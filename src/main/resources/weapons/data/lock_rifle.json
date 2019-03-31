@@ -1,0 +1,92 @@
+{
+  "name": "Distruttore",
+  "color": "BLUE",
+  "buyCost": {
+    "BLUE": 1,
+    "RED": 0,
+    "YELLOW": 0
+  },
+  "primaryEffect": [
+    {
+      "type": "DAMAGE",
+      "cost" : {
+        "BLUE": 0,
+        "RED": 0,
+        "YELLOW": 0
+      },
+      "amount": [
+        "2"
+      ],
+      "target": {
+        "type": "OTHERS",
+        "amount": [
+          "1"
+        ],
+        "positionType": "SAMESQUARE",
+        "positionConstraints": [
+          {
+            "type": "VISIBLE",
+            "target": {
+              "type": "PLAYER"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "MARK",
+      "amount": [
+        "1"
+      ],
+      "target": {
+        "type": "OTHERS",
+        "amount": [
+          "1"
+        ],
+        "positionType": "SAMESQUARE",
+        "positionConstraints": [
+          {
+            "type": "VISIBLE",
+            "target": {
+              "type": "PLAYER"
+            }
+          }
+        ],
+        "targetConstraints": [
+          "ONLYHITBYMAIN"
+        ]
+      }
+    }
+  ],
+  "secondaryEffectOne": [
+    {
+      "type": "MARK",
+      "amount": [
+        "1"
+      ],
+      "cost": {
+        "BLUE": 0,
+        "RED": 1,
+        "YELLOW": 0
+      },
+      "target": {
+        "type": "OTHERS",
+        "amount": [
+          "1"
+        ],
+        "positionType": "SAMESQUARE",
+        "positionConstraints": [
+          {
+            "type": "VISIBLE",
+            "target": {
+              "type": "PLAYER"
+            }
+          }
+        ],
+        "targetConstraints": [
+          "NOHITBYMAIN"
+        ]
+      }
+    }
+  ]
+}
