@@ -5,15 +5,15 @@ import java.util.List;
 
 public class Room {
 
-    private final String color;
+    private final RoomColor color;
     private final List<Square> squares;
 
-    Room(String color, List<Square> squares) {
+    Room(RoomColor color, List<Square> squares) {
         this.color = color;
         this.squares = new ArrayList<>(squares);
     }
 
-    public String getColor() {
+    public RoomColor getColor() {
         return color;
     }
 

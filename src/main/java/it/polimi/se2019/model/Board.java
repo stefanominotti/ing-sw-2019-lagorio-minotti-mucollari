@@ -13,6 +13,7 @@ public class Board extends Observable {
     private List<WeaponCard> weaponsDiscardPile;
     private List<Powerup> powerupsDiscardPile;
     private List<AmmoTile> ammosDiscardPile;
+    private List<Player> killshotTrack;
 
     public Board() {
         this.rooms = new ArrayList<>();
@@ -23,6 +24,7 @@ public class Board extends Observable {
         this.weaponsDiscardPile = new ArrayList<>();
         this.powerupsDiscardPile = new ArrayList<>();
         this.ammosDiscardPile = new ArrayList<>();
+        this.killshotTrack = new ArrayList<>();
     }
 
     public List<Player> getPlayers() {}
@@ -30,6 +32,8 @@ public class Board extends Observable {
     public int getSkulls() {
         return skulls;
     }
+
+    public List<Player> getKillshotTrack() {}
 
     public void initializeGame(int skulls, List<GameCharacter> chosenCharacters) {}
 
