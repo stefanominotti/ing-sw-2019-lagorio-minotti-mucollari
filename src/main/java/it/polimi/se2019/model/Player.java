@@ -8,6 +8,7 @@ public class Player {
     public static final int MAX_RED_AMMOS = 3;
     public static final int MAX_YELLOW_AMMOS = 3;
 
+    private String name;
     private final GameCharacter character;
     private int score;
     List<Player> damages;
@@ -18,7 +19,8 @@ public class Player {
     List<Powerup> powerups;
     Square position;
 
-    Player(GameCharacter character) {
+    Player(GameCharacter character, String name) {
+        this.name = name;
         this.character = character;
         this.score = 0;
         this.damages = new ArrayList<>();

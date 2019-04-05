@@ -10,7 +10,6 @@ public class Board extends Observable {
     private List<WeaponCard> weaponsDeck;
     private List<Powerup> powerupsDeck;
     private List<AmmoTile> ammosDeck;
-    private List<WeaponCard> weaponsDiscardPile;
     private List<Powerup> powerupsDiscardPile;
     private List<AmmoTile> ammosDiscardPile;
     private List<Player> killshotTrack;
@@ -21,7 +20,6 @@ public class Board extends Observable {
         this.weaponsDeck = new ArrayList<>();
         this.powerupsDeck = new ArrayList<>();
         this.ammosDeck = new ArrayList<>();
-        this.weaponsDiscardPile = new ArrayList<>();
         this.powerupsDiscardPile = new ArrayList<>();
         this.ammosDiscardPile = new ArrayList<>();
         this.killshotTrack = new ArrayList<>();
