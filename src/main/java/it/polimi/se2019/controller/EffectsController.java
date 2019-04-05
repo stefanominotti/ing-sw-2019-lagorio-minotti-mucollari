@@ -1,15 +1,13 @@
 package it.polimi.se2019.controller;
 
-import it.polimi.se2019.model.Player;
-import it.polimi.se2019.model.Square;
-import it.polimi.se2019.model.WeaponCard;
-import it.polimi.se2019.model.WeaponEffect;
+import it.polimi.se2019.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class EffectsController {
 
+    private Board board;
     private WeaponCard weapon;
     private Player player;
     private List<WeaponEffect> currentEffect;
@@ -19,8 +17,10 @@ public class EffectsController {
     private int effectIndex;
     private List<Player> hitByMain;
     private List<Player> hitBySecondary;
+    private Player activeTarget;
 
-    public EffectsController() {
+    public EffectsController(Board board) {
+        this.board = board;
         this.hitByMain = new ArrayList<>();
         this.hitBySecondary = new ArrayList<>();
         this.mainEffectApplied = false;
@@ -29,15 +29,19 @@ public class EffectsController {
         this.effectIndex = 0;
     }
 
-    public void selectEffect(EffectSelectedEvent event) {}
+    EffectType getActiveEffectType() {}
 
-    public boolean canApply(List <WeaponEffect> effect) {}
+    Player getActiveTarget() {}
 
-    public List<Square> getAvailableSquares(WeaponEffect, Player player)
+    void selectEffect(EffectSelectedEvent event) {}
 
-    public List<Player> getAvailableTargets(WeaponEffect, Player player) {}
+    boolean canApply(List <WeaponEffect> effect) {}
 
-    public void applyEffect(TargetSelectedEvent event) {}
+    List<Square> getAvailableSquares(WeaponEffect, Player player)
 
-    private void endAttack() {}
+    List<Player> getAvailableTargets(WeaponEffect, Player player) {}
+
+    void applyEffect(TargetSelectedEvent event) {}
+
+    void endAttack() {}
 }

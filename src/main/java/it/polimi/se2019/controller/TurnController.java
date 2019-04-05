@@ -13,6 +13,7 @@ public class TurnController {
     private int movesLeft;
     private ActionType selectedAction;
     private TurnState state;
+    private Player powerupTarget;
 
     public TurnController(Board board) {
         this.selectedAction = null;
@@ -22,21 +23,27 @@ public class TurnController {
         this.movesLeft = 2;
     }
 
-    public void startTurn() {}
+    Player getActiveplayer() {}
 
-    public Player getActivePlayer() {}
+    void startTurn() {}
 
-    public void selectAction(ActionSelectedEvent event) {}
+    void powerupTargetSelected(PowerupTargetSelectedEvent event) {}
 
-    private List<Square> whereCanMove(int maxDistamce) {}
+    void powerupMove(PowerupMoveEvent event) {}
 
-    public void shot(ShotEvent event) {}
+    void selectPowerup(PowerupCardSelectedEvent event) {}
 
-    public void pickup(PickupEvent event) {}
+    void selectAction(ActionSelectedEvent event) {}
 
-    public void move(MoveEvent event) {}
+    List<Square> whereCanMove(int maxDistamce) {}
 
-    public void reload(RealoadEvent event) {}
+    void shot(ShotEvent event) {}
 
-    public void endTurn() {}
+    void pickup(PickupEvent event) {}
+
+    void move(MoveEvent event) {}
+
+    void reload(RealoadEvent event) {}
+
+    void endTurn() {}
 }
