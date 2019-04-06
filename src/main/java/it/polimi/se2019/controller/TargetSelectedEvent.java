@@ -1,25 +1,28 @@
 package it.polimi.se2019.controller;
 
-import it.polimi.se2019.model.Player;
-import it.polimi.se2019.model.Square;
+import it.polimi.se2019.model.GameCharacter;
 
 import java.util.List;
 
 public class TargetSelectedEvent {
 
-    private Player player;
-    private List<Player> targets;
-    private Square square;
+    private GameCharacter player;
+    private List<GameCharacter> targets;
+    private int squareX;
+    private int squareY;
 
-    public TargetSelectedEvent(Player player, List<Player> targets, Square square) {
+    public TargetSelectedEvent(GameCharacter player, List<GameCharacter> targets, int squareX, int squareY) {
         this.player = player;
         this.targets = targets;
-        this.square = square;
+        this.squareX = squareX;
+        this.squareY = squareY;
     }
 
-    public Player getPlayer() {}
+    public GameCharacter getPlayer() {}
 
-    public Player getTarget() {}
+    public List<GameCharacter> getTargets() {}
 
-    public Square getSquare() {}
+    public int getSquareX() {}
+
+    public int getSquareY() {}
 }

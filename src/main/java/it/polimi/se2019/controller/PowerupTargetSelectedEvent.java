@@ -1,12 +1,12 @@
 package it.polimi.se2019.controller;
 
-import it.polimi.se2019.model.Player;
+import it.polimi.se2019.model.GameCharacter;
 
 public class PowerupTargetSelectedEvent {
-    private Player target;
-    private Player player;
+    private GameCharacter target;
+    private GameCharacter player;
 
-    public Player getTarget() {}
+    public GameCharacter getTarget() {}
 
-    public Player getPlayer(){}
+    public GameCharacter getPlayer(){}
 }

@@ -1,19 +1,18 @@
 package it.polimi.se2019.controller;
 
-import it.polimi.se2019.model.Player;
+import it.polimi.se2019.model.GameCharacter;
 import it.polimi.se2019.model.Weapon;
-import it.polimi.se2019.model.WeaponCard;
 
 public class RealoadEvent {
-    private Player player;
-    private WeaponCard weapon;
+    private GameCharacter player;
+    private Weapon weapon;
 
-    public RealoadEvent(Player player, WeaponCard weapon) {
+    public RealoadEvent(GameCharacter player, Weapon weapon) {
         this.player = player;
         this.weapon = weapon;
     }
 
-    public Player getPlayer() {}
+    public GameCharacter getPlayer() {}
 
-    public WeaponCard getWeapon() {}
+    public Weapon getWeapon() {}
 }

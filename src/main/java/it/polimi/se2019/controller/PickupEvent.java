@@ -1,19 +1,22 @@
 package it.polimi.se2019.controller;
 
-import it.polimi.se2019.model.Player;
-import it.polimi.se2019.model.Square;
+import it.polimi.se2019.model.GameCharacter;
 
 public class PickupEvent {
 
-    private Player player;
-    private Square square;
+    private GameCharacter player;
+    private int x;
+    private int y;
 
-    public PickupEvent(Player player, Square square) {
+    public PickupEvent(GameCharacter player, int x, int y) {
         this.player = player;
-        this.square = square;
+        this.x = x;
+        this.y = y;
     }
 
-    public Player getPlayer() {}
+    public GameCharacter getPlayer() {}
 
-    public Square getSquare() {}
+    public int getX() {}
+
+    public int getY() {}
 }

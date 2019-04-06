@@ -1,20 +1,18 @@
 package it.polimi.se2019.controller;
 
-import it.polimi.se2019.model.Player;
-import it.polimi.se2019.model.WeaponCard;
-
-import java.util.List;
+import it.polimi.se2019.model.GameCharacter;
+import it.polimi.se2019.model.Weapon;
 
 public class ShotEvent {
-    private Player player;
-    private WeaponCard weapon;
+    private GameCharacter player;
+    private Weapon weapon;
 
-    public ShotEvent(Player player, List<Player> targets, WeaponCard weapon) {
+    public ShotEvent(GameCharacter player, Weapon weapon) {
         this.player = player;
         this.weapon = weapon;
     }
 
-    public Player getPlayer() {}
+    public GameCharacter getPlayer() {}
 
-    public WeaponCard getWeapon() {}
+    public Weapon getWeapon() {}
 }

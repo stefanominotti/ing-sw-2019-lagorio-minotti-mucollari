@@ -1,18 +1,21 @@
 package it.polimi.se2019.controller;
 
-import it.polimi.se2019.model.Player;
-import it.polimi.se2019.model.Square;
+import it.polimi.se2019.model.GameCharacter;
 
 public class PowerupMoveEvent {
-    private Square square;
-    private Player target;
+    private int x;
+    private int y;
+    private GameCharacter target;
 
-    public PowerupMoveEvent(Square square, Player target) {
-        this.square = square;
+    public PowerupMoveEvent(GameCharacter target, int x, int y) {
+        this.x = x;
+        this.y = y;
         this.target = target;
     }
 
-    public Square getSquare() {}
+    public int getX() {}
 
-    public Player getTarget() {}
+    public int getY() {}
+
+    public GameCharacter getTarget() {}
 }

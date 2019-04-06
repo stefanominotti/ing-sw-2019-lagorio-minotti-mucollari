@@ -4,6 +4,8 @@ import java.util.*;
 
 public class Square {
 
+    private final int x;
+    private final int y;
     private final Map<CardinalPoint, Square> nearbySquares;
     private final Map<CardinalPoint, Boolean> nearbyAccessibility;
     private final Room room;
@@ -13,7 +15,9 @@ public class Square {
     private final List<Player> activePlayers;
 
     public Square(boolean spawn, Room room, Map<CardinalPoint, Square> nearbySquares,
-                  Map<CardinalPoint, Boolean> nearbyAccessibility) {
+                  Map<CardinalPoint, Boolean> nearbyAccessibility, int x, int y) {
+        this.x = x;
+        this.y = y;
         this.room = room;
         this.spawn = spawn;
         this.nearbySquares = new EnumMap<>(nearbySquares);
@@ -25,6 +29,14 @@ public class Square {
         } else {
             this.weaponsStore = new ArrayList<>();
         }
+    }
+
+    public int getX() {
+        return this.x;
+    }
+
+    public int getY() {
+        return this.y;
     }
 
     public boolean isSpawn() {

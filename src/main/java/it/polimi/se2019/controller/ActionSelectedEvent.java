@@ -1,18 +1,18 @@
 package it.polimi.se2019.controller;
 
-import it.polimi.se2019.model.Player;
+import it.polimi.se2019.model.GameCharacter;
 
 public class ActionSelectedEvent {
 
-    private Player player;
+    private GameCharacter player;
     private ActionType action;
 
-    public ActionSelectedEvent(Player player, ActionType action) {
+    public ActionSelectedEvent(GameCharacter player, ActionType action) {
         this.player = player;
         this.action = action;
     }
 
-    public Player getPlayer() {}
+    public GameCharacter getPlayer() {}
 
     public ActionType getAction() {}
 }

@@ -37,9 +37,9 @@ public class EffectsController {
 
     boolean canApply(List <WeaponEffect> effect) {}
 
-    List<Square> getAvailableSquares(WeaponEffect, Player player)
+    List<Square> getAvailableSquares(WeaponEffect effect, Player player)
 
-    List<Player> getAvailableTargets(WeaponEffect, Player player) {}
+    List<Player> getAvailableTargets(WeaponEffect effect, Player player) {}
 
     void applyEffect(TargetSelectedEvent event) {}
 
