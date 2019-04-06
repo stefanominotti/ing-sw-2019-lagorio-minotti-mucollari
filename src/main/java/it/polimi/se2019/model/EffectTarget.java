@@ -1,5 +1,6 @@
 package it.polimi.se2019.model;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -29,9 +30,15 @@ public class EffectTarget {
         return this.positionType;
     }
 
-    public List<String> getAmount() {}
+    public List<String> getAmount() {
+        return new ArrayList<>();
+    }
 
-    public List<PositionConstraint> getPositionConstraints() {}
+    public List<PositionConstraint> getPositionConstraints() {
+        return new ArrayList<>();
+    }
 
-    public Set<TargetConstraint> getTargetConstraints() {}
+    public Set<TargetConstraint> getTargetConstraints() {
+        return EnumSet.copyOf(this.targetConstraints);
+    }
 }

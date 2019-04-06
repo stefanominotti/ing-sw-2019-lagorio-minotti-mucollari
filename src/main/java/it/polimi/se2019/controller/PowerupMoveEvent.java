@@ -13,9 +13,15 @@ public class PowerupMoveEvent {
         this.target = target;
     }
 
-    public int getX() {}
+    public int getX() {
+        return this.x;
+    }
 
-    public int getY() {}
+    public int getY() {
+        return this.y;
+    }
 
-    public GameCharacter getTarget() {}
+    public GameCharacter getTarget() {
+        return null;
+    }
 }

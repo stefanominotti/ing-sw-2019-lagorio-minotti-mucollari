@@ -10,7 +10,6 @@ public class TurretBoard extends Board {
     private List<AmmoTile> availableAmmos;
     private Map<Square, Player> turrets;
 
-    @Override
     public TurretBoard() {
         super();
         this.availableAmmos = new ArrayList<>();
@@ -27,16 +26,20 @@ public class TurretBoard extends Board {
     public void giveAmmoTile(Player player, AmmoTile tile) {}
 
     @Override
-    private void fillAmmosDeck() {}
+    protected void fillAmmosDeck() {}
 
     @Override
     public void handleDeadPlayer(Player player) {}
 
-    public addTurret(Player player, Square square) {}
+    public void addTurret(Player player, Square square) {}
 
-    public removeTurret(Player player, Square square) {}
+    public void removeTurret(Player player, Square square) {}
 
-    public Map<Square, Player> getTurrets() {}
+    public Map<Square, Player> getTurrets() {
+        return new HashMap<>();
+    }
 
-    public List<AmmoTile> getAvailableAmmos() {}
+    public List<AmmoTile> getAvailableAmmos() {
+        return new ArrayList<>();
+    }
 }

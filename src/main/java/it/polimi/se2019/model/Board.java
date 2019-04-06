@@ -2,7 +2,7 @@ package it.polimi.se2019.model;
 
 import java.util.*;
 
-public class Board extends Observable {
+public abstract class Board extends Observable {
 
     private int skulls;
     private List<Room> rooms;
@@ -25,21 +25,25 @@ public class Board extends Observable {
         this.killshotTrack = new ArrayList<>();
     }
 
-    public List<Player> getPlayers() {}
+    public List<Player> getPlayers() {
+        return new ArrayList<>();
+    }
 
     public int getSkulls() {
         return skulls;
     }
 
-    public List<Player> getKillshotTrack() {}
+    public List<Player> getKillshotTrack() {
+        return new ArrayList<>();
+    }
 
     public void initializeGame(int skulls, List<GameCharacter> chosenCharacters) {}
 
-    private void fillWeaponsDeck() {}
+    protected void fillWeaponsDeck() {}
 
-    private void fillPowerupsDeck() {}
+    protected void fillPowerupsDeck() {}
 
-    private void fillAmmosDeck() {}
+    protected void fillAmmosDeck() {}
 
     public void handleEndTurn() {}
 

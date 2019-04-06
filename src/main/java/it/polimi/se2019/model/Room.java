@@ -17,7 +17,11 @@ public class Room {
         return color;
     }
 
-    public List<Square> getSquares() {}
+    public List<Square> getSquares() {
+        return new ArrayList<>();
+    }
 
-    public boolean hasSpawn() {}
+    public boolean hasSpawn() {
+        return true;
+    }
 }

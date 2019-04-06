@@ -13,7 +13,11 @@ public class PowerupCardSelectedEvent {
         this.player = player;
     }
 
-    public PowerupType getPowerup() {}
+    public PowerupType getPowerup() {
+        return null;
+    }
 
-    public GameCharacter getPlayer() {}
+    public GameCharacter getPlayer() {
+        return null;
+    }
 }

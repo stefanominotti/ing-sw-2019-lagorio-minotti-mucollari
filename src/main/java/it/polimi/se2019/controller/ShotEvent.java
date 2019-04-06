@@ -12,7 +12,11 @@ public class ShotEvent {
         this.weapon = weapon;
     }
 
-    public GameCharacter getPlayer() {}
+    public GameCharacter getPlayer() {
+        return null;
+    }
 
-    public Weapon getWeapon() {}
+    public Weapon getWeapon() {
+        return null;
+    }
 }

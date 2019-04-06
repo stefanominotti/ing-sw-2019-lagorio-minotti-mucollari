@@ -12,7 +12,11 @@ public class ActionSelectedEvent {
         this.action = action;
     }
 
-    public GameCharacter getPlayer() {}
+    public GameCharacter getPlayer() {
+        return null;
+    }
 
-    public ActionType getAction() {}
+    public ActionType getAction() {
+        return null;
+    }
 }

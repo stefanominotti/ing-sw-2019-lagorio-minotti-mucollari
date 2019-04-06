@@ -35,13 +35,33 @@ public class Player {
         this.position = null;
     }
 
-    public List<Player> getDamages() {}
+    public List<Player> getDamages() {
+        return new ArrayList<>();
+    }
+
+    public List<WeaponCard> getWeapons() {
+        return new ArrayList<>();
+    }
+
+    public Map<Player, Integer> getRevengeMarks() {
+        return new HashMap<>();
+    }
+
+    public Map<AmmoType, Integer> getAvailableAmmos() {
+        return new EnumMap<>(AmmoType.class);
+    }
+
+    public List<Powerup> getPowerups() {
+        return new ArrayList<>();
+    }
+
+    public Square getPosition() {
+        return null;
+    }
 
     void addDamages(Player player, int amount) {}
 
     void resetAfterDeath() {}
-
-    public List<WeaponCard> getWeapons() {}
 
     void addWeapon(WeaponCard weapon) {}
 
@@ -53,23 +73,15 @@ public class Player {
 
     void raiseScore(int amount) {}
 
-    public Map<AmmoType, Integer> getAvailableAmmos() {}
-
     void addAmmos(Map<AmmoType, Integer> ammos) {}
 
     void removeAmmos(Map<AmmoType, Integer> ammos) {}
-
-    public List<Powerup> getPowerups() {}
 
     void addPowerup(Powerup powerup) {}
 
     void removePowerup(Powerup powerup) {}
 
     void setPosition(Square square) {}
-
-    public Square getPosition() {}
-
-    public Map<Player, Integer> getRevengeMarks() {}
 
     void addRevengeMarks(Player player, int amount) {}
 

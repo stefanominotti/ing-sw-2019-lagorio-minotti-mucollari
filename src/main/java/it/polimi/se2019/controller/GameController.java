@@ -4,9 +4,10 @@ import it.polimi.se2019.model.Board;
 import it.polimi.se2019.model.Player;
 import it.polimi.se2019.model.WeaponCard;
 
+import java.util.Observable;
 import java.util.Observer;
 
-public class GameController implements Observer<Board> {
+public class GameController implements Observer {
 
     private Board board;
 
@@ -16,23 +17,24 @@ public class GameController implements Observer<Board> {
 
     void newGame(int playersNumber) {}
 
-    public void update(NewGameEvent event) {}
+    @Override
+    public void update(Observable view, Object event) {}
 
-    public void update(CardPressedEvent event) {}
+    public void update(Observable view, CardPressedEvent event) {}
 
-    public void update(ActionSelectedEvent event) {}
+    public void update(Observable view, ActionSelectedEvent event) {}
 
-    public void update(ShotEvent event) {}
+    public void update(Observable view, ShotEvent event) {}
 
-    public void update(PickupEvent event) {}
+    public void update(Observable view, PickupEvent event) {}
 
-    public void update(MoveEvent event) {}
+    public void update(Observable view, MoveEvent event) {}
 
-    public void update(RealoadEvent event) {}
+    public void update(Observable view, RealoadEvent event) {}
 
-    public void update(EffectSelectedEvent event) {}
+    public void update(Observable view, EffectSelectedEvent event) {}
 
-    public void update(TargetSelectedEvent event) {}
+    public void update(Observable view, TargetSelectedEvent event) {}
 
-    public void update(PowerupCardSelectedEvent event) {}
+    public void update(Observable view, PowerupCardSelectedEvent event) {}
 }

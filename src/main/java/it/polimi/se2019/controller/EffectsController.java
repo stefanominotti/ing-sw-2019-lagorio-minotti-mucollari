@@ -29,17 +29,27 @@ public class EffectsController {
         this.effectIndex = 0;
     }
 
-    EffectType getActiveEffectType() {}
+    EffectType getActiveEffectType() {
+        return null;
+    }
 
-    Player getActiveTarget() {}
+    Player getActiveTarget() {
+        return null;
+    }
 
     void selectEffect(EffectSelectedEvent event) {}
 
-    boolean canApply(List <WeaponEffect> effect) {}
+    boolean canApply(List <WeaponEffect> effect) {
+        return true;
+    }
 
-    List<Square> getAvailableSquares(WeaponEffect effect, Player player)
+    List<Square> getAvailableSquares(WeaponEffect effect, Player player) {
+        return new ArrayList<>();
+    }
 
-    List<Player> getAvailableTargets(WeaponEffect effect, Player player) {}
+    List<Player> getAvailableTargets(WeaponEffect effect, Player player) {
+        return new ArrayList<>();
+    }
 
     void applyEffect(TargetSelectedEvent event) {}
 

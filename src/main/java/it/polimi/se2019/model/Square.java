@@ -43,21 +43,37 @@ public class Square {
         return this.spawn;
     }
 
-    public List<WeaponCard> getWeaponsStore() {}
+    public List<WeaponCard> getWeaponsStore() {
+        return new ArrayList<>();
+    }
 
-    public AmmoTile getAvailableAmmoTile() {}
+    public AmmoTile getAvailableAmmoTile() {
+        return null;
+    }
 
-    public List<Player> getActivePlayers() {}
+    public List<Player> getActivePlayers() {
+        return new ArrayList<>();
+    }
 
-    public Map<CardinalPoint, Boolean> getNearbyAccessibility() {}
+    public Map<CardinalPoint, Boolean> getNearbyAccessibility() {
+        return new EnumMap<>(CardinalPoint.class);
+    }
 
-    public Map<CardinalPoint, Square> getNearbySquares() {}
+    public Map<CardinalPoint, Square> getNearbySquares() {
+        return new EnumMap<>(CardinalPoint.class);
+    }
 
-    public Room getRoom() {}
+    public Room getRoom() {
+        return null;
+    }
 
-    public int distanceFrom(Square square) {}
+    public int distanceFrom(Square square) {
+        return 0;
+    }
 
-    public boolean canSee(Square square) {}
+    public boolean canSee(Square square) {
+        return true;
+    }
 
     void addPlayer(Player player) {}
 

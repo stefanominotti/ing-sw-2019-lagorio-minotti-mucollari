@@ -16,7 +16,9 @@ public class WeaponCard {
         return this.weaponType;
     }
 
-    public Player getOwner() {}
+    public Player getOwner() {
+        return null;
+    }
 
     public boolean isReady() {
         return this.ready;

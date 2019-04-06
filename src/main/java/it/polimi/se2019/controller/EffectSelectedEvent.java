@@ -3,6 +3,7 @@ package it.polimi.se2019.controller;
 import it.polimi.se2019.model.GameCharacter;
 import it.polimi.se2019.model.WeaponEffect;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EffectSelectedEvent {
@@ -15,7 +16,11 @@ public class EffectSelectedEvent {
         this.effect = effect;
     }
 
-    public GameCharacter getPlayer() {}
+    public GameCharacter getPlayer() {
+        return null;
+    }
 
-    public List<WeaponEffect> getEffect() {}
+    public List<WeaponEffect> getEffect() {
+        return new ArrayList<>();
+    }
 }

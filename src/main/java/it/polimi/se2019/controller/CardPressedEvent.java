@@ -14,9 +14,15 @@ public class CardPressedEvent {
         this.powerup = powerup;
     }
 
-    public GameCharacter getPlayer() {}
+    public GameCharacter getPlayer() {
+        return null;
+    }
 
-    public Weapon getWeapon() {}
+    public Weapon getWeapon() {
+        return null;
+    }
 
-    public Powerup getPowerup() {}
+    public Powerup getPowerup() {
+        return null;
+    }
 }

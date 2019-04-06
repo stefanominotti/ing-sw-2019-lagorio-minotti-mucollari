@@ -6,7 +6,11 @@ public class PowerupTargetSelectedEvent {
     private GameCharacter target;
     private GameCharacter player;
 
-    public GameCharacter getTarget() {}
+    public GameCharacter getTarget() {
+        return null;
+    }
 
-    public GameCharacter getPlayer(){}
+    public GameCharacter getPlayer() {
+        return null;
+    }
 }

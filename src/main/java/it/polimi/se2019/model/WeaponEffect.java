@@ -24,11 +24,19 @@ public class WeaponEffect {
         return this.type;
     }
 
-    public List<String> getAmount() { }
+    public List<String> getAmount() {
+        return new ArrayList<>();
+    }
 
-    public EffectTarget getTarget() { }
+    public EffectTarget getTarget() {
+        return null;
+    }
 
-    public Set<EffectConstraint> getConstraints() {}
+    public Set<EffectConstraint> getConstraints() {
+        return EnumSet.copyOf(this.constraints);
+    }
 
-    public Map<AmmoType, Integer> getCost() {}
+    public Map<AmmoType, Integer> getCost() {
+        return new EnumMap<>(AmmoType.class);
+    }
 }

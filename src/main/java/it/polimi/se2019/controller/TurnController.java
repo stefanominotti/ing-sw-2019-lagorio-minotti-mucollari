@@ -4,6 +4,7 @@ import it.polimi.se2019.model.Board;
 import it.polimi.se2019.model.Player;
 import it.polimi.se2019.model.Square;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TurnController {
@@ -23,7 +24,9 @@ public class TurnController {
         this.movesLeft = 2;
     }
 
-    Player getActiveplayer() {}
+    Player getActiveplayer() {
+        return null;
+    }
 
     void startTurn() {}
 
@@ -35,7 +38,9 @@ public class TurnController {
 
     void selectAction(ActionSelectedEvent event) {}
 
-    List<Square> whereCanMove(int maxDistamce) {}
+    List<Square> whereCanMove(int maxDistamce) {
+        return new ArrayList<>();
+    }
 
     void shot(ShotEvent event) {}
 

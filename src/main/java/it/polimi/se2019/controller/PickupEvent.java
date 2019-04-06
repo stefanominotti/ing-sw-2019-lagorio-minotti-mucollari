@@ -14,9 +14,15 @@ public class PickupEvent {
         this.y = y;
     }
 
-    public GameCharacter getPlayer() {}
+    public GameCharacter getPlayer() {
+        return null;
+    }
 
-    public int getX() {}
+    public int getX() {
+        return this.x;
+    }
 
-    public int getY() {}
+    public int getY() {
+        return this.y;
+    }
 }

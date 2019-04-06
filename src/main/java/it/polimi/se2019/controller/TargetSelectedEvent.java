@@ -2,6 +2,7 @@ package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.GameCharacter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TargetSelectedEvent {
@@ -18,11 +19,19 @@ public class TargetSelectedEvent {
         this.squareY = squareY;
     }
 
-    public GameCharacter getPlayer() {}
+    public GameCharacter getPlayer() {
+        return null;
+    }
 
-    public List<GameCharacter> getTargets() {}
+    public List<GameCharacter> getTargets() {
+        return new ArrayList<>();
+    }
 
-    public int getSquareX() {}
+    public int getSquareX() {
+        return this.squareX;
+    }
 
-    public int getSquareY() {}
+    public int getSquareY() {
+        return this.squareY;
+    }
 }
