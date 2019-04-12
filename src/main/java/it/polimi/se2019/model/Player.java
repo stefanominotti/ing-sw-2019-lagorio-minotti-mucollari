@@ -1,5 +1,7 @@
 package it.polimi.se2019.model;
 
+import it.polimi.se2019.model.messages.PlayerReadyMessage;
+
 import java.util.*;
 
 public class Player {
@@ -8,6 +10,7 @@ public class Player {
     public static final int MAX_RED_AMMOS = 3;
     public static final int MAX_YELLOW_AMMOS = 3;
 
+    private Board board;
     private String name;
     private final GameCharacter character;
     private int score;
@@ -19,8 +22,8 @@ public class Player {
     List<Powerup> powerups;
     Square position;
 
-    Player(GameCharacter character, String name) {
-        this.name = name;
+    Player(Board board, GameCharacter character) {
+        this.board = board;
         this.character = character;
         this.score = 0;
         this.damages = new ArrayList<>();
@@ -33,6 +36,18 @@ public class Player {
         this.weapons = new ArrayList<>();
         this.powerups = new ArrayList<>();
         this.position = null;
+    }
+
+    public GameCharacter getCharacter() {
+        return this.character;
+    }
+
+    public String getNickname() {
+        return this.name;
+    }
+
+    public void setNickname(String name) {
+        this.name = name;
     }
 
     public List<Player> getDamages() {

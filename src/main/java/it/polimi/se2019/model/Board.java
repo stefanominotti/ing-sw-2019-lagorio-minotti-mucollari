@@ -1,8 +1,11 @@
 package it.polimi.se2019.model;
 
+import it.polimi.se2019.model.messages.PlayerCreatedMessage;
+import it.polimi.se2019.model.messages.PlayerReadyMessage;
+
 import java.util.*;
 
-public abstract class Board extends Observable {
+public class Board extends Observable {
 
     private int skulls;
     private List<Room> rooms;
@@ -26,7 +29,34 @@ public abstract class Board extends Observable {
     }
 
     public List<Player> getPlayers() {
-        return new ArrayList<>();
+        return new ArrayList<>(this.players);
+    }
+
+    public Player getPlayerByCharacter(GameCharacter character) {
+        for (Player player : this.players) {
+            if (player.getCharacter() == character) {
+                return player;
+            }
+        }
+        return null;
+    }
+
+    public void addPlayer(GameCharacter character) {
+        this.players.add(new Player(this, character));
+        setChanged();
+        notifyObservers(new PlayerCreatedMessage(character));
+    }
+
+    public void setPlayerNickname(GameCharacter player, String name) {
+        getPlayerByCharacter(player).setNickname(name);
+        Map<GameCharacter, String> others = new EnumMap<>(GameCharacter.class);
+        for (Player p : this.players) {
+            if (p.getNickname() != null && p.getCharacter() != player) {
+                others.put(p.getCharacter(), p.getNickname());
+            }
+        }
+        setChanged();
+        notifyObservers(new PlayerReadyMessage(player, name, others));
     }
 
     public int getSkulls() {

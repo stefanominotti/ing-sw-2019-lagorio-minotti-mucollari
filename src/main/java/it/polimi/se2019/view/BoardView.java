@@ -1,5 +1,6 @@
 package it.polimi.se2019.view;
 
+import it.polimi.se2019.client.ClientInterface;
 import it.polimi.se2019.model.*;
 
 import java.util.*;
@@ -8,18 +9,11 @@ public class BoardView {
 
     private int skulls;
     private List<SquareView> squares;
-    private List<PlayerBoard> enemyBoards;
-    private SelfPlayerBoard selfPlayerBoard;
     private Map<RoomColor, List<Weapon>> shops;
     private List<GameCharacter> killshotTrack;
     private boolean emptyWeaponsDeck;
 
-    BoardView(Map<GameCharacter, String> enemies, GameCharacter playerCharacter, String playerName, int skulls) {
-        this.enemyBoards = new ArrayList<>();
-        for(Map.Entry<GameCharacter, String> enemy : enemies.entrySet()) {
-            this.enemyBoards.add(new PlayerBoard(enemy.getKey(), enemy.getValue()));
-        }
-        this.selfPlayerBoard = new SelfPlayerBoard(playerCharacter, playerName);
+    BoardView(int skulls) {
         this.killshotTrack = new ArrayList<>();
         this.skulls = skulls;
         this.emptyWeaponsDeck = false;

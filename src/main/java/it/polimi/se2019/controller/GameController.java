@@ -1,40 +1,60 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Board;
-import it.polimi.se2019.model.Player;
-import it.polimi.se2019.model.WeaponCard;
+import it.polimi.se2019.model.messages.ClientReadyMessage;
+import it.polimi.se2019.model.messages.Message;
+import it.polimi.se2019.model.messages.NicknameMessage;
 
 import java.util.Observable;
 import java.util.Observer;
 
 public class GameController implements Observer {
 
-    private Board board;
+    private Board model;
 
     public GameController(Board board) {
-        this.board = board;
+        this.model = board;
     }
 
     void newGame(int playersNumber) {}
 
     @Override
-    public void update(Observable view, Object event) {}
+    public void update(Observable view, Object message) {
+        String messageType = ((Message) message).getMessageType().getName()
+                .replace("it.polimi.se2019.model.messages.", "");
+        switch (messageType) {
+            case "ClientReadyMessage":
+                update((ClientReadyMessage) message);
+                break;
+            case "NicknameMessage":
+                update((NicknameMessage) message);
+                break;
+        }
+    }
 
-    public void update(Observable view, CardPressedEvent event) {}
+    public void update(ClientReadyMessage message) {
+        this.model.addPlayer(message.getCharacter());
+    }
 
-    public void update(Observable view, ActionSelectedEvent event) {}
+    public void update(NicknameMessage message) {
+        this.model.setPlayerNickname(message.getCharacter(), message.getNickname());
+    }
 
-    public void update(Observable view, ShotEvent event) {}
+    public void update(CardPressedEvent event) {}
 
-    public void update(Observable view, PickupEvent event) {}
+    public void update(ActionSelectedEvent event) {}
 
-    public void update(Observable view, MoveEvent event) {}
+    public void update(ShotEvent event) {}
 
-    public void update(Observable view, RealoadEvent event) {}
+    public void update(PickupEvent event) {}
 
-    public void update(Observable view, EffectSelectedEvent event) {}
+    public void update(MoveEvent event) {}
 
-    public void update(Observable view, TargetSelectedEvent event) {}
+    public void update(RealoadEvent event) {}
 
-    public void update(Observable view, PowerupCardSelectedEvent event) {}
+    public void update(EffectSelectedEvent event) {}
+
+    public void update(TargetSelectedEvent event) {}
+
+    public void update(PowerupCardSelectedEvent event) {}
 }
