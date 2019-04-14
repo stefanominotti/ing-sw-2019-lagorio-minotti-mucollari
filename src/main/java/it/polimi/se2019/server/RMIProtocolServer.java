@@ -11,28 +11,29 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerInterface {
 
-    private static int PORT = 1099;
-    private Server server;
+    private final static int PORT = 1099;
+    private transient Server server;
 
-    public RMIProtocolServer(Server server) throws RemoteException {
+    RMIProtocolServer(Server server) throws RemoteException {
         this.server = server;
 
         try {
             LocateRegistry.createRegistry(PORT);
         } catch (RemoteException e) {
-            System.out.println("Registry già presente!");
+            System.out.println("Registry already present");
         }
 
         try {
             Naming.rebind("//localhost/MyServer", this);
         } catch (MalformedURLException e) {
-            System.err.println("Impossibile registrare l'oggetto indicato!");
+            System.err.println("Can't register given object");
         } catch (RemoteException e) {
-            System.err.println("Errore di connessione: " + e.getMessage() + "!");
+            System.err.println("Client error");
         }
     }
 
-    public synchronized void addClient(RMIClientInterface client) throws RemoteException {
+    @Override
+    public void addClient(RMIClientInterface client) throws RemoteException {
         RMIVirtualClient virtualClient = new RMIVirtualClient(client, this);
         if (this.server.getClientsNumber() == 5) {
             throw new IllegalStateException("Full lobby");
@@ -41,14 +42,15 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
         }
     }
 
-    public synchronized void removeClient(VirtualClientInterface client) {
+    void removeClient(RMIVirtualClient client) {
         this.server.removeClient(client);
     }
 
-    public void send(Message message, RMIVirtualClient client) throws RemoteException {
-        client.send(message);
+    void notifyDisconnection(RMIVirtualClient client) {
+        this.server.notifyDisconnection(client);
     }
 
+    @Override
     public void notify(Message message, RMIClientInterface client) {
         server.receiveMessage(message);
     }

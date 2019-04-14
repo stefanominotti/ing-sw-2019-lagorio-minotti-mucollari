@@ -29,8 +29,8 @@ public class VirtualView extends Observable implements Observer {
                 case "PlayerCreatedMessage":
                     update((PlayerCreatedMessage) message);
                     break;
-                case "PlayerReadyMessage":
-                    update((PlayerReadyMessage) message);
+                default:
+                    updateAll((Message) message);
                     break;
             }
         } catch (RemoteException e) {
@@ -38,12 +38,12 @@ public class VirtualView extends Observable implements Observer {
         }
     }
 
-    public void update(PlayerCreatedMessage message) throws RemoteException {
-        this.server.send(message.getCharacter(), message);
+    private void updateAll(Message message) throws RemoteException {
+        this.server.sendAll(message);
     }
 
-    public void update(PlayerReadyMessage message) throws RemoteException {
-        this.server.sendAll(message);
+    public void update(PlayerCreatedMessage message) throws RemoteException {
+        this.server.send(message.getCharacter(), message);
     }
 
     public void update(MovePlayerMessage message) {}

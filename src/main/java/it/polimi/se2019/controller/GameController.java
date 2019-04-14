@@ -16,8 +16,6 @@ public class GameController implements Observer {
         this.model = board;
     }
 
-    void newGame(int playersNumber) {}
-
     @Override
     public void update(Observable view, Object message) {
         String messageType = ((Message) message).getMessageType().getName()
@@ -32,11 +30,11 @@ public class GameController implements Observer {
         }
     }
 
-    public void update(ClientReadyMessage message) {
+    private void update(ClientReadyMessage message) {
         this.model.addPlayer(message.getCharacter());
     }
 
-    public void update(NicknameMessage message) {
+    private void update(NicknameMessage message) {
         this.model.setPlayerNickname(message.getCharacter(), message.getNickname());
     }
 

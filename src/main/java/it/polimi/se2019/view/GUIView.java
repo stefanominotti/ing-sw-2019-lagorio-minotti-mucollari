@@ -1,10 +1,10 @@
-package it.polimi.se2019.client;
+package it.polimi.se2019.view;
 
-import it.polimi.se2019.view.View;
+import it.polimi.se2019.client.AbstractClient;
 
 public class GUIView extends View {
 
-    public GUIView(ClientInterface client) {
+    public GUIView(AbstractClient client) {
         super(client);
     }
 

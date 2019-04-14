@@ -1,71 +1,35 @@
 package it.polimi.se2019.client;
 
 import it.polimi.se2019.model.messages.Message;
-import it.polimi.se2019.view.CLIView;
-import it.polimi.se2019.view.View;
 
 import java.io.*;
 import java.net.Socket;
-import java.rmi.RemoteException;
-import java.util.Scanner;
 
-public class SocketClient extends Thread implements ClientInterface {
+public class SocketClient extends AbstractClient implements Runnable {
 
     private static final int PORT = 9000;
     private static final String HOST = "localhost";
 
-    private View view;
     private Socket socket;
 
-    public SocketClient() {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("[1] - CLI");
-        System.out.println("[2] - GUI");
-        String viewSelection = scanner.nextLine();
-
-        if (viewSelection.equals("1")) {
-            this.view = new CLIView(this);
-        } else {
-            this.view = new GUIView(this);
-        }
-
+    SocketClient() {
+        super();
         try {
             this.socket = new Socket(HOST, PORT);
-            this.start();
-
         } catch (IOException e) {
-            System.out.println("Connection Error.");
+            showMessage("Connection error");
             e.printStackTrace();
         }
-
     }
 
-    public void notify(Message message) throws RemoteException {
-        this.view.manageUpdate(message);
-    }
-
-    public synchronized void send(Message message) {
-
+    @Override
+    public void send(Message message) {
         try {
             ObjectOutputStream writer = new ObjectOutputStream(this.socket.getOutputStream());
             writer.writeObject(message);
             writer.flush();
-
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    public synchronized void stopConnection () {
-
-        if (!socket.isClosed()) {
-            try {
-                this.socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            System.out.println("Connection closed.");
         }
     }
 
@@ -76,10 +40,14 @@ public class SocketClient extends Thread implements ClientInterface {
             try {
                 inputStream = new ObjectInputStream((this.socket.getInputStream()));
             } catch (EOFException e) {
-                this.view.showMessage("Connection refused");
+                showMessage("Connection error");
                 System.exit(0);
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+            if (inputStream == null) {
+                showMessage("Connection error");
+                System.exit(0);
             }
             try {
                 Message message = (Message) inputStream.readObject();
@@ -88,9 +56,7 @@ public class SocketClient extends Thread implements ClientInterface {
                 } else {
                     System.exit(0);
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
+            } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }

@@ -1,6 +1,6 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.client.ClientInterface;
+import it.polimi.se2019.client.AbstractClient;
 import it.polimi.se2019.model.GameCharacter;
 import it.polimi.se2019.model.messages.*;
 
@@ -9,15 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static it.polimi.se2019.view.ClientState.*;
+
 public abstract class View {
 
     private GameCharacter character;
-    private ClientInterface client;
+    private AbstractClient client;
     private BoardView board;
     private List<PlayerBoard> enemyBoards;
     private SelfPlayerBoard selfPlayerBoard;
+    private ClientState state;
 
-    public View(ClientInterface client) {
+    View(AbstractClient client) {
         this.client = client;
         this.enemyBoards = new ArrayList<>();
     }
@@ -35,15 +38,17 @@ public abstract class View {
         }
     }
 
-    public void update(PlayerCreatedMessage message) throws RemoteException {
+    void update(PlayerCreatedMessage message) throws RemoteException {
+        this.state = TYPINGNICKNAME;
         showMessage("Insert nickname: ");
         String nickname = receiveTextInput();
         this.character = message.getCharacter();
         this.client.send(new NicknameMessage(this.character, nickname));
     }
 
-    public void update(PlayerReadyMessage message) throws RemoteException {
+    void update(PlayerReadyMessage message) {
         if (message.getCharacter() == this.character) {
+            this.state = WAITINGSTART;
             this.selfPlayerBoard = new SelfPlayerBoard(message.getCharacter(), message.getNickname());
             showMessage("Nickname " + message.getNickname() + " accepted! You are " + message.getCharacter());
             for (Map.Entry<GameCharacter, String> player : message.getOtherPlayers().entrySet()) {
@@ -52,7 +57,9 @@ public abstract class View {
             }
         } else {
             this.enemyBoards.add(new PlayerBoard(message.getCharacter(), message.getNickname()));
-            showMessage(message.getNickname() + " - " + message.getCharacter() + " connected!");
+            if (this.state == WAITINGSTART) {
+                showMessage(message.getNickname() + " - " + message.getCharacter() + " connected!");
+            }
         }
     }
 

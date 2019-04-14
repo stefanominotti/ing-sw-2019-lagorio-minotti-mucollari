@@ -9,6 +9,6 @@ public interface RMIClientInterface extends Remote {
 
     void notify(Message message) throws RemoteException;
 
-    boolean ping() throws RemoteException;
+    void ping() throws RemoteException;
 
 }

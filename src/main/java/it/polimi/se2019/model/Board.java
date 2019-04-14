@@ -28,6 +28,11 @@ public class Board extends Observable {
         this.killshotTrack = new ArrayList<>();
     }
 
+    public void notifyChanges(Object object) {
+        setChanged();
+        notifyObservers(object);
+    }
+
     public List<Player> getPlayers() {
         return new ArrayList<>(this.players);
     }
@@ -43,8 +48,7 @@ public class Board extends Observable {
 
     public void addPlayer(GameCharacter character) {
         this.players.add(new Player(this, character));
-        setChanged();
-        notifyObservers(new PlayerCreatedMessage(character));
+        notifyChanges(new PlayerCreatedMessage(character));
     }
 
     public void setPlayerNickname(GameCharacter player, String name) {
@@ -55,8 +59,7 @@ public class Board extends Observable {
                 others.put(p.getCharacter(), p.getNickname());
             }
         }
-        setChanged();
-        notifyObservers(new PlayerReadyMessage(player, name, others));
+        notifyChanges(new PlayerReadyMessage(player, name, others));
     }
 
     public int getSkulls() {

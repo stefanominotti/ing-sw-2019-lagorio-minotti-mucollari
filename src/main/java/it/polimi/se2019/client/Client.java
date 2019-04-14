@@ -1,15 +1,10 @@
 package it.polimi.se2019.client;
 
-import it.polimi.se2019.view.CLIView;
-import it.polimi.se2019.view.View;
-
-import java.rmi.RemoteException;
 import java.util.Scanner;
 
 public class Client {
 
-    public static void main(String[] args) throws RemoteException {
-        ClientInterface client = null;
+    public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
 
@@ -18,10 +13,11 @@ public class Client {
         String connectionSelection = scanner.nextLine();
 
         if (connectionSelection.equals("1")) {
-            client = new SocketClient();
+            Runnable r = new SocketClient();
+            (new Thread(r)).start();
         } else {
             try {
-                client = new RMIProtocolClient();
+                new RMIProtocolClient();
             } catch (IllegalStateException e) {
                 System.exit(0);
             }

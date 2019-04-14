@@ -10,7 +10,7 @@ public class ClientHandler extends Thread {
     private ServerSocket serverSocket;
 
 
-    public ClientHandler(SocketServer server, int port) {
+    ClientHandler(SocketServer server, int port) {
         this.server = server;
         try {
             this.serverSocket = new ServerSocket(port);
@@ -21,7 +21,6 @@ public class ClientHandler extends Thread {
 
     @Override
     public void run() {
-
 
         while(true) {
             Socket newClientConnection;

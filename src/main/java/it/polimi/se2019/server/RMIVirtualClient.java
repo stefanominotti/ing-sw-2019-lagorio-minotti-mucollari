@@ -11,33 +11,35 @@ public class RMIVirtualClient extends Thread implements VirtualClientInterface {
     private RMIProtocolServer server;
     private boolean active;
 
-    public RMIVirtualClient(RMIClientInterface client, RMIProtocolServer server) {
+    RMIVirtualClient(RMIClientInterface client, RMIProtocolServer server) {
         this.active = true;
         this.client = client;
         this.server = server;
-        this.start();
     }
 
+    @Override
     public void send(Message message) throws RemoteException {
         this.client.notify(message);
     }
 
+    @Override
     public void run() {
         while(this.active) {
             try {
                 this.client.ping();
             } catch (RemoteException e) {
-                this.server.removeClient(this);
+                this.server.notifyDisconnection(this);
             }
 
             try {
                 sleep(1000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
         }
     }
 
+    @Override
     public void exit() {
         this.active = false;
     }
