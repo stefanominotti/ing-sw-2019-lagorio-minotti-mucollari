@@ -6,9 +6,9 @@ import java.util.Map;
 
 public class PlayerReadyMessage extends Message {
 
-    private GameCharacter character;
-    private String nickname;
-    private Map<GameCharacter, String> otherPlayers;
+    private final GameCharacter character;
+    private final String nickname;
+    private final Map<GameCharacter, String> otherPlayers;
 
     public PlayerReadyMessage(GameCharacter character, String nickname, Map<GameCharacter, String> otherPlayers) {
         setMessageType(this.getClass());

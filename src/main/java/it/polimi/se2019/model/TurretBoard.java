@@ -17,7 +17,7 @@ public class TurretBoard extends Board {
     }
 
     @Override
-    public void initializeGame(int skulls, List<GameCharacter> chosenCharacters) {}
+    public void initializeGame(int skulls, int arenaNumber) {}
 
     @Override
     public void handleEndTurn() {}

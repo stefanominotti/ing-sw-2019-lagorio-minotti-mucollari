@@ -5,10 +5,11 @@ import it.polimi.se2019.view.CLIView;
 import it.polimi.se2019.view.GUIView;
 import it.polimi.se2019.view.View;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Scanner;
 
-public abstract class AbstractClient {
+public abstract class AbstractClient implements ClientInterface {
 
     private View view;
 
@@ -30,7 +31,11 @@ public abstract class AbstractClient {
     public abstract void send(Message message) throws RemoteException;
 
     public void notify(Message message) throws RemoteException {
-        this.view.manageUpdate(message);
+        try {
+            this.view.manageUpdate(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     void showMessage(String message) {

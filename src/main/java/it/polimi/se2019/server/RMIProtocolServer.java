@@ -11,10 +11,10 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerInterface {
 
-    private final static int PORT = 1099;
+    private static final int PORT = 1099;
     private transient Server server;
 
-    RMIProtocolServer(Server server) throws RemoteException {
+    RMIProtocolServer(Server server) throws RemoteException, MalformedURLException {
         this.server = server;
 
         try {
@@ -32,25 +32,23 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
         }
     }
 
-    @Override
     public void addClient(RMIClientInterface client) throws RemoteException {
         RMIVirtualClient virtualClient = new RMIVirtualClient(client, this);
-        if (this.server.getClientsNumber() == 5) {
+        if (this.server.getClientsNumber() == 5 && this.server.canAccept()) {
             throw new IllegalStateException("Full lobby");
         } else {
             this.server.addClient(virtualClient);
         }
     }
 
-    void removeClient(RMIVirtualClient client) {
-        this.server.removeClient(client);
-    }
-
-    void notifyDisconnection(RMIVirtualClient client) {
+    void notifyDisconnection(VirtualClientInterface client) {
         this.server.notifyDisconnection(client);
     }
 
-    @Override
+    public void send(Message message, RMIVirtualClient client) throws RemoteException {
+        client.send(message);
+    }
+
     public void notify(Message message, RMIClientInterface client) {
         server.receiveMessage(message);
     }

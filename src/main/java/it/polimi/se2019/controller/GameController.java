@@ -1,20 +1,25 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Board;
-import it.polimi.se2019.model.messages.ClientReadyMessage;
-import it.polimi.se2019.model.messages.Message;
-import it.polimi.se2019.model.messages.NicknameMessage;
+import it.polimi.se2019.model.messages.*;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class GameController implements Observer {
 
+
     private Board model;
+    Timer timer;
 
     public GameController(Board board) {
         this.model = board;
+        this.timer = new Timer();
     }
+
+    void newGame(int playersNumber) {}
 
     @Override
     public void update(Observable view, Object message) {
@@ -27,15 +32,43 @@ public class GameController implements Observer {
             case "NicknameMessage":
                 update((NicknameMessage) message);
                 break;
+            case "ClientDisconnectedMessage":
+                update((ClientDisconnectedMessage) message);
+                break;
+            case "SetGameMessage":
+                update((SetGameMessage) message);
+                break;
         }
     }
 
-    private void update(ClientReadyMessage message) {
+    public void update(ClientReadyMessage message) {
         this.model.addPlayer(message.getCharacter());
     }
 
-    private void update(NicknameMessage message) {
+    public void update(ClientDisconnectedMessage message) {
+        this.model.handleDisconnection(message.getCharacter());
+    }
+
+    public void update(NicknameMessage message) {
         this.model.setPlayerNickname(message.getCharacter(), message.getNickname());
+        if (this.model.getPlayersCount() == 3) {
+            this.timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    finalizePlayersCreation();
+                }
+            }, 10*1000);
+        }
+    }
+
+    public void update(SetGameMessage message){
+        this.model.initializeGame(message.getSkulls(), message.getArena());
+    }
+
+    private void finalizePlayersCreation() {
+        if(this.model.getPlayersCount() >= 3) {
+            this.model.finalizePlayersCreation();
+        }
     }
 
     public void update(CardPressedEvent event) {}

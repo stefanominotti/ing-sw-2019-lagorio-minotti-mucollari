@@ -1,8 +1,10 @@
 package it.polimi.se2019.view;
 
+import it.polimi.se2019.model.GameCharacter;
 import it.polimi.se2019.model.messages.*;
 import it.polimi.se2019.server.Server;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Observable;
 import java.util.Observer;
@@ -29,21 +31,50 @@ public class VirtualView extends Observable implements Observer {
                 case "PlayerCreatedMessage":
                     update((PlayerCreatedMessage) message);
                     break;
+                case "GameAlreadyStartedMessage":
+                    update((GameAlreadyStartedMessage) message);
+                    break;
+                case "PlayerListMessage":
+                    update((PlayerListMessage) message);
+                    break;
+                case "ClientDisconnectedMessage":
+                    update((ClientDisconnectedMessage) message);
+                    break;
                 default:
                     updateAll((Message) message);
-                    break;
             }
         } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void updateAll(Message message) throws RemoteException {
+    public void updateAll(Message message) throws IOException {
         this.server.sendAll(message);
     }
 
-    public void update(PlayerCreatedMessage message) throws RemoteException {
+    public void update(PlayerCreatedMessage message) throws IOException {
         this.server.send(message.getCharacter(), message);
+    }
+
+    public void update(GameAlreadyStartedMessage message) throws IOException {
+        this.server.send(message.getCharacter(), message);
+        this.server.removeClient(message.getCharacter());
+    }
+
+    public void update(PlayerListMessage message) throws IOException {
+        for (GameCharacter character : this.server.getClientsList()) {
+            if (!message.getCharacters().contains(character)) {
+                this.update(new GameAlreadyStartedMessage(character));
+            }
+        }
+        this.server.sendAll(message);
+    }
+
+    public void update(ClientDisconnectedMessage message) throws IOException {
+        this.server.removeClient(message.getCharacter());
+        this.server.sendAll(message);
     }
 
     public void update(MovePlayerMessage message) {}

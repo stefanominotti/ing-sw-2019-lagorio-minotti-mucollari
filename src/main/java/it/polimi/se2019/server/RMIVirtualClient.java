@@ -15,16 +15,16 @@ public class RMIVirtualClient extends Thread implements VirtualClientInterface {
         this.active = true;
         this.client = client;
         this.server = server;
+        this.start();
     }
 
-    @Override
     public void send(Message message) throws RemoteException {
         this.client.notify(message);
     }
 
     @Override
     public void run() {
-        while(this.active) {
+        while (this.active) {
             try {
                 this.client.ping();
             } catch (RemoteException e) {
@@ -34,12 +34,11 @@ public class RMIVirtualClient extends Thread implements VirtualClientInterface {
             try {
                 sleep(1000);
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                e.printStackTrace();
             }
         }
     }
 
-    @Override
     public void exit() {
         this.active = false;
     }

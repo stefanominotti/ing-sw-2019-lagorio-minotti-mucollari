@@ -9,7 +9,7 @@ import java.util.*;
 public class PlayerBoard {
 
     private GameCharacter character;
-    private String name;
+    private String nickname;
     private Map<AmmoType, Integer> availableAmmos;
     private Map<GameCharacter, Integer> revengeMarks;
     private List<GameCharacter> damages;
@@ -18,8 +18,8 @@ public class PlayerBoard {
     int weaponsNumber;
     int powerupsNumber;
 
-    PlayerBoard(GameCharacter character, String name) {
-        this.name = name;
+    PlayerBoard(GameCharacter character, String nickname) {
+        this.nickname = nickname;
         this.character = character;
         this.damages = new ArrayList<>();
         this.killshotPoints = new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1, 1));
@@ -31,6 +31,14 @@ public class PlayerBoard {
         this.weaponsNumber = 0;
         this.powerupsNumber = 0;
         this.unloadedWeapons = new ArrayList<>();
+    }
+
+    public GameCharacter getCharacter() {
+        return this.character;
+    }
+
+    public String getNickame() {
+        return this.nickname;
     }
 
     void addDamage(GameCharacter attacker, GameCharacter target, int amount) {}

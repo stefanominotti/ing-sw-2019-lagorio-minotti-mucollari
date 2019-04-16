@@ -1,12 +1,12 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.client.AbstractClient;
+import it.polimi.se2019.client.ClientInterface;
 
 import java.util.Scanner;
 
 public class CLIView extends View {
 
-    public CLIView(AbstractClient client) {
+    public CLIView(ClientInterface client) {
         super(client);
     }
 
