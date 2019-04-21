@@ -27,7 +27,13 @@ public class VirtualView extends Observable implements Observer {
         try {
             switch (messageType) {
                 case "PlayerCreatedMessage":
-                    update((PlayerCreatedMessage) message);
+                    updateOne((SingleReceiverMessage) message);
+                    break;
+                case "NicknameDuplicatedMessage":
+                    updateOne((SingleReceiverMessage) message);
+                    break;
+                case "ClientDisconnectedMessage":
+                    update((ClientDisconnectedMessage) message);
                     break;
                 default:
                     updateAll((Message) message);
@@ -42,8 +48,13 @@ public class VirtualView extends Observable implements Observer {
         this.server.sendAll(message);
     }
 
-    public void update(PlayerCreatedMessage message) throws RemoteException {
-        this.server.send(message.getCharacter(), message);
+    public void updateOne(SingleReceiverMessage message) throws RemoteException {
+        this.server.send(message.getCharacter(), (Message) message);
+    }
+
+    public void update(ClientDisconnectedMessage message) throws RemoteException {
+        this.server.removeClient(message.getCharacter());
+        updateAll(message);
     }
 
     public void update(MovePlayerMessage message) {}

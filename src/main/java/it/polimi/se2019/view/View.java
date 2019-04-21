@@ -35,10 +35,30 @@ public abstract class View {
             case "PlayerReadyMessage":
                 update((PlayerReadyMessage) message);
                 break;
+            case "LobbyFullMessage":
+                update((LobbyFullMessage) message);
+                break;
+            case "NicknameDuplicatedMessage":
+                update((NicknameDuplicatedMessage) message);
+                break;
+            case "ClientDisconnectedMessage":
+                update((ClientDisconnectedMessage) message);
+                break;
         }
     }
 
-    void update(PlayerCreatedMessage message) throws RemoteException {
+    private void update(LobbyFullMessage message) {
+        showMessage("Lobby is full");
+        System.exit(0);
+    }
+
+    private void update(NicknameDuplicatedMessage message) throws RemoteException {
+        showMessage("Nickname already used. Insert another nickname: ");
+        String nickname = receiveTextInput();
+        this.client.send(new NicknameMessage(this.character, nickname));
+    }
+
+    private void update(PlayerCreatedMessage message) throws RemoteException {
         this.state = TYPINGNICKNAME;
         showMessage("Insert nickname: ");
         String nickname = receiveTextInput();
@@ -46,7 +66,7 @@ public abstract class View {
         this.client.send(new NicknameMessage(this.character, nickname));
     }
 
-    void update(PlayerReadyMessage message) {
+    private void update(PlayerReadyMessage message) {
         if (message.getCharacter() == this.character) {
             this.state = WAITINGSTART;
             this.selfPlayerBoard = new SelfPlayerBoard(message.getCharacter(), message.getNickname());
@@ -59,6 +79,22 @@ public abstract class View {
             this.enemyBoards.add(new PlayerBoard(message.getCharacter(), message.getNickname()));
             if (this.state == WAITINGSTART) {
                 showMessage(message.getNickname() + " - " + message.getCharacter() + " connected!");
+            }
+        }
+    }
+
+    private void update(ClientDisconnectedMessage message) {
+        if (this.state == TYPINGNICKNAME || this.state == WAITINGSTART) {
+            String nickname = "";
+            for (PlayerBoard board : this.enemyBoards) {
+                if (board.getCharacter() == message.getCharacter()) {
+                    nickname = board.getNickname();
+                    this.enemyBoards.remove(board);
+                    break;
+                }
+            }
+            if (this.state == WAITINGSTART) {
+                showMessage(nickname + " - " + message.getCharacter() + " disconnected");
             }
         }
     }

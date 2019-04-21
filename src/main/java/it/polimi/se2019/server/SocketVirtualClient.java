@@ -54,4 +54,7 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
         this.active = false;
     }
 
+    public void closeConnection() throws IOException {
+        this.socket.close();
+    }
 }

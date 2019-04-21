@@ -1,12 +1,13 @@
 package it.polimi.se2019.server;
 
+import it.polimi.se2019.model.messages.LobbyFullMessage;
 import it.polimi.se2019.model.messages.Message;
 
 import java.io.IOException;
 
 class SocketServer {
 
-    private static int PORT = 9000;
+    private static int PORT = 9001;
     private Server server;
 
     SocketServer(Server server) {
@@ -17,6 +18,8 @@ class SocketServer {
     void addClient(SocketVirtualClient client) throws IOException {
         if (this.server.getClientsNumber() < 5) {
             this.server.addClient(client);
+        } else if (this.server.getClientsNumber() == 5){
+            client.send(new LobbyFullMessage());
         }
     }
 

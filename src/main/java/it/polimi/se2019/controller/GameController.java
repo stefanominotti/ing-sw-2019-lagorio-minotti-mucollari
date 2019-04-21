@@ -1,6 +1,7 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Board;
+import it.polimi.se2019.model.messages.ClientDisconnectedMessage;
 import it.polimi.se2019.model.messages.ClientReadyMessage;
 import it.polimi.se2019.model.messages.Message;
 import it.polimi.se2019.model.messages.NicknameMessage;
@@ -27,6 +28,9 @@ public class GameController implements Observer {
             case "NicknameMessage":
                 update((NicknameMessage) message);
                 break;
+            case "ClientDisconnectedMessage":
+                update((ClientDisconnectedMessage) message);
+                break;
         }
     }
 
@@ -36,6 +40,10 @@ public class GameController implements Observer {
 
     private void update(NicknameMessage message) {
         this.model.setPlayerNickname(message.getCharacter(), message.getNickname());
+    }
+
+    private void update(ClientDisconnectedMessage message) {
+        this.model.handleDisconnection(message.getCharacter());
     }
 
     public void update(CardPressedEvent event) {}

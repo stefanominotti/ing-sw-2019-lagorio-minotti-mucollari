@@ -54,11 +54,11 @@ public class Server {
         for(GameCharacter character : GameCharacter.values()) {
             if (!this.clients.containsKey(character)) {
                 this.clients.put(character, client);
+                System.out.println("A new client connected.");
                 this.view.forwardMessage(new ClientReadyMessage(character));
                 break;
             }
         }
-        System.out.println("A new client connected.");
     }
 
     public void removeClient(VirtualClientInterface client) {

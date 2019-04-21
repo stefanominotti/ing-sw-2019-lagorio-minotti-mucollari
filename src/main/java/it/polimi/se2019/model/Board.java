@@ -1,9 +1,13 @@
 package it.polimi.se2019.model;
 
+import it.polimi.se2019.model.messages.ClientDisconnectedMessage;
+import it.polimi.se2019.model.messages.NicknameDuplicatedMessage;
 import it.polimi.se2019.model.messages.PlayerCreatedMessage;
 import it.polimi.se2019.model.messages.PlayerReadyMessage;
 
 import java.util.*;
+
+import static it.polimi.se2019.model.GameState.*;
 
 public class Board extends Observable {
 
@@ -16,8 +20,10 @@ public class Board extends Observable {
     private List<Powerup> powerupsDiscardPile;
     private List<AmmoTile> ammosDiscardPile;
     private List<Player> killshotTrack;
+    private GameState gameState;
 
     public Board() {
+        this.gameState = ACCEPTINGPLAYERS;
         this.rooms = new ArrayList<>();
         this.players = new ArrayList<>();
         this.weaponsDeck = new ArrayList<>();
@@ -52,6 +58,15 @@ public class Board extends Observable {
     }
 
     public void setPlayerNickname(GameCharacter player, String name) {
+        for (Player p : this.players) {
+            if (p.getCharacter() == player || p.getNickname() == null) {
+                continue;
+            }
+            if (p.getNickname().equals(name)) {
+                notifyChanges(new NicknameDuplicatedMessage(player));
+                return;
+            }
+        }
         getPlayerByCharacter(player).setNickname(name);
         Map<GameCharacter, String> others = new EnumMap<>(GameCharacter.class);
         for (Player p : this.players) {
@@ -60,6 +75,18 @@ public class Board extends Observable {
             }
         }
         notifyChanges(new PlayerReadyMessage(player, name, others));
+    }
+
+    public void handleDisconnection(GameCharacter player) {
+        switch(this.gameState) {
+            case ACCEPTINGPLAYERS:
+                if (getPlayerByCharacter(player).getNickname() != null) {
+                    notifyChanges(new ClientDisconnectedMessage(player));
+                }
+                this.players.remove(getPlayerByCharacter(player));
+                break;
+        }
+
     }
 
     public int getSkulls() {

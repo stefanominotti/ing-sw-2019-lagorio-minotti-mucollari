@@ -1,6 +1,7 @@
 package it.polimi.se2019.server;
 
 import it.polimi.se2019.client.RMIClientInterface;
+import it.polimi.se2019.model.messages.LobbyFullMessage;
 import it.polimi.se2019.model.messages.Message;
 
 import java.net.MalformedURLException;
@@ -36,7 +37,7 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
     public void addClient(RMIClientInterface client) throws RemoteException {
         RMIVirtualClient virtualClient = new RMIVirtualClient(client, this);
         if (this.server.getClientsNumber() == 5) {
-            throw new IllegalStateException("Full lobby");
+            client.notify(new LobbyFullMessage());
         } else {
             this.server.addClient(virtualClient);
         }
