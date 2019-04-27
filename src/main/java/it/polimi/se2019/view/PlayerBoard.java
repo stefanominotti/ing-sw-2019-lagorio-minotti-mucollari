@@ -33,11 +33,11 @@ public class PlayerBoard {
         this.unloadedWeapons = new ArrayList<>();
     }
 
-    public GameCharacter getCharacter() {
+    GameCharacter getCharacter() {
         return this.character;
     }
 
-    public String getNickame() {
+    public String getNickname() {
         return this.nickname;
     }
 

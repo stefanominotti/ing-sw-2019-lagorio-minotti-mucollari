@@ -16,8 +16,8 @@ public class TurretBoard extends Board {
         this.turrets = new HashMap<>();
     }
 
-    @Override
-    public void initializeGame(int skulls, int arenaNumber) {}
+    //@Override
+    //public void initializeGame(int skulls, String arenaNumber) {}
 
     @Override
     public void handleEndTurn() {}

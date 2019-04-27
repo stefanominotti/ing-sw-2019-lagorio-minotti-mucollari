@@ -23,6 +23,7 @@ public class Player {
     Square position;
 
     Player(Board board, GameCharacter character) {
+        this.name = null;
         this.board = board;
         this.character = character;
         this.score = 0;

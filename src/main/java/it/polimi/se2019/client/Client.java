@@ -1,9 +1,5 @@
 package it.polimi.se2019.client;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.util.Scanner;
 
 public class Client {
@@ -17,18 +13,13 @@ public class Client {
         String connectionSelection = scanner.nextLine();
 
         if (connectionSelection.equals("1")) {
-            try {
-                new SocketClient();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Runnable r = new SocketClient();
+            (new Thread(r)).start();
         } else {
             try {
                 new RMIProtocolClient();
             } catch (IllegalStateException e) {
                 System.exit(0);
-            } catch (RemoteException | NotBoundException | MalformedURLException e) {
-                e.printStackTrace();
             }
         }
 

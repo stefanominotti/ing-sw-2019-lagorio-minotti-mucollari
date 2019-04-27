@@ -1,32 +1,33 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.client.ClientInterface;
+import it.polimi.se2019.client.AbstractClient;
+import it.polimi.se2019.model.Coordinates;
 import it.polimi.se2019.model.GameCharacter;
+import it.polimi.se2019.model.RoomColor;
 import it.polimi.se2019.model.messages.*;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static it.polimi.se2019.view.RemoteState.*;
+import static it.polimi.se2019.view.ClientState.*;
 
 public abstract class View {
 
-    private RemoteState state;
     private GameCharacter character;
-    private ClientInterface client;
+    private AbstractClient client;
     private BoardView board;
     private List<PlayerBoard> enemyBoards;
     private SelfPlayerBoard selfPlayerBoard;
+    private ClientState state;
 
-    public View(ClientInterface client) {
+    View(AbstractClient client) {
         this.client = client;
         this.enemyBoards = new ArrayList<>();
     }
 
-    public void manageUpdate(Message message) throws IOException {
+    public void manageUpdate(Message message) throws RemoteException {
         String messageType = message.getMessageType().getName()
                 .replace("it.polimi.se2019.model.messages.", "");;
         switch (messageType) {
@@ -36,57 +37,134 @@ public abstract class View {
             case "PlayerReadyMessage":
                 update((PlayerReadyMessage) message);
                 break;
-            case "PlayerListMessage":
-                update((PlayerListMessage) message);
+            case "LobbyFullMessage":
+                update((LobbyFullMessage) message);
                 break;
             case "GameAlreadyStartedMessage":
                 update((GameAlreadyStartedMessage) message);
                 break;
+            case "NicknameDuplicatedMessage":
+                update((NicknameDuplicatedMessage) message);
+                break;
             case "ClientDisconnectedMessage":
                 update((ClientDisconnectedMessage) message);
+                break;
+            case "StartGameSetupMessage":
+                update((StartGameSetupMessage) message);
+                break;
+            case "GameSetupTimerStartedMessage":
+                update((GameSetupTimerStartedMessage) message);
+                break;
+            case "GameSetupTimerResetMessage":
+                update((GameSetupTimerResetMessage) message);
+                break;
+            case "SkullsSettedMessage":
+                update((SkullsSettedMessage) message);
+                break;
+            case "ArenaCreatedMessage":
+                update((ArenaCreatedMessage) message);
+            case "GameSetupInterruptedMessage":
+                update((GameSetupInterruptedMessage) message);
+                break;
+            case "MasterChangedMessage":
+                update((MasterChangedMessage) message);
                 break;
         }
     }
 
-    public void update(ClientDisconnectedMessage message) throws RemoteException {
-        if (this.state == SETTINGNICKNAME || this.state == WAITINGSTART ) {
-            String nickname = "";
-            for (PlayerBoard board : this.enemyBoards) {
-                if (board.getCharacter() == message.getCharacter()) {
-                    nickname = board.getNickame();
-                    this.enemyBoards.remove(board);
+    void handleInput(String input) throws RemoteException {
+        switch (this.state) {
+            case TYPINGNICKNAME:
+                this.client.send(new NicknameMessage(this.character, input));
+                break;
+            case SETTINGSKULLS:
+                int skulls;
+                try {
+                    skulls = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    showMessage("Invalid number, retry: ");
                     break;
                 }
-            }
-            if (this.state == WAITINGSTART) {
-                showMessage(nickname + " - " + message.getCharacter() + " disconnected");
-            }
+                if (skulls < 3 || skulls > 8) {
+                    showMessage("Skulls number must be between 3 and 8, retry: ");
+                    break;
+                }
+                this.client.send(new SkullsMessage(skulls));
+                break;
+            case SETTINGARENA:
+                if(input.equals("1") || input.equals("2") || input.equals("3") || input.equals("4")){
+                    this.client.send(new ArenaMessage(input));
+                    break;
+                }
+                else{
+                    showMessage("Arena must be one of {1, 2, 3, 4}");
+                    break;
+                }
         }
     }
 
-    public void update(PlayerCreatedMessage message) throws IOException {
-        this.state = SETTINGNICKNAME;
-        boolean valid = false;
-        String nickname = "";
-        while (!valid) {
-            showMessage("Insert nickname: ");
-            nickname = receiveTextInput();
-            if (!nickname.equals("") && nickname != null && !message.getNicknames().contains(nickname)) {
-                valid = true;
-            }
-            showMessage("invalid nickname!");
+    private void update(MasterChangedMessage message) {
+        if (message.getCharacter() == this.character) {
+            showMessage("Master disconnected, you are the new master");
+        } else {
+            showMessage("Master disconnected, the new master is setting up the game");
         }
+    }
+
+    private void update(GameSetupInterruptedMessage message) {
+        showMessage("Too few players, game setup interrupted");
+        this.state = WAITINGSTART;
+    }
+
+    private void update(GameSetupTimerResetMessage message) {
+        if (this.state == WAITINGSTART) {
+            showMessage("Need more players to start the game");
+        }
+    }
+
+    private void update(GameSetupTimerStartedMessage message) {
+        if (this.state == WAITINGSTART) {
+            showMessage("Game setup will start in " + message.getTime() + " seconds...");
+        }
+    }
+
+    private void update(LobbyFullMessage message) {
+        showMessage("Lobby is full");
+        System.exit(0);
+    }
+
+    private void update(GameAlreadyStartedMessage message) {
+        showMessage("Game already started, sorry");
+        System.exit(0);
+    }
+
+    private void update(NicknameDuplicatedMessage message) throws RemoteException {
+        showMessage("Nickname already used. Insert another nickname: ");
+    }
+
+    private void update(PlayerCreatedMessage message) throws RemoteException {
         this.character = message.getCharacter();
-        this.client.send(new NicknameMessage(this.character, nickname));
+        showMessage("Insert nickname: ");
+        this.state = TYPINGNICKNAME;
     }
 
-    public void update(PlayerReadyMessage message) throws RemoteException {
+    private void update(PlayerReadyMessage message) {
         if (message.getCharacter() == this.character) {
             this.selfPlayerBoard = new SelfPlayerBoard(message.getCharacter(), message.getNickname());
             showMessage("Nickname " + message.getNickname() + " accepted! You are " + message.getCharacter());
             for (Map.Entry<GameCharacter, String> player : message.getOtherPlayers().entrySet()) {
-                this.enemyBoards.add(new PlayerBoard(player.getKey(), player.getValue()));
+                boolean present = false;
+                for (PlayerBoard p : this.enemyBoards) {
+                    if (p.getCharacter() == player.getKey()) {
+                        present = true;
+                        break;
+                    }
+                }
                 showMessage(player.getKey() + " - " + player.getValue() + " is in!");
+                if (present) {
+                    continue;
+                }
+                this.enemyBoards.add(new PlayerBoard(player.getKey(), player.getValue()));
             }
             this.state = WAITINGSTART;
         } else {
@@ -97,55 +175,47 @@ public abstract class View {
         }
     }
 
-    public void update(GameAlreadyStartedMessage message) throws RemoteException {
-        showMessage("Game already started, sorry");
-        System.exit(0);
-    }
-
-    public void update(PlayerListMessage message) throws IOException {
-        if (message.getCharacters().get(0) == this.character) {
-            showMessage("You are the master, insert skulls number: ");
-            boolean valid = false;
-            String number;
-            int skulls = 0;
-            int arena = 0;
-            while (!valid) {
-                number = receiveTextInput();
-                try {
-                    skulls = Integer.parseInt(number);
-                } catch (NumberFormatException e) {
-                    showMessage("Invalid number, retry: ");
-                    continue;
+    private void update(ClientDisconnectedMessage message) {
+        if (this.state == TYPINGNICKNAME || this.state == WAITINGSTART) {
+            String nickname = "";
+            for (PlayerBoard board : this.enemyBoards) {
+                if (board.getCharacter() == message.getCharacter()) {
+                    nickname = board.getNickname();
+                    this.enemyBoards.remove(board);
+                    break;
                 }
-                if (skulls < 3 || skulls > 8) {
-                    showMessage("Skulls number must be between 3 and 8, retry: ");
-                    continue;
-                }
-                valid = true;
             }
-            valid = false;
-            showMessage("Choose the arena {1, 2, 3, 4}");
-            while (!valid) {
-                number = receiveTextInput();
-                try {
-                    arena = Integer.parseInt(number);
-                } catch (NumberFormatException e) {
-                    showMessage("Invalid number, retry: ");
-                    continue;
-                }
-                if (arena < 1 || arena > 4) {
-                    showMessage("Arena number must be one of these {1, 2, 3, 4}");
-                    continue;
-                }
-                valid = true;
+            if (this.state == WAITINGSTART) {
+                showMessage(nickname + " - " + message.getCharacter() + " disconnected");
             }
-            this.client.send(new SetGameMessage(skulls, arena));
-        } else {
-            showMessage("Master player is setting game rules, wait");
         }
     }
 
-    public abstract String receiveTextInput();
+    private void update(StartGameSetupMessage message) {
+        if (message.getCharacter() == this.character) {
+            showMessage("You are the master, set skull number for the game:");
+            this.state = SETTINGSKULLS;
+
+        } else {
+            showMessage("Master player is setting up the game, wait");
+            this.state = WAITINGSETUP;
+        }
+    }
+    private void update(SkullsSettedMessage message) {
+        showMessage("set arena {1, 2, 3, 4}:");
+        this.state = SETTINGARENA;
+    }
+
+    private void update(ArenaCreatedMessage message){
+        showMessage("Arena is :");
+        for(Coordinates square : message.getArenaColor().keySet()){
+            int x = square.getX();
+            int y = square.getY();
+            RoomColor color = message.getArenaColor().get(square);
+            Boolean spawn = message.getArenaSpawn().get(square);
+            showMessage("Square ["+square.getX()+","+square.getY()+"] is "+color+" spawn : "+spawn);
+        }
+    }
 
     public abstract void showMessage(String message);
 }

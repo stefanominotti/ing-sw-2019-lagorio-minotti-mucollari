@@ -1,42 +1,39 @@
 package it.polimi.se2019.server;
 
+import it.polimi.se2019.model.messages.GameAlreadyStartedMessage;
+import it.polimi.se2019.model.messages.LobbyFullMessage;
 import it.polimi.se2019.model.messages.Message;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 
-public class SocketServer {
+class SocketServer {
 
-    private static int PORT = 9000;
+    private static int PORT = 9001;
     private Server server;
 
-    SocketServer(Server server) throws IOException {
+    SocketServer(Server server) {
         this.server = server;
         (new ClientHandler(this, PORT)).start();
     }
 
-    void addClient(VirtualClientInterface client) throws IOException {
-        if (this.server.getClientsNumber() == 5 && this.server.canAccept()) {
-            ((SocketVirtualClient) client).getSocket().close();
-            client.exit();
-        } else {
+    void addClient(SocketVirtualClient client) throws IOException {
+        if (!this.server.isConnectionAllowed()) {
+            client.send(new GameAlreadyStartedMessage());
+            return;
+        }
+        if (this.server.getClientsNumber() < 5) {
             this.server.addClient(client);
+        } else if (this.server.getClientsNumber() == 5){
+            client.send(new LobbyFullMessage());
         }
     }
 
-    void notifyDisconnection(VirtualClientInterface client) {
-        this.server.notifyDisconnection(client);
+    void removeClient(SocketVirtualClient client) {
+        this.server.removeClient(client);
     }
 
-    public void send(Message message, VirtualClientInterface client) throws IOException {
-        SocketVirtualClient socketClient = (SocketVirtualClient) client;
-        Socket socket = socketClient.getSocket();
-        ObjectOutputStream writer;
-
-        writer = new ObjectOutputStream(socket.getOutputStream());
-        writer.writeObject(message);
-        writer.flush();
+    void notifyDisconnection(SocketVirtualClient client) {
+        this.server.notifyDisconnection(client);
     }
 
     void notify(Message message) {

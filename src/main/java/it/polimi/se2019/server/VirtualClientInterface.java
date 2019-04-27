@@ -2,11 +2,13 @@ package it.polimi.se2019.server;
 
 import it.polimi.se2019.model.messages.Message;
 
-import java.io.IOException;
+import java.rmi.RemoteException;
 
 public interface VirtualClientInterface {
 
-     void send(Message message) throws IOException;
+     void send(Message message) throws RemoteException;
+
+     void sendClose(Message message) throws RemoteException;
 
      void exit();
 }

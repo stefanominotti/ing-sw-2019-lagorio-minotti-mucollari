@@ -1,6 +1,5 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.client.ClientInterface;
 import it.polimi.se2019.model.*;
 
 import java.util.*;

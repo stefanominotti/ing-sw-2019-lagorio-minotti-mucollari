@@ -4,8 +4,8 @@ import it.polimi.se2019.model.GameCharacter;
 
 public class NicknameMessage extends Message {
 
-    private final GameCharacter character;
-    private final String nickname;
+    private GameCharacter character;
+    private String nickname;
 
     public NicknameMessage(GameCharacter character, String nickname) {
         setMessageType(this.getClass());

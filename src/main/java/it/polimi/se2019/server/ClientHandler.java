@@ -10,13 +10,18 @@ public class ClientHandler extends Thread {
     private ServerSocket serverSocket;
 
 
-    public ClientHandler(SocketServer server, int port) throws IOException {
+    ClientHandler(SocketServer server, int port) {
         this.server = server;
-        this.serverSocket = new ServerSocket(port);
+        try {
+            this.serverSocket = new ServerSocket(port);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void run() {
+
         while(true) {
             Socket newClientConnection;
             try {

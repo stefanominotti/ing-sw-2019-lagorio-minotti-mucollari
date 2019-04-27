@@ -1,6 +1,8 @@
 package it.polimi.se2019.server;
 
 import it.polimi.se2019.client.RMIClientInterface;
+import it.polimi.se2019.model.messages.GameAlreadyStartedMessage;
+import it.polimi.se2019.model.messages.LobbyFullMessage;
 import it.polimi.se2019.model.messages.Message;
 
 import java.net.MalformedURLException;
@@ -11,10 +13,10 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerInterface {
 
-    private static final int PORT = 1099;
+    private final static int PORT = 1099;
     private transient Server server;
 
-    RMIProtocolServer(Server server) throws RemoteException, MalformedURLException {
+    RMIProtocolServer(Server server) throws RemoteException {
         this.server = server;
 
         try {
@@ -32,23 +34,29 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
         }
     }
 
+    @Override
     public void addClient(RMIClientInterface client) throws RemoteException {
         RMIVirtualClient virtualClient = new RMIVirtualClient(client, this);
-        if (this.server.getClientsNumber() == 5 && this.server.canAccept()) {
-            throw new IllegalStateException("Full lobby");
+        if (!this.server.isConnectionAllowed()) {
+            client.notify(new GameAlreadyStartedMessage());
+            return;
+        }
+        if (this.server.getClientsNumber() == 5) {
+            client.notify(new LobbyFullMessage());
         } else {
             this.server.addClient(virtualClient);
         }
     }
 
-    void notifyDisconnection(VirtualClientInterface client) {
+    void removeClient(RMIVirtualClient client) {
+        this.server.removeClient(client);
+    }
+
+    void notifyDisconnection(RMIVirtualClient client) {
         this.server.notifyDisconnection(client);
     }
 
-    public void send(Message message, RMIVirtualClient client) throws RemoteException {
-        client.send(message);
-    }
-
+    @Override
     public void notify(Message message, RMIClientInterface client) {
         server.receiveMessage(message);
     }

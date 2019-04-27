@@ -2,9 +2,9 @@ package it.polimi.se2019.model.messages;
 
 import java.io.Serializable;
 
-public abstract class Message implements Serializable {
+public class Message implements Serializable {
 
-    Class messageType;
+    private Class messageType;
 
     void setMessageType(Class type) {
         this.messageType = type;
@@ -13,5 +13,4 @@ public abstract class Message implements Serializable {
     public Class getMessageType() {
         return this.messageType;
     }
-
 }

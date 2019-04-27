@@ -4,7 +4,9 @@ import it.polimi.se2019.model.messages.Message;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.rmi.RemoteException;
 
 public class SocketVirtualClient extends Thread implements VirtualClientInterface {
 
@@ -16,15 +18,25 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
         this.active = true;
         this.server = server;
         this.socket = socket;
-        this.start();
     }
 
-    public void send(Message message) throws IOException {
-        this.server.send(message, this);
+    @Override
+    public void send(Message message) {
+        ObjectOutputStream writer;
+
+        try {
+            writer = new ObjectOutputStream(this.socket.getOutputStream());
+            writer.writeObject(message);
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    Socket getSocket() {
-        return this.socket;
+    @Override
+    public void sendClose(Message message) throws RemoteException {
+        send(message);
+        exit();
     }
 
     @Override
@@ -37,13 +49,19 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
                     this.server.notify(message);
                 }
             }
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             this.server.notifyDisconnection(this);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
+    @Override
     public void exit() {
         this.active = false;
     }
 
+    public void closeConnection() throws IOException {
+        this.socket.close();
+    }
 }

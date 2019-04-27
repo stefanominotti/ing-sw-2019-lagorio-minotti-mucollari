@@ -1,27 +1,34 @@
 package it.polimi.se2019.model;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Room {
 
     private final RoomColor color;
-    private final List<Square> squares;
+    private List<Square> squares;
 
-    Room(RoomColor color, List<Square> squares) {
+    Room(RoomColor color , List<Square> squares) {
         this.color = color;
-        this.squares = new ArrayList<>(squares);
+        this.squares = squares;
     }
 
-    public RoomColor getColor() {
-        return color;
-    }
+    public RoomColor getColor() { return color; }
 
     public List<Square> getSquares() {
-        return new ArrayList<>();
+        return new ArrayList<>(squares);
     }
 
     public boolean hasSpawn() {
-        return true;
+        for(Square square : squares) {
+            if (square.isSpawn()) {
+                return true;
+            }
+        }
+        return false;
     }
+
 }
