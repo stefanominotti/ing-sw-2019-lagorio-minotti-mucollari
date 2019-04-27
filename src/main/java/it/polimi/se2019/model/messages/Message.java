@@ -4,14 +4,13 @@ import java.io.Serializable;
 
 public class Message implements Serializable {
 
-    Class messageType;
+    private Class messageType;
 
-    protected void setMessageType(Class type) {
+    void setMessageType(Class type) {
         this.messageType = type;
     }
 
     public Class getMessageType() {
         return this.messageType;
     }
-
 }

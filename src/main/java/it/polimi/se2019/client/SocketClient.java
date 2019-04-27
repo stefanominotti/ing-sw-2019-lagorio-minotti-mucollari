@@ -7,7 +7,7 @@ import java.net.Socket;
 
 public class SocketClient extends AbstractClient implements Runnable {
 
-    private static final int PORT = 9000;
+    private static final int PORT = 9001;
     private static final String HOST = "localhost";
 
     private Socket socket;

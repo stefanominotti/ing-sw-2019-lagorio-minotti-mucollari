@@ -32,8 +32,23 @@ public class VirtualView extends Observable implements Observer {
                 case "NicknameDuplicatedMessage":
                     updateOne((SingleReceiverMessage) message);
                     break;
+                case "GameAlreadyStartedMessage":
+                    update((GameAlreadyStartedMessage) message);
+                    break;
                 case "ClientDisconnectedMessage":
                     update((ClientDisconnectedMessage) message);
+                    break;
+                case "StartGameSetupMessage":
+                    update((StartGameSetupMessage) message);
+                    break;
+                case "SkullsSettedMessage":
+                    updateOne((SingleReceiverMessage) message);
+                    break;
+                case "ArenaCreatedMessage":
+                    updateAll((Message) message);
+                    break;
+                case "GameSetupInterruptedMessage":
+                    update((GameSetupInterruptedMessage) message);
                     break;
                 default:
                     updateAll((Message) message);
@@ -48,12 +63,27 @@ public class VirtualView extends Observable implements Observer {
         this.server.sendAll(message);
     }
 
-    public void updateOne(SingleReceiverMessage message) throws RemoteException {
+    private void updateOne(SingleReceiverMessage message) throws RemoteException {
         this.server.send(message.getCharacter(), (Message) message);
     }
 
-    public void update(ClientDisconnectedMessage message) throws RemoteException {
+    private void update(ClientDisconnectedMessage message) throws RemoteException {
         this.server.removeClient(message.getCharacter());
+        this.server.setConnectionAllowed(message.isReconnectionAllowed());
+        updateAll(message);
+    }
+
+    private void update(GameAlreadyStartedMessage message) throws RemoteException {
+        this.server.removeClient(message.getCharacter(), message);
+    }
+
+    private void update(StartGameSetupMessage message) throws RemoteException {
+        this.server.setConnectionAllowed(false);
+        updateAll(message);
+    }
+
+    private void update(GameSetupInterruptedMessage message) throws RemoteException {
+        this.server.setConnectionAllowed(true);
         updateAll(message);
     }
 

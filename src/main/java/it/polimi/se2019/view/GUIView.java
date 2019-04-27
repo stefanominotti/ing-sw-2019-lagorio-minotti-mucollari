@@ -8,10 +8,6 @@ public class GUIView extends View {
         super(client);
     }
 
-    public String receiveTextInput() {
-        return null;
-    }
-
     public void showMessage(String message) {
 
     }

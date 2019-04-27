@@ -11,6 +11,7 @@ public class PlayerCreatedMessage extends Message implements SingleReceiverMessa
         this.character = character;
     }
 
+    @Override
     public GameCharacter getCharacter() {
         return this.character;
     }

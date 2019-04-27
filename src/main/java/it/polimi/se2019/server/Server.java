@@ -20,9 +20,11 @@ public class Server {
     private VirtualView view;
     private GameController controller;
     private Board model;
+    private boolean connectionAllowed;
 
-    public Server() {
+    Server() {
         this.clients = new EnumMap<>(GameCharacter.class);
+        this.connectionAllowed = true;
     }
 
     public static void main(String[] args) throws RemoteException {
@@ -49,6 +51,14 @@ public class Server {
         return this.clients.size();
     }
 
+    public void setConnectionAllowed(boolean allowed) {
+        this.connectionAllowed = allowed;
+    }
+
+    boolean isConnectionAllowed() {
+        return this.connectionAllowed;
+    }
+
     void addClient(VirtualClientInterface client) {
         ((Thread) client).start();
         for(GameCharacter character : GameCharacter.values()) {
@@ -59,6 +69,12 @@ public class Server {
                 break;
             }
         }
+    }
+
+    public void removeClient(GameCharacter character, Message message) throws RemoteException {
+        this.clients.get(character).sendClose(message);
+        this.clients.remove(character);
+        System.out.println("Client disconnected.");
     }
 
     public void removeClient(VirtualClientInterface client) {
@@ -73,20 +89,9 @@ public class Server {
     }
 
     public void removeClient(GameCharacter character) {
+        this.clients.get(character).exit();
         this.clients.remove(character);
         System.out.println("Client disconnected.");
-    }
-
-    public void adjustClients(List<GameCharacter> characters) {
-        List<GameCharacter> toRemove = new ArrayList<>();
-        for (GameCharacter character : this.clients.keySet()) {
-            if (!characters.contains(character)) {
-                toRemove.add(character);
-            }
-        }
-        for (GameCharacter character : toRemove) {
-            this.clients.remove(character);
-        }
     }
 
     public void send(GameCharacter character, Message message) throws RemoteException {

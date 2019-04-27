@@ -8,5 +8,7 @@ public interface VirtualClientInterface {
 
      void send(Message message) throws RemoteException;
 
+     void sendClose(Message message) throws RemoteException;
+
      void exit();
 }

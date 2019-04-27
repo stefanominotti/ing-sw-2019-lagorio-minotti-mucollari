@@ -1,10 +1,7 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Board;
-import it.polimi.se2019.model.messages.ClientDisconnectedMessage;
-import it.polimi.se2019.model.messages.ClientReadyMessage;
-import it.polimi.se2019.model.messages.Message;
-import it.polimi.se2019.model.messages.NicknameMessage;
+import it.polimi.se2019.model.messages.*;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -31,6 +28,12 @@ public class GameController implements Observer {
             case "ClientDisconnectedMessage":
                 update((ClientDisconnectedMessage) message);
                 break;
+            case "SkullsMessage":
+                update((SkullsMessage) message);
+                break;
+            case "ArenaMessage":
+                update((ArenaMessage) message);
+                break;
         }
     }
 
@@ -45,6 +48,10 @@ public class GameController implements Observer {
     private void update(ClientDisconnectedMessage message) {
         this.model.handleDisconnection(message.getCharacter());
     }
+
+    private void update(SkullsMessage message){ this.model.setSkulls(message.getSkulls()); }
+
+    private void update(ArenaMessage message){ this.model.createArena(message.getArena()); }
 
     public void update(CardPressedEvent event) {}
 

@@ -1,6 +1,7 @@
 package it.polimi.se2019.server;
 
 import it.polimi.se2019.client.RMIClientInterface;
+import it.polimi.se2019.model.messages.GameAlreadyStartedMessage;
 import it.polimi.se2019.model.messages.LobbyFullMessage;
 import it.polimi.se2019.model.messages.Message;
 
@@ -36,6 +37,10 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
     @Override
     public void addClient(RMIClientInterface client) throws RemoteException {
         RMIVirtualClient virtualClient = new RMIVirtualClient(client, this);
+        if (!this.server.isConnectionAllowed()) {
+            client.notify(new GameAlreadyStartedMessage());
+            return;
+        }
         if (this.server.getClientsNumber() == 5) {
             client.notify(new LobbyFullMessage());
         } else {

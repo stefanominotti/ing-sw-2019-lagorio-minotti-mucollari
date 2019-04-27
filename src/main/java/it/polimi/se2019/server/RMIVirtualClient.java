@@ -23,6 +23,12 @@ public class RMIVirtualClient extends Thread implements VirtualClientInterface {
     }
 
     @Override
+    public void sendClose(Message message) throws RemoteException {
+        send(message);
+        exit();
+    }
+
+    @Override
     public void run() {
         while(this.active) {
             try {

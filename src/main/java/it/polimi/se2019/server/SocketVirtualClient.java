@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.rmi.RemoteException;
 
 public class SocketVirtualClient extends Thread implements VirtualClientInterface {
 
@@ -30,6 +31,12 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void sendClose(Message message) throws RemoteException {
+        send(message);
+        exit();
     }
 
     @Override

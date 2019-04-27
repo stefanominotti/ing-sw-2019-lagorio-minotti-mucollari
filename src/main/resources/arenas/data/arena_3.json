@@ -1,0 +1,167 @@
+{
+  "number": 2,
+  "rooms": [
+    {
+      "color": "BLUE",
+      "squares": [
+        {
+          "x": 1,
+          "y": 0,
+          "nearbyAccessibility": {
+            "EAST": true,
+            "WEST": true,
+            "NORTH": false,
+            "SOUTH": true
+          },
+          "spawn": false
+        },
+        {
+          "x": 2,
+          "y": 0,
+          "nearbyAccessibility": {
+            "EAST": true,
+            "WEST": true,
+            "NORTH": false,
+            "SOUTH": true
+          },
+          "spawn": true
+        }
+      ]
+    },
+    {
+      "color": "RED",
+      "squares": [
+        {
+          "x": 0,
+          "y": 0,
+          "nearbyAccessibility": {
+            "EAST": true,
+            "WEST": false,
+            "NORTH": false,
+            "SOUTH": true
+          },
+          "spawn": false
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "nearbyAccessibility": {
+            "EAST": false,
+            "WEST": false,
+            "NORTH": true,
+            "SOUTH": true
+          },
+          "spawn": true
+        }
+      ]
+    },
+    {
+      "color": "YELLOW",
+      "squares": [
+        {
+          "x": 3,
+          "y": 1,
+          "nearbyAccessibility": {
+            "EAST": false,
+            "WEST": true,
+            "NORTH": true,
+            "SOUTH": true
+          },
+          "spawn": false
+        },
+        {
+          "x": 3,
+          "y": 2,
+          "nearbyAccessibility": {
+            "EAST": false,
+            "WEST": true,
+            "NORTH": true,
+            "SOUTH": false
+          },
+          "spawn": true
+        },
+        {
+          "x": 2,
+          "y": 1,
+          "nearbyAccessibility": {
+            "EAST": true,
+            "WEST": false,
+            "NORTH": true,
+            "SOUTH": true
+          },
+          "spawn": false
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "nearbyAccessibility": {
+            "EAST": true,
+            "WEST": true,
+            "NORTH": true,
+            "SOUTH": false
+          },
+          "spawn": false
+        }
+      ]
+    },
+    {
+      "color": "WHITE",
+      "squares": [
+        {
+          "x": 0,
+          "y": 2,
+          "nearbyAccessibility": {
+            "EAST": true,
+            "WEST": false,
+            "NORTH": true,
+            "SOUTH": false
+          },
+          "spawn": false
+        },
+        {
+          "x": 1,
+          "y": 2,
+          "nearbyAccessibility": {
+            "EAST": true,
+            "WEST": true,
+            "NORTH": true,
+            "SOUTH": false
+          },
+          "spawn": false
+        }
+      ]
+    },
+    {
+      "color": "GREEN",
+      "squares": [
+        {
+          "x": 3,
+          "y": 0,
+          "nearbyAccessibility": {
+            "EAST": false,
+            "WEST": true,
+            "NORTH": false,
+            "SOUTH": true
+          },
+          "spawn": false
+        }
+      ]
+    },
+    {
+      "color": "PURPLE",
+      "squares": [
+        {
+          "x": 1,
+          "y": 1,
+          "nearbyAccessibility": {
+            "EAST": false,
+            "WEST": false,
+            "NORTH": true,
+            "SOUTH": true
+          },
+          "spawn": false
+        }
+      ]
+    }
+  ]
+}
