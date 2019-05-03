@@ -63,6 +63,7 @@ public abstract class View {
                 break;
             case "ArenaCreatedMessage":
                 update((ArenaCreatedMessage) message);
+                break;
             case "GameSetupInterruptedMessage":
                 update((GameSetupInterruptedMessage) message);
                 break;
