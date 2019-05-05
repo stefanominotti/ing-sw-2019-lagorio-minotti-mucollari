@@ -9,7 +9,27 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 public enum Weapon {
-    LOCK_RIFLE("lock_rifle.json");
+    LOCK_RIFLE("lock_rifle.json"),
+    ELECTROSCYTHE("electroscythe.json"),
+    MACHINE_GUN("machine_gun.json"),
+    TRACTOR_BEAM ("tractor_beam.json"),
+    THOR("thor.json"),
+    VORTEX_CANNON("vortex_cannon.json"),
+    FURNACE("furnace.json"),
+    PLASMA_GUN ("plasma_gun.json"),
+    HEATSEEKER ("heatseeker.json"),
+    WHISPER("whisper.json"),
+    HELLION ("hellion .json"),
+    FLAMETHROWER ("flamethrower.json"),
+    ZX_2("zx-2.json"),
+    GRENADE_LAUNCHER ("grenade_launcher.json"),
+    SHOTGUN("shotgun.json"),
+    ROCKET_LAUNCHER("rocket_launcher.json"),
+    POWER_GLOVE("power_glove.json"),
+    RAILGUN("railgun.json"),
+    SHOCKWAVE("shockwave.json"),
+    CYBERBLADE("cyberblade.json"),
+    SLEDGEHAMMER("sledgehammer.json");
 
     private static final String ROOT = "/weapons/data/";
     private String name;
