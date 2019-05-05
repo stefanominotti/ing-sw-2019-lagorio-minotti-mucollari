@@ -1,15 +1,15 @@
 {
-  "name": "DISTRUTTORE",
-  "color": "BLUE",
+  "name": "ZX-2",
+  "color": "YELLOW",
   "buyCost": {
-    "BLUE": 1,
-    "RED": 0,
+    "BLUE": 0,
+    "RED": 1,
     "YELLOW": 0
   },
   "primaryEffect": [
     {
-      "effectName": "effetto base",
-      "description:": "Dai 2 danni e 1 marchio a 1 bersaglio che puoi vedere",
+      "effectName":"modalità base",
+      "description:": "Dai 1 danno e 2 marchi a 1 bersaglio che puoi vedere.",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
@@ -17,7 +17,7 @@
         "YELLOW": 0
       },
       "amount": [
-        "2"
+        "1"
       ],
       "target": {
         "type": "OTHERS",
@@ -38,7 +38,7 @@
     {
       "type": "MARK",
       "amount": [
-        "1"
+        "2"
       ],
       "target": {
         "type": "OTHERS",
@@ -60,25 +60,25 @@
       }
     }
   ],
-  "secondaryEffectOne": [
+  "alternativeMode": [
     {
-      "effectName": "secondo aggancio",
-      "description": "Dai 1 marchio a un altro bersaglio che puoi vedere",
+      "effectName": "modalità scanner",
+      "description": "Scegli fino a 3 bersagli che puoi vedere e dai 1 marchio a ciascuno",
       "type": "MARK",
       "amount": [
         "1"
       ],
       "cost": {
         "BLUE": 0,
-        "RED": 1,
+        "RED": 0,
         "YELLOW": 0
       },
       "target": {
         "type": "OTHERS",
         "amount": [
-          "1"
+          "1", "2", "3"
         ],
-        "positionType": "SAMESQUARE",
+        "positionType": "EVERYWHERE",
         "positionConstraints": [
           {
             "type": "VISIBLE",
@@ -86,9 +86,6 @@
               "type": "SELF"
             }
           }
-        ],
-        "targetConstraints": [
-          "NOHITBYMAIN"
         ]
       }
     }

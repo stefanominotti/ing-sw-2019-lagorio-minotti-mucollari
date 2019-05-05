@@ -1,0 +1,69 @@
+{
+  "name": "FUCILE A LASER",
+  "color": "YELLOW",
+  "buyCost": {
+    "BLUE": 1,
+    "RED": 0,
+    "YELLOW": 1
+  },
+  "primaryEffect": [
+    {
+      "effectName": "modalità base",
+      "description:": " Scegli una direzione cardinale e 1 bersaglio in quella direzione. Dagli 3 danni.",
+      "type": "DAMAGE",
+      "cost" : {
+        "BLUE": 0,
+        "RED": 0,
+        "YELLOW": 0
+      },
+      "amount": [
+        "3"
+      ],
+      "target": {
+        "type": "OTHERS",
+        "amount": [
+          "1"
+        ],
+        "positionType": "SAMEDIRECTION",
+        "positionConstraints": [
+          {
+            "type": "CARDINALDIRECTION",
+            "target": {
+              "type": "SELF"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "alternativeMode": [
+    {
+      "effectName": "modalità perforazione",
+      "description": "Scegli una direzione cardinale e 1 o 2 bersagli in quella direzione. Dai 2 danni a ciascuno.",
+      "type": "DAMAGE",
+      "amount": [
+        "2"
+      ],
+      "cost": {
+        "BLUE": 0,
+        "RED": 0,
+        "YELLOW": 0
+      },
+      "target": {
+        "type": "OTHERS",
+        "amount": [
+          "1", "2"
+        ],
+        "positionType": "SAMEDIRECTION",
+        "positionConstraints": [
+          {
+            "type": "CARDINALDIRECTION",
+            "target": {
+              "type": "SELF"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

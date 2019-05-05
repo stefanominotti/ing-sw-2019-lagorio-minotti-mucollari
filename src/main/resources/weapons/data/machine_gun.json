@@ -1,15 +1,15 @@
 {
-  "name": "DISTRUTTORE",
+  "name": "MITRAGLIATRICE",
   "color": "BLUE",
   "buyCost": {
-    "BLUE": 1,
-    "RED": 0,
+    "BLUE": 0,
+    "RED": 1,
     "YELLOW": 0
   },
   "primaryEffect": [
     {
       "effectName": "effetto base",
-      "description:": "Dai 2 danni e 1 marchio a 1 bersaglio che puoi vedere",
+      "description:": "Scegli 1 o 2 bersagli che puoi vedere e dai 1 danno ad entrambi",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
@@ -17,12 +17,12 @@
         "YELLOW": 0
       },
       "amount": [
-        "2"
+        "1"
       ],
       "target": {
         "type": "OTHERS",
         "amount": [
-          "1"
+          "1", "2"
         ],
         "positionType": "SAMESQUARE",
         "positionConstraints": [
@@ -34,12 +34,22 @@
           }
         ]
       }
-    },
+    }
+  ],
+  "secondaryEffectOne": [
     {
-      "type": "MARK",
+      "effectName": "colpo focalizzato",
+      "description": "Dai 1 danno aggiuntivo ad uno dei due bersagli",
+      "effectDependency": "primaryEffect",
+      "type": "DAMAGE",
       "amount": [
         "1"
       ],
+      "cost": {
+        "BLUE": 0,
+        "RED": 0,
+        "YELLOW": 1
+      },
       "target": {
         "type": "OTHERS",
         "amount": [
@@ -60,17 +70,18 @@
       }
     }
   ],
-  "secondaryEffectOne": [
+  "secondaryEffectTwo": [
     {
-      "effectName": "secondo aggancio",
-      "description": "Dai 1 marchio a un altro bersaglio che puoi vedere",
-      "type": "MARK",
+      "effectName": "tripode di supporto",
+      "description": "Dai 1 danno aggiuntivo all'altro dei due bersagli e/o dai 1 danno aggiuntivo a un bersaglio differente che puoi vedere",
+      "effectDependency": "secondaryEffectOne",
+      "type": "DAMAGE",
       "amount": [
         "1"
       ],
       "cost": {
-        "BLUE": 0,
-        "RED": 1,
+        "BLUE": 1,
+        "RED": 0,
         "YELLOW": 0
       },
       "target": {
@@ -88,7 +99,34 @@
           }
         ],
         "targetConstraints": [
-          "NOHITBYMAIN"
+          "ONLYHITBYMAIN", "NOHITBYSECONDARY"
+        ]
+      }
+    },
+    {
+      "type": "DAMAGE",
+      "amount": [
+        "1"
+      ],
+      "effectCostraints":[
+        "NOTREQUIRED"
+      ],
+      "target": {
+        "type": "OTHERS",
+        "amount": [
+          "1"
+        ],
+        "positionType": "SAMESQUARE",
+        "positionConstraints": [
+          {
+            "type": "VISIBLE",
+            "target": {
+              "type": "SELF"
+            }
+          }
+        ],
+        "targetConstraints": [
+          "NOHITBYMAIN", "NOHITBYSECONDARY"
         ]
       }
     }

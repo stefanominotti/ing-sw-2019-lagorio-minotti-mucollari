@@ -1,15 +1,15 @@
-{
-  "name": "DISTRUTTORE",
+ {
+  "name": "FUCILE DI PRECISIONE",
   "color": "BLUE",
   "buyCost": {
     "BLUE": 1,
     "RED": 0,
-    "YELLOW": 0
+    "YELLOW": 1
   },
   "primaryEffect": [
     {
-      "effectName": "effetto base",
-      "description:": "Dai 2 danni e 1 marchio a 1 bersaglio che puoi vedere",
+      "effectName": "effetto",
+      "description:": "Dai 3 danni e 1 marchio a 1 bersaglio che puoi vedere; il bersaglio deve essere ad almeno 2 movimenti da te",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
@@ -17,7 +17,7 @@
         "YELLOW": 0
       },
       "amount": [
-        "2"
+        "3"
       ],
       "target": {
         "type": "OTHERS",
@@ -28,6 +28,15 @@
         "positionConstraints": [
           {
             "type": "VISIBLE",
+            "target": {
+              "type": "SELF"
+            }
+          },
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "2", "MAX"
+            ],
             "target": {
               "type": "SELF"
             }
@@ -52,43 +61,19 @@
             "target": {
               "type": "SELF"
             }
-          }
-        ],
-        "targetConstraints": [
-          "ONLYHITBYMAIN"
-        ]
-      }
-    }
-  ],
-  "secondaryEffectOne": [
-    {
-      "effectName": "secondo aggancio",
-      "description": "Dai 1 marchio a un altro bersaglio che puoi vedere",
-      "type": "MARK",
-      "amount": [
-        "1"
-      ],
-      "cost": {
-        "BLUE": 0,
-        "RED": 1,
-        "YELLOW": 0
-      },
-      "target": {
-        "type": "OTHERS",
-        "amount": [
-          "1"
-        ],
-        "positionType": "SAMESQUARE",
-        "positionConstraints": [
+          },
           {
-            "type": "VISIBLE",
+            "type": "DISTANCE",
+            "distanceValues":[
+              "2", "MAX"
+            ],
             "target": {
               "type": "SELF"
             }
           }
         ],
         "targetConstraints": [
-          "NOHITBYMAIN"
+          "ONLYHITBYMAIN"
         ]
       }
     }

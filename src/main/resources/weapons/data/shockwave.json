@@ -1,0 +1,75 @@
+{
+  "name": "ONDA D'URTO",
+  "color": "YELLOW",
+  "buyCost": {
+    "BLUE": 0,
+    "RED": 0,
+    "YELLOW": 0
+  },
+  "primaryEffect": [
+    {
+      "effectName": "modalità base",
+      "description:": "Scegli fino a 3 bersagli su quadrati differenti, ognuno distante esattamente 1 movimento. Dai 1 danno a ogni bersaglio",
+      "type": "DAMAGE",
+      "cost" : {
+        "BLUE": 0,
+        "RED": 0,
+        "YELLOW": 0
+      },
+      "amount": [
+        "1"
+      ],
+      "target": {
+        "type": "OTHERS",
+        "amount": [
+          "1", "2", "3"
+        ],
+        "positionType": "MULTIPLESQUARES",
+        "positionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "1"
+            ],
+            "target": {
+              "type": "SELF"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "alternativeMode": [
+    {
+      "effectName": "modalità tsunami",
+      "description": "Dai 1 danno ai bersagli che sono distanti esattamente 1 movimento",
+      "type": "DAMAGE",
+      "amount": [
+        "1"
+      ],
+      "cost": {
+        "BLUE": 0,
+        "RED": 0,
+        "YELLOW": 1
+      },
+      "target": {
+        "type": "OTHERS",
+        "amount": [
+          "MAX"
+        ],
+        "positionType": "EVERYWHERE",
+        "positionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "1"
+            ],
+            "target": {
+              "type": "SELF"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

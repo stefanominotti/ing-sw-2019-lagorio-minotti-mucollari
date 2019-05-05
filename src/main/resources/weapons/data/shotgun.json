@@ -1,42 +1,21 @@
 {
-  "name": "DISTRUTTORE",
-  "color": "BLUE",
+  "name": "FUCILE A POMPA",
+  "color": "YELLOW",
   "buyCost": {
-    "BLUE": 1,
-    "RED": 0,
+    "BLUE": 0,
+    "RED": 1,
     "YELLOW": 0
   },
   "primaryEffect": [
     {
-      "effectName": "effetto base",
-      "description:": "Dai 2 danni e 1 marchio a 1 bersaglio che puoi vedere",
+      "effectName": "modalità base",
+      "description:": "Dai 3 danni a 1 bersaglio nel quadrato in cui ti trovi. Se vuoi puoi muovere quel bersaglio di 1 quadrato.",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
-      "amount": [
-        "2"
-      ],
-      "target": {
-        "type": "OTHERS",
-        "amount": [
-          "1"
-        ],
-        "positionType": "SAMESQUARE",
-        "positionConstraints": [
-          {
-            "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "MARK",
       "amount": [
         "1"
       ],
@@ -48,7 +27,37 @@
         "positionType": "SAMESQUARE",
         "positionConstraints": [
           {
-            "type": "VISIBLE",
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
+            "target": {
+              "type": "SELF"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "MOVE",
+      "amount": [
+        "1"
+      ],
+      "effectCostraints":[
+        "NOTREQUIRED"
+      ],
+      "target": {
+        "type": "OTHERS",
+        "amount": [
+          "1"
+        ],
+        "positionType": "SAMESQUARE",
+        "positionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
             "target": {
               "type": "SELF"
             }
@@ -60,17 +69,17 @@
       }
     }
   ],
-  "secondaryEffectOne": [
+  "alternativeMode": [
     {
-      "effectName": "secondo aggancio",
-      "description": "Dai 1 marchio a un altro bersaglio che puoi vedere",
-      "type": "MARK",
+      "effectName": "modalità canna lunga",
+      "description": "Dai 2 danni a 1 bersaglio in un quadrato distante esattamente 1 movimento.",
+      "type": "DAMAGE",
       "amount": [
-        "1"
+        "2"
       ],
       "cost": {
         "BLUE": 0,
-        "RED": 1,
+        "RED": 0,
         "YELLOW": 0
       },
       "target": {
@@ -81,14 +90,14 @@
         "positionType": "SAMESQUARE",
         "positionConstraints": [
           {
-            "type": "VISIBLE",
+            "type": "DISTANCE",
+            "distanceValues":[
+              "1"
+            ],
             "target": {
               "type": "SELF"
             }
           }
-        ],
-        "targetConstraints": [
-          "NOHITBYMAIN"
         ]
       }
     }

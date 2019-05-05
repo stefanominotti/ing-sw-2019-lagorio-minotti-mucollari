@@ -1,15 +1,15 @@
 {
-  "name": "DISTRUTTORE",
+  "name": "TORPEDINE",
   "color": "BLUE",
   "buyCost": {
-    "BLUE": 1,
-    "RED": 0,
+    "BLUE": 0,
+    "RED": 1,
     "YELLOW": 0
   },
   "primaryEffect": [
     {
       "effectName": "effetto base",
-      "description:": "Dai 2 danni e 1 marchio a 1 bersaglio che puoi vedere",
+      "description:": "Dai 2 danni a 1 bersaglio che puoi vedere",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
@@ -34,12 +34,22 @@
           }
         ]
       }
-    },
+    }
+  ],
+  "secondaryEffectOne": [
     {
-      "type": "MARK",
+      "effectName": "reazione a catena",
+      "description": "Dai 1 danno a un secondo bersaglio che il tuo primo bersaglio può vedere",
+      "effectDependency": "primaryEffect",
+      "type": "DAMAGE",
       "amount": [
         "1"
       ],
+      "cost": {
+        "BLUE": 1,
+        "RED": 0,
+        "YELLOW": 0
+      },
       "target": {
         "type": "OTHERS",
         "amount": [
@@ -48,29 +58,30 @@
         "positionType": "SAMESQUARE",
         "positionConstraints": [
           {
-            "type": "VISIBLE",
+            "type": "VISIBLE", 
             "target": {
-              "type": "SELF"
+              "type": "FIRSTPLAYER"
             }
           }
         ],
         "targetConstraints": [
-          "ONLYHITBYMAIN"
+          "NOHITBYMAIN"
         ]
       }
     }
   ],
-  "secondaryEffectOne": [
+  "secondaryEffectTwo": [
     {
-      "effectName": "secondo aggancio",
-      "description": "Dai 1 marchio a un altro bersaglio che puoi vedere",
-      "type": "MARK",
+      "effectName": "alta tensione",
+      "description": "Dai 2 danni ad un terzo bersaglio che il tuo secondo bersaglio può vedere. Non puoi usare questo effetto se prima non hai utilizzato Reazione a Catena",
+      "effectDependency": "secondaryEffectOne",
+      "type": "DAMAGE",
       "amount": [
-        "1"
+        "2"
       ],
       "cost": {
-        "BLUE": 0,
-        "RED": 1,
+        "BLUE": 1,
+        "RED": 0,
         "YELLOW": 0
       },
       "target": {
@@ -83,12 +94,12 @@
           {
             "type": "VISIBLE",
             "target": {
-              "type": "SELF"
+              "type": "SECONDPLAYER"
             }
           }
         ],
         "targetConstraints": [
-          "NOHITBYMAIN"
+          "NOHITBYMAIN", "NOHITBYSECONDARY"
         ]
       }
     }

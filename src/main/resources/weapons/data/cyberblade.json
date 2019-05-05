@@ -1,15 +1,15 @@
 {
-  "name": "DISTRUTTORE",
-  "color": "BLUE",
+  "name": "SPADA FOTONICA",
+  "color": "YELLOW",
   "buyCost": {
-    "BLUE": 1,
-    "RED": 0,
+    "BLUE": 0,
+    "RED": 1,
     "YELLOW": 0
   },
   "primaryEffect": [
     {
       "effectName": "effetto base",
-      "description:": "Dai 2 danni e 1 marchio a 1 bersaglio che puoi vedere",
+      "description:": "Dai 2 danni a 1 bersaglio nel quadrato in cui ti trovi",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
@@ -27,50 +27,47 @@
         "positionType": "SAMESQUARE",
         "positionConstraints": [
           {
-            "type": "VISIBLE",
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+           ],
             "target": {
               "type": "SELF"
             }
           }
-        ]
-      }
-    },
-    {
-      "type": "MARK",
-      "amount": [
-        "1"
-      ],
-      "target": {
-        "type": "OTHERS",
-        "amount": [
-          "1"
-        ],
-        "positionType": "SAMESQUARE",
-        "positionConstraints": [
-          {
-            "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
-          }
-        ],
-        "targetConstraints": [
-          "ONLYHITBYMAIN"
         ]
       }
     }
   ],
   "secondaryEffectOne": [
     {
-      "effectName": "secondo aggancio",
-      "description": "Dai 1 marchio a un altro bersaglio che puoi vedere",
-      "type": "MARK",
+      "effectName": "passo d'ombra",
+      "description": "Muoviti di un quadrato, prima o dopo l'effetto base",
+      "type": "MOVE",
       "amount": [
         "1"
       ],
       "cost": {
         "BLUE": 0,
-        "RED": 1,
+        "RED": 0,
+        "YELLOW": 0
+      },
+      "target": {
+        "type": "SELF"
+      }
+    }
+  ],
+  "secondaryEffectTwo": [
+    {
+      "effectName": "modalità sminuzzare",
+      "description": "Dai 2 danni a un bersaglio differente nel quadrato in cui ti trovi. Il passo d'ombra può essere usato prima o dopo questo effetto",
+      "type": "DAMAGE",
+      "amount": [
+        "2"
+      ],
+      "cost": {
+        "BLUE": 1,
+        "RED": 0,
         "YELLOW": 0
       },
       "target": {
@@ -81,7 +78,10 @@
         "positionType": "SAMESQUARE",
         "positionConstraints": [
           {
-            "type": "VISIBLE",
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
             "target": {
               "type": "SELF"
             }

@@ -1,15 +1,15 @@
 {
-  "name": "DISTRUTTORE",
-  "color": "BLUE",
+  "name": "LANCIAGRANATE",
+  "color": "RED",
   "buyCost": {
-    "BLUE": 1,
+    "BLUE": 0,
     "RED": 0,
     "YELLOW": 0
   },
   "primaryEffect": [
     {
-      "effectName": "effetto base",
-      "description:": "Dai 2 danni e 1 marchio a 1 bersaglio che puoi vedere",
+      "effectName":"effetto base",
+      "description:": "Dai 1 danno a 1 bersaglio che puoi vedere. Poi puoi muovere il bersaglio di 1 quadrato.",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
@@ -17,7 +17,7 @@
         "YELLOW": 0
       },
       "amount": [
-        "2"
+        "1"
       ],
       "target": {
         "type": "OTHERS",
@@ -36,9 +36,12 @@
       }
     },
     {
-      "type": "MARK",
+      "type": "MOVE",
       "amount": [
         "1"
+      ],
+      "effectCostraints":[
+        "NOTREQUIRED"
       ],
       "target": {
         "type": "OTHERS",
@@ -62,21 +65,21 @@
   ],
   "secondaryEffectOne": [
     {
-      "effectName": "secondo aggancio",
-      "description": "Dai 1 marchio a un altro bersaglio che puoi vedere",
-      "type": "MARK",
+      "effectName": "granata extra",
+      "description": "Dai 1 danno a ogni giocatore in un quadrato che puoi vedere. Puoi usare questo effetto prima o dopo il movimento dell'effetto base.",
+      "type": "DAMAGE",
       "amount": [
         "1"
       ],
       "cost": {
         "BLUE": 0,
-        "RED": 1,
+        "RED": 0,
         "YELLOW": 0
       },
       "target": {
         "type": "OTHERS",
         "amount": [
-          "1"
+          "MAX"
         ],
         "positionType": "SAMESQUARE",
         "positionConstraints": [
@@ -86,9 +89,6 @@
               "type": "SELF"
             }
           }
-        ],
-        "targetConstraints": [
-          "NOHITBYMAIN"
         ]
       }
     }

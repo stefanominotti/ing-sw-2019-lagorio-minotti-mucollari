@@ -1,6 +1,6 @@
 {
-  "name": "DISTRUTTORE",
-  "color": "BLUE",
+  "name": "VULCANIZZATORE",
+  "color": "RED",
   "buyCost": {
     "BLUE": 1,
     "RED": 0,
@@ -8,8 +8,8 @@
   },
   "primaryEffect": [
     {
-      "effectName": "effetto base",
-      "description:": "Dai 2 danni e 1 marchio a 1 bersaglio che puoi vedere",
+      "effectName": "modalità base",
+      "description:": "Scegli una stanza che puoi vedere, ma non la stanza in cui ti trovi. Dai 1 danno a ognuno in quella stanza.",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
@@ -17,17 +17,56 @@
         "YELLOW": 0
       },
       "amount": [
-        "2"
+        "1"
       ],
       "target": {
         "type": "OTHERS",
         "amount": [
           "1"
         ],
+        "positionType": "SAMEROOM",
+        "positionConstraints": [
+          {
+            "type": "NOTCONTAINS",
+            "target": {
+              "type": "SELF"
+            }
+          },
+          {
+            "type": "VISIBLE",
+            "target": {
+              "type": "SELF"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "alternativeMode": [
+    {
+      "effectName": "modalità fuoco confortevole",
+      "description": "Scegli un quadrato distante esattamente 1 movimento. Dai 1 danno e 1 marchio a ognuno in quel quadrato.",
+      "type": "DAMAGE",
+      "amount": [
+        "1"
+      ],
+      "cost": {
+        "BLUE": 1,
+        "RED": 0,
+        "YELLOW": 0
+      },
+      "target": {
+        "type": "OTHERS",
+        "amount": [
+          "MAX"
+        ],
         "positionType": "SAMESQUARE",
         "positionConstraints": [
           {
-            "type": "VISIBLE",
+            "type": "DISTANCE",
+            "distanceValues":[
+              "1"
+            ], 
             "target": {
               "type": "SELF"
             }
@@ -43,52 +82,22 @@
       "target": {
         "type": "OTHERS",
         "amount": [
-          "1"
+          "MAX"
         ],
         "positionType": "SAMESQUARE",
         "positionConstraints": [
           {
-            "type": "VISIBLE",
+            "type": "DISTANCE",
+            "distanceValues":[
+              "1"
+            ], 
             "target": {
               "type": "SELF"
             }
           }
         ],
         "targetConstraints": [
-          "ONLYHITBYMAIN"
-        ]
-      }
-    }
-  ],
-  "secondaryEffectOne": [
-    {
-      "effectName": "secondo aggancio",
-      "description": "Dai 1 marchio a un altro bersaglio che puoi vedere",
-      "type": "MARK",
-      "amount": [
-        "1"
-      ],
-      "cost": {
-        "BLUE": 0,
-        "RED": 1,
-        "YELLOW": 0
-      },
-      "target": {
-        "type": "OTHERS",
-        "amount": [
-          "1"
-        ],
-        "positionType": "SAMESQUARE",
-        "positionConstraints": [
-          {
-            "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
-          }
-        ],
-        "targetConstraints": [
-          "NOHITBYMAIN"
+          "ONLYHITBYSECONDARY"
         ]
       }
     }

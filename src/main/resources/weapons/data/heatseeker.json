@@ -1,0 +1,39 @@
+{
+  "name": "RAZZO TERMICO",
+  "color": "RED",
+  "buyCost": {
+    "BLUE": 0,
+    "RED": 1,
+    "YELLOW": 1
+  },
+  "primaryEffect": [
+    {
+      "effectName": "effetto",
+      "description:": "Scegli un bersaglio che non puoi vedere e dagli 3 danni",
+      "type": "DAMAGE",
+      "cost" : {
+        "BLUE": 0,
+        "RED": 0,
+        "YELLOW": 0
+      },
+      "amount": [
+        "3"
+      ],
+      "target": {
+        "type": "OTHERS",
+        "amount": [
+          "1"
+        ],
+        "positionType": "SAMESQUARE",
+        "positionConstraints": [
+          {
+            "type": "NOTVISIBLE",
+            "target": {
+              "type": "SELF"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

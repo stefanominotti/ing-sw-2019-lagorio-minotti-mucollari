@@ -1,0 +1,193 @@
+{
+  "name": "CANNONE VORTEX",
+  "color": "BLUE",
+  "buyCost": {
+    "BLUE": 1,
+    "RED": 0,
+    "YELLOW": 0
+  },
+  "primaryEffect": [
+    {
+      "effectName":"effetto base",
+      "description:": "Scegli un quadrato che puoi vedere ad almeno 1 movimento di distanza. Un vortice si apre in quel punto. Scegli un bersaglio nel quadrato in cui si trova il vortice o distante 1 movimento. Muovi il bersaglio nel quadrato in cui si trova il vortice e dagli 2 danni.",
+      "type": "MOVE",
+      "cost" : {
+        "BLUE": 0,
+        "RED": 0,
+        "YELLOW": 0
+      },
+      "amount": [
+        "1"
+      ],
+       "effectCostraints": [
+        "NOTREQUIRED"
+      ],
+      "target": {
+        "type": "OTHERS",
+        "amount": [
+          "1"
+        ],
+        "positionType": "EVERYWHERE",
+        "prePositionConstraints": [
+          {
+            "type": "VISIBLE",
+            "target": {
+              "type": "SELF"
+            }
+          },
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "2", "MAX"
+            ],
+            "target": {
+              "type": "SELF"
+            }
+          },
+           {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "1"
+            ],
+            "target": {
+              "type": "SQUARE"
+            }
+          }
+        ],
+        "afterPositionConstraints": [
+          {
+            "type": "VISIBLE",
+            "target": {
+              "type": "SELF"
+            }
+          },
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "1", "MAX"
+            ],
+            "target": {
+              "type": "SELF"
+            }
+          },
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
+            "target": {
+              "type": "SQUARE"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "DAMAGE",
+      "amount": [
+        "2"
+      ],
+      "target": {
+        "type": "OTHERS",
+        "amount": [
+          "1"
+        ],
+        "positionType": "SAMESQUARE",
+        "positionConstraints": [
+          {
+            "type": "VISIBLE",
+            "target": {
+              "type": "SELF"
+            }
+          },
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "1", "MAX"
+            ],
+            "target": {
+              "type": "SELF"
+            }
+          }
+        ],
+        "targetConstraints": [
+          "ONLYHITBYMAIN"
+        ]
+      }
+    }
+  ],
+  "secondaryEffectOne": [
+    {
+      "effectName": "buco nero",
+      "description": "Scegli fino ad altri 2 bersagli nel quadrato in cui si trova il vortice o distanti 1 movimento. Muovili nel quadrato in cui si trova il vortice e dai loro 1 danno ciascuno",
+      "type": "MOVE",
+      "amount": [
+        "0", "1", "2"
+      ],
+      "cost": {
+        "BLUE": 0,
+        "RED": 1,
+        "YELLOW": 0
+      },
+      "target": {
+        "type": "OTHERS",
+        "amount": [
+          "0", "1", "2"
+        ],
+        "positionType": "EVERYWHERE",
+        "prePositionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0", "1"
+            ],
+            "target": {
+              "type": "FIRSTPLAYER"
+            }
+          }
+        ],
+        "afterPositionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
+            "target": {
+              "type": "FIRSTPLAYER"
+            }
+          }
+        ],
+        "targetConstraints": [
+          "NOHITBYMAIN"
+        ]
+      }
+    },
+    {
+      "type": "DAMAGE",
+      "amount": [
+        "1"
+      ],
+      "target": {
+        "type": "OTHERS",
+        "amount": [
+          "0", "1", "2"
+        ],
+        "positionType": "SAMESQUARE",
+        "positionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
+            "target": {
+              "type": "FIRSTPLAYER"
+            }
+          }
+        ],
+        "targetConstraints": [
+          "NOHITBYMAIN", "ONLYHITBYSECONDARY"
+        ]
+      }
+    }
+  ]
+}
