@@ -72,7 +72,7 @@
       ],
       "target": {
         "type": "SELF",
-        "prePositionConstraints": [
+        "positionConstraints": [
           {
             "type": "DISTANCE",
             "distanceValues":[
@@ -136,7 +136,7 @@
       ],
       "target": {
         "type": "SELF",
-        "prePositionConstraints": [
+        "positionConstraints": [
           {
             "type": "DISTANCE",
             "distanceValues":[
@@ -200,7 +200,7 @@
       ],
       "target": {
         "type": "SELF",
-        "prePositionConstraints": [
+        "positionConstraints": [
           {
             "type": "DISTANCE",
             "distanceValues":[

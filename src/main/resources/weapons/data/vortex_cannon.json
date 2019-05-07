@@ -1,6 +1,6 @@
 {
   "name": "CANNONE VORTEX",
-  "color": "BLUE",
+  "color": "RED",
   "buyCost": {
     "BLUE": 1,
     "RED": 0,
@@ -28,7 +28,7 @@
           "1"
         ],
         "positionType": "EVERYWHERE",
-        "prePositionConstraints": [
+        "positionConstraints": [
           {
             "type": "VISIBLE",
             "target": {
@@ -135,7 +135,7 @@
           "0", "1", "2"
         ],
         "positionType": "EVERYWHERE",
-        "prePositionConstraints": [
+        "positionConstraints": [
           {
             "type": "DISTANCE",
             "distanceValues":[

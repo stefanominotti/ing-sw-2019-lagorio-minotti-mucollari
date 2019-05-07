@@ -3,8 +3,8 @@
   "color": "YELLOW",
   "buyCost": {
     "BLUE": 0,
-    "RED": 1,
-    "YELLOW": 0
+    "RED": 0,
+    "YELLOW": 1
   },
   "primaryEffect": [
     {

@@ -85,7 +85,7 @@
           "1"
         ],
         "positionType": "SAMEDIRECTION",
-        "prePositionConstraints": [
+        "positionConstraints": [
           {
             "type": "DISTANCE",
             "distanceValues":[

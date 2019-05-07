@@ -7,5 +7,5 @@ public enum TargetType {
     FIRSTPLAYER,
     SECONDPLAYER,
     SQUARE,
-    ROOM
+    ROOM;
 }
