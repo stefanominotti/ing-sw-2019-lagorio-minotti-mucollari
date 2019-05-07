@@ -19,7 +19,7 @@ public enum Weapon {
     PLASMA_GUN ("plasma_gun.json"),
     HEATSEEKER ("heatseeker.json"),
     WHISPER("whisper.json"),
-    HELLION ("hellion .json"),
+    HELLION ("hellion.json"),
     FLAMETHROWER ("flamethrower.json"),
     ZX_2("zx-2.json"),
     GRENADE_LAUNCHER ("grenade_launcher.json"),

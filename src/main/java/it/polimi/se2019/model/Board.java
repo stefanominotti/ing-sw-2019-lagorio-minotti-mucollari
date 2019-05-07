@@ -188,17 +188,17 @@ public class Board extends Observable {
         notifyChanges(new SkullsSettedMessage(getValidPlayers().get(0).getCharacter()));
     }
 
-    public void createArena(String arenaNumber){
+    public void createArena(String arenaNumber) {
         this.arena = new Arena(arenaNumber);
         Map<Coordinates, RoomColor> arenaColor = new HashMap<>();
         Map<Coordinates, Boolean> arenaSpawn = new HashMap<>();
-        for(Room room : arena.getRoomList()){
-            for(Square square : room.getSquares()){
+        for(Room room : this.arena.getRoomList()) {
+            for(Square square : room.getSquares()) {
                 Coordinates coordinates = new Coordinates(square.getX(), square.getY());
                 RoomColor color =  room.getColor();
                 Boolean spawn = square.isSpawn();
-                arenaColor.put(coordinates,color);
-                arenaSpawn.put(coordinates,spawn);
+                arenaColor.put(coordinates, color);
+                arenaSpawn.put(coordinates, spawn);
             }
         }
         notifyChanges(new ArenaCreatedMessage(arenaColor, arenaSpawn));

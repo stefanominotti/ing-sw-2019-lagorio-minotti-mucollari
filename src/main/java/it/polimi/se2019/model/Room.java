@@ -1,10 +1,7 @@
 package it.polimi.se2019.model;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class Room {
 
@@ -16,14 +13,16 @@ public class Room {
         this.squares = squares;
     }
 
-    public RoomColor getColor() { return color; }
+    public RoomColor getColor() {
+        return color;
+    }
 
     public List<Square> getSquares() {
-        return new ArrayList<>(squares);
+        return new ArrayList<>(this.squares);
     }
 
     public boolean hasSpawn() {
-        for(Square square : squares) {
+        for(Square square : this.squares) {
             if (square.isSpawn()) {
                 return true;
             }

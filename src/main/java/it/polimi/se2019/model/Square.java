@@ -37,26 +37,38 @@ public class Square {
         this.nearbySquares = new EnumMap<>(CardinalPoint.class);
         Square nearSquare;
         for(CardinalPoint cardinal : CardinalPoint.values()){
-            switch (cardinal){
+            switch (cardinal) {
                 case EAST:
                     nearSquare = this.arena.getSquareByCoordinate(x+1, y);
-                    if(nearSquare != null){ this.nearbySquares.put(cardinal, nearSquare); }
-                    else{ this.nearbySquares.put(cardinal, null); }
+                    if(nearSquare != null) {
+                        this.nearbySquares.put(cardinal, nearSquare); }
+                    else {
+                        this.nearbySquares.put(cardinal, null);
+                    }
                     break;
                 case WEST:
                     nearSquare = this.arena.getSquareByCoordinate(x-1, y);
-                    if(nearSquare != null){ this.nearbySquares.put(cardinal, nearSquare); }
-                    else{ this.nearbySquares.put(cardinal, null); }
+                    if(nearSquare != null) {
+                        this.nearbySquares.put(cardinal, nearSquare);
+                    } else {
+                        this.nearbySquares.put(cardinal, null);
+                    }
                     break;
                 case NORTH:
                     nearSquare = this.arena.getSquareByCoordinate(x, y-1);
-                    if(nearSquare != null){ this.nearbySquares.put(cardinal, nearSquare); }
-                    else{ this.nearbySquares.put(cardinal, null); }
+                    if(nearSquare != null) {
+                        this.nearbySquares.put(cardinal, nearSquare);
+                    } else {
+                        this.nearbySquares.put(cardinal, null);
+                    }
                     break;
                 case SOUTH:
                     nearSquare = this.arena.getSquareByCoordinate(x, y+1);
-                    if(nearSquare != null){ this.nearbySquares.put(cardinal, nearSquare); }
-                    else{ this.nearbySquares.put(cardinal, null); }
+                    if(nearSquare != null){
+                        this.nearbySquares.put(cardinal, nearSquare);
+                    } else {
+                        this.nearbySquares.put(cardinal, null);
+                    }
                     break;
 
             }
@@ -91,12 +103,12 @@ public class Square {
         return new ArrayList<>();
     }
 
-    public Map<CardinalPoint, Boolean> getNearbyAccessibility() { return new EnumMap<>(nearbyAccessibility); }
+    public Map<CardinalPoint, Boolean> getNearbyAccessibility() { return new EnumMap<>(this.nearbyAccessibility); }
 
-    public Map<CardinalPoint, Square> getNearbySquares() { return new EnumMap<>(nearbySquares); }
+    public Map<CardinalPoint, Square> getNearbySquares() { return new EnumMap<>(this.nearbySquares); }
 
     public Room getRoom() {
-        return null;
+        return this.room;
     }
 
     public int distanceFrom(Square square) {

@@ -46,7 +46,7 @@
           "x": 0,
           "y": 1,
           "nearbyAccessibility": {
-            "EAST": true,
+            "EAST": false,
             "WEST": false,
             "NORTH": true,
             "SOUTH": true
@@ -128,7 +128,7 @@
           "y": 1,
           "nearbyAccessibility": {
             "EAST": false,
-            "WEST": true,
+            "WEST": false,
             "NORTH": true,
             "SOUTH": true
           },

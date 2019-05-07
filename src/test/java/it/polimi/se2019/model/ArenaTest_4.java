@@ -13,26 +13,24 @@ public class ArenaTest_4 {
     String number = "4";
     Arena arena;
 
+    @Before
     public void setUp() {
-        arena = new Arena(number);
+        this.arena = new Arena(number);
     }
 
     @Test
     public void createArena() {
-        assertNotNull(arena);
+        assertNotNull(this.arena);
     }
 
     @Test
     public void getSquareByCoordinates() {
         for(int x = 0; x < 4; x++){
-            for(int y = 0; y < 3; y++){
+            for(int y = 0; y < 3; y++) {
                 if((x==3 && y==0)){
-                    System.out.println("Not exist Square ["+x+","+y+"]");
-                    assertNull(arena.getSquareByCoordinate(x, y));
-                }
-                else {
-                    Square square = arena.getSquareByCoordinate(x, y);
-                    System.out.println("Exist Square ["+x+","+y+"]");
+                    assertNull(this.arena.getSquareByCoordinate(x, y));
+                } else {
+                    Square square = this.arena.getSquareByCoordinate(x, y);
                     assertNotNull(square);
                 }
             }
@@ -41,17 +39,14 @@ public class ArenaTest_4 {
 
     @Test
     public void getRooms() {
-        List<Room> rooms = arena.getRoomList();
+        List<Room> rooms = this.arena.getRoomList();
         assertNotNull(rooms);
-        for(Room room : rooms){
+        for(Room room : rooms) {
             assertNotNull(room);
             if(room.getColor().equals(RoomColor.WHITE)
-                    || room.getColor().equals(RoomColor.PURPLE)){
-                System.out.println(room.getColor()+" not has spawn");
+                    || room.getColor().equals(RoomColor.PURPLE)) {
                 assertFalse(room.hasSpawn());
-            }
-            else {
-                System.out.println(room.getColor()+ " has spawn");
+            } else {
                 assertTrue(room.hasSpawn());
             }
         }
@@ -59,25 +54,21 @@ public class ArenaTest_4 {
 
     @Test
     public void getSquaresFromRooms() {
-        List<Room> rooms = arena.getRoomList();
+        List<Room> rooms = this.arena.getRoomList();
         assertNotNull(rooms);
         for(Room room : rooms) {
             assertNotNull(room);
-            System.out.println(room.getColor());
             List<Square> squares = room.getSquares();
             assertNotNull(squares);
             for (Square square : squares) {
                 assertNotNull(square);
                 int x = square.getX();
                 int y = square.getY();
-                assertEquals(square, arena.getSquareByCoordinate(x, y));
+                assertEquals(square, this.arena.getSquareByCoordinate(x, y));
                 if(x==2 && y==0 || x==0 && y==1 || x==3 && y==2){
                     assertTrue(square.isSpawn());
-                    System.out.println("["+x+","+y+"] is spawn");
-                }
-                else {
+                } else {
                     assertFalse(square.isSpawn());
-                    System.out.println("["+x+","+y+"] is not spawn");
                 }
 
             }
@@ -88,46 +79,49 @@ public class ArenaTest_4 {
     public void nearBySquares() {
         for(int x = 0; x < 4; x++) {
             for (int y = 0; y < 3; y++) {
-                Square square = arena.getSquareByCoordinate(x, y);
+                Square square = this.arena.getSquareByCoordinate(x, y);
                 if (square != null) {
-                    System.out.println("for Square["+x+","+y+"]");
                     Map<CardinalPoint, Boolean> nearAccess = square.getNearbyAccessibility();
                     Map<CardinalPoint, Square> nearSquare = square.getNearbySquares();
                     for (CardinalPoint cardinal : CardinalPoint.values()) {
                         switch (cardinal) {
                             case EAST:
-                                assertEquals(nearSquare.get(cardinal), arena.getSquareByCoordinate(x + 1, y));
-                                if(x==0 && y==0 || x==1 && y==0 ||x==2 && y==0
-                                        || x==1 && y==1 || x==2 && y==1
-                                        || x==0 && y==2 || x==1 && y==2 || x==2 && y==2){
+                                assertEquals(nearSquare.get(cardinal), this.arena.getSquareByCoordinate(x + 1, y));
+                                if(x==0 && y==0 || x==1 && y==0
+                                        || x==2 && y==1
+                                        || x==0 && y==2 || x==1 && y==2 || x==2 && y==2) {
                                     assertTrue(nearAccess.get(cardinal));
+                                } else {
+                                    assertFalse(nearAccess.get(cardinal));
                                 }
-                                else {assertFalse(nearAccess.get(cardinal));}
                                 break;
                             case WEST:
-                                assertEquals(nearSquare.get(cardinal), arena.getSquareByCoordinate(x - 1, y));
+                                assertEquals(nearSquare.get(cardinal), this.arena.getSquareByCoordinate(x - 1, y));
                                 if(x==1 && y==0 || x==2 && y==0
                                         || x==2 && y==1 || x==3 && y==1
-                                        || x==1 && y==2 || x==2 && y==2 || x==3 && y==2){
+                                        || x==1 && y==2 || x==2 && y==2 || x==3 && y==2) {
                                     assertTrue(nearAccess.get(cardinal));
+                                } else {
+                                    assertFalse(nearAccess.get(cardinal));
                                 }
-                                else {assertFalse(nearAccess.get(cardinal));}
                                 break;
                             case NORTH:
-                                assertEquals(nearSquare.get(cardinal), arena.getSquareByCoordinate(x, y - 1));
+                                assertEquals(nearSquare.get(cardinal), this.arena.getSquareByCoordinate(x, y - 1));
                                 if(x==0 && y==1 || x==1 && y==1 || x==2 && y==1
-                                        || x==0 && y==2 || x==1 && y==2 || x==3 && y==2){
+                                        || x==0 && y==2 || x==1 && y==2 || x==3 && y==2) {
                                     assertTrue(nearAccess.get(cardinal));
+                                } else {
+                                    assertFalse(nearAccess.get(cardinal));
                                 }
-                                else {assertFalse(nearAccess.get(cardinal));}
                                 break;
                             case SOUTH:
-                                assertEquals(nearSquare.get(cardinal), arena.getSquareByCoordinate(x, y + 1));
+                                assertEquals(nearSquare.get(cardinal), this.arena.getSquareByCoordinate(x, y + 1));
                                 if(x==0 && y==0 || x==1 && y==0 || x==2 && y==0
-                                        || x==0 && y==1 || x==1 && y==1 || x==3 && y==1){
+                                        || x==0 && y==1 || x==1 && y==1 || x==3 && y==1) {
                                     assertTrue(nearAccess.get(cardinal));
+                                } else {
+                                    assertFalse(nearAccess.get(cardinal));
                                 }
-                                else {assertFalse(nearAccess.get(cardinal));}
                                 break;
                         }
                     }

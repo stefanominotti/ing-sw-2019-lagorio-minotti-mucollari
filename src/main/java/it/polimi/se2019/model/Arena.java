@@ -20,7 +20,7 @@ public class Arena {
     private List<Room> rooms;
 
     Arena(String filename){
-        rooms = null;
+        this.rooms = null;
         String path = ROOT + filename + ".json";
         ClassLoader classLoader = getClass().getClassLoader();
         InputStream inputStream = classLoader.getResourceAsStream(path);
@@ -32,9 +32,9 @@ public class Arena {
 
         this.number = gson.fromJson(jsonElement.get("number"), int.class);
         this.rooms = gson.fromJson(jsonElement.get("rooms"), roomType);
-        for (Room room : rooms){
+        for (Room room : rooms) {
             List<Square> squares = room.getSquares();
-            for(Square square : squares){
+            for(Square square : squares) {
                 square.setRoom(room);
                 square.setArena(this);
                 square.setNearbySquares();
@@ -43,13 +43,13 @@ public class Arena {
     }
 
     public List<Room> getRoomList() {
-        return rooms;
+        return this.rooms;
     }
 
-    public Square getSquareByCoordinate(int x, int y){
-        for(Room room : rooms){
-            for(Square square : room.getSquares()){
-                if(square.getX() == x && square.getY() == y){
+    public Square getSquareByCoordinate(int x, int y) {
+        for(Room room : this.rooms) {
+            for(Square square : room.getSquares()) {
+                if(square.getX() == x && square.getY() == y) {
                     return square;
                 }
             }
