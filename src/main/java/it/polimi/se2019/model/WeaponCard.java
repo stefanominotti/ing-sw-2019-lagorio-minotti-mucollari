@@ -17,14 +17,18 @@ public class WeaponCard {
     }
 
     public Player getOwner() {
-        return null;
+        return this.owner;
     }
 
     public boolean isReady() {
         return this.ready;
     }
 
-    void setOwner(Player owner) {}
+    void setOwner(Player owner) {
+        this.owner = owner;
+    }
 
-    void setReady(boolean ready) {}
+    void setReady(boolean ready) {
+        this.ready = ready;
+    }
 }

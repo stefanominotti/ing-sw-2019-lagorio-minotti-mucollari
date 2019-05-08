@@ -2,8 +2,7 @@ package it.polimi.se2019.model;
 
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
@@ -46,11 +45,21 @@ public class WeaponEffectTest {
     }
 
     @Test
-    public void getConstraintsTest() {
+    public void getEffectConstraintsTest() {
         WeaponEffect effect = Weapon.ZX_2.getAlternativeMode().get(0);
-        assertNull(effect.getConstraints());
+        assertEquals(Collections.emptySet(), effect.getEffectConstraints());
 
+        effect = Weapon.ROCKET_LAUNCHER.getPrimaryEffect().get(1);
+        assertNotNull(effect.getEffectConstraints());
+    }
 
-        System.out.println(Weapon.LOCK_RIFLE.getPrimaryEffect().get(0).getDescription());
+    @Test
+    public void getCostTest() {
+        WeaponEffect effect = Weapon.ROCKET_LAUNCHER.getSecondaryEffectTwo().get(0);
+        Map<AmmoType, Integer> cost = new EnumMap<>(AmmoType.class);
+        cost.put(AmmoType.BLUE, 0);
+        cost.put(AmmoType.RED, 0);
+        cost.put(AmmoType.YELLOW, 1);
+        assertEquals(cost, effect.getCost());
     }
 }

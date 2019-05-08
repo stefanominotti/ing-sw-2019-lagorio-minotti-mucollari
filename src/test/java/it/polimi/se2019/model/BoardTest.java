@@ -22,7 +22,7 @@ public class BoardTest {
     }
 
     @Test
-    public void getPlayesTest() {
+    public void getPlayersTest() {
         this.board.addPlayer(GameCharacter.BANSHEE);
         assertNotNull(this.board.getPlayers());
         assertEquals(1 , this.board.getPlayers().size());
@@ -36,18 +36,18 @@ public class BoardTest {
     }
 
     @Test
-    public void getValidCharactersTes() {
+    public void getValidCharactersTest() {
         this.board.addPlayer(GameCharacter.BANSHEE);
         this.board.setPlayerNickname(GameCharacter.BANSHEE, "testNickname");
         assertNotNull(this.board.getValidCharacters());
-        assertEquals( Arrays.asList(GameCharacter.BANSHEE), this.board.getValidCharacters());
+        assertEquals(Arrays.asList(GameCharacter.BANSHEE), this.board.getValidCharacters());
     }
 
     @Test
     public void getPlayerByCharacter() {
         this.board.addPlayer(GameCharacter.BANSHEE);
         assertNotNull(this.board.getValidCharacters());
-        assertEquals( this.board.getPlayers().get(0), this.board.getPlayerByCharacter(GameCharacter.BANSHEE));
+        assertEquals(this.board.getPlayers().get(0), this.board.getPlayerByCharacter(GameCharacter.BANSHEE));
     }
 
     @Test

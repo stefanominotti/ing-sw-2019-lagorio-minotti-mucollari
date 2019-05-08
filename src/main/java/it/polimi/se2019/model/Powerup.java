@@ -11,10 +11,10 @@ public class Powerup {
     }
 
     public PowerupType getType() {
-        return type;
+        return this.type;
     }
 
     public AmmoType getColor() {
-        return color;
+        return this.color;
     }
 }

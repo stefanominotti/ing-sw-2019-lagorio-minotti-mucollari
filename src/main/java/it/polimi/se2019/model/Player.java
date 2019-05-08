@@ -11,13 +11,13 @@ public class Player {
     private String name;
     private final GameCharacter character;
     private int score;
-    List<Player> damages;
-    List<Integer> killshotPoints;
-    Map<AmmoType, Integer> availableAmmos;
-    Map<Player, Integer> revengeMarks;
-    List<WeaponCard> weapons;
-    List<Powerup> powerups;
-    Square position;
+    private List<Player> damages;
+    private List<Integer> killshotPoints;
+    private Map<AmmoType, Integer> availableAmmos;
+    private Map<Player, Integer> revengeMarks;
+    private List<WeaponCard> weapons;
+    private List<Powerup> powerups;
+    private Square position;
 
     Player(GameCharacter character) {
         this.name = null;
@@ -79,8 +79,6 @@ public class Player {
         }
     }
 
-    void resetAfterDeath() {}
-
     void addWeapon(WeaponCard weapon) {
         this.weapons.add(weapon);
     }
@@ -99,12 +97,7 @@ public class Player {
 
     void addAmmos(Map<AmmoType, Integer> ammos) {
         for(Map.Entry<AmmoType, Integer> ammo : ammos.entrySet()) {
-            int newAmmos;
-            if(this.availableAmmos.containsKey(ammo.getKey())) {
-                newAmmos = this.availableAmmos.get(ammo.getKey()) + ammo.getValue();
-            } else {
-                newAmmos = ammo.getValue();
-            }
+            int newAmmos = this.availableAmmos.get(ammo.getKey()) + ammo.getValue();
             this.availableAmmos.put(ammo.getKey(), newAmmos);
         }
     }
@@ -144,5 +137,7 @@ public class Player {
         }
         this.revengeMarks.remove(player);
     }
+
+    void resetAfterDeath() {}
 }
 
