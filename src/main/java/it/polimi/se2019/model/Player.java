@@ -1,7 +1,5 @@
 package it.polimi.se2019.model;
 
-import it.polimi.se2019.model.messages.PlayerReadyMessage;
-
 import java.util.*;
 
 public class Player {
@@ -10,7 +8,6 @@ public class Player {
     public static final int MAX_RED_AMMOS = 3;
     public static final int MAX_YELLOW_AMMOS = 3;
 
-    private Board board;
     private String name;
     private final GameCharacter character;
     private int score;
@@ -22,9 +19,8 @@ public class Player {
     List<Powerup> powerups;
     Square position;
 
-    Player(Board board, GameCharacter character) {
+    Player(GameCharacter character) {
         this.name = null;
-        this.board = board;
         this.character = character;
         this.score = 0;
         this.damages = new ArrayList<>();
@@ -52,55 +48,101 @@ public class Player {
     }
 
     public List<Player> getDamages() {
-        return new ArrayList<>();
+        return new ArrayList<>(this.damages);
     }
 
     public List<WeaponCard> getWeapons() {
-        return new ArrayList<>();
+        return new ArrayList<>(this.weapons);
     }
 
     public Map<Player, Integer> getRevengeMarks() {
-        return new HashMap<>();
+        return new HashMap<>(this.revengeMarks);
     }
 
     public Map<AmmoType, Integer> getAvailableAmmos() {
-        return new EnumMap<>(AmmoType.class);
+        Map<AmmoType, Integer> returnMap = new EnumMap<>(AmmoType.class);
+        returnMap.putAll(this.availableAmmos);
+        return returnMap;
     }
 
     public List<Powerup> getPowerups() {
-        return new ArrayList<>();
+        return new ArrayList<>(this.powerups);
     }
 
     public Square getPosition() {
-        return null;
+        return this.position;
     }
 
-    void addDamages(Player player, int amount) {}
+    void addDamages(Player player, int amount) {
+        for(int i = 0; i < amount; i++) {
+            this.damages.add(player);
+        }
+    }
 
     void resetAfterDeath() {}
 
-    void addWeapon(WeaponCard weapon) {}
+    void addWeapon(WeaponCard weapon) {
+        this.weapons.add(weapon);
+    }
 
-    void removeWeapon(WeaponCard weapon) {}
+    void removeWeapon(WeaponCard weapon) {
+        this.weapons.remove(weapon);
+    }
 
     public int getScore() {
         return this.score;
     }
 
-    void raiseScore(int amount) {}
+    void raiseScore(int amount) {
+        this.score = this.score + amount;
+    }
 
-    void addAmmos(Map<AmmoType, Integer> ammos) {}
+    void addAmmos(Map<AmmoType, Integer> ammos) {
+        for(Map.Entry<AmmoType, Integer> ammo : ammos.entrySet()) {
+            int newAmmos;
+            if(this.availableAmmos.containsKey(ammo.getKey())) {
+                newAmmos = this.availableAmmos.get(ammo.getKey()) + ammo.getValue();
+            } else {
+                newAmmos = ammo.getValue();
+            }
+            this.availableAmmos.put(ammo.getKey(), newAmmos);
+        }
+    }
 
-    void removeAmmos(Map<AmmoType, Integer> ammos) {}
+    void removeAmmos(Map<AmmoType, Integer> ammos) {
+        for(Map.Entry<AmmoType, Integer> ammo : ammos.entrySet()) {
+            int newAmmos = this.availableAmmos.get(ammo.getKey()) - ammo.getValue();
+            this.availableAmmos.put(ammo.getKey(), newAmmos);
+        }
+    }
 
-    void addPowerup(Powerup powerup) {}
+    void addPowerup(Powerup powerup) {
+        this.powerups.add(powerup);
+    }
 
-    void removePowerup(Powerup powerup) {}
+    void removePowerup(Powerup powerup) {
+        this.powerups.remove(powerup);
+    }
 
-    void setPosition(Square square) {}
+    void setPosition(Square square) {
+        this.position = square;
+    }
 
-    void addRevengeMarks(Player player, int amount) {}
+    void addRevengeMarks(Player player, int amount) {
+        int newAmount;
+        if(this.revengeMarks.containsKey(player)) {
+            newAmount = this.revengeMarks.get(player) + amount;
+        } else {
+            newAmount = amount;
+        }
+        this.revengeMarks.put(player, newAmount);
+    }
 
-    void marksToDamages(Player player) {}
+    void marksToDamages(Player player) {
+        for(int i = 0; i < this.revengeMarks.get(player); i++) {
+            this.damages.add(player);
+        }
+        this.revengeMarks.remove(player);
+    }
 }
 

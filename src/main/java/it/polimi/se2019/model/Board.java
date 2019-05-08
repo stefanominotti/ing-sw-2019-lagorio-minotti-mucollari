@@ -74,7 +74,7 @@ public class Board extends Observable {
     }
 
     public void addPlayer(GameCharacter character) {
-        this.players.add(new Player(this, character));
+        this.players.add(new Player(character));
         notifyChanges(new PlayerCreatedMessage(character));
     }
 
