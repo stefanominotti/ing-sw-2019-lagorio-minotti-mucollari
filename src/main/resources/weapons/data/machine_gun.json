@@ -9,7 +9,7 @@
   "primaryEffect": [
     {
       "effectName": "effetto base",
-      "description:": "Scegli 1 o 2 bersagli che puoi vedere e dai 1 danno ad entrambi",
+      "description": "Scegli 1 o 2 bersagli che puoi vedere e dai 1 danno ad entrambi",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,

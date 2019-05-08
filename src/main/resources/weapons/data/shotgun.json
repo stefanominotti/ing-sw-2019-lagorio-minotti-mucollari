@@ -9,7 +9,7 @@
   "primaryEffect": [
     {
       "effectName": "modalità base",
-      "description:": "Dai 3 danni a 1 bersaglio nel quadrato in cui ti trovi. Se vuoi puoi muovere quel bersaglio di 1 quadrato.",
+      "description": "Dai 3 danni a 1 bersaglio nel quadrato in cui ti trovi. Se vuoi puoi muovere quel bersaglio di 1 quadrato.",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,

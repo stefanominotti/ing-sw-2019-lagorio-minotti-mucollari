@@ -9,7 +9,7 @@
   "primaryEffect": [
     {
       "effectName":"modalità base",
-      "description:": "Scegli un quadrato distante 1 movimento e possibilmente un secondo quadrato distante ancora 1 movimento nella stessa direzione. In ogni quadrato puoi scegliere 1 bersaglio e dargli 1 danno",
+      "description": "Scegli un quadrato distante 1 movimento e possibilmente un secondo quadrato distante ancora 1 movimento nella stessa direzione. In ogni quadrato puoi scegliere 1 bersaglio e dargli 1 danno",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
@@ -86,7 +86,7 @@
   ],
   "alternativeMode": [
     {
-      "description:": "Scegli 2 quadrati come prima. Dai 2 danni a chiunque sia nel primo quadrato e 1 danno a chiunque si trovi nel secondo quadrato.",
+      "description": "Scegli 2 quadrati come prima. Dai 2 danni a chiunque sia nel primo quadrato e 1 danno a chiunque si trovi nel secondo quadrato.",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,

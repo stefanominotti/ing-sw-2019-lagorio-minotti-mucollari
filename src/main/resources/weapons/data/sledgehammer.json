@@ -9,7 +9,7 @@
   "primaryEffect": [
     {
       "effectName": "modalità base",
-      "description:": "Dai 2 danni a 1 bersaglio nel quadrato in cui ti trovi",
+      "description": "Dai 2 danni a 1 bersaglio nel quadrato in cui ti trovi",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,

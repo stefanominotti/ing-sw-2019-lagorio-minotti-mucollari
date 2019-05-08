@@ -9,7 +9,7 @@
   "primaryEffect": [
     {
       "effectName": "modalità base",
-      "description:": "Dai 1 danno a ogni altro giocatore presente nel quadrato in cui ti trovi",
+      "description": "Dai 1 danno a ogni altro giocatore presente nel quadrato in cui ti trovi",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,

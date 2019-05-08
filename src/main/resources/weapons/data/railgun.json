@@ -9,7 +9,7 @@
   "primaryEffect": [
     {
       "effectName": "modalità base",
-      "description:": " Scegli una direzione cardinale e 1 bersaglio in quella direzione. Dagli 3 danni.",
+      "description": " Scegli una direzione cardinale e 1 bersaglio in quella direzione. Dagli 3 danni.",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,

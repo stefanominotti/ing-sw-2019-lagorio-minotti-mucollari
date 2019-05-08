@@ -1,5 +1,6 @@
 package it.polimi.se2019.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PositionConstraint {
@@ -19,6 +20,9 @@ public class PositionConstraint {
     }
 
     public List<String> getDistanceValues() {
+        if (distanceValues == null){
+            return new ArrayList<>();
+        }
         return this.distanceValues;
     }
 

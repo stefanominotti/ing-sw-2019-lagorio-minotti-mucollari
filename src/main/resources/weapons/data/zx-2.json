@@ -9,7 +9,7 @@
   "primaryEffect": [
     {
       "effectName":"modalità base",
-      "description:": "Dai 1 danno e 2 marchi a 1 bersaglio che puoi vedere.",
+      "description": "Dai 1 danno e 2 marchi a 1 bersaglio che puoi vedere.",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,

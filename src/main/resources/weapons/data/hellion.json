@@ -9,7 +9,7 @@
   "primaryEffect": [
     {
       "effectName": "modalità base",
-      "description:": "Dai 1 danno a 1 bersaglio che puoi vedere e distante almeno 1 movimento. Poi dai un marchio a quel bersaglio e a chiunque altro in quel quadrato",
+      "description": "Dai 1 danno a 1 bersaglio che puoi vedere e distante almeno 1 movimento. Poi dai un marchio a quel bersaglio e a chiunque altro in quel quadrato",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,

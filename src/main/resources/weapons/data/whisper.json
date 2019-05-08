@@ -9,7 +9,7 @@
   "primaryEffect": [
     {
       "effectName": "effetto",
-      "description:": "Dai 3 danni e 1 marchio a 1 bersaglio che puoi vedere; il bersaglio deve essere ad almeno 2 movimenti da te",
+      "description": "Dai 3 danni e 1 marchio a 1 bersaglio che puoi vedere; il bersaglio deve essere ad almeno 2 movimenti da te",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,

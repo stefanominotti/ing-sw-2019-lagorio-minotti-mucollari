@@ -9,7 +9,7 @@
   "primaryEffect": [
     {
       "effectName": "effetto base",
-      "description:": "Dai 2 danni a 1 bersaglio che puoi vedere",
+      "description": "Dai 2 danni a 1 bersaglio che puoi vedere",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,

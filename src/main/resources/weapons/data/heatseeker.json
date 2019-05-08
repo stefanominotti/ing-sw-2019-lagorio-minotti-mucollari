@@ -9,7 +9,7 @@
   "primaryEffect": [
     {
       "effectName": "effetto",
-      "description:": "Scegli un bersaglio che non puoi vedere e dagli 3 danni",
+      "description": "Scegli un bersaglio che non puoi vedere e dagli 3 danni",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,

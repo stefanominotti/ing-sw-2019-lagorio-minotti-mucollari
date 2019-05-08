@@ -9,7 +9,7 @@
   "primaryEffect": [
     {
       "effectName":"modalità base",
-      "description:": "Muovi un bersaglio di 0, 1 o 2 quadrati fino a un quadrato che puoi vedere e dagli 1 danno.",
+      "description": "Muovi un bersaglio di 0, 1 o 2 quadrati fino a un quadrato che puoi vedere e dagli 1 danno.",
       "type": "MOVE",
       "cost" : {
         "BLUE": 0,

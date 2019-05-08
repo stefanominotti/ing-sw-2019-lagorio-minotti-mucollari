@@ -9,7 +9,7 @@
   "primaryEffect": [
     {
       "effectName": "modalità base",
-      "description:": "Scegli 1 bersaglio in un quadrato distante esattamente 1 movimento. Muoviti in quel quadrato e dai al bersaglio 1 danno e 2 marchi.",
+      "description": "Scegli 1 bersaglio in un quadrato distante esattamente 1 movimento. Muoviti in quel quadrato e dai al bersaglio 1 danno e 2 marchi.",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,

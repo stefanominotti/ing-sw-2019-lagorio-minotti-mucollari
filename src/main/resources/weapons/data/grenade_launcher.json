@@ -9,7 +9,7 @@
   "primaryEffect": [
     {
       "effectName":"effetto base",
-      "description:": "Dai 1 danno a 1 bersaglio che puoi vedere. Poi puoi muovere il bersaglio di 1 quadrato.",
+      "description": "Dai 1 danno a 1 bersaglio che puoi vedere. Poi puoi muovere il bersaglio di 1 quadrato.",
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,

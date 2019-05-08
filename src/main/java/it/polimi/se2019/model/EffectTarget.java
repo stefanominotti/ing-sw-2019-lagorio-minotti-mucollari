@@ -36,14 +36,22 @@ public class EffectTarget {
     }
 
     public List<String> getAmount() {
-        return new ArrayList<>();
+        return new ArrayList<>(this.amount);
     }
 
     public List<PositionConstraint> getPositionConstraints() {
-        return new ArrayList<>();
-    }
+        if (positionConstraints == null){
+            return new ArrayList<>();
+        }
+            return new ArrayList<>(this.positionConstraints);
+        }
 
-    public List<PositionConstraint> getAfterPositionConstraints() { return new ArrayList<>(); }
+    public List<PositionConstraint> getAfterPositionConstraints() {
+        if (afterPositionConstraints == null){
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(this.afterPositionConstraints);
+    }
 
     public Set<TargetConstraint> getTargetConstraints() {
         return EnumSet.copyOf(this.targetConstraints);
