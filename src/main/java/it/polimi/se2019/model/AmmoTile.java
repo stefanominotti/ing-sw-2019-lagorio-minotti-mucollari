@@ -1,5 +1,6 @@
 package it.polimi.se2019.model;
 
+import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -12,7 +13,7 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.Scanner;
 
-public class AmmoTile {
+public class AmmoTile implements Serializable {
 
     private static final String ROOT = "arenas/data/arena_";
     private final boolean powerup;

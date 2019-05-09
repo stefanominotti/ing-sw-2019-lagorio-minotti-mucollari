@@ -1,9 +1,7 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.client.AbstractClient;
-import it.polimi.se2019.model.Coordinates;
-import it.polimi.se2019.model.GameCharacter;
-import it.polimi.se2019.model.RoomColor;
+import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.messages.*;
 
 import java.rmi.RemoteException;
@@ -69,6 +67,9 @@ public abstract class View {
                 break;
             case "MasterChangedMessage":
                 update((MasterChangedMessage) message);
+                break;
+            case "ArenaFilledMessage":
+                update((ArenaFilledMessage) message);
                 break;
         }
     }
@@ -226,6 +227,48 @@ public abstract class View {
         }
         this.board = new BoardView(message.getSkulls(), squares);
         showMessage(builder.toString());
+    }
+
+    private void update(ArenaFilledMessage message) {
+        for(Map.Entry<Coordinates, AmmoTile> square: message.getAmmos().entrySet()) {
+            this.board.getSquareByCoordinates(square.getKey().getX(), square.getKey().getY())
+                    .setAvailableAmmoTile(square.getValue());
+        }
+        for(Map.Entry<Coordinates, List<Weapon>> store: message.getStores().entrySet()) {
+            SquareView square = this.board.getSquareByCoordinates(store.getKey().getX(), store.getKey().getY());
+            for(Weapon weapon : store.getValue()) {
+                square.addStoreWeapon(weapon);
+            }
+        }
+        showMessage("Ammo tiles and weapons placed:");
+        StringBuilder builder = new StringBuilder();
+        for(SquareView square : this.board.getSquares()) {
+            String text = "[" + square.getX() + ", " + square.getY() + "], " + square.getColor();
+            builder.append(text);
+            if(!square.isSpawn()) {
+                builder.append( "\nTile: [");
+                if(square.getAvailableAmmoTile().hasPowerup()) {
+                    builder.append("POWERUP, ");
+                }
+                for(Map.Entry<AmmoType, Integer> ammos : square.getAvailableAmmoTile().getAmmos().entrySet()) {
+                    if(ammos.getValue() != 0) {
+                        String toAppend = ammos.getKey() + "x" + ammos.getValue() + ", ";
+                        builder.append(toAppend);
+                    }
+                }
+            } else {
+                builder.append( "\nStore: [");
+                for(Weapon weapon : square.getStore()) {
+                    String toAppend = weapon + ", ";
+                    builder.append(toAppend);
+                }
+            }
+            builder.setLength(builder.length() - 1);
+            builder.append("]");
+            showMessage(builder.toString());
+            builder = new StringBuilder();
+        }
+
     }
 
     public abstract void showMessage(String message);

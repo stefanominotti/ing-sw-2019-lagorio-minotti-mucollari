@@ -21,13 +21,22 @@ public class Room {
         return new ArrayList<>(this.squares);
     }
 
-    public boolean hasSpawn() {
+    boolean hasSpawn() {
         for(Square square : this.squares) {
             if (square.isSpawn()) {
                 return true;
             }
         }
         return false;
+    }
+
+    Square getSpawn() {
+        for(Square square : this.squares) {
+            if(square.isSpawn()) {
+                return square;
+            }
+        }
+        throw new IllegalStateException("This room doesn't have a spawn point");
     }
 
 }

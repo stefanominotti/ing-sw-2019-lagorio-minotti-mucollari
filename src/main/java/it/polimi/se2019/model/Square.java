@@ -28,10 +28,10 @@ public class Square {
         this.nearbyAccessibility = new EnumMap<>(nearbyAccessibility);
         this.availableAmmoTile = null;
         this.activePlayers = new ArrayList<>();
-        if (spawn) {
-            this.weaponsStore = null;
-        } else {
+        if(spawn) {
             this.weaponsStore = new ArrayList<>();
+        } else {
+            this.weaponsStore = null;
         }
     }
 

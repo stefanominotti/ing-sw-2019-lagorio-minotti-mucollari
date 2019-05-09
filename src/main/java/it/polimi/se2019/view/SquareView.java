@@ -1,8 +1,6 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.model.AmmoTile;
-import it.polimi.se2019.model.GameCharacter;
-import it.polimi.se2019.model.RoomColor;
+import it.polimi.se2019.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +13,18 @@ public class SquareView {
     private RoomColor color;
     private List<GameCharacter> activePlayers;
     private AmmoTile availableAmmoTile;
+    private List<Weapon> store;
 
     SquareView(int x, int y, RoomColor color, boolean spawn) {
         this.x = x;
         this.y = y;
         this.spawn = spawn;
         this.color = color;
+        if(spawn) {
+            this.store = new ArrayList<>();
+        } else {
+            this.store = null;
+        }
     }
 
     int getX() {
@@ -40,16 +44,30 @@ public class SquareView {
     }
 
     AmmoTile getAvailableAmmoTile() {
-        return null;
+        return this.availableAmmoTile;
     }
 
     List<GameCharacter> getActivePlayers() {
-        return new ArrayList<>();
+        return new ArrayList<>(this.activePlayers);
+    }
+
+    void addStoreWeapon(Weapon weapon) {
+        this.store.add(weapon);
+    }
+
+    List<Weapon> getStore() {
+        return new ArrayList<>(this.store);
+    }
+
+    RoomColor getColor() {
+        return this.color;
     }
 
     void addActivePlayer(GameCharacter player) {}
 
     void removeActivePlayer(GameCharacter player) {}
 
-    void setAvailableAmmoTile(AmmoTile tile) {}
+    void setAvailableAmmoTile(AmmoTile tile) {
+        this.availableAmmoTile = tile;
+    }
 }

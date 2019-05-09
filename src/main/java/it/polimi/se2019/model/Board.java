@@ -11,11 +11,13 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static it.polimi.se2019.model.GameState.*;
+import static java.util.Map.Entry.comparingByValue;
+import static java.util.stream.Collectors.toMap;
 
 public class Board extends Observable {
 
     private static final long STARTTIME = 10L*1000L;
-    private static final int MAX_WEAPONSTORE = 3;
+    private static final int MAX_WEAPONS_STORE = 3;
 
     private int skulls;
     private Arena arena;
@@ -185,10 +187,6 @@ public class Board extends Observable {
         return this.skulls;
     }
 
-    public List<Player> getKillshotTrack() {
-        return new ArrayList<>();
-    }
-
     public void setSkulls(int skulls){
         this.skulls = skulls;
         notifyChanges(new SkullsSetMessage(getValidPlayers().get(0).getCharacter()));
@@ -208,6 +206,32 @@ public class Board extends Observable {
             }
         }
         notifyChanges(new GameSetMessage(this.skulls, Integer.parseInt(arenaNumber), arenaColor, arenaSpawn));
+        finalizeGameSetup();
+    }
+
+    private void finalizeGameSetup() {
+        fillAmmosDeck();
+        fillWeaponsDeck();
+        fillPowerupsDeck();
+        fillWeaponStores();
+        fillAmmoTiles();
+        Map<Coordinates, AmmoTile> ammos = new HashMap<>();
+        Map<Coordinates, List<Weapon>> stores = new HashMap<>();
+        for(Room room : this.arena.getRoomList()) {
+            for(Square square : room.getSquares()) {
+                Coordinates coordinates = new Coordinates(square.getX(), square.getY());
+                if(square.isSpawn()) {
+                    List<Weapon> weapons = new ArrayList<>();
+                    for(WeaponCard card : square.getWeaponsStore()) {
+                        weapons.add(card.getWeaponType());
+                    }
+                    stores.put(coordinates, weapons);
+                } else {
+                    ammos.put(coordinates, square.getAvailableAmmoTile());
+                }
+            }
+        }
+        notifyChanges(new ArenaFilledMessage(ammos, stores));
     }
 
     protected void fillWeaponsDeck() {
@@ -218,7 +242,7 @@ public class Board extends Observable {
     }
 
     protected void fillPowerupsDeck() {
-        if(this.powerupsDiscardPile.size() == 0) {
+        if(this.powerupsDiscardPile.isEmpty()) {
             for(PowerupType type : PowerupType.values()) {
                 for (AmmoType color : AmmoType.values()) {
                     for(int i = 0; i < 2; i++) {
@@ -235,7 +259,7 @@ public class Board extends Observable {
     }
 
     protected void fillAmmosDeck() {
-        if(this.ammosDiscardPile.size() == 0) {
+        if(this.ammosDiscardPile.isEmpty()) {
             String path = "ammotiles/data/ammotile_";
             int ammosNumber;
             ClassLoader classLoader = getClass().getClassLoader();
@@ -264,7 +288,7 @@ public class Board extends Observable {
                 if(!square.isSpawn()) {
                     continue;
                 }
-                while (square.getWeaponsStore().size() < MAX_WEAPONSTORE){
+                while(square.getWeaponsStore().size() < MAX_WEAPONS_STORE){
                     square.addWeapon(this.weaponsDeck.get(0));
                     this.weaponsDeck.remove(0);
                 }
@@ -272,7 +296,20 @@ public class Board extends Observable {
         }
     }
 
-    public void handleEndTurn() {}
+    public void fillAmmoTiles() {
+        for(Room room : this.arena.getRoomList()) {
+            for(Square square : room.getSquares()) {
+                if(square.isSpawn()) {
+                    continue;
+                }
+                if(square.getAvailableAmmoTile() != null) {
+                    continue;
+                }
+                square.addAmmoTile(this.ammosDeck.get(0));
+                this.ammosDeck.remove(0);
+            }
+        }
+    }
 
     public void removePowerup(Player player, Powerup powerup) {
         player.removePowerup(powerup);
@@ -316,7 +353,36 @@ public class Board extends Observable {
         player.setPosition(square);
     }
 
+    public void respawnPlayer(Player player, Room room) {
+        player.setPosition(room.getSpawn());
+    }
+
+    public boolean verifyGameFinished() {
+        return this.skulls == 0;
+    }
+
+    public void giveKillshotTrack() {
+        Map<Player, Integer> killshotRank = new HashMap<>();
+        for(Player p : this.players) {
+            killshotRank.put(p, 0);
+        }
+        for(Player p : this.killshotTrack) {
+            int value = killshotRank.get(p) + 1;
+            killshotRank.put(p, 1);
+        }
+        Map<Player, Integer> sorted = killshotRank
+                .entrySet()
+                .stream()
+                .sorted(comparingByValue())
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
+        List<Player> rank = new ArrayList<>(sorted.keySet());
+        List<Integer> points = Arrays.asList(8, 6, 4, 2, 1, 1);
+        for(int i = 0; i < 5; i++) {
+            rank.get(i).raiseScore(points.get(i));
+        }
+    }
+
     public void handleDeadPlayer(Player player) {}
 
-    public void respawnPlayer(Player player, Room room) {}
+    public void handleEndTurn() {}
 }

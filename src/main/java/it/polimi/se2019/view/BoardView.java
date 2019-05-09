@@ -8,7 +8,6 @@ public class BoardView {
 
     private int skulls;
     private List<SquareView> squares;
-    private Map<RoomColor, List<Weapon>> shops;
     private List<GameCharacter> killshotTrack;
     private boolean emptyWeaponsDeck;
 
@@ -17,7 +16,6 @@ public class BoardView {
         this.skulls = skulls;
         this.squares = squares;
         this.emptyWeaponsDeck = false;
-        this.shops = new EnumMap<>(RoomColor.class);
     }
 
     public int getSkulls() {
@@ -25,7 +23,16 @@ public class BoardView {
     }
 
     public List<SquareView> getSquares() {
-        return new ArrayList<>();
+        return new ArrayList<>(this.squares);
+    }
+
+    public SquareView getSquareByCoordinates(int x, int y) {
+        for(SquareView square : this.squares) {
+            if(square.getX() == x && square.getY() == y) {
+                return square;
+            }
+        }
+        throw new IllegalStateException("No square with given coordinates");
     }
 
     public List<PlayerBoard> getEnemyBoards() {

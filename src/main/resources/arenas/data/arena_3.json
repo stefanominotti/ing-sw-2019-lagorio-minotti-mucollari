@@ -24,7 +24,8 @@
             "NORTH": false,
             "SOUTH": true
           },
-          "spawn": true
+          "spawn": true,
+          "weaponsStore": []
         }
       ]
     },
@@ -51,7 +52,8 @@
             "NORTH": true,
             "SOUTH": true
           },
-          "spawn": true
+          "spawn": true,
+          "weaponsStore": []
         }
       ]
     },
@@ -78,7 +80,8 @@
             "NORTH": true,
             "SOUTH": false
           },
-          "spawn": true
+          "spawn": true,
+          "weaponsStore": []
         },
         {
           "x": 2,
