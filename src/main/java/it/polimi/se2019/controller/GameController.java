@@ -49,9 +49,13 @@ public class GameController implements Observer {
         this.model.handleDisconnection(message.getCharacter());
     }
 
-    private void update(SkullsMessage message){ this.model.setSkulls(message.getSkulls()); }
+    private void update(SkullsMessage message) {
+        this.model.setSkulls(message.getSkulls());
+    }
 
-    private void update(ArenaMessage message){ this.model.createArena(message.getArena()); }
+    private void update(ArenaMessage message) {
+        this.model.createArena(message.getArena());
+    }
 
     public void update(CardPressedEvent event) {}
 

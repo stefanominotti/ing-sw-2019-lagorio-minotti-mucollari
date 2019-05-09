@@ -41,10 +41,10 @@ public class VirtualView extends Observable implements Observer {
                 case "StartGameSetupMessage":
                     update((StartGameSetupMessage) message);
                     break;
-                case "SkullsSettedMessage":
+                case "SkullsSetMessage":
                     updateOne((SingleReceiverMessage) message);
                     break;
-                case "ArenaCreatedMessage":
+                case "GameSetMessage":
                     updateAll((Message) message);
                     break;
                 case "GameSetupInterruptedMessage":

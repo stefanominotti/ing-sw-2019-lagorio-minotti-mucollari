@@ -58,11 +58,11 @@ public abstract class View {
             case "GameSetupTimerResetMessage":
                 update((GameSetupTimerResetMessage) message);
                 break;
-            case "SkullsSettedMessage":
-                update((SkullsSettedMessage) message);
+            case "SkullsSetMessage":
+                update((SkullsSetMessage) message);
                 break;
-            case "ArenaCreatedMessage":
-                update((ArenaCreatedMessage) message);
+            case "GameSetMessage":
+                update((GameSetMessage) message);
                 break;
             case "GameSetupInterruptedMessage":
                 update((GameSetupInterruptedMessage) message);
@@ -93,12 +93,12 @@ public abstract class View {
                 this.client.send(new SkullsMessage(skulls));
                 break;
             case SETTINGARENA:
-                if(input.equals("1") || input.equals("2") || input.equals("3") || input.equals("4")){
+                if(input.equals("1") || input.equals("2") || input.equals("3") || input.equals("4")) {
                     this.client.send(new ArenaMessage(input));
                     break;
                 }
                 else{
-                    showMessage("Arena must be one of {1, 2, 3, 4}");
+                    showMessage("Arena must be one of {1, 2, 3, 4}, retry:");
                     break;
                 }
         }
@@ -106,7 +106,8 @@ public abstract class View {
 
     private void update(MasterChangedMessage message) {
         if (message.getCharacter() == this.character) {
-            showMessage("Master disconnected, you are the new master");
+            showMessage("Master disconnected, you are the new master. Set skull number for the game:");
+            this.state = SETTINGSKULLS;
         } else {
             showMessage("Master disconnected, the new master is setting up the game");
         }
@@ -202,20 +203,29 @@ public abstract class View {
             this.state = WAITINGSETUP;
         }
     }
-    private void update(SkullsSettedMessage message) {
-        showMessage("set arena {1, 2, 3, 4}:");
+    private void update(SkullsSetMessage message) {
+        showMessage("OK, now select the arena between {1, 2, 3, 4}:");
         this.state = SETTINGARENA;
     }
 
-    private void update(ArenaCreatedMessage message){
-        showMessage("Arena is :");
-        for(Coordinates square : message.getArenaColor().keySet()){
-            int x = square.getX();
-            int y = square.getY();
-            RoomColor color = message.getArenaColor().get(square);
+    private void update(GameSetMessage message) {
+        showMessage("Master choose " + message.getSkulls() + " skulls and arena number " + message.getArenaNumber());
+        showMessage("This is the arena:");
+        StringBuilder builder = new StringBuilder();
+        List<SquareView> squares = new ArrayList<>();
+        for(Coordinates square : message.getArenaColors().keySet()){
+            RoomColor color = message.getArenaColors().get(square);
             Boolean spawn = message.getArenaSpawn().get(square);
-            showMessage("Square ["+square.getX()+","+square.getY()+"] is "+color+" spawn : "+spawn);
+            squares.add(new SquareView(square.getX(), square.getY(), color, spawn));
+            String text = "Square [" + square.getX() + ", " + square.getY() + "] is " + color;
+            builder.append(text);
+            if(spawn) {
+                builder.append(" [Spawn]");
+            }
+            builder.append("\n");
         }
+        this.board = new BoardView(message.getSkulls(), squares);
+        showMessage(builder.toString());
     }
 
     public abstract void showMessage(String message);

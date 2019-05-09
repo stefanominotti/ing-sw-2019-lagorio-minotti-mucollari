@@ -12,9 +12,10 @@ public class BoardView {
     private List<GameCharacter> killshotTrack;
     private boolean emptyWeaponsDeck;
 
-    BoardView(int skulls) {
+    BoardView(int skulls, List<SquareView> squares) {
         this.killshotTrack = new ArrayList<>();
         this.skulls = skulls;
+        this.squares = squares;
         this.emptyWeaponsDeck = false;
         this.shops = new EnumMap<>(RoomColor.class);
     }

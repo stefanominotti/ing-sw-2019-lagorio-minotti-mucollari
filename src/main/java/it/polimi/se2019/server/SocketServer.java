@@ -8,7 +8,7 @@ import java.io.IOException;
 
 class SocketServer {
 
-    private static int PORT = 9001;
+    private static int PORT = 12345;
     private Server server;
 
     SocketServer(Server server) {

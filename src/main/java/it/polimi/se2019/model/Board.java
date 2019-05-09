@@ -138,6 +138,7 @@ public class Board extends Observable {
     public void handleDisconnection(GameCharacter player) {
         if (getPlayerByCharacter(player).getNickname() == null) {
             this.players.remove(getPlayerByCharacter(player));
+            notifyChanges(new ClientDisconnectedMessage(player, true));
             return;
         }
         switch(this.gameState) {
@@ -176,7 +177,7 @@ public class Board extends Observable {
     }
 
     public int getSkulls() {
-        return skulls;
+        return this.skulls;
     }
 
     public List<Player> getKillshotTrack() {
@@ -185,7 +186,7 @@ public class Board extends Observable {
 
     public void setSkulls(int skulls){
         this.skulls = skulls;
-        notifyChanges(new SkullsSettedMessage(getValidPlayers().get(0).getCharacter()));
+        notifyChanges(new SkullsSetMessage(getValidPlayers().get(0).getCharacter()));
     }
 
     public void createArena(String arenaNumber) {
@@ -201,8 +202,7 @@ public class Board extends Observable {
                 arenaSpawn.put(coordinates, spawn);
             }
         }
-        notifyChanges(new ArenaCreatedMessage(arenaColor, arenaSpawn));
-
+        notifyChanges(new GameSetMessage(this.skulls, Integer.parseInt(arenaNumber), arenaColor, arenaSpawn));
     }
 
     protected void fillWeaponsDeck() {}
