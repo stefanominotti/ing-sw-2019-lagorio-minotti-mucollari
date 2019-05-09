@@ -15,7 +15,9 @@ public class AmmoTile {
     }
 
     public Map<AmmoType, Integer> getAmmos() {
-        return new EnumMap<>(AmmoType.class);
+        Map<AmmoType, Integer> returnMap = new EnumMap<>(AmmoType.class);
+        returnMap.putAll(this.ammos);
+        return returnMap;
     }
 
     public boolean hasPowerup() {

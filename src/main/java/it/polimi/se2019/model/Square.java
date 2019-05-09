@@ -2,6 +2,8 @@ package it.polimi.se2019.model;
 
 import java.util.*;
 
+import static java.lang.Math.abs;
+
 public class Square {
 
     private final int x;
@@ -92,15 +94,15 @@ public class Square {
     }
 
     public List<WeaponCard> getWeaponsStore() {
-        return new ArrayList<>();
+        return new ArrayList<>(this.weaponsStore);
     }
 
     public AmmoTile getAvailableAmmoTile() {
-        return null;
+        return this.availableAmmoTile;
     }
 
     public List<Player> getActivePlayers() {
-        return new ArrayList<>();
+        return new ArrayList<>(this.activePlayers);
     }
 
     public Map<CardinalPoint, Boolean> getNearbyAccessibility() { return new EnumMap<>(this.nearbyAccessibility); }
@@ -112,22 +114,45 @@ public class Square {
     }
 
     public int distanceFrom(Square square) {
-        return 0;
+        return abs(this.x - square.getX()) + abs(this.y - square.getY());
     }
 
     public boolean canSee(Square square) {
-        return true;
+        if(square.getRoom() == this.room) {
+            return true;
+        }
+        for(CardinalPoint point : CardinalPoint.values()) {
+            if(!this.nearbyAccessibility.get(point)) {
+                continue;
+            }
+            if(this.nearbySquares.get(point).getRoom() == square.getRoom()) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    void addPlayer(Player player) {}
+    void addPlayer(Player player) {
+        this.activePlayers.add(player);
+    }
 
-    void removePlayer(Player player) {}
+    void removePlayer(Player player) {
+        this.activePlayers.remove(player);
+    }
 
-    void addAmmoTile(AmmoTile tile) {}
+    void addAmmoTile(AmmoTile tile) {
+        this.availableAmmoTile = tile;
+    }
 
-    void removeAmmoTile(AmmoTile tile) {}
+    void removeAmmoTile() {
+        this.availableAmmoTile = null;
+    }
 
-    void addWeapon(WeaponCard weapon) {}
+    void addWeapon(WeaponCard weapon) {
+        this.weaponsStore.add(weapon);
+    }
 
-    void removeWeapon(WeaponCard weapon) {}
+    void removeWeapon(WeaponCard weapon) {
+        this.weaponsStore.remove(weapon);
+    }
 }

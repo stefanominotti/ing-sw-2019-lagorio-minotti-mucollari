@@ -20,7 +20,7 @@ public class PositionConstraint {
     }
 
     public List<String> getDistanceValues() {
-        if (distanceValues == null){
+        if (this.distanceValues == null){
             return new ArrayList<>();
         }
         return this.distanceValues;
