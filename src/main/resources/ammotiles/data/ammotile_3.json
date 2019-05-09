@@ -1,0 +1,11 @@
+{
+	"qty": 2,
+	"ammo":{
+		"powerup": true,
+		"ammos": {
+			"BLUE": 2,
+			"RED": 0,
+			"YELLOW": 0
+		} 
+	}
+}
