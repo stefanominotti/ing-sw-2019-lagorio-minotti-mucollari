@@ -15,6 +15,7 @@ import static it.polimi.se2019.model.GameState.*;
 public class Board extends Observable {
 
     private static final long STARTTIME = 10L*1000L;
+    private static final int MAX_WEAPONSTORE = 3;
 
     private int skulls;
     private Arena arena;
@@ -252,15 +253,45 @@ public class Board extends Observable {
 
     }
 
+    public void fillWeaponStores() {
+        for(Room room : this.arena.getRoomList()) {
+            for(Square square : room.getSquares()) {
+                if(!square.isSpawn()) {
+                    continue;
+                }
+                while (square.getWeaponsStore().size() < MAX_WEAPONSTORE){
+                    square.addWeapon(this.weaponsDeck.get(0));
+                    this.weaponsDeck.remove(0);
+                }
+            }
+        }
+    }
+
     public void handleEndTurn() {}
 
-    public void removePowerup(Player player, Powerup powerup) {}
+    public void removePowerup(Player player, Powerup powerup) {
+        player.removePowerup(powerup);
+        this.powerupsDiscardPile.add(powerup);
+    }
 
-    public void drawPowerup(Player player) {}
+    public void drawPowerup(Player player) {
+        Powerup powerup = this.powerupsDeck.get(0);
+        player.addPowerup(powerup);
+        this.powerupsDeck.remove(powerup);
+    }
 
-    public void changeWeapon(Player player, WeaponCard oldCard, WeaponCard newCard) {}
+    public void changeWeapon(Player player, WeaponCard oldCard, WeaponCard newCard) {
+        player.removeWeapon(oldCard);
+        player.getPosition().removeWeapon(newCard);
+        player.getPosition().addWeapon(oldCard);
+        player.addWeapon(newCard);
+    }
 
-    public void giveWeapon(Player player, WeaponCard weapon) {}
+    public void giveWeapon(Player player, WeaponCard weapon) {
+        player.getPosition().removeWeapon(weapon);
+        player.addWeapon(weapon);
+        this.fillWeaponStores();
+    }
 
     public void giveAmmoTile(Player player, AmmoTile tile) {
         if(tile.hasPowerup() && player.getPowerupsNumber() < 3) {
@@ -270,9 +301,15 @@ public class Board extends Observable {
         this.ammosDiscardPile.add(tile);
     }
 
-    public void useAmmos(Player player, Map<AmmoType, Integer> usedAmmos) {}
+    public void useAmmos(Player player, Map<AmmoType, Integer> usedAmmos) {
+        player.removeAmmos(usedAmmos);
+    }
 
-    public void movePlayer(Player player, Square square) {}
+    public void movePlayer(Player player, Square square) {
+        player.getPosition().removePlayer(player);
+        square.addPlayer(player);
+        player.setPosition(square);
+    }
 
     public void handleDeadPlayer(Player player) {}
 

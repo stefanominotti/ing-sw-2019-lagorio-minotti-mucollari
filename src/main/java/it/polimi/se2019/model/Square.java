@@ -155,4 +155,5 @@ public class Square {
     void removeWeapon(WeaponCard weapon) {
         this.weaponsStore.remove(weapon);
     }
+
 }
