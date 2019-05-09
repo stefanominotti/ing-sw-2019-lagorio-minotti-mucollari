@@ -210,7 +210,12 @@ public class Board extends Observable {
         notifyChanges(new GameSetMessage(this.skulls, Integer.parseInt(arenaNumber), arenaColor, arenaSpawn));
     }
 
-    protected void fillWeaponsDeck() {}
+    protected void fillWeaponsDeck() {
+        for(Weapon weapon : Weapon.values()) {
+            this.weaponsDeck.add(new WeaponCard(weapon));
+        }
+        Collections.shuffle(this.weaponsDeck);
+    }
 
     protected void fillPowerupsDeck() {
         if(this.powerupsDiscardPile.size() == 0) {

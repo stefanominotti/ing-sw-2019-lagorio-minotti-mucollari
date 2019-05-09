@@ -105,9 +105,13 @@ public class Square {
         return new ArrayList<>(this.activePlayers);
     }
 
-    public Map<CardinalPoint, Boolean> getNearbyAccessibility() { return new EnumMap<>(this.nearbyAccessibility); }
+    public Map<CardinalPoint, Boolean> getNearbyAccessibility() {
+        return new EnumMap<>(this.nearbyAccessibility);
+    }
 
-    public Map<CardinalPoint, Square> getNearbySquares() { return new EnumMap<>(this.nearbySquares); }
+    public Map<CardinalPoint, Square> getNearbySquares() {
+        return new EnumMap<>(this.nearbySquares);
+    }
 
     public Room getRoom() {
         return this.room;
