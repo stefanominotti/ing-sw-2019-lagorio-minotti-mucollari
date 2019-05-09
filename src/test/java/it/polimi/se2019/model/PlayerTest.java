@@ -118,4 +118,14 @@ public class PlayerTest {
         this.player.removePowerup(powerup);
         assertEquals(new ArrayList<Powerup>(), this.player.getPowerups());
     }
+    @Test
+    public void getPowerupsNumberTest() {
+        Powerup powerup = new Powerup(PowerupType.NEWTON, AmmoType.YELLOW);
+        Powerup powerup1 = new Powerup(PowerupType.TAGBACK_GRENADE, AmmoType.BLUE);
+        int number = 2;
+        this.player.addPowerup(powerup);
+        this.player.addPowerup(powerup1);
+        assertEquals(number, player.getPowerups().size());
+        assertEquals(number, player.getPowerupsNumber());
+    }
 }
