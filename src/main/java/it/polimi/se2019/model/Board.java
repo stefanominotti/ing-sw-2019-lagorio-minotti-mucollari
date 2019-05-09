@@ -1,7 +1,11 @@
 package it.polimi.se2019.model;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import it.polimi.se2019.model.messages.*;
 
+import java.io.InputStream;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -207,9 +211,46 @@ public class Board extends Observable {
 
     protected void fillWeaponsDeck() {}
 
-    protected void fillPowerupsDeck() {}
+    protected void fillPowerupsDeck() {
+        if(this.powerupsDiscardPile.size() == 0) {
+            for(PowerupType type : PowerupType.values()) {
+                for (AmmoType color : AmmoType.values()) {
+                    for(int i = 0; i < 2; i++) {
+                        this.powerupsDeck.add(new Powerup(type, color));
+                    }
+                }
+            }
+            Collections.shuffle(this.powerupsDeck);
+            return;
+        }
+        this.powerupsDeck = this.powerupsDiscardPile;
+        this.powerupsDiscardPile = new ArrayList<>();
+        Collections.shuffle(powerupsDeck);
+    }
 
-    protected void fillAmmosDeck() {}
+    protected void fillAmmosDeck() {
+        if(this.ammosDiscardPile.size() == 0) {
+            String path = "ammotiles/data/ammotile_";
+            int ammosNumber;
+            ClassLoader classLoader = getClass().getClassLoader();
+            Gson gson = new Gson();
+            for(ammosNumber = 1; ammosNumber < 13; ammosNumber++) {
+                InputStream inputStream = classLoader.getResourceAsStream(path + ammosNumber + ".json");
+                String jsonString = new Scanner(inputStream, "UTF-8").useDelimiter("\\A").next();
+                JsonParser parser = new JsonParser();
+                JsonObject jsonElement = (JsonObject) parser.parse(jsonString);
+                for(int j = gson.fromJson(jsonElement.get("qty"), Integer.class); j > 0; j--){
+                    this.ammosDeck.add(gson.fromJson(jsonElement.get("ammo"), AmmoTile.class));
+                }
+            }
+            Collections.shuffle(this.ammosDeck);
+            return;
+        }
+        this.ammosDeck = this.ammosDiscardPile;
+        this.ammosDiscardPile = new ArrayList<>();
+        Collections.shuffle(this.ammosDeck);
+
+    }
 
     public void handleEndTurn() {}
 
@@ -221,7 +262,13 @@ public class Board extends Observable {
 
     public void giveWeapon(Player player, WeaponCard weapon) {}
 
-    public void giveAmmoTile(Player player, AmmoTile tile) {}
+    public void giveAmmoTile(Player player, AmmoTile tile) {
+        if(tile.hasPowerup() && player.getPowerupsNumber() < 3) {
+            drawPowerup(player);
+        }
+        player.addAmmos(tile.getAmmos());
+        this.ammosDiscardPile.add(tile);
+    }
 
     public void useAmmos(Player player, Map<AmmoType, Integer> usedAmmos) {}
 

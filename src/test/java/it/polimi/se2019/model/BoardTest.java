@@ -5,7 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
-
+import java.util.List;
 
 
 public class BoardTest {
@@ -57,5 +57,6 @@ public class BoardTest {
         this.board.setSkulls(5);
         assertEquals(5, this.board.getSkulls());
     }
+
 
 }

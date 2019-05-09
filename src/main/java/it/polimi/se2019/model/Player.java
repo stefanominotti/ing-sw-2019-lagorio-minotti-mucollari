@@ -4,9 +4,7 @@ import java.util.*;
 
 public class Player {
 
-    public static final int MAX_BLUE_AMMOS = 3;
-    public static final int MAX_RED_AMMOS = 3;
-    public static final int MAX_YELLOW_AMMOS = 3;
+    public static final int MAX_AMMOS = 3;
 
     private String name;
     private final GameCharacter character;
@@ -98,6 +96,9 @@ public class Player {
     void addAmmos(Map<AmmoType, Integer> ammos) {
         for(Map.Entry<AmmoType, Integer> ammo : ammos.entrySet()) {
             int newAmmos = this.availableAmmos.get(ammo.getKey()) + ammo.getValue();
+            if(newAmmos > MAX_AMMOS) {
+                newAmmos = MAX_AMMOS;
+            }
             this.availableAmmos.put(ammo.getKey(), newAmmos);
         }
     }
@@ -136,6 +137,14 @@ public class Player {
             this.damages.add(player);
         }
         this.revengeMarks.remove(player);
+    }
+
+    int getPowerupsNumber() {
+        return this.powerups.size();
+    }
+
+    int getAmmosNumber(AmmoType color) {
+        return  this.availableAmmos.get(color);
     }
 
     void resetAfterDeath() {}
