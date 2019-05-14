@@ -43,4 +43,3 @@ public class RoomTest {
         assertNotNull(squares);
     }
 }
-
