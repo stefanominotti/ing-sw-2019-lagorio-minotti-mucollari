@@ -1,11 +1,16 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.client.AbstractClient;
+import it.polimi.se2019.server.ClientHandler;
 
 import java.rmi.RemoteException;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CLIView extends View {
+
+    private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getName());
 
     private Thread inputThread;
 
@@ -22,7 +27,7 @@ public class CLIView extends View {
                     try {
                         handleInput(input);
                     } catch (RemoteException e) {
-                        e.printStackTrace();
+                        LOGGER.log(Level.SEVERE, "Error on executing remote method call:" + e.toString(), e);
                     }
                 }
             }

@@ -7,8 +7,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SocketVirtualClient extends Thread implements VirtualClientInterface {
+
+    private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getName());
 
     private Socket socket;
     private SocketServer server;
@@ -29,7 +33,7 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
             writer.writeObject(message);
             writer.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error on sending Message:" + e.toString(), e);;
         }
     }
 
@@ -52,7 +56,7 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
         } catch (IOException e) {
             this.server.notifyDisconnection(this);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error on managing Stream:" + e.toString(), e);;
         }
     }
 
