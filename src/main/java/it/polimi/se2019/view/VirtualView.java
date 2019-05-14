@@ -1,13 +1,18 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.model.messages.*;
+import it.polimi.se2019.server.ClientHandler;
 import it.polimi.se2019.server.Server;
 
 import java.rmi.RemoteException;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class VirtualView extends Observable implements Observer {
+
+    private static final Logger LOGGER = Logger.getLogger(VirtualView.class.getName());
 
     private Server server;
 
@@ -58,7 +63,7 @@ public class VirtualView extends Observable implements Observer {
                     break;
             }
         } catch (RemoteException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error on sending message:", e);
         }
     }
 

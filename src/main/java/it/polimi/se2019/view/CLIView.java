@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 public class CLIView extends View {
 
-    private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CLIView.class.getName());
 
     private Thread inputThread;
 
@@ -27,7 +27,7 @@ public class CLIView extends View {
                     try {
                         handleInput(input);
                     } catch (RemoteException e) {
-                        LOGGER.log(Level.SEVERE, "Error on executing remote method call:" + e.toString(), e);
+                        LOGGER.log(Level.SEVERE, "Error on managing input", e);
                     }
                 }
             }

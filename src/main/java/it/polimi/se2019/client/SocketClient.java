@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 public class SocketClient extends AbstractClient implements Runnable {
 
-    private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SocketClient.class.getName());
 
     private static final int PORT = 12345;
     private static final String HOST = "localhost";
@@ -22,7 +22,7 @@ public class SocketClient extends AbstractClient implements Runnable {
         try {
             this.socket = new Socket(HOST, PORT);
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error on creating Socket:" + e.toString(), e);
+            LOGGER.log(Level.SEVERE, "Error on creating Socket", e);
         }
     }
 
@@ -33,7 +33,7 @@ public class SocketClient extends AbstractClient implements Runnable {
             writer.writeObject(message);
             writer.flush();
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error on sending Message:" + e.toString(), e);
+            LOGGER.log(Level.SEVERE, "Error on sending Message", e);
         }
     }
 
@@ -47,7 +47,7 @@ public class SocketClient extends AbstractClient implements Runnable {
                 showMessage("Connection error");
                 System.exit(0);
             } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Error on creating Stream:" + e.toString(), e);
+                LOGGER.log(Level.SEVERE, "Error on creating Stream", e);
             }
             if (inputStream == null) {
                 showMessage("Connection error");
@@ -61,7 +61,7 @@ public class SocketClient extends AbstractClient implements Runnable {
                     System.exit(0);
                 }
             } catch (IOException | ClassNotFoundException e) {
-                LOGGER.log(Level.SEVERE, "Error on reading Message:" + e.toString(), e);
+                LOGGER.log(Level.SEVERE, "Error on reading Message", e);
             }
         }
     }

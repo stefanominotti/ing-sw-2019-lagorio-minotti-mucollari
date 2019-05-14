@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 public class SocketVirtualClient extends Thread implements VirtualClientInterface {
 
-    private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SocketVirtualClient.class.getName());
 
     private Socket socket;
     private SocketServer server;
@@ -33,7 +33,7 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
             writer.writeObject(message);
             writer.flush();
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error on sending Message:" + e.toString(), e);;
+            LOGGER.log(Level.SEVERE, "Error on sending Message", e);;
         }
     }
 
@@ -56,7 +56,7 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
         } catch (IOException e) {
             this.server.notifyDisconnection(this);
         } catch (ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Error on managing Stream:" + e.toString(), e);;
+            LOGGER.log(Level.SEVERE, "Error on managing Stream", e);;
         }
     }
 

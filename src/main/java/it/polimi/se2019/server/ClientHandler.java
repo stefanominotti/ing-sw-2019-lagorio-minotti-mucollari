@@ -19,7 +19,7 @@ public class ClientHandler extends Thread {
         try {
             this.serverSocket = new ServerSocket(port);
         } catch (IOException e) {
-           LOGGER.log(Level.SEVERE, "Error on creating Server Socket:" + e.toString(), e);
+           LOGGER.log(Level.SEVERE, "Error on creating Server Socket", e);
         }
     }
 
@@ -32,7 +32,7 @@ public class ClientHandler extends Thread {
                 newClientConnection = this.serverSocket.accept();
                 this.server.addClient(new SocketVirtualClient(newClientConnection, this.server));
             } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Error on adding new SocketVirtualClient to Server:" + e.toString(), e);
+                LOGGER.log(Level.SEVERE, "Error on adding new SocketVirtualClient to Server", e);
             }
         }
     }

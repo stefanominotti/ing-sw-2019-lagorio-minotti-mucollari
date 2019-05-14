@@ -3,13 +3,18 @@ package it.polimi.se2019.controller;
 import it.polimi.se2019.model.Board;
 import it.polimi.se2019.model.TurnType;
 import it.polimi.se2019.model.messages.*;
+import it.polimi.se2019.server.ClientHandler;
 import it.polimi.se2019.view.VirtualView;
 
 import java.rmi.RemoteException;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GameController implements Observer {
+
+    private static final Logger LOGGER = Logger.getLogger(GameController.class.getName());
 
     private Board model;
     private TurnController turnController;
@@ -45,7 +50,7 @@ public class GameController implements Observer {
                 try {
                     update((StartTurnMessage) message);
                 } catch (RemoteException e) {
-                    e.printStackTrace();
+                    LOGGER.log(Level.SEVERE, "Error on sending message:", e);;
                 }
                 break;
         }
