@@ -31,6 +31,8 @@ public class Board extends Observable {
     private GameState gameState;
     private Timer timer;
     private LocalDateTime gameTimerStartDate;
+    private int currentPlayer;
+    private List<Player> finalFrenzyOrder;
 
     public Board() {
         this.gameState = ACCEPTINGPLAYERS;
@@ -232,6 +234,45 @@ public class Board extends Observable {
             }
         }
         notifyChanges(new ArenaFilledMessage(ammos, stores));
+        this.gameState = FIRSTTURN;
+        this.currentPlayer = 0;
+        startTurn();
+    }
+
+    private void startTurn() {
+        TurnType type;
+        if(this.gameState == FIRSTTURN) {
+            type = TurnType.FIRST_TURN;
+        } else if(this.players.get(this.currentPlayer).isDead()) {
+            type = TurnType.AFTER_DEATH;
+        } else if(this.finalFrenzyOrder != null) {
+            int currentPlayerOrder = 0;
+            int firstPlayerOrder = 0;
+            for(Player p : this.finalFrenzyOrder) {
+                if(p == this.players.get(this.currentPlayer)) {
+                    currentPlayerOrder = this.players.indexOf(p);
+                }
+                if(p == this.players.get(0)) {
+                    firstPlayerOrder = this.players.indexOf(p);
+                }
+            }
+            if(currentPlayerOrder < firstPlayerOrder) {
+                type = TurnType.FINAL_FRENZY_FIRST;
+            } else {
+                type = TurnType.FINAL_FRENZY_AFTER;
+            }
+        } else {
+            type = TurnType.NORMAL;
+        }
+        notifyChanges(new StartTurnMessage(type, this.players.get(this.currentPlayer).getCharacter()));
+    }
+
+    private void incrementCurrentPlayer() {
+        if(this.currentPlayer == this.players.size() - 1) {
+            this.currentPlayer = 0;
+        } else {
+            this.currentPlayer++;
+        }
     }
 
     protected void fillWeaponsDeck() {
@@ -320,6 +361,8 @@ public class Board extends Observable {
         Powerup powerup = this.powerupsDeck.get(0);
         player.addPowerup(powerup);
         this.powerupsDeck.remove(powerup);
+        notifyChanges(new PowerupDrawnMessage(player.getCharacter(), powerup));
+        notifyChanges(new PowerupDrawnMessage(player.getCharacter(), null));
     }
 
     public void changeWeapon(Player player, WeaponCard oldCard, WeaponCard newCard) {

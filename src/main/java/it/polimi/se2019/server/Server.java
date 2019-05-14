@@ -37,8 +37,8 @@ public class Server {
 
     private void startMVC() {
         this.model = new Board();
-        this.controller = new GameController(this.model);
         this.view = new VirtualView(this);
+        this.controller = new GameController(this.model, this.view);
         this.view.addObserver(this.controller);
         this.model.addObserver(this.view);
     }

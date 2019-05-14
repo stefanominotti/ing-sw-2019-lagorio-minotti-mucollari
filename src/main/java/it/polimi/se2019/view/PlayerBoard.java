@@ -2,6 +2,7 @@ package it.polimi.se2019.view;
 
 import it.polimi.se2019.model.AmmoType;
 import it.polimi.se2019.model.GameCharacter;
+import it.polimi.se2019.model.Powerup;
 import it.polimi.se2019.model.Weapon;
 
 import java.util.*;
@@ -27,10 +28,14 @@ public class PlayerBoard {
         this.availableAmmos.put(AmmoType.BLUE, 1);
         this.availableAmmos.put(AmmoType.RED, 1);
         this.availableAmmos.put(AmmoType.YELLOW, 1);
-        this.revengeMarks = new HashMap<>();
+        this.revengeMarks = new EnumMap<>(GameCharacter.class);
         this.weaponsNumber = 0;
         this.powerupsNumber = 0;
         this.unloadedWeapons = new ArrayList<>();
+    }
+
+    void addPowerup() {
+        this.powerupsNumber++;
     }
 
     GameCharacter getCharacter() {

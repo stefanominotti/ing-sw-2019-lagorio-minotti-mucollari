@@ -1,14 +1,15 @@
 package it.polimi.se2019.controller;
 
-import it.polimi.se2019.model.Board;
-import it.polimi.se2019.model.Player;
-import it.polimi.se2019.model.Square;
+import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.messages.DiscardToSpawnMessage;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TurnController {
 
+    private GameController controller;
     private Board board;
     private Player activePlayer;
     private int movesLeft;
@@ -16,11 +17,10 @@ public class TurnController {
     private TurnState state;
     private Player powerupTarget;
 
-    public TurnController(Board board) {
-        this.selectedAction = null;
+    public TurnController(Board board, GameController controller) {
         this.state = TurnState.SELECTACTION;
         this.board = board;
-        this.activePlayer = board.getPlayers().get(0);
+        this.controller = controller;
         this.movesLeft = 2;
     }
 
@@ -28,27 +28,19 @@ public class TurnController {
         return null;
     }
 
-    void startTurn() {}
-
-    void powerupTargetSelected(PowerupTargetSelectedEvent event) {}
-
-    void powerupMove(PowerupMoveEvent event) {}
-
-    void selectPowerup(PowerupCardSelectedEvent event) {}
-
-    void selectAction(ActionSelectedEvent event) {}
+    void startTurn(TurnType type, GameCharacter player) throws RemoteException {
+        this.activePlayer = this.board.getPlayerByCharacter(player);
+        switch (type) {
+            case FIRST_TURN:
+                this.board.drawPowerup(this.activePlayer);
+                this.board.drawPowerup(this.activePlayer);
+                this.controller.send(new DiscardToSpawnMessage(player));
+        }
+    }
 
     List<Square> whereCanMove(int maxDistamce) {
         return new ArrayList<>();
     }
-
-    void shot(ShotEvent event) {}
-
-    void pickup(PickupEvent event) {}
-
-    void move(MoveEvent event) {}
-
-    void reload(RealoadEvent event) {}
 
     void endTurn() {}
 }

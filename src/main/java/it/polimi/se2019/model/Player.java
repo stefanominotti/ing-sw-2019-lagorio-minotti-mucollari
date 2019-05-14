@@ -16,6 +16,7 @@ public class Player {
     private List<WeaponCard> weapons;
     private List<Powerup> powerups;
     private Square position;
+    private boolean dead;
 
     Player(GameCharacter character) {
         this.name = null;
@@ -31,6 +32,10 @@ public class Player {
         this.weapons = new ArrayList<>();
         this.powerups = new ArrayList<>();
         this.position = null;
+    }
+
+    public boolean isDead() {
+        return this.dead;
     }
 
     public GameCharacter getCharacter() {

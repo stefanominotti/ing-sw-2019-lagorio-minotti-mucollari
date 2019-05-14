@@ -50,6 +50,9 @@ public class VirtualView extends Observable implements Observer {
                 case "GameSetupInterruptedMessage":
                     update((GameSetupInterruptedMessage) message);
                     break;
+                case "PowerupDrawnMessage":
+                    update((PowerupDrawnMessage) message);
+                    break;
                 default:
                     updateAll((Message) message);
                     break;
@@ -87,33 +90,19 @@ public class VirtualView extends Observable implements Observer {
         updateAll(message);
     }
 
-    public void update(MovePlayerMessage message) {}
+    private void update(PowerupDrawnMessage message) throws RemoteException {
+        if(message.getPowerup() == null) {
+            this.server.sendOthers(message.getPlayer(), message);
+        } else {
+            this.server.send(message.getPlayer(), message);
+        }
+    }
 
-    public void update(IncrementScoreMessage message) {}
+    public void send(SingleReceiverMessage message) throws RemoteException {
+        this.server.send(message.getCharacter(), (Message) message);
+    }
 
-    public void update(GivePowerupMessage message) {}
-
-    public void update(RemovePowerupMessage message) {}
-
-    public void update(GiveWeaponMessage message) {}
-
-    public void update(RemoveWeaponMessage message) {}
-
-    public void update(FillStoreMessage message) {}
-
-    public void update(DamageMessage message) {}
-
-    public void update(MarkMessage message) {}
-
-    public void update(AddKillshotMessage message) {}
-
-    public void update(ResetPlayerBoardMessage message) {}
-
-    public void update(GiveAmmoMessage message) {}
-
-    public void update(RemoveAmmoMessage message) {}
-
-    public void update(AddAmmoTileMessage message) {}
-
-    public void update(RemoveAmmoTileMessage message) {}
+    public void sendAll(Message message) throws RemoteException {
+        this.server.sendAll(message);
+    }
 }

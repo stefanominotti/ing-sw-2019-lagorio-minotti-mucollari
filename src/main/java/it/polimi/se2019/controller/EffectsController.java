@@ -37,8 +37,6 @@ public class EffectsController {
         return null;
     }
 
-    void selectEffect(EffectSelectedEvent event) {}
-
     boolean canApply(List <WeaponEffect> effect) {
         return true;
     }
@@ -50,8 +48,6 @@ public class EffectsController {
     List<Player> getAvailableTargets(WeaponEffect effect, Player player) {
         return new ArrayList<>();
     }
-
-    void applyEffect(TargetSelectedEvent event) {}
 
     void endAttack() {}
 }

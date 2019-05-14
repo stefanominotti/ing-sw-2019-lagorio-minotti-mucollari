@@ -9,6 +9,7 @@ public class BoardView {
     private int skulls;
     private List<SquareView> squares;
     private List<GameCharacter> killshotTrack;
+    private Map<GameCharacter, SquareView> positions;
     private boolean emptyWeaponsDeck;
 
     BoardView(int skulls, List<SquareView> squares) {
@@ -16,6 +17,7 @@ public class BoardView {
         this.skulls = skulls;
         this.squares = squares;
         this.emptyWeaponsDeck = false;
+        this.positions = new EnumMap<>(GameCharacter.class);
     }
 
     public int getSkulls() {
@@ -33,6 +35,10 @@ public class BoardView {
             }
         }
         throw new IllegalStateException("No square with given coordinates");
+    }
+
+    public void setPlayerPosition(GameCharacter player, SquareView square) {
+        this.positions.put(player, square);
     }
 
     public List<PlayerBoard> getEnemyBoards() {

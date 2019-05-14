@@ -1,6 +1,8 @@
 package it.polimi.se2019.model;
 
-public class Powerup {
+import java.io.Serializable;
+
+public class Powerup implements Serializable {
 
     private PowerupType type;
     private AmmoType color;

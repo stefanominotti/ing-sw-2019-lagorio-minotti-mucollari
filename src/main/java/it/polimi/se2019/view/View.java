@@ -71,7 +71,25 @@ public abstract class View {
             case "ArenaFilledMessage":
                 update((ArenaFilledMessage) message);
                 break;
+            case "StartTurnMessage":
+                update((StartTurnMessage) message);
+                break;
+            case "DiscardToSpawnMessage":
+                update((DiscardToSpawnMessage) message);
+                break;
+            case "PowerupDrawnMessage":
+                update((PowerupDrawnMessage) message);
+                break;
         }
+    }
+
+    private PlayerBoard getBoardByCharacter(GameCharacter character) {
+        for(PlayerBoard board : this.enemyBoards) {
+            if(board.getCharacter() == character) {
+                return board;
+            }
+        }
+        return null;
     }
 
     void handleInput(String input) throws RemoteException {
@@ -98,8 +116,18 @@ public abstract class View {
                     this.client.send(new ArenaMessage(input));
                     break;
                 }
-                else{
-                    showMessage("Arena must be one of {1, 2, 3, 4}, retry:");
+                showMessage("Arena must be one of {1, 2, 3, 4}, retry:");
+                break;
+            case DISCARD_SPAWN:
+                try {
+                    int number = Integer.parseInt(input);
+                    if (0 >= number || number > this.selfPlayerBoard.getPowerups().size()) {
+                        showMessage("Invalid input, retry:");
+                        break;
+                    }
+                    this.client.send(null);
+                } catch(NumberFormatException e) {
+                    showMessage("Invalid input, retry:");
                     break;
                 }
         }
@@ -179,7 +207,8 @@ public abstract class View {
     }
 
     private void update(ClientDisconnectedMessage message) {
-        if (this.state == TYPINGNICKNAME || this.state == WAITINGSTART) {
+        if (this.state == TYPINGNICKNAME || this.state == WAITINGSTART || this.state == WAITINGSETUP ||
+                this.state == SETTINGSKULLS || this.state == SETTINGARENA) {
             String nickname = "";
             for (PlayerBoard board : this.enemyBoards) {
                 if (board.getCharacter() == message.getCharacter()) {
@@ -188,8 +217,15 @@ public abstract class View {
                     break;
                 }
             }
-            if (this.state == WAITINGSTART) {
+            if (this.state == WAITINGSTART || this.state == WAITINGSETUP || this.state == SETTINGSKULLS ||
+                    this.state == SETTINGARENA) {
                 showMessage(nickname + " - " + message.getCharacter() + " disconnected");
+            }
+            if (this.state == SETTINGSKULLS) {
+                showMessage("Set skull number for the game:");
+            }
+            if (this.state == SETTINGARENA) {
+                showMessage("Select the arena between {1, 2, 3, 4}:");
             }
         }
     }
@@ -226,6 +262,10 @@ public abstract class View {
             builder.append("\n");
         }
         this.board = new BoardView(message.getSkulls(), squares);
+        for(PlayerBoard enemy : this.enemyBoards) {
+            this.board.setPlayerPosition(enemy.getCharacter(), null);
+        }
+        this.board.setPlayerPosition(this.character, null);
         showMessage(builder.toString());
     }
 
@@ -263,12 +303,48 @@ public abstract class View {
                     builder.append(toAppend);
                 }
             }
-            builder.setLength(builder.length() - 1);
+            builder.setLength(builder.length() - 2);
             builder.append("]");
             showMessage(builder.toString());
             builder = new StringBuilder();
         }
 
+    }
+
+    private void update(StartTurnMessage message) throws RemoteException {
+        if(message.getPlayer() != this.character) {
+            this.state = OTHERTURN;
+            showMessage(message.getPlayer() + " is playing");
+        } else {
+            this.state = YOURTURN;
+            showMessage("It's your turn!");
+            this.client.send(message);
+        }
+    }
+
+    private void update(PowerupDrawnMessage message) {
+        if(message.getPlayer() != this.character) {
+            PlayerBoard playerBoard = getBoardByCharacter(message.getPlayer());
+            playerBoard.addPowerup();
+            showMessage(message.getPlayer() + " has drawn a powerup");
+        } else {
+            this.selfPlayerBoard.addPowerup(message.getPowerup());
+            showMessage("You have drawn " + message.getPowerup().getType() + " " + message.getPowerup().getColor());
+        }
+    }
+
+    private void update(DiscardToSpawnMessage message) {
+        showMessage("Discard a powerup to spawn:");
+        StringBuilder text = new StringBuilder();
+        List<Powerup> powerups = this.selfPlayerBoard.getPowerups();
+        for(int i=0; i<powerups.size(); i++) {
+            int index = i + 1;
+            String toAppend = "[" + index + "] - " + powerups.get(i).getType() + " " + powerups.get(i).getColor() + "\n";
+            text.append(toAppend);
+        }
+        text.setLength(text.length() - 1);
+        showMessage(text.toString());
+        this.state = DISCARD_SPAWN;
     }
 
     public abstract void showMessage(String message);

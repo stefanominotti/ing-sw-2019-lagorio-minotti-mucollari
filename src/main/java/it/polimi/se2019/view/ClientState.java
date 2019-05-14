@@ -5,5 +5,8 @@ public enum ClientState {
     WAITINGSTART,
     SETTINGSKULLS,
     SETTINGARENA,
-    WAITINGSETUP;
+    WAITINGSETUP,
+    OTHERTURN,
+    YOURTURN,
+    DISCARD_SPAWN;
 }

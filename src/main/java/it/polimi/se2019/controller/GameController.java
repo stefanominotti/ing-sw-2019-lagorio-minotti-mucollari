@@ -1,17 +1,24 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Board;
+import it.polimi.se2019.model.TurnType;
 import it.polimi.se2019.model.messages.*;
+import it.polimi.se2019.view.VirtualView;
 
+import java.rmi.RemoteException;
 import java.util.Observable;
 import java.util.Observer;
 
 public class GameController implements Observer {
 
     private Board model;
+    private TurnController turnController;
+    private VirtualView view;
 
-    public GameController(Board board) {
+    public GameController(Board board, VirtualView view) {
         this.model = board;
+        this.turnController = new TurnController(this.model, this);
+        this.view = view;
     }
 
     @Override
@@ -33,6 +40,13 @@ public class GameController implements Observer {
                 break;
             case "ArenaMessage":
                 update((ArenaMessage) message);
+                break;
+            case "StartTurnMessage":
+                try {
+                    update((StartTurnMessage) message);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
                 break;
         }
     }
@@ -57,21 +71,15 @@ public class GameController implements Observer {
         this.model.createArena(message.getArena());
     }
 
-    public void update(CardPressedEvent event) {}
+    private void update(StartTurnMessage message) throws RemoteException {
+        this.turnController.startTurn(message.getTurnType(), message.getPlayer());
+    }
 
-    public void update(ActionSelectedEvent event) {}
+    void send(SingleReceiverMessage message) throws RemoteException {
+        this.view.send(message);
+    }
 
-    public void update(ShotEvent event) {}
-
-    public void update(PickupEvent event) {}
-
-    public void update(MoveEvent event) {}
-
-    public void update(RealoadEvent event) {}
-
-    public void update(EffectSelectedEvent event) {}
-
-    public void update(TargetSelectedEvent event) {}
-
-    public void update(PowerupCardSelectedEvent event) {}
+    void sendAll(Message message) throws RemoteException {
+        this.view.sendAll(message);
+    }
 }

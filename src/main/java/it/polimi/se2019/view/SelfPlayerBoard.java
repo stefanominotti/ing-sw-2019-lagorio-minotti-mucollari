@@ -20,9 +20,16 @@ public class SelfPlayerBoard extends PlayerBoard {
         this.score = 0;
     }
 
-    void incrementScore(int amount) {}
+    List<Powerup> getPowerups() {
+        return new ArrayList<>(this.powerups);
+    }
 
-    void addPowerup(Powerup powerup) {}
+    void addPowerup(Powerup powerup) {
+        super.addPowerup();
+        this.powerups.add(powerup);
+    }
+
+    void incrementScore(int amount) {}
 
     void removePowerup(Powerup powerup) {}
 }

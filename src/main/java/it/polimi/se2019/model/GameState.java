@@ -4,5 +4,5 @@ public enum GameState {
 
     ACCEPTINGPLAYERS,
     SETTINGUPGAME,
-    INGAME;
+    FIRSTTURN;
 }
