@@ -122,7 +122,7 @@ public abstract class View {
                     this.client.send(new ArenaMessage(input));
                     break;
                 }
-                showMessage("Arena must be one of {1, 2, 3, 4}, retry:");
+                showMessage("Arena must be [1, 2, 3, 4]:, retry:");
                 break;
             case DISCARD_SPAWN:
                 try {
@@ -176,7 +176,7 @@ public abstract class View {
     }
 
     private void update(NicknameDuplicatedMessage message) throws RemoteException {
-        showMessage("Nickname already used. Insert another nickname: ");
+        showMessage("Nickname is already in use. Insert another nickname: ");
     }
 
     private void update(PlayerCreatedMessage message) throws RemoteException {
@@ -228,17 +228,17 @@ public abstract class View {
                 showMessage(nickname + " - " + message.getCharacter() + " disconnected");
             }
             if (this.state == SETTINGSKULLS) {
-                showMessage("Set skull number for the game:");
+                showMessage("Set Skulls number for the game:");
             }
             if (this.state == SETTINGARENA) {
-                showMessage("Select the arena between {1, 2, 3, 4}:");
+                showMessage("Select the Arena [1, 2, 3, 4]:");
             }
         }
     }
 
     private void update(StartGameSetupMessage message) {
         if (message.getCharacter() == this.character) {
-            showMessage("You are the master, set skull number for the game:");
+            showMessage("You are the master, set Skulls number for the game:");
             this.state = SETTINGSKULLS;
 
         } else {
@@ -247,13 +247,13 @@ public abstract class View {
         }
     }
     private void update(SkullsSetMessage message) {
-        showMessage("OK, now select the arena between {1, 2, 3, 4}:");
+        showMessage("OK, now select the Arena [1, 2, 3, 4]:");
         this.state = SETTINGARENA;
     }
 
     private void update(GameSetMessage message) {
-        showMessage("Master choose " + message.getSkulls() + " skulls and arena number " + message.getArenaNumber());
-        showMessage("This is the arena:");
+        showMessage("Master choose " + message.getSkulls() + " Skulls and Arena " + message.getArenaNumber());
+        showMessage("This is the Arena:");
         StringBuilder builder = new StringBuilder();
         List<SquareView> squares = new ArrayList<>();
         for(Coordinates square : message.getArenaColors().keySet()){
@@ -286,7 +286,7 @@ public abstract class View {
                 square.addStoreWeapon(weapon);
             }
         }
-        showMessage("Ammo tiles and weapons placed:");
+        showMessage("Ammo tiles and Weapons placed:");
         StringBuilder builder = new StringBuilder();
         for(SquareView square : this.board.getSquares()) {
             String text = "[" + square.getX() + ", " + square.getY() + "], " + square.getColor();
@@ -331,8 +331,10 @@ public abstract class View {
     private void update(PowerupDrawnMessage message) {
         if(message.getPlayer() != this.character) {
             PlayerBoard playerBoard = getBoardByCharacter(message.getPlayer());
-            playerBoard.addPowerup();
-            showMessage(message.getPlayer() + " has drawn a powerup");
+            if(playerBoard != null) {
+                playerBoard.addPowerup();
+                showMessage(message.getPlayer() + " has drawn a Powerup");
+            }
         } else {
             this.selfPlayerBoard.addPowerup(message.getPowerup());
             showMessage("You have drawn " + message.getPowerup().getType() + " " + message.getPowerup().getColor());
@@ -340,7 +342,7 @@ public abstract class View {
     }
 
     private void update(DiscardToSpawnMessage message) {
-        showMessage("Discard a powerup to spawn:");
+        showMessage("Discard a Powerup to spawn:");
         StringBuilder text = new StringBuilder();
         List<Powerup> powerups = this.selfPlayerBoard.getPowerups();
         for(int i=0; i<powerups.size(); i++) {
@@ -365,7 +367,7 @@ public abstract class View {
 
     private void update(PowerupRemoved message) {
         if(this.character == message.getCharacter()) {
-            showMessage("you have removed " +
+            showMessage("You have removed " +
                     message.getPowerup().getType() + " " + message.getPowerup().getColor());
         } else {
             showMessage(message.getCharacter() + " has removed " +
