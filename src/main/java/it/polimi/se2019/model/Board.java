@@ -211,6 +211,10 @@ public class Board extends Observable {
         finalizeGameSetup();
     }
 
+    public Arena getArena() {
+        return this.arena;
+    }
+
     private void finalizeGameSetup() {
         fillAmmosDeck();
         fillWeaponsDeck();
@@ -355,6 +359,7 @@ public class Board extends Observable {
     public void removePowerup(Player player, Powerup powerup) {
         player.removePowerup(powerup);
         this.powerupsDiscardPile.add(powerup);
+        notifyChanges(new PowerupRemoved(player.getCharacter(), powerup));
     }
 
     public void drawPowerup(Player player) {
@@ -397,7 +402,11 @@ public class Board extends Observable {
     }
 
     public void respawnPlayer(Player player, Room room) {
-        player.setPosition(room.getSpawn());
+        Square square = room.getSpawn();
+        player.setPosition(square);
+        square.addPlayer(player);
+        notifyChanges(new PlayerSpawnedMessage(player.getCharacter(),
+                new Coordinates(square.getX(), square.getY())));
     }
 
     public boolean verifyGameFinished() {

@@ -1,20 +1,16 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Board;
+import it.polimi.se2019.model.RoomColor;
 import it.polimi.se2019.model.TurnType;
 import it.polimi.se2019.model.messages.*;
-import it.polimi.se2019.server.ClientHandler;
 import it.polimi.se2019.view.VirtualView;
 
 import java.rmi.RemoteException;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class GameController implements Observer {
-
-    private static final Logger LOGGER = Logger.getLogger(GameController.class.getName());
 
     private Board model;
     private TurnController turnController;
@@ -47,11 +43,10 @@ public class GameController implements Observer {
                 update((ArenaMessage) message);
                 break;
             case "StartTurnMessage":
-                try {
-                    update((StartTurnMessage) message);
-                } catch (RemoteException e) {
-                    LOGGER.log(Level.SEVERE, "Error on sending message:", e);;
-                }
+                update((StartTurnMessage) message);
+                break;
+            case "PowerupSelectedMessage":
+                update((PowerupSelectedMessage) message);
                 break;
         }
     }
@@ -76,12 +71,25 @@ public class GameController implements Observer {
         this.model.createArena(message.getArena());
     }
 
-    private void update(StartTurnMessage message) throws RemoteException {
+    private void update(StartTurnMessage message) {
         this.turnController.startTurn(message.getTurnType(), message.getPlayer());
     }
 
-    void send(SingleReceiverMessage message) throws RemoteException {
-        this.view.send(message);
+    private void update(PowerupSelectedMessage message) {
+        if(this.turnController.getState() == TurnState.RESPAWNING) {
+            this.turnController.spawnPlayer(RoomColor.valueOf(message.getPowerup().getColor().toString()));
+        } else {
+            //usa powerup
+        }
+        this.model.removePowerup(turnController.getActiveplayer(), message.getPowerup());
+    }
+
+    void send(SingleReceiverMessage message) {
+        try {
+            this.view.send(message);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     void sendAll(Message message) throws RemoteException {

@@ -5,6 +5,7 @@ import java.util.*;
 public class Player {
 
     public static final int MAX_AMMOS = 3;
+    public static final int MAX_DAMAGES = 12;
 
     private String name;
     private final GameCharacter character;
@@ -77,8 +78,9 @@ public class Player {
     }
 
     void addDamages(Player player, int amount) {
-        for(int i = 0; i < amount; i++) {
+        while (amount > 0 && this.damages.size() <= MAX_DAMAGES) {
             this.damages.add(player);
+            amount--;
         }
     }
 
@@ -139,7 +141,9 @@ public class Player {
 
     void marksToDamages(Player player) {
         for(int i = 0; i < this.revengeMarks.get(player); i++) {
-            this.damages.add(player);
+            if(this.damages.size() <= MAX_DAMAGES) {
+                this.damages.add(player);
+            }
         }
         this.revengeMarks.remove(player);
     }

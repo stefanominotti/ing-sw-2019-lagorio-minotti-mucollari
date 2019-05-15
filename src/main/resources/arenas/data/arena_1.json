@@ -13,7 +13,8 @@
             "NORTH": false,
             "SOUTH": true
           },
-          "spawn": false
+          "spawn": false,
+          "activePlayers": []
         },
         {
           "x": 1,
@@ -24,7 +25,8 @@
             "NORTH": false,
             "SOUTH": false
           },
-          "spawn": false
+          "spawn": false,
+          "activePlayers": []
         },
         {
           "x": 2,
@@ -36,7 +38,8 @@
             "SOUTH": true
           },
           "spawn": true,
-          "weaponsStore": []
+          "weaponsStore": [],
+          "activePlayers": []
         }
       ]
     },
@@ -53,7 +56,8 @@
             "SOUTH": false
           },
           "spawn": true,
-          "weaponsStore": []
+          "weaponsStore": [],
+          "activePlayers": []
         },
         {
           "x": 1,
@@ -64,7 +68,8 @@
             "NORTH": false,
             "SOUTH": true
           },
-          "spawn": false
+          "spawn": false,
+          "activePlayers": []
         },
         {
           "x": 2,
@@ -75,7 +80,8 @@
             "NORTH": true,
             "SOUTH": false
           },
-          "spawn": false
+          "spawn": false,
+          "activePlayers": []
         }
       ]
     },
@@ -91,7 +97,8 @@
             "NORTH": false,
             "SOUTH": true
           },
-          "spawn": false
+          "spawn": false,
+          "activePlayers": []
         },
         {
           "x": 3,
@@ -103,7 +110,8 @@
             "SOUTH": false
           },
           "spawn": true,
-          "weaponsStore": []
+          "weaponsStore": [],
+          "activePlayers": []
         }
       ]
     },
@@ -119,7 +127,8 @@
             "NORTH": true,
             "SOUTH": false
           },
-          "spawn": false
+          "spawn": false,
+          "activePlayers": []
         },
         {
           "x": 2,
@@ -130,7 +139,8 @@
             "NORTH": false,
             "SOUTH": false
           },
-          "spawn": false
+          "spawn": false,
+          "activePlayers": []
         }
       ]
     }

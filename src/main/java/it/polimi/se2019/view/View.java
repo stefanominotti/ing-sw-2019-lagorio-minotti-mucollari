@@ -80,6 +80,12 @@ public abstract class View {
             case "PowerupDrawnMessage":
                 update((PowerupDrawnMessage) message);
                 break;
+            case "PlayerSpawnedMessage":
+                update((PlayerSpawnedMessage) message);
+                break;
+            case "PowerupRemoved":
+                update((PowerupRemoved) message);
+                break;
         }
     }
 
@@ -125,7 +131,7 @@ public abstract class View {
                         showMessage("Invalid input, retry:");
                         break;
                     }
-                    this.client.send(null);
+                    this.client.send(new PowerupSelectedMessage(this.selfPlayerBoard.getPowerups().get(number - 1)));
                 } catch(NumberFormatException e) {
                     showMessage("Invalid input, retry:");
                     break;
@@ -345,6 +351,26 @@ public abstract class View {
         text.setLength(text.length() - 1);
         showMessage(text.toString());
         this.state = DISCARD_SPAWN;
+    }
+
+    private void update(PlayerSpawnedMessage message) {
+        int x = message.getCoordinates().getX();
+        int y = message.getCoordinates().getY();
+        if(this.character == message.getCharacter()) {
+            showMessage("Your position is [" + x + ", " + y + "]");
+        } else {
+            showMessage(message.getCharacter() + " position is [" + x + ", " + y + "]");
+        }
+    }
+
+    private void update(PowerupRemoved message) {
+        if(this.character == message.getCharacter()) {
+            showMessage("you have removed " +
+                    message.getPowerup().getType() + " " + message.getPowerup().getColor());
+        } else {
+            showMessage(message.getCharacter() + " has removed " +
+                    message.getPowerup().getType() + " " + message.getPowerup().getColor());
+        }
     }
 
     public abstract void showMessage(String message);
