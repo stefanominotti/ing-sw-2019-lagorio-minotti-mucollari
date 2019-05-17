@@ -36,6 +36,8 @@ public class WeaponTest {
         assertEquals("ONDA D'URTO", Weapon.SHOCKWAVE.getName());
         assertEquals("SPADA FOTONICA", Weapon.CYBERBLADE.getName());
         assertEquals("MARTELLO IONICO", Weapon.SLEDGEHAMMER.getName());
+
+        System.out.println(Weapon.FURNACE.getPrimaryEffect().get(0).getTarget().getPositionType());
     }
 
     @Test

@@ -39,4 +39,11 @@ public class Room {
         throw new IllegalStateException("This room doesn't have a spawn point");
     }
 
+    public List<Player> getPlayers() {
+        List<Player> players = new ArrayList<>();
+        for(Square square : getSquares()) {
+            players.addAll(square.getActivePlayers());
+        }
+        return players;
+    }
 }

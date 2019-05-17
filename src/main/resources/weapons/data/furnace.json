@@ -24,7 +24,7 @@
         "amount": [
           "1"
         ],
-        "positionType": "SAMEROOM",
+        "positionType": "ROOM",
         "positionConstraints": [
           {
             "type": "NOTCONTAINS",

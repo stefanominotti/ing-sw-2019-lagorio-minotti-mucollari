@@ -160,4 +160,29 @@ public class Square {
         this.weaponsStore.remove(weapon);
     }
 
+    boolean isAtDirection(CardinalPoint direction, Square square) {
+        switch(direction) {
+            case EAST:
+                if(square.getY() == this.y && square.getX() < this.x) {
+                    return true;
+                }
+                break;
+            case WEST:
+                if(square.getY() == this.y && square.getX() > this.x) {
+                    return true;
+                }
+                break;
+            case NORTH:
+                if(square.getY() < this.y && square.getX() == this.x) {
+                    return true;
+                }
+                break;
+            case SOUTH:
+                if(square.getY() > this.y && square.getX() == this.x) {
+                    return true;
+                }
+        }
+        return false;
+    }
+
 }

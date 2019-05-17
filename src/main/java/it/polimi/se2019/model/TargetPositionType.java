@@ -1,6 +1,6 @@
 package it.polimi.se2019.model;
 
-public enum TargetPositionType {
+public enum  TargetPositionType {
 
     SAMESQUARE,
     MULTIPLESQUARES,

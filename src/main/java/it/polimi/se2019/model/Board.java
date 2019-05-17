@@ -437,4 +437,76 @@ public class Board extends Observable {
     public void handleDeadPlayer(Player player) {}
 
     public void handleEndTurn() {}
+
+    public List<Player> getPlayerVisible(Player player) {
+        List<Player> visiblePlayers = new ArrayList<>();
+        for(Player p : this.players) {
+            if(p == player) {
+                continue;
+            }
+            if(p.getPosition().canSee(player.getPosition())) {
+                visiblePlayers.add(p);
+            }
+        }
+        return visiblePlayers;
+    }
+
+    public List<Player> getPlayerByDistance(Player player, List<String> distances) {
+        List<Player> result = new ArrayList<>();
+        Square position = player.getPosition();
+        if (distances.contains("MAX")) {
+            int distance = Integer.parseInt(distances.get(0));
+            for(Player p : this.players) {
+                if(p == player) {
+                    continue;
+                }
+                if(position.distanceFrom(p.getPosition()) == distance) {
+                    result.add(p);
+                }
+            }
+            return result;
+        }
+
+        List<Integer> intDistances = new ArrayList<>();
+        for(String distance : distances) {
+            intDistances.add(Integer.parseInt(distance));
+        }
+
+        for(int distance : intDistances) {
+            for(Player p : this.players) {
+                if(p == player) {
+                    continue;
+                }
+                if(position.distanceFrom(p.getPosition()) == distance) {
+                    result.add(p);
+                }
+            }
+        }
+        return result;
+    }
+
+    public List<Player> getPlayerInSameDirection(Player player1, Player player2) {
+        List<Player> result = new ArrayList<>();
+        Square square1 = player1.getPosition();
+        Square square2 = player2.getPosition();
+        CardinalPoint direction;
+        if (square1.getX() == square2.getX() && square1.getY() < square2.getY()) {
+            direction = CardinalPoint.NORTH;
+        } else if (square1.getX() == square2.getX() && square1.getY() > square2.getY()) {
+            direction = CardinalPoint.SOUTH;
+        } else if (square1.getX() > square2.getX() && square1.getY() == square2.getY()) {
+            direction = CardinalPoint.WEST;
+        } else {
+            direction = CardinalPoint.EAST;
+        }
+
+        for (Player p : this.players) {
+            if (p.getPosition().isAtDirection(direction, player2.getPosition())) {
+                result.add(p);
+            }
+        }
+
+        return result;
+    }
+
 }
