@@ -81,7 +81,8 @@ public class GameController implements Observer {
     }
 
     private void update(PowerupSelectedMessage message) {
-        if(this.turnController.getState() == TurnState.RESPAWNING) {
+        if(this.turnController.getState() == TurnState.FIRST_RESPAWNING ||
+                this.turnController.getState() == TurnState.DEATH_RESPAWNING) {
             this.turnController.spawnPlayer(RoomColor.valueOf(message.getPowerup().getColor().toString()));
         } else {
             //usa powerup
@@ -97,7 +98,11 @@ public class GameController implements Observer {
         }
     }
 
-    void sendAll(Message message) throws RemoteException {
-        this.view.sendAll(message);
+    void sendAll(Message message) {
+        try {
+            this.view.sendAll(message);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 }

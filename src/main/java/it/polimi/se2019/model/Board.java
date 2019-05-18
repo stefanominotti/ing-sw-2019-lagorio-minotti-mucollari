@@ -33,6 +33,7 @@ public class Board extends Observable {
     private LocalDateTime gameTimerStartDate;
     private int currentPlayer;
     private List<Player> finalFrenzyOrder;
+    private List<Player> deathPlayers;
 
     public Board() {
         this.gameState = ACCEPTINGPLAYERS;
@@ -240,15 +241,33 @@ public class Board extends Observable {
         notifyChanges(new ArenaFilledMessage(ammos, stores));
         this.gameState = FIRSTTURN;
         this.currentPlayer = 0;
-        startTurn();
+        startTurn(this.players.get(this.currentPlayer));
     }
 
-    private void startTurn() {
+    public void addDeadPlayer(Player player) {
+        this.deathPlayers.add(player);
+    }
+
+    public void endTurn() {
+        if(this.gameState == FIRSTTURN && this.currentPlayer == this.players.size() -1) {
+            this.gameState = INGAME;
+        }
+        Player nextPlayer;
+        if(this.deathPlayers.size() > 0) {
+            nextPlayer = this.deathPlayers.get(0);
+        } else {
+            incrementCurrentPlayer();
+            nextPlayer = this.players.get(this.currentPlayer);
+        }
+        startTurn(nextPlayer);
+    }
+
+    private void startTurn(Player player) {
         TurnType type;
-        if(this.gameState == FIRSTTURN) {
-            type = TurnType.FIRST_TURN;
-        } else if(this.players.get(this.currentPlayer).isDead()) {
+        if(player.isDead()) {
             type = TurnType.AFTER_DEATH;
+        } else if(this.gameState == FIRSTTURN) {
+            type = TurnType.FIRST_TURN;
         } else if(this.finalFrenzyOrder != null) {
             int currentPlayerOrder = 0;
             int firstPlayerOrder = 0;
@@ -268,7 +287,7 @@ public class Board extends Observable {
         } else {
             type = TurnType.NORMAL;
         }
-        notifyChanges(new StartTurnMessage(type, this.players.get(this.currentPlayer).getCharacter()));
+        notifyChanges(new StartTurnMessage(type, player.getCharacter()));
     }
 
     private void incrementCurrentPlayer() {
@@ -411,27 +430,6 @@ public class Board extends Observable {
 
     public boolean verifyGameFinished() {
         return this.skulls == 0;
-    }
-
-    public void giveKillshotTrack() {
-        Map<Player, Integer> killshotRank = new HashMap<>();
-        for(Player p : this.players) {
-            killshotRank.put(p, 0);
-        }
-        for(Player p : this.killshotTrack) {
-            int value = killshotRank.get(p) + 1;
-            killshotRank.put(p, 1);
-        }
-        Map<Player, Integer> sorted = killshotRank
-                .entrySet()
-                .stream()
-                .sorted(comparingByValue())
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
-        List<Player> rank = new ArrayList<>(sorted.keySet());
-        List<Integer> points = Arrays.asList(8, 6, 4, 2, 1, 1);
-        for(int i = 0; i < 5; i++) {
-            rank.get(i).raiseScore(points.get(i));
-        }
     }
 
     public void handleDeadPlayer(Player player) {}

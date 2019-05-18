@@ -35,6 +35,14 @@ public class Player {
         this.position = null;
     }
 
+    public List<Integer> getKillshotPoints() {
+        return this.killshotPoints;
+    }
+
+    public void reducekillshotPoints() {
+        this.killshotPoints.remove(0);
+    }
+
     public boolean isDead() {
         return this.dead;
     }
@@ -96,8 +104,9 @@ public class Player {
         return this.score;
     }
 
-    void raiseScore(int amount) {
+    public void raiseScore(int amount) {
         this.score = this.score + amount;
+
     }
 
     void addAmmos(Map<AmmoType, Integer> ammos) {
