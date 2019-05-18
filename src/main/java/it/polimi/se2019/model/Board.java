@@ -507,4 +507,9 @@ public class Board extends Observable {
         return result;
     }
 
+    public void raisePlayerScore(Player p, int score) {
+        p.raiseScore(score);
+        notifyChanges(new ScoreMessage(p.getCharacter(), p.getScore()));
+    }
+
 }

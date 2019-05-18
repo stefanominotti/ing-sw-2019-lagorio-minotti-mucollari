@@ -11,13 +11,8 @@ public class SquaresGraph {
 
     public SquaresGraph(Arena arena) {
 
-        this.vertices = new ArrayList<>();
+        this.vertices = new ArrayList<>(arena.getAllSquares());
         this.currentPaths = new ArrayList<>();
-
-        for (Room r : arena.getRoomList()) {
-            this.vertices.addAll(r.getSquares());
-        }
-
         this.nearbyAccessibilityList = new ArrayList[this.vertices.size()];
 
         for (int i = 0; i < vertices.size(); i++) {

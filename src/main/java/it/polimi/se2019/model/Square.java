@@ -185,4 +185,12 @@ public class Square {
         return false;
     }
 
+    public List<List<Square>> pathsTo(Square square) {
+        return new SquaresGraph(this.arena).findPaths(this, square);
+    }
+
+    public int minimumDistanceFrom(Square square) {
+        return new SquaresGraph(this.arena).findMinimumDistance(this, square);
+    }
+
 }

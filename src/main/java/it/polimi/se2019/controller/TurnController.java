@@ -1,11 +1,10 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.messages.AvailableMoveActionMessage;
+import it.polimi.se2019.model.messages.AvailablePickupActionMessage;
 import it.polimi.se2019.model.messages.DiscardToSpawnMessage;
-import it.polimi.se2019.model.messages.Message;
-import org.omg.PortableServer.THREAD_POLICY_ID;
 
-import java.rmi.RemoteException;
 import java.util.*;
 
 import static java.util.stream.Collectors.toMap;
@@ -73,8 +72,7 @@ public class TurnController {
                                 LinkedHashMap::new));
         int index = 0;
         for(Player player : playersOrder.keySet()) {
-            player.raiseScore(this.getActiveplayer().getKillshotPoints().get(index));
-            this.controller.sendAll(new Message()/*aggiorna giocatori sui punteggi*/);
+            this.board.raisePlayerScore(player, this.getActiveplayer().getKillshotPoints().get(index));
             index++;
         }
     }
@@ -99,6 +97,46 @@ public class TurnController {
 
     List<Square> whereCanMove(int maxDistamce) {
         return new ArrayList<>();
+    }
+
+    void calculateMovementAction() {
+        Square position = this.activePlayer.getPosition();
+        List<Coordinates> movements = new ArrayList<>();
+        for (Square s : this.board.getArena().getAllSquares()) {
+            if(s == position) {
+                continue;
+            }
+            List<List<Square>> paths = position.pathsTo(s);
+            for (List<Square> path : paths) {
+                if (path.size() - 1 <= 3) {
+                    movements.add(new Coordinates(s.getX(), s.getY()));
+                }
+            }
+        }
+
+        this.controller.send(new AvailableMoveActionMessage(this.activePlayer.getCharacter(), movements));
+    }
+
+    void calculatePickupAction() {
+        Square position = this.activePlayer.getPosition();
+        int maxDistance = 1;
+        if (this.activePlayer.getDamages().size() > 2) {
+            maxDistance = 2;
+        }
+        List<Coordinates> movements = new ArrayList<>();
+        for (Square s : this.board.getArena().getAllSquares()) {
+            if(s == position || s.getAvailableAmmoTile() == null) {
+                continue;
+            }
+            List<List<Square>> paths = position.pathsTo(s);
+            for (List<Square> path : paths) {
+                if (path.size() - 1 <= maxDistance) {
+                    movements.add(new Coordinates(s.getX(), s.getY()));
+                }
+            }
+        }
+
+        this.controller.send(new AvailablePickupActionMessage(this.activePlayer.getCharacter(), movements));
     }
 
 }

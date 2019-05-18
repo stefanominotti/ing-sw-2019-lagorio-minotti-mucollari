@@ -15,23 +15,8 @@ import java.util.Scanner;
 
 public class AmmoTile implements Serializable {
 
-    private static final String ROOT = "arenas/data/arena_";
     private final boolean powerup;
     private final Map<AmmoType, Integer> ammos;
-
-    AmmoTile(String filename) {
-        String path = ROOT + filename + ".json";
-        ClassLoader classLoader = getClass().getClassLoader();
-        InputStream inputStream = classLoader.getResourceAsStream(path);
-        String jsonString = new Scanner(inputStream, "UTF-8").useDelimiter("\\A").next();
-        JsonParser parser = new JsonParser();
-        JsonObject jsonElement = (JsonObject)parser.parse(jsonString);
-        Gson gson = new Gson();
-        Type ammosColor = new TypeToken<Map<AmmoType, Integer>>(){}.getType();
-
-        this.powerup = gson.fromJson(jsonElement.get("powerup"), Boolean.class);
-        this.ammos = gson.fromJson(jsonElement.get("ammos"), ammosColor);
-    }
 
     AmmoTile(boolean powerup, Map<AmmoType, Integer> ammos) {
         this.powerup = powerup;

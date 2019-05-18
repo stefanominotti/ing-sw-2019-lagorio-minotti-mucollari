@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -52,5 +53,15 @@ public class Arena {
             }
         }
         return null;
+    }
+
+    public List<Square> getAllSquares() {
+        List<Square> squares  = new ArrayList<>();
+
+        for (Room r : this.rooms) {
+            squares.addAll(r.getSquares());
+        }
+
+        return squares;
     }
 }
