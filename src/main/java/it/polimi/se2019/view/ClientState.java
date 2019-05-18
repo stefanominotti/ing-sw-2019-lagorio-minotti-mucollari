@@ -8,5 +8,7 @@ public enum ClientState {
     WAITINGSETUP,
     OTHERTURN,
     YOURTURN,
-    DISCARD_SPAWN;
+    DISCARD_SPAWN,
+    SELECTACTION,
+    SELECTMOVEMENT;
 }

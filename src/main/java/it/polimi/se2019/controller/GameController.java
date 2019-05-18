@@ -8,6 +8,8 @@ import it.polimi.se2019.view.CLIView;
 import it.polimi.se2019.view.VirtualView;
 
 import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -53,6 +55,9 @@ public class GameController implements Observer {
             case "PowerupSelectedMessage":
                 update((PowerupSelectedMessage) message);
                 break;
+            case "ActionSelectedMessage":
+                update((ActionSelectedMessage) message);
+                break;
         }
     }
 
@@ -81,13 +86,11 @@ public class GameController implements Observer {
     }
 
     private void update(PowerupSelectedMessage message) {
-        if(this.turnController.getState() == TurnState.FIRST_RESPAWNING ||
-                this.turnController.getState() == TurnState.DEATH_RESPAWNING) {
-            this.turnController.spawnPlayer(RoomColor.valueOf(message.getPowerup().getColor().toString()));
-        } else {
-            //usa powerup
-        }
-        this.model.removePowerup(turnController.getActiveplayer(), message.getPowerup());
+        this.turnController.handlePowerupDiscarded(message.getPowerup());
+    }
+
+    private void update(ActionSelectedMessage message) {
+        this.turnController.handleAction(message.getAction());
     }
 
     void send(SingleReceiverMessage message) {

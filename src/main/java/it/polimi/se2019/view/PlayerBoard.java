@@ -42,8 +42,12 @@ public class PlayerBoard {
         return this.character;
     }
 
-    public String getNickname() {
+    String getNickname() {
         return this.nickname;
+    }
+
+    List<GameCharacter> getDamages() {
+        return new ArrayList<>(this.damages);
     }
 
     void addDamage(GameCharacter attacker, GameCharacter target, int amount) {}

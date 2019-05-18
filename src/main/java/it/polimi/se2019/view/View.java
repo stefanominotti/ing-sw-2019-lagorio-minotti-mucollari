@@ -1,6 +1,7 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.client.AbstractClient;
+import it.polimi.se2019.controller.ActionType;
 import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.messages.*;
 
@@ -19,6 +20,8 @@ public abstract class View {
     private List<PlayerBoard> enemyBoards;
     private SelfPlayerBoard selfPlayerBoard;
     private ClientState state;
+    private List<ActionType> turnActions;
+    private List<Coordinates> actionCoordinates;
 
     View(AbstractClient client) {
         this.client = client;
@@ -86,6 +89,15 @@ public abstract class View {
             case "PowerupRemoved":
                 update((PowerupRemoved) message);
                 break;
+            case "AvailableActionsMessage":
+                update((AvailableActionsMessage) message);
+                break;
+            case "AvailableMoveActionMessage":
+                update((AvailableMoveActionMessage) message);
+                break;
+            case "AvailablePickupActionMessage":
+                update((AvailablePickupActionMessage) message);
+                break;
         }
     }
 
@@ -136,6 +148,20 @@ public abstract class View {
                     showMessage("Invalid input, retry:");
                     break;
                 }
+                break;
+            case SELECTACTION:
+                try {
+                    int number = Integer.parseInt(input);
+                    if (0 >= number || number > this.turnActions.size()) {
+                        showMessage("Invalid input, retry:");
+                        break;
+                    }
+                    this.client.send(new ActionSelectedMessage(this.turnActions.get(number - 1)));
+                } catch(NumberFormatException e) {
+                    showMessage("Invalid input, retry:");
+                    break;
+                }
+                break;
         }
     }
 
@@ -342,8 +368,8 @@ public abstract class View {
     }
 
     private void update(DiscardToSpawnMessage message) {
-        showMessage("Discard a Powerup to spawn:");
         StringBuilder text = new StringBuilder();
+        text.append("Discard a Powerup to spawn:\n");
         List<Powerup> powerups = this.selfPlayerBoard.getPowerups();
         for(int i=0; i<powerups.size(); i++) {
             int index = i + 1;
@@ -367,12 +393,88 @@ public abstract class View {
 
     private void update(PowerupRemoved message) {
         if(this.character == message.getCharacter()) {
-            showMessage("You have removed " +
+            showMessage("You have discarded " +
                     message.getPowerup().getType() + " " + message.getPowerup().getColor());
         } else {
-            showMessage(message.getCharacter() + " has removed " +
+            showMessage(message.getCharacter() + " has discarded " +
                     message.getPowerup().getType() + " " + message.getPowerup().getColor());
         }
+    }
+
+    private void update(AvailableActionsMessage message) {
+        this.turnActions = message.getActions();
+        StringBuilder text = new StringBuilder();
+        text.append("Select one of these actions:\n");
+        int number = 1;
+        for (ActionType action : message.getActions()) {
+            String toAppend;
+            switch (action) {
+                case MOVE:
+                    toAppend = "[" + number + "] - Move yourself by up to 3 squares\n";
+                    text.append(toAppend);
+                    break;
+                case PICKUP:
+                    if (this.selfPlayerBoard.getDamages().size() < 3) {
+                        toAppend = "[" + number + "] - Move yourself by up to 1 square and pickup\n";
+                    } else {
+                        toAppend = "[" + number + "] - Move yourself by up to 2 squares and pickup\n";
+                    }
+                    text.append(toAppend);
+                    break;
+                case SHOT:
+                    if (this.selfPlayerBoard.getDamages().size() < 6) {
+                        toAppend = "[" + number + "] - Shoot\n";
+                    } else {
+                        toAppend = "[" + number + "] - Move yourself by up to 1 square and shoot\n";
+                    }
+                    text.append(toAppend);
+                    break;
+            }
+            number++;
+        }
+        text.setLength(text.length() - 1);
+        showMessage(text.toString());
+        this.state = SELECTACTION;
+    }
+
+    private void update(AvailableMoveActionMessage message) {
+        this.actionCoordinates = message.getMovements();
+        StringBuilder text = new StringBuilder();
+        text.append("Select one of these squares:\n");
+        int number = 1;
+        for(Coordinates coordinates : message.getMovements()) {
+            SquareView square = this.board.getSquareByCoordinates(coordinates.getX(), coordinates.getY());
+            String toAppend = "[" + number + "] - [" + square.getX() + ", " + square.getY() + "], " + square.getColor();
+            text.append(toAppend);
+            if(!square.isSpawn()) {
+                text.append( "\nTile: [");
+                if(square.getAvailableAmmoTile().hasPowerup()) {
+                    text.append("POWERUP, ");
+                }
+                for(Map.Entry<AmmoType, Integer> ammos : square.getAvailableAmmoTile().getAmmos().entrySet()) {
+                    if(ammos.getValue() != 0) {
+                        toAppend = ammos.getKey() + "x" + ammos.getValue() + ", ";
+                        text.append(toAppend);
+                    }
+                }
+            } else {
+                text.append( "\nStore: [");
+                for(Weapon weapon : square.getStore()) {
+                    toAppend = weapon + ", ";
+                    text.append(toAppend);
+                }
+            }
+            text.setLength(text.length() - 2);
+            text.append("]\n\n");
+            number++;
+        }
+        text.setLength(text.length() - 1);
+        showMessage(text.toString());
+        this.state = SELECTMOVEMENT;
+    }
+
+    private void update(AvailablePickupActionMessage message) {
+
     }
 
     public abstract void showMessage(String message);

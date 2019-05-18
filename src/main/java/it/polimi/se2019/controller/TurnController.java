@@ -1,12 +1,15 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.messages.AvailableActionsMessage;
 import it.polimi.se2019.model.messages.AvailableMoveActionMessage;
 import it.polimi.se2019.model.messages.AvailablePickupActionMessage;
 import it.polimi.se2019.model.messages.DiscardToSpawnMessage;
 
 import java.util.*;
 
+import static it.polimi.se2019.controller.TurnState.MOVING;
+import static it.polimi.se2019.controller.TurnState.PICKINGUP;
 import static java.util.stream.Collectors.toMap;
 
 public class TurnController {
@@ -34,12 +37,14 @@ public class TurnController {
         this.activePlayer = this.board.getPlayerByCharacter(player);
         switch (type) {
             case FIRST_TURN:
+                this.movesLeft = 2;
                 this.state = TurnState.FIRST_RESPAWNING;
                 this.board.drawPowerup(this.activePlayer);
                 this.board.drawPowerup(this.activePlayer);
                 this.controller.send(new DiscardToSpawnMessage(player));
                 break;
             case AFTER_DEATH:
+                this.movesLeft = 0;
                 this.state = TurnState.DEATH_RESPAWNING;
                 countScore();
                 this.board.drawPowerup(this.activePlayer);
@@ -77,11 +82,23 @@ public class TurnController {
         }
     }
 
+    void handlePowerupDiscarded(Powerup powerup) {
+        this.board.removePowerup(this.activePlayer, powerup);
+
+        if(this.state == TurnState.FIRST_RESPAWNING || this.state == TurnState.DEATH_RESPAWNING) {
+            spawnPlayer(RoomColor.valueOf(powerup.getColor().toString()));
+        } else {
+            //usa powerup
+        }
+    }
+
     void spawnPlayer(RoomColor color) {
         for(Room room : this.board.getArena().getRoomList()){
             if(room.getColor() == color){
                 this.board.respawnPlayer(this.activePlayer, room);
                 if(this.state == TurnState.FIRST_RESPAWNING) {
+                    List<ActionType> availableActions = Arrays.asList(ActionType.MOVE, ActionType.PICKUP, ActionType.SHOT);
+                    this.controller.send(new AvailableActionsMessage(this.activePlayer.getCharacter(), availableActions));
                     this.state = TurnState.SELECTACTION;
                 }
                 if (this.state == TurnState.DEATH_RESPAWNING){
@@ -137,6 +154,19 @@ public class TurnController {
         }
 
         this.controller.send(new AvailablePickupActionMessage(this.activePlayer.getCharacter(), movements));
+    }
+
+    void handleAction(ActionType action) {
+        switch (action) {
+            case MOVE:
+                this.state = MOVING;
+                calculateMovementAction();
+                break;
+            case PICKUP:
+                this.state = PICKINGUP;
+                calculatePickupAction();
+                break;
+        }
     }
 
 }
