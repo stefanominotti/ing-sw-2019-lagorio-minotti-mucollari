@@ -7,15 +7,15 @@ public class PositionConstraint {
 
     private final PositionConstraintType type;
     private final List<String> distanceValues;
-    private final TargetType target;
+    private final EffectTarget target;
 
-    PositionConstraint(PositionConstraintType type, List<String> distanceValues, TargetType target) {
+    PositionConstraint(PositionConstraintType type, List<String> distanceValues, EffectTarget target) {
         this.type = type;
         this.distanceValues = distanceValues;
         this.target = target;
     }
 
-    public TargetType getTarget() {
+    public EffectTarget getTarget() {
         return this.target;
     }
 

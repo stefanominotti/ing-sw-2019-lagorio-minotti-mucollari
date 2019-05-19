@@ -10,12 +10,12 @@
     {
       "effectName": "effetto",
       "description": "Dai 3 danni e 1 marchio a 1 bersaglio che puoi vedere; il bersaglio deve essere ad almeno 2 movimenti da te",
+      "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
-      "type": "DAMAGE",
       "amount": [
         "3"
       ],
@@ -24,17 +24,22 @@
         "amount": [
           "1"
         ],
+        "positionType": "SAMESQUARE",
         "positionConstraints": [
           {
             "type": "VISIBLE",
-            "target": "SELF"
+            "target": {
+              "type": "SELF"
+            }
           },
           {
             "type": "DISTANCE",
             "distanceValues":[
               "2", "MAX"
             ],
-            "target": "SELF"
+            "target": {
+              "type": "SELF"
+            }
           }
         ]
       }
@@ -48,6 +53,24 @@
         "type": "OTHERS",
         "amount": [
           "1"
+        ],
+        "positionType": "SAMESQUARE",
+        "positionConstraints": [
+          {
+            "type": "VISIBLE",
+            "target": {
+              "type": "SELF"
+            }
+          },
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "2", "MAX"
+            ],
+            "target": {
+              "type": "SELF"
+            }
+          }
         ],
         "targetConstraints": [
           "ONLYHITBYMAIN"

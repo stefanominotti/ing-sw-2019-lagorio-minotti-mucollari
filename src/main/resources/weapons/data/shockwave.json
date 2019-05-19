@@ -10,12 +10,12 @@
     {
       "effectName": "modalità base",
       "description": "Scegli fino a 3 bersagli su quadrati differenti, ognuno distante esattamente 1 movimento. Dai 1 danno a ogni bersaglio",
+      "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
-      "type": "DAMAGE",
       "amount": [
         "1"
       ],
@@ -31,7 +31,9 @@
             "distanceValues":[
               "1"
             ],
-            "target": "SELF"
+            "target": {
+              "type": "SELF"
+            }
           }
         ]
       }
@@ -41,15 +43,15 @@
     {
       "effectName": "modalità tsunami",
       "description": "Dai 1 danno ai bersagli che sono distanti esattamente 1 movimento",
+      "type": "DAMAGE",
+      "amount": [
+        "1"
+      ],
       "cost": {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 1
       },
-      "type": "DAMAGE",
-      "amount": [
-        "1"
-      ],
       "target": {
         "type": "OTHERS",
         "amount": [
@@ -62,7 +64,9 @@
             "distanceValues":[
               "1"
             ],
-            "target": "SELF"
+            "target": {
+              "type": "SELF"
+            }
           }
         ]
       }

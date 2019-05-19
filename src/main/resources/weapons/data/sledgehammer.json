@@ -10,12 +10,12 @@
     {
       "effectName": "modalità base",
       "description": "Dai 2 danni a 1 bersaglio nel quadrato in cui ti trovi",
+      "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
-      "type": "DAMAGE",
       "amount": [
         "2"
       ],
@@ -24,13 +24,16 @@
         "amount": [
           "1"
         ],
+        "positionType": "SAMESQUARE",
         "positionConstraints": [
           {
             "type": "DISTANCE",
             "distanceValues":[
               "0"
             ],
-            "target": "SELF"
+            "target": {
+              "type": "SELF"
+            }
           }
         ]
       }
@@ -40,27 +43,30 @@
     {
       "effectName": "modalità polverizzatore",
       "description": "Dai 3 danni 1 bersaglio nel quadrato in cui ti trovi, poi muovi quel bersaglio di 0, 1, 2 quadrati in una direzione",
+      "type": "DAMAGE",
+      "amount": [
+        "3"
+      ],
       "cost": {
         "BLUE": 0,
         "RED": 1,
         "YELLOW": 0
       },
-      "type": "DAMAGE",
-      "amount": [
-        "3"
-      ],
       "target": {
         "type": "OTHERS",
         "amount": [
           "1"
         ],
+        "positionType": "SAMESQUARE",
         "positionConstraints": [
           {
             "type": "DISTANCE",
             "distanceValues":[
               "0"
             ],
-            "target": "SELF"
+            "target": {
+              "type": "SELF"
+            }
           }
         ]
       }
@@ -68,12 +74,27 @@
     { 
       "type": "MOVE",
       "amount": [
-        "0", "1", "2"
+        "1", "2"
+      ],
+      "effectCostraints": [
+        "NOTREQUIRED"
       ],
       "target": {
         "type": "OTHERS",
         "amount": [
           "1"
+        ],
+        "positionType": "SAMEDIRECTION",
+        "positionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
+            "target": {
+              "type": "SELF"
+            }
+          }
         ],
         "afterPositionConstraints": [
           {
@@ -87,7 +108,9 @@
             "distanceValues":[
               "0", "1", "2"
             ],
-            "target": "SELF"
+            "target": {
+              "type": "SELF"
+            }
           }
         ],
         "targetConstraints": [

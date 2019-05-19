@@ -10,12 +10,12 @@
     {
       "effectName": "modalità base",
       "description": "Dai 1 danno a 1 bersaglio che puoi vedere e distante almeno 1 movimento. Poi dai un marchio a quel bersaglio e a chiunque altro in quel quadrato",
+      "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
-      "type": "DAMAGE",
       "amount": [
         "1"
       ],
@@ -24,17 +24,22 @@
         "amount": [
           "1"
         ],
+        "positionType": "SAMESQUARE",
         "positionConstraints": [
           {
             "type": "VISIBLE",
-            "target": "SELF"
+            "target": {
+              "type": "SELF"
+            }
           },
           {
            "type": "DISTANCE",
            "distanceValues":[
               "1", "MAX"
            ],
-            "target": "SELF"
+            "target": {
+              "type": "SELF"
+            }
           }
         ]
       }
@@ -56,7 +61,9 @@
            "distanceValues":[
               "0"
            ],
-            "target": "FIRSTPLAYER"
+            "target": {
+              "type": "FIRSTPLAYER"
+            }
           }
         ]
       }
@@ -66,12 +73,12 @@
     {
       "effectName": "modalità nano-traccianti",
       "description": "Dai 1 danno a 1 bersaglio che puoi vedere e distante almeno 1 movimento. Poi dai 2 marchi a quel bersaglio e a chiunque in quel quadrato",
+      "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
         "RED": 1,
         "YELLOW": 0
       },
-      "type": "DAMAGE",
       "amount": [
         "1"
       ],
@@ -80,18 +87,22 @@
         "amount": [
           "1"
         ],
+        "positionType": "SAMESQUARE",
         "positionConstraints": [
           {
             "type": "VISIBLE",
-            "target": "SELF"
-
+            "target": {
+              "type": "SELF"
+            }
           },
           {
            "type": "DISTANCE",
            "distanceValues":[
               "1", "MAX"
            ],
-            "target": "SELF"
+            "target": {
+              "type": "SELF"
+            }
           }
         ]
       }
@@ -113,7 +124,9 @@
            "distanceValues":[
               "0"
            ],
-            "target": "FIRSTPLAYER"
+            "target": {
+              "type": "FIRSTPLAYER"
+            }
           }
         ]
       }

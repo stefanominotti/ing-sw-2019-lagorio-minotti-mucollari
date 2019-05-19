@@ -10,12 +10,12 @@
     {
       "effectName": "modalità base",
       "description": "Dai 1 danno a ogni altro giocatore presente nel quadrato in cui ti trovi",
+      "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
-      "type": "DAMAGE",
       "amount": [
         "1"
       ],
@@ -31,7 +31,9 @@
             "distanceValues":[
               "0"
             ],
-            "target": "SELF"
+            "target": {
+              "type": "SELF"
+            }
           }
         ]
       }
@@ -40,16 +42,16 @@
   "alternativeMode": [
     {
       "effectName": "modalità mietitore",
-      "description": "Dai 2 danni a ogni altro giocatore presente nel quadrato in cui ti trovi",
+      "description": "Dai 2 danno a ogni altro giocatore presente nel quadrato in cui ti trovi",
+      "type": "DAMAGE",
+      "amount": [
+        "2"
+      ],
       "cost": {
         "BLUE": 1,
         "RED": 1,
         "YELLOW": 0
       },
-      "type": "DAMAGE",
-      "amount": [
-        "2"
-      ],
       "target": {
         "type": "OTHERS",
         "amount": [
@@ -62,7 +64,9 @@
             "distanceValues":[
               "0"
             ],
-            "target": "SELF"
+            "target": {
+              "type": "SELF"
+            }
           }
         ]
       }

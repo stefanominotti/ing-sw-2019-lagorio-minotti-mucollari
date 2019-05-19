@@ -4,6 +4,5 @@ public enum EffectType {
 
     DAMAGE,
     MARK,
-    MOVE,
-    SELECT;
+    MOVE;
 }
