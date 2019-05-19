@@ -94,6 +94,9 @@ public class Square {
     }
 
     public List<WeaponCard> getWeaponsStore() {
+        if (this.weaponsStore == null) {
+            return null;
+        }
         return new ArrayList<>(this.weaponsStore);
     }
 

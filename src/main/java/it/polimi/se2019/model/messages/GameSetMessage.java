@@ -14,11 +14,11 @@ public class GameSetMessage extends Message {
 
     public GameSetMessage(int skulls, int arenaNumber, Map<Coordinates, RoomColor> arenaColors,
                           Map<Coordinates, Boolean> arenaSpawn) {
+        setMessageType(this.getClass());
         this.skulls = skulls;
         this.arenaNumber = arenaNumber;
         this.arenaColors = arenaColors;
         this.arenaSpawn = arenaSpawn;
-        setMessageType(this.getClass());
     }
 
     public int getSkulls() {

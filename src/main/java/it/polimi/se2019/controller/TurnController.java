@@ -21,6 +21,7 @@ public class TurnController {
     private ActionType selectedAction;
     private TurnState state;
     private Player powerupTarget;
+    private boolean finalFrenzy;
 
     public TurnController(Board board, GameController controller) {
         this.state = TurnState.SELECTACTION;
@@ -142,7 +143,10 @@ public class TurnController {
         }
         List<Coordinates> movements = new ArrayList<>();
         for (Square s : this.board.getArena().getAllSquares()) {
-            if(s == position || s.getAvailableAmmoTile() == null) {
+            if(s.getWeaponsStore() != null && s.getWeaponsStore().size() == 0) {
+                continue;
+            }
+            if(s.getAvailableAmmoTile() == null && s.getWeaponsStore() == null) {
                 continue;
             }
             List<List<Square>> paths = position.pathsTo(s);
@@ -167,6 +171,41 @@ public class TurnController {
                 calculatePickupAction();
                 break;
         }
+        this.movesLeft--;
+    }
+
+    void handleEndAction() {
+        if (this.movesLeft == 0) {
+            // chiedi di ricaricare e termina turno
+            return;
+        }
+        if (this.finalFrenzy) {
+            // invia mosse frenesia finale
+            return;
+        }
+        List<ActionType> availableActions = Arrays.asList(ActionType.MOVE, ActionType.PICKUP, ActionType.SHOT);
+        this.controller.send(new AvailableActionsMessage(this.activePlayer.getCharacter(), availableActions));
+        this.state = TurnState.SELECTACTION;
+    }
+
+    void movementAction(Coordinates coordinates) {
+        this.board.movePlayer(this.activePlayer, this.board.getArena().getSquareByCoordinate(coordinates.getX(), coordinates.getY()));
+        handleEndAction();
+    }
+
+    void pickupAction(Coordinates coordinates) {
+        int x = coordinates.getX();
+        int y = coordinates.getY();
+        Square targetSquare = this.board.getArena().getSquareByCoordinate(x, y);
+        if (this.activePlayer.getPosition() != targetSquare) {
+            this.board.movePlayer(this.activePlayer, targetSquare);
+        }
+        if (targetSquare.getWeaponsStore() != null) {
+            // chiedi che arma raccogliere
+            return;
+        }
+        this.board.giveAmmoTile(this.activePlayer, targetSquare.getAvailableAmmoTile());
+        handleEndAction();
     }
 
 }

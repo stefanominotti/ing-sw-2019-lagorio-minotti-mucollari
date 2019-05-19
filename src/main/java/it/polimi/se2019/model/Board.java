@@ -369,6 +369,9 @@ public class Board extends Observable {
                 if(square.getAvailableAmmoTile() != null) {
                     continue;
                 }
+                if (this.ammosDeck.isEmpty()) {
+                    fillAmmosDeck();
+                }
                 square.addAmmoTile(this.ammosDeck.get(0));
                 this.ammosDeck.remove(0);
             }
@@ -376,12 +379,15 @@ public class Board extends Observable {
     }
 
     public void removePowerup(Player player, Powerup powerup) {
-        player.removePowerup(powerup);
+        player.removePowerup(player.getPowerupByType(powerup.getType(), powerup.getColor()));
         this.powerupsDiscardPile.add(powerup);
         notifyChanges(new PowerupRemoved(player.getCharacter(), powerup));
     }
 
     public void drawPowerup(Player player) {
+        if (this.powerupsDeck.isEmpty()) {
+            fillPowerupsDeck();
+        }
         Powerup powerup = this.powerupsDeck.get(0);
         player.addPowerup(powerup);
         this.powerupsDeck.remove(powerup);
@@ -406,8 +412,11 @@ public class Board extends Observable {
         if(tile.hasPowerup() && player.getPowerupsNumber() < 3) {
             drawPowerup(player);
         }
-        player.addAmmos(tile.getAmmos());
+        Map<AmmoType, Integer> addedAmmos = player.addAmmos(tile.getAmmos());
         this.ammosDiscardPile.add(tile);
+        Square position = player.getPosition();
+        position.removeAmmoTile();
+        notifyChanges(new AmmosGivenMessage(player.getCharacter(), addedAmmos, new Coordinates(position.getX(), position.getY())));
     }
 
     public void useAmmos(Player player, Map<AmmoType, Integer> usedAmmos) {
@@ -418,6 +427,7 @@ public class Board extends Observable {
         player.getPosition().removePlayer(player);
         square.addPlayer(player);
         player.setPosition(square);
+        notifyChanges(new MovementMessage(player.getCharacter(), new Coordinates(square.getX(), square.getY())));
     }
 
     public void respawnPlayer(Player player, Room room) {

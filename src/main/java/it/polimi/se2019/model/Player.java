@@ -109,14 +109,17 @@ public class Player {
 
     }
 
-    void addAmmos(Map<AmmoType, Integer> ammos) {
+    Map<AmmoType, Integer> addAmmos(Map<AmmoType, Integer> ammos) {
+        Map<AmmoType, Integer> addedAmmos = new EnumMap<>(AmmoType.class);
         for(Map.Entry<AmmoType, Integer> ammo : ammos.entrySet()) {
             int newAmmos = this.availableAmmos.get(ammo.getKey()) + ammo.getValue();
             if(newAmmos > MAX_AMMOS) {
                 newAmmos = MAX_AMMOS;
             }
+            addedAmmos.put(ammo.getKey(), newAmmos - this.availableAmmos.get(ammo.getKey()));
             this.availableAmmos.put(ammo.getKey(), newAmmos);
         }
+        return addedAmmos;
     }
 
     void removeAmmos(Map<AmmoType, Integer> ammos) {
@@ -128,6 +131,15 @@ public class Player {
 
     void addPowerup(Powerup powerup) {
         this.powerups.add(powerup);
+    }
+
+    Powerup getPowerupByType(PowerupType type, AmmoType color) {
+        for (Powerup powerup : this.powerups) {
+            if (powerup.getColor() == color && powerup.getType() == type) {
+                return powerup;
+            }
+        }
+        return null;
     }
 
     void removePowerup(Powerup powerup) {

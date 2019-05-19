@@ -70,4 +70,8 @@ public class SquareView {
     void setAvailableAmmoTile(AmmoTile tile) {
         this.availableAmmoTile = tile;
     }
+
+    void removeAmmoTile() {
+        this.availableAmmoTile = null;
+    }
 }

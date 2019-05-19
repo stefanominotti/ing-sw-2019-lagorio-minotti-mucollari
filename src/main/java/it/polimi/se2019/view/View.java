@@ -98,6 +98,12 @@ public abstract class View {
             case "AvailablePickupActionMessage":
                 update((AvailablePickupActionMessage) message);
                 break;
+            case "MovementMessage":
+                update((MovementMessage) message);
+                break;
+            case "AmmosGivenMessage":
+                update((AmmosGivenMessage) message);
+                break;
         }
     }
 
@@ -157,6 +163,35 @@ public abstract class View {
                         break;
                     }
                     this.client.send(new ActionSelectedMessage(this.turnActions.get(number - 1)));
+                    this.turnActions = new ArrayList<>();
+                } catch(NumberFormatException e) {
+                    showMessage("Invalid input, retry:");
+                    break;
+                }
+                break;
+            case SELECTMOVEMENT:
+                try {
+                    int number = Integer.parseInt(input);
+                    if (0 >= number || number > this.actionCoordinates.size()) {
+                        showMessage("Invalid input, retry:");
+                        break;
+                    }
+                    this.client.send(new MovementSelectedMessage(this.actionCoordinates.get(number - 1)));
+                    this.actionCoordinates = new ArrayList<>();
+                } catch(NumberFormatException e) {
+                    showMessage("Invalid input, retry:");
+                    break;
+                }
+                break;
+            case SELECTPICKUP:
+                try {
+                    int number = Integer.parseInt(input);
+                    if (0 >= number || number > this.actionCoordinates.size()) {
+                        showMessage("Invalid input, retry:");
+                        break;
+                    }
+                    this.client.send(new PickupSelectedMessage(this.actionCoordinates.get(number - 1)));
+                    this.actionCoordinates = new ArrayList<>();
                 } catch(NumberFormatException e) {
                     showMessage("Invalid input, retry:");
                     break;
@@ -384,10 +419,11 @@ public abstract class View {
     private void update(PlayerSpawnedMessage message) {
         int x = message.getCoordinates().getX();
         int y = message.getCoordinates().getY();
+        this.board.getSquareByCoordinates(x, y).addActivePlayer(message.getCharacter());
         if(this.character == message.getCharacter()) {
-            showMessage("Your position is [" + x + ", " + y + "]");
+            showMessage("You spawned in [" + x + ", " + y + "]");
         } else {
-            showMessage(message.getCharacter() + " position is [" + x + ", " + y + "]");
+            showMessage(message.getCharacter() + " spawned in [" + x + ", " + y + "]");
         }
     }
 
@@ -402,7 +438,8 @@ public abstract class View {
     }
 
     private void update(AvailableActionsMessage message) {
-        this.turnActions = message.getActions();
+        this.turnActions = new ArrayList<>(message.getActions());
+        this.turnActions.add(ActionType.ENDTURN);
         StringBuilder text = new StringBuilder();
         text.append("Select one of these actions:\n");
         int number = 1;
@@ -432,6 +469,8 @@ public abstract class View {
             }
             number++;
         }
+        String toAppend = "[" + number + "] - End your turn\n";
+        text.append(toAppend);
         text.setLength(text.length() - 1);
         showMessage(text.toString());
         this.state = SELECTACTION;
@@ -447,6 +486,9 @@ public abstract class View {
             String toAppend = "[" + number + "] - [" + square.getX() + ", " + square.getY() + "], " + square.getColor();
             text.append(toAppend);
             if(!square.isSpawn()) {
+                if(square.getAvailableAmmoTile() == null) {
+                    continue;
+                }
                 text.append( "\nTile: [");
                 if(square.getAvailableAmmoTile().hasPowerup()) {
                     text.append("POWERUP, ");
@@ -474,7 +516,74 @@ public abstract class View {
     }
 
     private void update(AvailablePickupActionMessage message) {
+        this.actionCoordinates = message.getMovements();
+        StringBuilder text = new StringBuilder();
+        text.append("Select one of these squares:\n");
+        int number = 1;
+        for(Coordinates coordinates : message.getMovements()) {
+            SquareView square = this.board.getSquareByCoordinates(coordinates.getX(), coordinates.getY());
+            String toAppend = "[" + number + "] - [" + square.getX() + ", " + square.getY() + "], " + square.getColor();
+            text.append(toAppend);
+            if(!square.isSpawn()) {
+                if(square.getAvailableAmmoTile() == null) {
+                    continue;
+                }
+                text.append( "\nTile: [");
+                if(square.getAvailableAmmoTile().hasPowerup()) {
+                    text.append("POWERUP, ");
+                }
+                for(Map.Entry<AmmoType, Integer> ammos : square.getAvailableAmmoTile().getAmmos().entrySet()) {
+                    if(ammos.getValue() != 0) {
+                        toAppend = ammos.getKey() + "x" + ammos.getValue() + ", ";
+                        text.append(toAppend);
+                    }
+                }
+            } else {
+                text.append( "\nStore: [");
+                for(Weapon weapon : square.getStore()) {
+                    toAppend = weapon + ", ";
+                    text.append(toAppend);
+                }
+            }
+            text.setLength(text.length() - 2);
+            text.append("]\n\n");
+            number++;
+        }
+        text.setLength(text.length() - 1);
+        showMessage(text.toString());
+        this.state = SELECTPICKUP;
+    }
 
+    private void update(MovementMessage message) {
+        int x = message.getCoordinates().getX();
+        int y = message.getCoordinates().getY();
+        this.board.getSquareByCoordinates(x, y).addActivePlayer(message.getCharacter());
+        if(this.character == message.getCharacter()) {
+            showMessage("You moved in [" + x + ", " + y + "]");
+        } else {
+            showMessage(message.getCharacter() + " moved in [" + x + ", " + y + "]");
+        }
+    }
+
+    private void update(AmmosGivenMessage message) {
+        int x = message.getCoordinates().getX();
+        int y = message.getCoordinates().getY();
+        this.board.getSquareByCoordinates(x, y).removeAmmoTile();
+        if (this.character == message.getCharacter()) {
+            this.selfPlayerBoard.addAmmos(message.getAmmos());
+        } else {
+            this.getBoardByCharacter(message.getCharacter()).addAmmos(message.getAmmos());
+        }
+        for (Map.Entry<AmmoType, Integer> ammo : message.getAmmos().entrySet()) {
+            if (ammo.getValue() == 0) {
+                continue;
+            }
+            if (this.character == message.getCharacter()) {
+                showMessage("You got " + ammo.getValue() + "x" + ammo.getKey());
+            } else {
+                showMessage(message.getCharacter() + " got " + ammo.getValue() + "x" + ammo.getKey());
+            }
+        }
     }
 
     public abstract void showMessage(String message);

@@ -1,15 +1,10 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Board;
-import it.polimi.se2019.model.RoomColor;
-import it.polimi.se2019.model.TurnType;
 import it.polimi.se2019.model.messages.*;
-import it.polimi.se2019.view.CLIView;
 import it.polimi.se2019.view.VirtualView;
 
 import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -58,6 +53,12 @@ public class GameController implements Observer {
             case "ActionSelectedMessage":
                 update((ActionSelectedMessage) message);
                 break;
+            case "MovementSelectedMessage":
+                update((MovementSelectedMessage) message);
+                break;
+            case "PickupSelectedMessage":
+                update((PickupSelectedMessage) message);
+                break;
         }
     }
 
@@ -91,6 +92,14 @@ public class GameController implements Observer {
 
     private void update(ActionSelectedMessage message) {
         this.turnController.handleAction(message.getAction());
+    }
+
+    private void update(MovementSelectedMessage message) {
+        this.turnController.movementAction(message.getCoordinates());
+    }
+
+    private void update(PickupSelectedMessage message) {
+        this.turnController.pickupAction(message.getCoordinates());
     }
 
     void send(SingleReceiverMessage message) {

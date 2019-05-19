@@ -10,5 +10,6 @@ public enum ClientState {
     YOURTURN,
     DISCARD_SPAWN,
     SELECTACTION,
-    SELECTMOVEMENT;
+    SELECTMOVEMENT,
+    SELECTPICKUP;
 }

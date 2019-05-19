@@ -50,13 +50,18 @@ public class PlayerBoard {
         return new ArrayList<>(this.damages);
     }
 
-    void addDamage(GameCharacter attacker, GameCharacter target, int amount) {}
+    void addDamage(GameCharacter target, int amount) {}
 
-    void addMarks(GameCharacter marker, GameCharacter target, int amount) {}
+    void addMarks(GameCharacter target, int amount) {}
 
-    void removeMarks(GameCharacter marker, GameCharacter target) {}
+    void removeMarks(GameCharacter target) {}
 
-    void addAmmos(GameCharacter player, Map<AmmoType, Integer> ammos) {}
+    void addAmmos(Map<AmmoType, Integer> ammos) {
+        for (Map.Entry<AmmoType, Integer> ammo : ammos.entrySet()) {
+            int newAmmos = this.availableAmmos.get(ammo.getKey()) + ammo.getValue();
+            this.availableAmmos.put(ammo.getKey(), newAmmos);
+        }
+    }
 
-    void useAmmos(GameCharacter player, Map<AmmoType, Integer> usedAmmos) {}
+    void useAmmos(Map<AmmoType, Integer> usedAmmos) {}
 }
