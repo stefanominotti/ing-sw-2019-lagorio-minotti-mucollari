@@ -10,66 +10,52 @@
     {
       "effectName":"effetto base",
       "description": "Scegli un quadrato che puoi vedere ad almeno 1 movimento di distanza. Un vortice si apre in quel punto. Scegli un bersaglio nel quadrato in cui si trova il vortice o distante 1 movimento. Muovi il bersaglio nel quadrato in cui si trova il vortice e dagli 2 danni.",
-      "type": "MOVE",
       "cost" : {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
+      "type": "SELECT",
+      "target": {
+        "type": "SQUARE",
+        "amount": [
+          "1"
+        ],
+        "positionConstraints": [
+          {
+            "type": "VISIBLE",
+            "target": "SELF"
+          },
+          {
+            "type": "DISTANCE",
+            "distanceValues": [
+              "1", "MAX"
+            ],
+            "target": "SELF"
+          }
+        ]
+      }
+    },
+    {
+      "type": "MOVE",
       "amount": [
-        "1"
-      ],
-       "effectCostraints": [
-        "NOTREQUIRED"
+        "0", "1"
       ],
       "target": {
         "type": "OTHERS",
         "amount": [
           "1"
         ],
-        "positionType": "EVERYWHERE",
         "positionConstraints": [
           {
-            "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
-          },
-          {
             "type": "DISTANCE",
             "distanceValues":[
-              "2", "MAX"
+              "0", "1"
             ],
-            "target": {
-              "type": "SELF"
-            }
-          },
-           {
-            "type": "DISTANCE",
-            "distanceValues":[
-              "1"
-            ],
-            "target": {
-              "type": "SQUARE"
-            }
+            "target": "SQUARE"
           }
         ],
         "afterPositionConstraints": [
-          {
-            "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
-          },
-          {
-            "type": "DISTANCE",
-            "distanceValues":[
-              "1", "MAX"
-            ],
-            "target": {
-              "type": "SELF"
-            }
-          },
           {
             "type": "DISTANCE",
             "distanceValues":[
@@ -92,24 +78,6 @@
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
-        "positionConstraints": [
-          {
-            "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
-          },
-          {
-            "type": "DISTANCE",
-            "distanceValues":[
-              "1", "MAX"
-            ],
-            "target": {
-              "type": "SELF"
-            }
-          }
-        ],
         "targetConstraints": [
           "ONLYHITBYMAIN"
         ]
@@ -122,7 +90,7 @@
       "description": "Scegli fino ad altri 2 bersagli nel quadrato in cui si trova il vortice o distanti 1 movimento. Muovili nel quadrato in cui si trova il vortice e dai loro 1 danno ciascuno",
       "type": "MOVE",
       "amount": [
-        "0", "1", "2"
+        "0", "1"
       ],
       "cost": {
         "BLUE": 0,
@@ -171,18 +139,6 @@
         "type": "OTHERS",
         "amount": [
           "0", "1", "2"
-        ],
-        "positionType": "SAMESQUARE",
-        "positionConstraints": [
-          {
-            "type": "DISTANCE",
-            "distanceValues":[
-              "0"
-            ],
-            "target": {
-              "type": "FIRSTPLAYER"
-            }
-          }
         ],
         "targetConstraints": [
           "NOHITBYMAIN", "ONLYHITBYSECONDARY"

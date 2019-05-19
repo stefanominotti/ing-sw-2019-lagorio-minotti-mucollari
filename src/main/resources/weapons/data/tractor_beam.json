@@ -10,24 +10,20 @@
     {
       "effectName":"modalità base",
       "description": "Muovi un bersaglio di 0, 1 o 2 quadrati fino a un quadrato che puoi vedere e dagli 1 danno.",
-      "type": "MOVE",
       "cost" : {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
+      "type": "MOVE",
       "amount": [
-        "1", "2"
-      ],
-       "effectCostraints": [
-        "NOTREQUIRED"
+        "0", "1", "2"
       ],
       "target": {
         "type": "OTHERS",
         "amount": [
           "1"
         ],
-        "positionType": "EVERYWHERE",
         "afterPositionConstraints": [
           {
             "type": "VISIBLE",
@@ -48,15 +44,6 @@
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
-        "positionConstraints": [
-          {
-            "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
-          }
-        ],
         "targetConstraints": [
           "ONLYHITBYMAIN"
         ]
@@ -67,30 +54,27 @@
     {
       "effectName": "modalità punitore",
       "description": " Scegli un bersaglio 0, 1, o 2 movimenti da te. Muovi quel bersaglio nel quadrato in cui ti trovi e dagli 3 danni.",
-      "type": "MOVE",
-      "amount": [
-        "0", "1", "2"
-      ],
       "cost": {
         "BLUE": 0,
         "RED": 1,
         "YELLOW": 0
       },
+      "type": "MOVE",
+      "amount": [
+        "0", "1", "2"
+      ],
       "target": {
         "type": "OTHERS",
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
         "positionConstraints": [
           {
             "type": "DISTANCE",
             "distanceValues":[
               "0", "1", "2"
             ],
-            "target": {
-              "type": "SELF"
-            }
+            "target": "SELF"
           }
         ],
         "afterPositionConstraints": [
@@ -115,15 +99,6 @@
         "type": "OTHERS",
         "amount": [
           "1"
-        ],
-        "positionType": "SAMESQUARE",
-        "positionConstraints": [
-          {
-            "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
-          }
         ],
         "targetConstraints": [
           "ONLYHITBYMAIN"

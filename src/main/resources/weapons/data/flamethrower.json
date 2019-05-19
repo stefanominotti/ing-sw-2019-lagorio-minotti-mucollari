@@ -10,36 +10,24 @@
     {
       "effectName":"modalità base",
       "description": "Scegli un quadrato distante 1 movimento e possibilmente un secondo quadrato distante ancora 1 movimento nella stessa direzione. In ogni quadrato puoi scegliere 1 bersaglio e dargli 1 danno",
-      "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
-      "amount": [
-        "1"
-      ],
+      "type": "SELECT",
       "target": {
-        "type": "OTHERS",
+        "type": "SQUARE",
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
         "positionConstraints": [
-          {
-            "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
-          },
           {
             "type": "DISTANCE",
             "distanceValues":[
               "1"
             ],
-            "target": {
-              "type": "SELF"
-            }
+            "target": "SELF"
           }
         ]
       }
@@ -49,36 +37,65 @@
       "amount": [
         "1"
       ],
-      "effectCostraints":[
-        "NOTREQUIRED"
+      "target": {
+        "type": "OTHERS",
+        "amount": [
+          "1"
+        ],
+        "positionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
+            "target": "SQUARE"
+          }
+        ]
+      }
+    },
+    {
+      "type": "SELECT",
+        "target": {
+          "type": "SQUARE",
+          "amount": [
+            "1"
+          ],
+          "positionConstraints": [
+            {
+              "type": "SAMEDIRECTION",
+              "target": "SQUARE"
+            },
+            {
+              "type": "DISTANCE",
+              "distanceValues":[
+                "1"
+              ],
+              "target": "SQUARE"
+            }
+          ]
+        }
+    },
+    {
+      "type": "DAMAGE",
+      "amount": [
+        "1"
       ],
       "target": {
         "type": "OTHERS",
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
         "positionConstraints": [
           {
             "type": "SAMEDIRECTION",
-            "target": {
-              "type": "FIRSTPLAYER"
-            }
-          },
-          {
-            "type": "VISIBLE",
-            "target": {
-              "type": "FIRSTPLAYER"
-            }
+            "target": "SQUARE"
           },
           {
             "type": "DISTANCE",
             "distanceValues":[
               "1"
             ],
-            "target": {
-              "type": "FIRSTPLAYER"
-            }
+            "target": "SQUARE"
           }
         ]
       }
@@ -87,12 +104,74 @@
   "alternativeMode": [
     {
       "description": "Scegli 2 quadrati come prima. Dai 2 danni a chiunque sia nel primo quadrato e 1 danno a chiunque si trovi nel secondo quadrato.",
-      "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 2
       },
+      "type": "SELECT",
+      "target": {
+        "type": "SQUARE",
+        "amount": [
+          "1"
+        ],
+        "positionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "1"
+            ],
+            "target": "SELF"
+          }
+        ]
+      }
+    },
+    {
+      "type": "DAMAGE",
+      "amount": [
+        "2"
+      ],
+      "target": {
+        "type": "OTHERS",
+        "amount": [
+          "MAX"
+        ],
+        "positionType": "SAMESQUARE",
+        "positionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
+            "target": "SQUARE"
+          }
+        ]
+      }
+    },
+    {
+      "type": "SELECT",
+        "target": {
+          "type": "SQUARE",
+          "amount": [
+            "1"
+          ],
+          "positionConstraints": [
+            {
+              "type": "SAMEDIRECTION",
+              "target": "SQUARE"
+            },
+            {
+              "type": "DISTANCE",
+              "distanceValues":[
+                "1"
+              ],
+              "target": "SQUARE"
+            }
+          ]
+        }
+    },
+    {
+      "type": "DAMAGE",
       "amount": [
         "2"
       ],
@@ -105,63 +184,14 @@
         "positionConstraints": [
           {
             "type": "SAMEDIRECTION",
-            "target": {
-              "type": "FIRSTPLAYER"
-            }
-          },
-          {
-            "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
+            "target": "SQUARE"
           },
           {
             "type": "DISTANCE",
             "distanceValues":[
               "1"
             ],
-            "target": {
-              "type": "SELF"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "DAMAGE",
-      "amount": [
-        "1"
-      ],
-      "effectCostraints":[
-        "NOTREQUIRED"
-      ],
-      "target": {
-        "type": "OTHERS",
-        "amount": [
-          "MAX"
-        ],
-        "positionType": "SAMESQUARE",
-        "positionConstraints": [
-           {
-            "type": "SAMEDIRECTION",
-            "target": {
-              "type": "FIRSTPLAYER"
-            }
-          },
-          {
-            "type": "VISIBLE",
-            "target": {
-              "type": "FIRSTPLAYER"
-            }
-          },
-          {
-            "type": "DISTANCE",
-            "distanceValues":[
-              "1"
-            ],
-            "target": {
-              "type": "FIRSTPLAYER"
-            }
+            "target": "SQUARE"
           }
         ]
       }

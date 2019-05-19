@@ -10,6 +10,9 @@
     {
       "effectName": "effetto base",
       "description": "Dai 2 danni a 1 bersaglio che puoi vedere",
+      "effectDependency": [
+        "secondaryEffectOne"
+      ],
       "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
@@ -24,13 +27,10 @@
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
         "positionConstraints": [
           {
             "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
+            "target": "SELF"
           }
         ]
       }
@@ -58,7 +58,6 @@
     {
       "effectName": "colpo sovraccarico",
       "description": "Dai 1 danno aggiuntivo al tuo bersaglio",
-      "effectDependency": "primaryEffect",
       "type": "DAMAGE",
       "amount": [
         "1"
@@ -72,15 +71,6 @@
         "type": "OTHERS",
         "amount": [
           "1"
-        ],
-        "positionType": "SAMESQUARE",
-        "positionConstraints": [
-          {
-            "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
-          }
         ],
         "targetConstraints": [
           "ONLYHITBYMAIN"
