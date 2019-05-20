@@ -144,10 +144,9 @@ public class Board extends Observable {
             }
         }
         for (Player p : toRemove) {
-            notifyChanges(new GameAlreadyStartedMessage(p.getCharacter()));
             this.players.remove(p);
         }
-
+        notifyChanges(new GameAlreadyStartedMessage());
         notifyChanges(new StartGameSetupMessage(getValidPlayers().get(0).getCharacter()));
     }
 
@@ -319,7 +318,7 @@ public class Board extends Observable {
         }
     }
 
-    public void addFrenezyOrderPlayer(Player player) {
+    public void addFrenzyOrderPlayer(Player player) {
         this.finalFrenzyOrder.add(player);
     }
 

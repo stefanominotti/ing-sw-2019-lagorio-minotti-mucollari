@@ -26,10 +26,12 @@ public class Server {
     private GameController controller;
     private Board model;
     private boolean connectionAllowed;
+    private List<VirtualClientInterface> temporaryClients;
 
     Server() {
         this.clients = new EnumMap<>(GameCharacter.class);
         this.connectionAllowed = true;
+        this.temporaryClients = new ArrayList<>();
     }
 
     public static void main(String[] args) throws RemoteException {
@@ -69,6 +71,7 @@ public class Server {
 
     void addClient(VirtualClientInterface client) {
         ((Thread) client).start();
+        this.temporaryClients.add(client);
         if(this.model.getArena() != null) {
             try {
                 client.send(new ReconnectionMessage());
@@ -108,6 +111,14 @@ public class Server {
         System.out.println("Client disconnected.");
     }
 
+    public void removeTemporaryClients(Message message) throws RemoteException {
+        for (VirtualClientInterface client : this.temporaryClients) {
+            client.send(message);
+            client.exit();
+        }
+        this.temporaryClients = new ArrayList<>();
+    }
+
     public void send(GameCharacter character, Message message) throws RemoteException {
         this.clients.get(character).send(message);
     }
@@ -138,12 +149,16 @@ public class Server {
 
     void receiveMessage(Message message, VirtualClientInterface client) throws RemoteException {
         String messageType = message.getMessageType().getName()
-                .replace("it.polimi.se2019.model.messages.", "");;
+                .replace("it.polimi.se2019.model.messages.", "");
+        if (this.clients.size() == 5) {
+            client.send(new GameAlreadyStartedMessage());
+        }
         switch (messageType) {
             case "NicknameRecconnectingMessage":
                 for(Player player : this.model.getPlayers()) {
                     if(player.getNickname().equals(((NicknameRecconnectingMessage)message).getNickname())) {
                         this.clients.put(player.getCharacter(), client);
+                        this.temporaryClients.remove(client);
                         System.out.println("A new client connected.");
                         this.view.forwardMessage(new ClientReconnectedMessage(player.getCharacter()));
                         return;
@@ -161,6 +176,7 @@ public class Server {
                 for(GameCharacter character : GameCharacter.values()) {
                     if (!this.clients.containsKey(character)) {
                         this.clients.put(character, client);
+                        this.temporaryClients.remove(client);
                         System.out.println("A new client connected.");
                         this.view.forwardMessage(
                                 new ClientReadyMessage(character, ((NicknameMessage) message).getNickname()));

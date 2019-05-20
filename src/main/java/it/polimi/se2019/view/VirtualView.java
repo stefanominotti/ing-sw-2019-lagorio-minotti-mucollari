@@ -99,7 +99,7 @@ public class VirtualView extends Observable implements Observer {
     }
 
     private void update(GameAlreadyStartedMessage message) throws RemoteException {
-        this.server.removeClient(message.getCharacter(), message);
+        this.server.removeTemporaryClients(message);
     }
 
     private void update(StartGameSetupMessage message) throws RemoteException {

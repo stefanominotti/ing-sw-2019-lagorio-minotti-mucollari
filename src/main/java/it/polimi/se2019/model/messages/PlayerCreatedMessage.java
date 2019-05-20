@@ -4,7 +4,7 @@ import it.polimi.se2019.model.GameCharacter;
 
 import java.util.Map;
 
-public class PlayerCreatedMessage extends Message implements SingleReceiverMessage {
+public class PlayerCreatedMessage extends Message {
 
     private GameCharacter character;
     private String nickname;

@@ -4,10 +4,8 @@ import com.google.gson.*;
 import it.polimi.se2019.model.*;
 
 import java.io.*;
-import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 
 public class GameLoader {
@@ -64,7 +62,7 @@ public class GameLoader {
         this.board.setPlayers(this.players);
         if (frenezyOrder != null) {
             for (JsonElement frenezyElement : frenezyOrder) {
-                this.board.addFrenezyOrderPlayer(this.board.getPlayerByCharacter(
+                this.board.addFrenzyOrderPlayer(this.board.getPlayerByCharacter(
                         gson.fromJson(frenezyElement.getAsJsonObject(), GameCharacter.class)));
             }
         }
