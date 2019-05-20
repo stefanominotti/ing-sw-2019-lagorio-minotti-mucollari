@@ -120,6 +120,9 @@ public abstract class View {
             case "WeaponsSwitchedMessage":
                 update((WeaponsSwitchedMessage) message);
                 break;
+            case "RequireWeaponLoadMessage":
+                update((RequireWeaponLoadMessage) message);
+                break;
         }
     }
 
@@ -242,6 +245,27 @@ public abstract class View {
                         break;
                     }
                     this.client.send(new WeaponSwitchMessage(this.weaponsSelectionList.get(number - 1)));
+                    this.weaponsSelectionList = new ArrayList<>();
+                } catch(NumberFormatException e) {
+                    showMessage("Invalid input, retry:");
+                    break;
+                }
+                break;
+            case RECHARGEWEAPON:
+                try {
+                    int number = Integer.parseInt(input);
+                    if (0 >= number || number > this.weaponsSelectionList.size() + 1) {
+                        showMessage("Invalid input, retry:");
+                        break;
+                    }
+                    number = number - 1;
+                    Weapon selection;
+                    if (number == this.weaponsSelectionList.size()) {
+                        selection = null;
+                    } else {
+                        selection = this.weaponsSelectionList.get(number);
+                    }
+                    this.client.send(null); //TODO;
                     this.weaponsSelectionList = new ArrayList<>();
                 } catch(NumberFormatException e) {
                     showMessage("Invalid input, retry:");
@@ -721,6 +745,20 @@ public abstract class View {
         } else {
             showMessage(message.getCharacter() + " dropped a " + message.getOldWeapon() + " to get a " + message.getNewWeapon());
         }
+    }
+
+    private void update(RequireWeaponLoadMessage message) {
+        this.weaponsSelectionList = new ArrayList<>(message.getWeapons());
+        StringBuilder text = new StringBuilder();
+        text.append("Select a weapon to recharge or skip:\n");
+        int index = 1;
+        for (Weapon weapon : message.getWeapons()) {
+            String toAppend = "[" + index + "] - " + weapon;
+            text.append(toAppend);
+            index++;
+        }
+        showMessage(text.toString());
+        this.state = RECHARGEWEAPON;
     }
 
     public abstract void showMessage(String message);

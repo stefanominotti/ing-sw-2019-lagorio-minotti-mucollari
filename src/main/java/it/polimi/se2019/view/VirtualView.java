@@ -1,7 +1,6 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.model.messages.*;
-import it.polimi.se2019.server.ClientHandler;
 import it.polimi.se2019.server.Server;
 
 import java.rmi.RemoteException;
@@ -68,6 +67,9 @@ public class VirtualView extends Observable implements Observer {
                     updateOne((SingleReceiverMessage) message);
                     break;
                 case "RequireWeaponSwitchMessage":
+                    updateOne((SingleReceiverMessage) message);
+                    break;
+                case "RequireWeaponLoadMessage":
                     updateOne((SingleReceiverMessage) message);
                     break;
                 default:

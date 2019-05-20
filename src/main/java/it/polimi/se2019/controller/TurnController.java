@@ -5,8 +5,7 @@ import it.polimi.se2019.model.messages.*;
 
 import java.util.*;
 
-import static it.polimi.se2019.controller.TurnState.MOVING;
-import static it.polimi.se2019.controller.TurnState.PICKINGUP;
+import static it.polimi.se2019.controller.TurnState.*;
 import static java.util.stream.Collectors.toMap;
 
 public class TurnController {
@@ -154,6 +153,10 @@ public class TurnController {
 
     void handleAction(ActionType action) {
         switch (action) {
+            case ENDTURN:
+                this.state = ENDING;
+                handleRecharge();
+                break;
             case MOVE:
                 this.state = MOVING;
                 calculateMovementAction();
@@ -244,4 +247,38 @@ public class TurnController {
         }
     }
 
+    void handleRecharge() {
+        List<Weapon> unloadedWeapons = new ArrayList<>();
+        for (WeaponCard weapon : this.activePlayer.getWeapons()) {
+            if (weapon.isReady()) {
+                unloadedWeapons.add(weapon.getWeaponType());
+                continue;
+            }
+            Map<AmmoType, Integer> requiredAmmo = new EnumMap<>(AmmoType.class);
+            requiredAmmo.putAll(weapon.getWeaponType().getBuyCost());
+            int toSum = requiredAmmo.get(weapon.getWeaponType().getColor()) + 1;
+            requiredAmmo.put(weapon.getWeaponType().getColor(), toSum);
+            boolean rechargeable = true;
+            for (Map.Entry<AmmoType, Integer> ammo : requiredAmmo.entrySet()) {
+                if (this.activePlayer.getAvailableAmmos().get(ammo.getKey()) < ammo.getValue()) {
+                    rechargeable = false;
+                    break;
+                }
+            }
+            if(rechargeable) {
+                unloadedWeapons.add(weapon.getWeaponType());
+            }
+        }
+        if (unloadedWeapons.isEmpty() && !this.finalFrenzy) {
+            endTurn();
+            return;
+        }
+        if (!unloadedWeapons.isEmpty() && this.finalFrenzy) {
+            // gestione ricarica durante azione frenesia finale
+            return;
+        }
+        this.controller.send(new RequireWeaponLoadMessage(this.activePlayer.getCharacter(), unloadedWeapons));
+    }
+
+    void endTurn() {}
 }
