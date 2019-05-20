@@ -21,6 +21,6 @@ public class PositionConstraintTest {
     }
 
     @Test
-    public void getTargetTest() { assertEquals(TargetType.SELF, primaryPC.getTarget().getType()); }
+    public void getTargetTest() { assertEquals(TargetType.SELF, primaryPC.getTarget()); }
 
 }

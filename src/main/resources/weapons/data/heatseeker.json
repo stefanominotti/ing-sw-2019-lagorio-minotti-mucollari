@@ -10,12 +10,14 @@
     {
       "effectName": "effetto",
       "description": "Scegli un bersaglio che non puoi vedere e dagli 3 danni",
-      "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
+      "effectRequired": true,
+      "effectCombo": false,
+      "type": "DAMAGE",
       "amount": [
         "3"
       ],
@@ -24,13 +26,11 @@
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
+        "positionType": "EVERYWHERE",
         "positionConstraints": [
           {
             "type": "NOTVISIBLE",
-            "target": {
-              "type": "SELF"
-            }
+            "target": "SELF"
           }
         ]
       }

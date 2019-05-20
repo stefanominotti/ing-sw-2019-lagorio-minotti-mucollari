@@ -1,5 +1,6 @@
 package it.polimi.se2019.model;
 
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,15 +8,15 @@ public class PositionConstraint {
 
     private final PositionConstraintType type;
     private final List<String> distanceValues;
-    private final EffectTarget target;
+    private final TargetType target;
 
-    PositionConstraint(PositionConstraintType type, List<String> distanceValues, EffectTarget target) {
+    PositionConstraint(PositionConstraintType type, List<String> distanceValues, TargetType target) {
         this.type = type;
         this.distanceValues = distanceValues;
         this.target = target;
     }
 
-    public EffectTarget getTarget() {
+    public TargetType getTarget() {
         return this.target;
     }
 

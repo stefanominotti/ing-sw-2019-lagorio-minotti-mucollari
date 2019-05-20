@@ -44,14 +44,6 @@ public class WeaponEffectTest {
         assertEquals(TargetType.OTHERS, target.getType());
     }
 
-    @Test
-    public void getEffectConstraintsTest() {
-        WeaponEffect effect = Weapon.ZX_2.getAlternativeMode().get(0);
-        assertEquals(Collections.emptySet(), effect.getEffectConstraints());
-
-        effect = Weapon.ROCKET_LAUNCHER.getPrimaryEffect().get(1);
-        assertNotNull(effect.getEffectConstraints());
-    }
 
     @Test
     public void getCostTest() {

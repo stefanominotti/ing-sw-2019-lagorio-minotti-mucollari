@@ -10,12 +10,14 @@
     {
       "effectName":"modalità base",
       "description": "Dai 1 danno e 2 marchi a 1 bersaglio che puoi vedere.",
-      "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
+      "effectRequired": true,
+      "effectCombo": false,
+      "type": "DAMAGE",
       "amount": [
         "1"
       ],
@@ -24,18 +26,18 @@
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
+        "positionType": "EVERYWHERE",
         "positionConstraints": [
           {
             "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
+            "target": "SELF"
           }
         ]
       }
     },
     {
+      "effectRequired": true,
+      "effectCombo": false,
       "type": "MARK",
       "amount": [
         "2"
@@ -45,15 +47,7 @@
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
-        "positionConstraints": [
-          {
-            "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
-          }
-        ],
+        "positionType": "EVERYWHERE",
         "targetConstraints": [
           "ONLYHITBYMAIN"
         ]
@@ -64,15 +58,17 @@
     {
       "effectName": "modalità scanner",
       "description": "Scegli fino a 3 bersagli che puoi vedere e dai 1 marchio a ciascuno",
-      "type": "MARK",
-      "amount": [
-        "1"
-      ],
       "cost": {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
+      "effectRequired": true,
+      "effectCombo": false,
+      "type": "MARK",
+      "amount": [
+        "1"
+      ],
       "target": {
         "type": "OTHERS",
         "amount": [
@@ -82,9 +78,7 @@
         "positionConstraints": [
           {
             "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
+            "target": "SELF"
           }
         ]
       }

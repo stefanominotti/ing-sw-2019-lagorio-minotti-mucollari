@@ -10,12 +10,17 @@
     {
       "effectName": "effetto base",
       "description": "Dai 2 danni a 1 bersaglio nel quadrato in cui ti trovi",
-      "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
+      "effectRequired": true,
+      "effectCombo": false,
+      "effectDependency" : [
+        "secondaryEffectOne"
+      ],
+      "type": "DAMAGE",
       "amount": [
         "2"
       ],
@@ -24,16 +29,14 @@
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
+        "positionType": "EVERYWHERE",
         "positionConstraints": [
           {
             "type": "DISTANCE",
             "distanceValues":[
               "0"
            ],
-            "target": {
-              "type": "SELF"
-            }
+            "target": "SELF"
           }
         ]
       }
@@ -43,17 +46,20 @@
     {
       "effectName": "passo d'ombra",
       "description": "Muoviti di un quadrato, prima o dopo l'effetto base",
-      "type": "MOVE",
-      "amount": [
-        "1"
-      ],
       "cost": {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
+      "effectRequired": true,
+      "effectCombo": false,
+      "type": "MOVE",
+      "amount": [
+        "1"
+      ],
       "target": {
-        "type": "SELF"
+        "type": "SELF",
+        "positionType": "EVERYWHERE"
       }
     }
   ],
@@ -61,30 +67,30 @@
     {
       "effectName": "modalità sminuzzare",
       "description": "Dai 2 danni a un bersaglio differente nel quadrato in cui ti trovi. Il passo d'ombra può essere usato prima o dopo questo effetto",
-      "type": "DAMAGE",
-      "amount": [
-        "2"
-      ],
       "cost": {
         "BLUE": 1,
         "RED": 0,
         "YELLOW": 0
       },
+      "effectRequired": true,
+      "effectCombo": false,
+      "type": "DAMAGE",
+      "amount": [
+        "2"
+      ],
       "target": {
         "type": "OTHERS",
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
+        "positionType": "EVERYWHERE",
         "positionConstraints": [
           {
             "type": "DISTANCE",
             "distanceValues":[
               "0"
             ],
-            "target": {
-              "type": "SELF"
-            }
+            "target": "SELF"
           }
         ],
         "targetConstraints": [

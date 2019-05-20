@@ -10,27 +10,39 @@
     {
       "effectName": "modalità base",
       "description": " Scegli una direzione cardinale e 1 bersaglio in quella direzione. Dagli 3 danni.",
-      "type": "DAMAGE",
-      "cost" : {
+      "cost": {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
+      "effectRequired": true,
+      "effectCombo": false,
+      "type": "SELECT",
+      "target": {
+        "type": "CARDINALDIRECTION",
+        "amount": [
+          "1"
+        ],
+        "positionType": "EVERYWHERE"
+      }
+    },
+    {
+      "effectRequired": true,
+      "effectCombo": false,
+      "type": "DAMAGE",
       "amount": [
-        "3"
+        "1"
       ],
       "target": {
         "type": "OTHERS",
         "amount": [
           "1"
         ],
-        "positionType": "SAMEDIRECTION",
+        "positionType": "EVERYWHERE",
         "positionConstraints": [
           {
-            "type": "CARDINALDIRECTION",
-            "target": {
-              "type": "SELF"
-            }
+            "type": "SAMEDIRECTION",
+            "target": "CARDINALDIRECTION"
           }
         ]
       }
@@ -40,27 +52,39 @@
     {
       "effectName": "modalità perforazione",
       "description": "Scegli una direzione cardinale e 1 o 2 bersagli in quella direzione. Dai 2 danni a ciascuno.",
-      "type": "DAMAGE",
-      "amount": [
-        "2"
-      ],
       "cost": {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
+      "effectRequired": true,
+      "effectCombo": false,
+      "type": "SELECT",
+      "target": {
+        "type": "CARDINALDIRECTION",
+        "amount": [
+          "1"
+        ],
+        "positionType": "EVERYWHERE"
+      }
+    },
+    {
+      "effectRequired": true,
+      "effectCombo": false,
+      "type": "DAMAGE",
+      "amount": [
+        "1"
+      ],
       "target": {
         "type": "OTHERS",
         "amount": [
           "1", "2"
         ],
-        "positionType": "SAMEDIRECTION",
+        "positionType": "EVERYWHERE",
         "positionConstraints": [
           {
-            "type": "CARDINALDIRECTION",
-            "target": {
-              "type": "SELF"
-            }
+            "type": "SAMEDIRECTION",
+            "target": "CARDINALDIRECTION"
           }
         ]
       }

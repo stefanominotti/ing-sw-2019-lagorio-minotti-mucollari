@@ -41,13 +41,20 @@ public class EffectsController {
         return true;
     }
 
-    List<Square> getAvailableSquares(WeaponEffect effect, Player player) {
+    List<Square> getAvailableSquares(WeaponEffect effect, Player activePlayer) {
         return new ArrayList<>();
     }
 
-    List<Player> getAvailableTargets(WeaponEffect effect, Player player) {
+    List<Player> getAvailableTargets(WeaponEffect effect, Player activePlayer) {
         return new ArrayList<>();
     }
 
     void endAttack() {}
+/*
+    List<WeaponEffect> manageWeaponEffects(Weapon weapon, char effectChosen){
+        //TODO: richiesta effetto da usare
+        if(mainEffectApplied == false && effectChosen != '1')  {
+
+        }
+    }*/
 }

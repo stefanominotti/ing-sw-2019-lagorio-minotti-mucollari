@@ -10,12 +10,17 @@
     {
       "effectName": "effetto base",
       "description": "Dai 2 danni a 1 bersaglio che puoi vedere",
-      "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
+      "effectRequired": true,
+      "effectCombo": false,
+      "effectDependency": [
+        "secondaryEffectOne"
+      ],
+      "type": "DAMAGE",
       "amount": [
         "2"
       ],
@@ -24,13 +29,11 @@
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
+        "positionType": "EVERYWHERE",
         "positionConstraints": [
           {
             "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
+            "target": "SELF"
           }
         ]
       }
@@ -40,48 +43,44 @@
     {
       "effectName": "slittamento di fase",
       "description": "Muoviti di 1 o 2 quadrati. Questo effetto può essere usato prima o dopo l'effetto base",
-      "type": "MOVE",
-      "amount": [
-        "1", "2"
-      ],
       "cost": {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
+      "effectRequired": true,
+      "effectCombo": false,
+      "type": "MOVE",
+      "amount": [
+        "1", "2"
+      ],
       "target": {
-        "type": "SELF"
-      }
+        "type": "SELF",
+        "positionType": "EVERYWHERE"
+      } 
     }
   ],
   "secondaryEffectTwo": [
     {
       "effectName": "colpo sovraccarico",
       "description": "Dai 1 danno aggiuntivo al tuo bersaglio",
-      "effectDependency": "primaryEffect",
-      "type": "DAMAGE",
-      "amount": [
-        "1"
-      ],
       "cost": {
         "BLUE": 1,
         "RED": 0,
         "YELLOW": 0
       },
+      "effectRequired": true,
+      "effectCombo": false,
+      "type": "DAMAGE",
+      "amount": [
+        "1"
+      ],
       "target": {
         "type": "OTHERS",
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
-        "positionConstraints": [
-          {
-            "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
-          }
-        ],
+        "positionType": "EVERYWHERE",
         "targetConstraints": [
           "ONLYHITBYMAIN"
         ]

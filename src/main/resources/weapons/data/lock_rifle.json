@@ -10,12 +10,14 @@
     {
       "effectName": "effetto base",
       "description": "Dai 2 danni e 1 marchio a 1 bersaglio che puoi vedere",
-      "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
+      "effectRequired": true,
+      "effectCombo": false,
+      "type": "DAMAGE",
       "amount": [
         "2"
       ],
@@ -24,18 +26,18 @@
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
+        "positionType": "EVERYWHERE",
         "positionConstraints": [
           {
             "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
+            "target": "SELF"
           }
         ]
       }
     },
     {
+      "effectRequired": true,
+      "effectCombo": false,
       "type": "MARK",
       "amount": [
         "1"
@@ -45,15 +47,7 @@
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
-        "positionConstraints": [
-          {
-            "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
-          }
-        ],
+        "positionType": "EVERYWHERE",
         "targetConstraints": [
           "ONLYHITBYMAIN"
         ]
@@ -64,27 +58,27 @@
     {
       "effectName": "secondo aggancio",
       "description": "Dai 1 marchio a un altro bersaglio che puoi vedere",
-      "type": "MARK",
-      "amount": [
-        "1"
-      ],
       "cost": {
         "BLUE": 0,
         "RED": 1,
         "YELLOW": 0
       },
+      "effectRequired": true,
+      "effectCombo": false,
+      "type": "MARK",
+      "amount": [
+        "1"
+      ],
       "target": {
         "type": "OTHERS",
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
+        "positionType": "EVERYWHERE",
         "positionConstraints": [
           {
             "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
+            "target": "SELF"
           }
         ],
         "targetConstraints": [

@@ -10,12 +10,14 @@
     {
       "effectName": "modalità base",
       "description": "Dai 1 danno a 1 bersaglio che puoi vedere e distante almeno 1 movimento. Poi dai un marchio a quel bersaglio e a chiunque altro in quel quadrato",
-      "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
+      "effectRequired": true,
+      "effectCombo": false,
+      "type": "DAMAGE",
       "amount": [
         "1"
       ],
@@ -24,27 +26,25 @@
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
+        "positionType": "EVERYWHERE",
         "positionConstraints": [
           {
             "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
+            "target": "SELF"
           },
           {
            "type": "DISTANCE",
            "distanceValues":[
               "1", "MAX"
            ],
-            "target": {
-              "type": "SELF"
-            }
+            "target": "SELF"
           }
         ]
       }
     },
     {
+      "effectRequired": true,
+      "effectCombo": false,
       "type": "MARK",
       "amount": [
         "1"
@@ -61,9 +61,7 @@
            "distanceValues":[
               "0"
            ],
-            "target": {
-              "type": "FIRSTPLAYER"
-            }
+            "target": "FIRSTPLAYER"
           }
         ]
       }
@@ -73,12 +71,14 @@
     {
       "effectName": "modalità nano-traccianti",
       "description": "Dai 1 danno a 1 bersaglio che puoi vedere e distante almeno 1 movimento. Poi dai 2 marchi a quel bersaglio e a chiunque in quel quadrato",
-      "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
         "RED": 1,
         "YELLOW": 0
       },
+      "effectRequired": true,
+      "effectCombo": false,
+      "type": "DAMAGE",
       "amount": [
         "1"
       ],
@@ -87,27 +87,26 @@
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
+        "positionType": "EVERYWHERE",
         "positionConstraints": [
           {
             "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
+            "target": "SELF"
+
           },
           {
            "type": "DISTANCE",
            "distanceValues":[
               "1", "MAX"
            ],
-            "target": {
-              "type": "SELF"
-            }
+            "target": "SELF"
           }
         ]
       }
     },
     {
+      "effectRequired": true,
+      "effectCombo": false,
       "type": "MARK",
       "amount": [
         "2"
@@ -124,9 +123,7 @@
            "distanceValues":[
               "0"
            ],
-            "target": {
-              "type": "FIRSTPLAYER"
-            }
+            "target": "FIRSTPLAYER"
           }
         ]
       }

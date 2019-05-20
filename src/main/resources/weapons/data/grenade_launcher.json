@@ -10,12 +10,14 @@
     {
       "effectName":"effetto base",
       "description": "Dai 1 danno a 1 bersaglio che puoi vedere. Poi puoi muovere il bersaglio di 1 quadrato.",
-      "type": "DAMAGE",
       "cost" : {
         "BLUE": 0,
         "RED": 0,
         "YELLOW": 0
       },
+      "effectRequired": true,
+      "effectCombo": false,
+      "type": "DAMAGE",
       "amount": [
         "1"
       ],
@@ -24,39 +26,31 @@
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
+        "positionType": "EVERYWHERE",
         "positionConstraints": [
           {
             "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
+            "target": "SELF"
           }
         ]
       }
     },
     {
+      "effectRequired": false,
+      "effectCombo": false,
+      "effectDependency" : [
+        "secondaryEffectOne"
+      ],
       "type": "MOVE",
       "amount": [
         "1"
-      ],
-      "effectCostraints":[
-        "NOTREQUIRED"
       ],
       "target": {
         "type": "OTHERS",
         "amount": [
           "1"
         ],
-        "positionType": "SAMESQUARE",
-        "positionConstraints": [
-          {
-            "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
-          }
-        ],
+        "positionType": "EVERYWHERE",
         "targetConstraints": [
           "ONLYHITBYMAIN"
         ]
@@ -67,15 +61,38 @@
     {
       "effectName": "granata extra",
       "description": "Dai 1 danno a ogni giocatore in un quadrato che puoi vedere. Puoi usare questo effetto prima o dopo il movimento dell'effetto base.",
+      "cost": {
+        "BLUE": 0,
+        "RED": 1,
+        "YELLOW": 0
+      },
+      "effectRequired": true,
+      "effectCombo": false,
+      "type": "SELECT",
+      "target": {
+        "type": "SQUARE",
+        "amount": [
+          "1"
+        ],
+        "positionType": "EVERYWHERE",
+        "positionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "1"
+            ],
+            "target": "SELF"
+          }
+        ]
+      }
+    },
+    {
+      "effectRequired": true,
+      "effectCombo": false,
       "type": "DAMAGE",
       "amount": [
         "1"
       ],
-      "cost": {
-        "BLUE": 0,
-        "RED": 0,
-        "YELLOW": 0
-      },
       "target": {
         "type": "OTHERS",
         "amount": [
@@ -84,10 +101,11 @@
         "positionType": "SAMESQUARE",
         "positionConstraints": [
           {
-            "type": "VISIBLE",
-            "target": {
-              "type": "SELF"
-            }
+            "type": "DISTANCE",
+            "distanceValues": [
+              "0"
+            ],
+            "target": "SQUARE"
           }
         ]
       }

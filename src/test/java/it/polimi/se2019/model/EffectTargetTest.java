@@ -16,11 +16,6 @@ public class EffectTargetTest {
         assertEquals(TargetType.OTHERS, Weapon.LOCK_RIFLE.getPrimaryEffect().get(1).getTarget().getType());
     }
 
-    @Test
-    public void getPositionTypeTest() {
-        assertEquals(TargetPositionType.SAMESQUARE, Weapon.LOCK_RIFLE.getPrimaryEffect().get(0).getTarget().getPositionType());
-        assertEquals(TargetPositionType.SAMESQUARE, Weapon.LOCK_RIFLE.getPrimaryEffect().get(1).getTarget().getPositionType());
-    }
 
     @Test
     public void getAmountTest() {
@@ -40,7 +35,7 @@ public class EffectTargetTest {
         assertEquals(1, weaponPositionConstraints.size());
         assertEquals(PositionConstraintType.VISIBLE, weaponPositionConstraints.get(0).getType());
         assertEquals(distances, weaponPositionConstraints.get(0).getDistanceValues());
-        assertEquals(TargetType.SELF, weaponPositionConstraints.get(0).getTarget().getType());
+        assertEquals(TargetType.SELF, weaponPositionConstraints.get(0).getTarget());
     }
 
     @Test
