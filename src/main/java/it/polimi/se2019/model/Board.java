@@ -481,4 +481,49 @@ public class Board extends Observable {
         notifyChanges(new ScoreMessage(p.getCharacter(), p.getScore()));
     }
 
+    public List<Player> getPlayersOnCardinalDirection(Player activePlayer, CardinalPoint cardinalPoint) {
+        List<Player> result = new ArrayList<>();
+        switch (cardinalPoint) {
+            case NORTH:
+                for (Player p : this.players) {
+                    if (p.getPosition().getX() == activePlayer.getPosition().getX()
+                            && p.getPosition().getY() <= activePlayer.getPosition().getY()
+                            && p != activePlayer) {
+                        result.add(p);
+                    }
+                }
+                return result;
+
+            case SOUTH:
+                for (Player p : this.players) {
+                    if (p.getPosition().getX() == activePlayer.getPosition().getX()
+                            && p.getPosition().getY() >= activePlayer.getPosition().getY()
+                            && p != activePlayer) {
+                        result.add(p);
+                    }
+                }
+                return result;
+
+            case EAST:
+                for (Player p : this.players) {
+                    if (p.getPosition().getY() == activePlayer.getPosition().getY()
+                            && p.getPosition().getX() >= activePlayer.getPosition().getX()
+                            && p != activePlayer) {
+                        result.add(p);
+                    }
+                }
+                return result;
+
+            case WEST:
+                for (Player p : this.players) {
+                    if (p.getPosition().getY() == activePlayer.getPosition().getY()
+                            && p.getPosition().getX() <= activePlayer.getPosition().getX()
+                            && p != activePlayer) {
+                        result.add(p);
+                    }
+                }
+                return result;
+        }
+        return result;
+    }
 }
