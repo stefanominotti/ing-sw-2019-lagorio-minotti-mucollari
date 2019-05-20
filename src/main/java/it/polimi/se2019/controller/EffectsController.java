@@ -37,7 +37,8 @@ public class EffectsController {
         return null;
     }
 
-    boolean canApply(List <WeaponEffect> effect) {
+    boolean canApply(List<WeaponEffect> effect) {
+
         return true;
     }
 
@@ -45,16 +46,78 @@ public class EffectsController {
         return new ArrayList<>();
     }
 
-    List<Player> getAvailableTargets(WeaponEffect effect, Player activePlayer) {
-        return new ArrayList<>();
+    List<List<Player>> getAvailableTargets(WeaponEffect effect, Player activePlayer) {
+        List<List<Player>> availableTargets = new ArrayList<>();
+        return availableTargets;
     }
 
     void endAttack() {}
-/*
-    List<WeaponEffect> manageWeaponEffects(Weapon weapon, char effectChosen){
-        //TODO: richiesta effetto da usare
-        if(mainEffectApplied == false && effectChosen != '1')  {
 
+    List<List<WeaponEffect>> manageEffectChoise (WeaponCard weapon, String effectChosen) {
+        List<List<WeaponEffect>> availableEffects = new ArrayList<>();
+        availableEffects.add(weapon.getWeaponType().getPrimaryEffect());
+        effectChosen = effectChosen.toLowerCase();
+        switch (effectChosen) {
+            case ("p"): {
+                if (!mainEffectApplied) {
+                    if (canApply(weapon.getWeaponType().getPrimaryEffect())) {
+                        //metodi per performing action
+                    } else {
+                        //messaggio azione non eseguibile
+                    }
+                } else {
+                    //effetto già usato o usata alternative mode
+                }
+                return availableEffects;
+            }
+
+            case ("a"): {
+                if (!mainEffectApplied && weapon.getWeaponType().getAlternativeMode() != null) {
+                    if (canApply(weapon.getWeaponType().getAlternativeMode())) {
+                        //metodi per performing action
+                        this.mainEffectApplied = true;
+                        availableEffects.remove(weapon.getWeaponType().getAlternativeMode());
+                        availableEffects.remove(weapon.getWeaponType().getPrimaryEffect());
+                    } else {
+                        //messaggio azione non eseguibile
+                    }
+                }
+                return availableEffects;
+            }
+            case ("1"): {
+                if (mainEffectApplied && weapon.getWeaponType().getSecondaryEffectOne() != null
+                        && !this.secondaryEffectOneApplied) {
+                    if (canApply(weapon.getWeaponType().getSecondaryEffectOne())) {
+                        //metodi per performing action
+                        this.secondaryEffectOneApplied = true;
+                        availableEffects.remove(weapon.getWeaponType().getSecondaryEffectOne());
+                    } else {
+                        //messaggio azione non eseguibile
+                    }
+                }
+                return availableEffects;
+            }
+
+            case ("2"): {
+                if (mainEffectApplied && weapon.getWeaponType().getSecondaryEffectTwo() != null
+                        && !this.secondaryEffectTwoApplied) {
+                    if (canApply(weapon.getWeaponType().getSecondaryEffectOne())) {
+                        //metodi per performing action
+                        this.secondaryEffectTwoApplied = true;
+                        availableEffects.remove(weapon.getWeaponType().getSecondaryEffectTwo());
+                    } else {
+                        //messaggio azione non eseguibile
+                    }
+                }
+                return availableEffects;
+            }
+
+            default: {
+                //scelta non valida
+                return availableEffects;
+            }
         }
-    }*/
+    }
+
+
 }
