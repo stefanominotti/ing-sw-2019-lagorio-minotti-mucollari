@@ -64,6 +64,12 @@ public class VirtualView extends Observable implements Observer {
                 case "AvailablePickupActionMessage":
                     updateOne((SingleReceiverMessage) message);
                     break;
+                case "WeaponPickupSelectionMessage":
+                    updateOne((SingleReceiverMessage) message);
+                    break;
+                case "RequireWeaponSwitchMessage":
+                    updateOne((SingleReceiverMessage) message);
+                    break;
                 default:
                     updateAll((Message) message);
                     break;

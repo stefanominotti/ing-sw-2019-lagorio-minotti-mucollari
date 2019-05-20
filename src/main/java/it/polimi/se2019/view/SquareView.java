@@ -20,6 +20,7 @@ public class SquareView {
         this.y = y;
         this.spawn = spawn;
         this.color = color;
+        this.activePlayers = new ArrayList<>();
         if(spawn) {
             this.store = new ArrayList<>();
         } else {
@@ -55,6 +56,10 @@ public class SquareView {
         this.store.add(weapon);
     }
 
+    void removeStoreWeapon(Weapon weapon) {
+        this.store.remove(weapon);
+    }
+
     List<Weapon> getStore() {
         return new ArrayList<>(this.store);
     }
@@ -63,9 +68,13 @@ public class SquareView {
         return this.color;
     }
 
-    void addActivePlayer(GameCharacter player) {}
+    void addActivePlayer(GameCharacter player) {
+        this.activePlayers.add(player);
+    }
 
-    void removeActivePlayer(GameCharacter player) {}
+    void removeActivePlayer(GameCharacter player) {
+        this.activePlayers.remove(player);
+    }
 
     void setAvailableAmmoTile(AmmoTile tile) {
         this.availableAmmoTile = tile;

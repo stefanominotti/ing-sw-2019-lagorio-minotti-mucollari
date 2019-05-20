@@ -59,6 +59,13 @@ public class GameController implements Observer {
             case "PickupSelectedMessage":
                 update((PickupSelectedMessage) message);
                 break;
+            case "WeaponPickupMessage":
+                update((WeaponPickupMessage) message);
+                break;
+            case "WeaponSwitchMessage":
+                update((WeaponSwitchMessage) message);
+                break;
+
         }
     }
 
@@ -83,7 +90,7 @@ public class GameController implements Observer {
     }
 
     private void update(StartTurnMessage message) {
-        this.turnController.startTurn(message.getTurnType(), message.getPlayer());
+
     }
 
     private void update(PowerupSelectedMessage message) {
@@ -100,6 +107,14 @@ public class GameController implements Observer {
 
     private void update(PickupSelectedMessage message) {
         this.turnController.pickupAction(message.getCoordinates());
+    }
+
+    private void update(WeaponPickupMessage message) {
+        this.turnController.pickupWeapon(message.getWeapon());
+    }
+
+    private void update(WeaponSwitchMessage message) {
+        this.turnController.switchWeapon(message.getWeapon());
     }
 
     void send(SingleReceiverMessage message) {

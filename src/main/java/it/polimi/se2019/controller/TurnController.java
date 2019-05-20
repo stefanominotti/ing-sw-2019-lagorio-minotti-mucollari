@@ -1,10 +1,7 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.model.messages.AvailableActionsMessage;
-import it.polimi.se2019.model.messages.AvailableMoveActionMessage;
-import it.polimi.se2019.model.messages.AvailablePickupActionMessage;
-import it.polimi.se2019.model.messages.DiscardToSpawnMessage;
+import it.polimi.se2019.model.messages.*;
 
 import java.util.*;
 
@@ -22,6 +19,7 @@ public class TurnController {
     private TurnState state;
     private Player powerupTarget;
     private boolean finalFrenzy;
+    private WeaponCard switchingWeapon;
 
     public TurnController(Board board, GameController controller) {
         this.state = TurnState.SELECTACTION;
@@ -70,7 +68,7 @@ public class TurnController {
                 playersOrder.put(player, points);
             }
         }
-        playersOrder.entrySet()
+        playersOrder = playersOrder.entrySet()
                 .stream()
                 .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .collect(
@@ -109,14 +107,6 @@ public class TurnController {
         }
     }
 
-    public TurnState getState() {
-        return this.state;
-    }
-
-    List<Square> whereCanMove(int maxDistamce) {
-        return new ArrayList<>();
-    }
-
     void calculateMovementAction() {
         Square position = this.activePlayer.getPosition();
         List<Coordinates> movements = new ArrayList<>();
@@ -128,6 +118,7 @@ public class TurnController {
             for (List<Square> path : paths) {
                 if (path.size() - 1 <= 3) {
                     movements.add(new Coordinates(s.getX(), s.getY()));
+                    break;
                 }
             }
         }
@@ -153,6 +144,7 @@ public class TurnController {
             for (List<Square> path : paths) {
                 if (path.size() - 1 <= maxDistance) {
                     movements.add(new Coordinates(s.getX(), s.getY()));
+                    break;
                 }
             }
         }
@@ -201,11 +193,55 @@ public class TurnController {
             this.board.movePlayer(this.activePlayer, targetSquare);
         }
         if (targetSquare.getWeaponsStore() != null) {
-            // chiedi che arma raccogliere
+            List<Weapon> availableWeapons = new ArrayList<>();
+            for (WeaponCard weapon : this.activePlayer.getPosition().getWeaponsStore()) {
+                boolean valid = true;
+                for (Map.Entry<AmmoType, Integer> ammoCost : weapon.getWeaponType().getBuyCost().entrySet()) {
+                    if (ammoCost.getValue() > this.activePlayer.getAvailableAmmos().get(ammoCost.getKey())) {
+                        valid = false;
+                        break;
+                    }
+                }
+                if (valid) {
+                    availableWeapons.add(weapon.getWeaponType());
+                }
+            }
+            this.controller.send(new WeaponPickupSelectionMessage(this.activePlayer.getCharacter(), availableWeapons));
             return;
         }
         this.board.giveAmmoTile(this.activePlayer, targetSquare.getAvailableAmmoTile());
         handleEndAction();
+    }
+
+    void pickupWeapon(Weapon weapon) {
+        if (this.activePlayer.getWeapons().size() == 3) {
+            for (WeaponCard weaponCard : this.activePlayer.getPosition().getWeaponsStore()) {
+                if (weaponCard.getWeaponType() == weapon) {
+                    this.switchingWeapon = weaponCard;
+                    break;
+                }
+            }
+            this.controller.send(new RequireWeaponSwitchMessage(this.activePlayer.getCharacter(), weapon));
+            return;
+        }
+        this.board.useAmmos(this.activePlayer, weapon.getBuyCost());
+        for (WeaponCard weaponCard : this.activePlayer.getPosition().getWeaponsStore()) {
+            if (weaponCard.getWeaponType() == weapon) {
+                this.board.giveWeapon(this.activePlayer, weaponCard);
+                break;
+            }
+        }
+        handleEndAction();
+    }
+
+    void switchWeapon(Weapon weapon) {
+        this.board.useAmmos(this.activePlayer, weapon.getBuyCost());
+        for (WeaponCard weaponCard : this.activePlayer.getPosition().getWeaponsStore()) {
+            if (weaponCard.getWeaponType() == weapon) {
+                this.board.switchWeapon(this.activePlayer, this.switchingWeapon, weaponCard);
+                break;
+            }
+        }
     }
 
 }

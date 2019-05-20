@@ -1,8 +1,6 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.model.GameCharacter;
-import it.polimi.se2019.model.Powerup;
-import it.polimi.se2019.model.Weapon;
+import it.polimi.se2019.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +27,33 @@ public class SelfPlayerBoard extends PlayerBoard {
         this.powerups.add(powerup);
     }
 
-    void incrementScore(int amount) {}
+    void raiseScore(int amount) {
+        this.score += amount;
+    }
 
-    void removePowerup(Powerup powerup) {}
+    void removePowerup(PowerupType type, AmmoType color) {
+        super.removePowerup();
+        for (Powerup powerup : this.powerups) {
+            if (powerup.getColor() == color && powerup.getType() == type) {
+                this.powerups.remove(powerup);
+                break;
+            }
+        }
+    }
+
+    void addWeapon(Weapon weapon) {
+        super.addWeapon();
+        this.readyWeapons.add(weapon);
+    }
+
+    void removeWeapon(Weapon weapon) {
+        super.removeWeapon(weapon);
+        if (this.readyWeapons.contains(weapon)) {
+            this.readyWeapons.remove(weapon);
+        }
+    }
+
+    public List<Weapon> getReadyWeapons() {
+        return new ArrayList<>(this.readyWeapons);
+    }
 }

@@ -2,7 +2,6 @@ package it.polimi.se2019.view;
 
 import it.polimi.se2019.model.AmmoType;
 import it.polimi.se2019.model.GameCharacter;
-import it.polimi.se2019.model.Powerup;
 import it.polimi.se2019.model.Weapon;
 
 import java.util.*;
@@ -50,11 +49,20 @@ public class PlayerBoard {
         return new ArrayList<>(this.damages);
     }
 
-    void addDamage(GameCharacter target, int amount) {}
+    void addDamage(GameCharacter target, int amount) {
+        for (int i=0; i<amount; i++) {
+            this.damages.add(target);
+        }
+    }
 
-    void addMarks(GameCharacter target, int amount) {}
+    void addMarks(GameCharacter target, int amount) {
+        int newAmount = this.revengeMarks.get(target) + amount;
+        this.revengeMarks.put(target, newAmount);
+    }
 
-    void removeMarks(GameCharacter target) {}
+    void removeMarks(GameCharacter target) {
+        this.revengeMarks.remove(target);
+    }
 
     void addAmmos(Map<AmmoType, Integer> ammos) {
         for (Map.Entry<AmmoType, Integer> ammo : ammos.entrySet()) {
@@ -63,5 +71,37 @@ public class PlayerBoard {
         }
     }
 
-    void useAmmos(Map<AmmoType, Integer> usedAmmos) {}
+    void useAmmos(Map<AmmoType, Integer> usedAmmos) {
+        for (Map.Entry<AmmoType, Integer> ammo : usedAmmos.entrySet()) {
+            int newAmmos = this.availableAmmos.get(ammo.getKey()) - ammo.getValue();
+            this.availableAmmos.put(ammo.getKey(), newAmmos);
+        }
+    }
+
+    void addWeapon() {
+        this.weaponsNumber++;
+    }
+
+    void removeWeapon(Weapon weapon) {
+        this.weaponsNumber--;
+        if (this.unloadedWeapons.contains(weapon)) {
+            this.unloadedWeapons.remove(weapon);
+        }
+    }
+
+    void unloadWeapon(Weapon weapon) {
+        this.unloadedWeapons.add(weapon);
+    }
+
+    void reloadWeapon(Weapon weapon) {
+        this.unloadedWeapons.remove(weapon);
+    }
+
+    void removePowerup() {
+        this.powerupsNumber--;
+    }
+
+    public List<Weapon> getUnloadedWeapons() {
+        return new ArrayList<>(this.unloadedWeapons);
+    }
 }

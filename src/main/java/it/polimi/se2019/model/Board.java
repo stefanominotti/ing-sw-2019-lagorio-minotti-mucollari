@@ -352,7 +352,10 @@ public class Board extends Observable {
                 if(!square.isSpawn()) {
                     continue;
                 }
-                while(square.getWeaponsStore().size() < MAX_WEAPONS_STORE){
+                while(square.getWeaponsStore().size() < MAX_WEAPONS_STORE) {
+                    if (this.weaponsDeck.isEmpty()) {
+                        return;
+                    }
                     square.addWeapon(this.weaponsDeck.get(0));
                     this.weaponsDeck.remove(0);
                 }
@@ -395,17 +398,19 @@ public class Board extends Observable {
         notifyChanges(new PowerupDrawnMessage(player.getCharacter(), null));
     }
 
-    public void changeWeapon(Player player, WeaponCard oldCard, WeaponCard newCard) {
+    public void switchWeapon(Player player, WeaponCard oldCard, WeaponCard newCard) {
         player.removeWeapon(oldCard);
         player.getPosition().removeWeapon(newCard);
+        oldCard.setReady(true);
         player.getPosition().addWeapon(oldCard);
         player.addWeapon(newCard);
+        notifyChanges(new WeaponsSwitchedMessage(player.getCharacter(), oldCard.getWeaponType(), newCard.getWeaponType()));
     }
 
     public void giveWeapon(Player player, WeaponCard weapon) {
         player.getPosition().removeWeapon(weapon);
         player.addWeapon(weapon);
-        this.fillWeaponStores();
+        notifyChanges(new WeaponGivenMessage(player.getCharacter(), weapon.getWeaponType()));
     }
 
     public void giveAmmoTile(Player player, AmmoTile tile) {
@@ -414,13 +419,13 @@ public class Board extends Observable {
         }
         Map<AmmoType, Integer> addedAmmos = player.addAmmos(tile.getAmmos());
         this.ammosDiscardPile.add(tile);
-        Square position = player.getPosition();
-        position.removeAmmoTile();
-        notifyChanges(new AmmosGivenMessage(player.getCharacter(), addedAmmos, new Coordinates(position.getX(), position.getY())));
+        player.getPosition().removeAmmoTile();
+        notifyChanges(new AmmosGivenMessage(player.getCharacter(), addedAmmos));
     }
 
     public void useAmmos(Player player, Map<AmmoType, Integer> usedAmmos) {
         player.removeAmmos(usedAmmos);
+        notifyChanges(new AmmosUsedMessage(player.getCharacter(), usedAmmos));
     }
 
     public void movePlayer(Player player, Square square) {
@@ -445,77 +450,6 @@ public class Board extends Observable {
     public void handleDeadPlayer(Player player) {}
 
     public void handleEndTurn() {}
-
-    public List<Player> getPlayerVisible(Player player) {
-        List<Player> visiblePlayers = new ArrayList<>();
-        for(Player p : this.players) {
-            if(p == player) {
-                continue;
-            }
-            if(p.getPosition().canSee(player.getPosition())) {
-                visiblePlayers.add(p);
-            }
-        }
-        return visiblePlayers;
-    }
-
-    public List<Player> getPlayerByDistance(Player player, List<String> distances) {
-        List<Player> result = new ArrayList<>();
-        Square position = player.getPosition();
-        if (distances.contains("MAX")) {
-            int distance = Integer.parseInt(distances.get(0));
-            for(Player p : this.players) {
-                if(p == player) {
-                    continue;
-                }
-                if(position.distanceFrom(p.getPosition()) == distance) {
-                    result.add(p);
-                }
-            }
-            return result;
-        }
-
-        List<Integer> intDistances = new ArrayList<>();
-        for(String distance : distances) {
-            intDistances.add(Integer.parseInt(distance));
-        }
-
-        for(int distance : intDistances) {
-            for(Player p : this.players) {
-                if(p == player) {
-                    continue;
-                }
-                if(position.distanceFrom(p.getPosition()) == distance) {
-                    result.add(p);
-                }
-            }
-        }
-        return result;
-    }
-
-    public List<Player> getPlayerInSameDirection(Player player1, Player player2) {
-        List<Player> result = new ArrayList<>();
-        Square square1 = player1.getPosition();
-        Square square2 = player2.getPosition();
-        CardinalPoint direction;
-        if (square1.getX() == square2.getX() && square1.getY() < square2.getY()) {
-            direction = CardinalPoint.NORTH;
-        } else if (square1.getX() == square2.getX() && square1.getY() > square2.getY()) {
-            direction = CardinalPoint.SOUTH;
-        } else if (square1.getX() > square2.getX() && square1.getY() == square2.getY()) {
-            direction = CardinalPoint.WEST;
-        } else {
-            direction = CardinalPoint.EAST;
-        }
-
-        for (Player p : this.players) {
-            if (p.getPosition().isAtDirection(direction, player2.getPosition())) {
-                result.add(p);
-            }
-        }
-
-        return result;
-    }
 
     public void raisePlayerScore(Player p, int score) {
         p.raiseScore(score);

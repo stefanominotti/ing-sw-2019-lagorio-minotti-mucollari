@@ -120,10 +120,6 @@ public class Square {
         return this.room;
     }
 
-    public int distanceFrom(Square square) {
-        return abs(this.x - square.getX()) + abs(this.y - square.getY());
-    }
-
     public boolean canSee(Square square) {
         if(square.getRoom() == this.room) {
             return true;

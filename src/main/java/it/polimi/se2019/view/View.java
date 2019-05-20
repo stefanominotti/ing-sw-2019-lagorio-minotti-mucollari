@@ -22,6 +22,7 @@ public abstract class View {
     private ClientState state;
     private List<ActionType> turnActions;
     private List<Coordinates> actionCoordinates;
+    private List<Weapon> weaponsSelectionList;
 
     View(AbstractClient client) {
         this.client = client;
@@ -104,6 +105,21 @@ public abstract class View {
             case "AmmosGivenMessage":
                 update((AmmosGivenMessage) message);
                 break;
+            case "WeaponPickupSelectionMessage":
+                update((WeaponPickupSelectionMessage) message);
+                break;
+            case "WeaponGivenMessage":
+                update((WeaponGivenMessage) message);
+                break;
+            case "AmmosUsedMessage":
+                update((AmmosUsedMessage) message);
+                break;
+            case "RequireWeaponSwitchMessage":
+                update((RequireWeaponSwitchMessage) message);
+                break;
+            case "WeaponsSwitchedMessage":
+                update((WeaponsSwitchedMessage) message);
+                break;
         }
     }
 
@@ -117,8 +133,15 @@ public abstract class View {
     }
 
     void handleInput(String input) throws RemoteException {
+        if (input == null) {
+            return;
+        }
         switch (this.state) {
             case TYPINGNICKNAME:
+                if (input.equals("")) {
+                    showMessage("Invalid username, retry: ");
+                    break;
+                }
                 this.client.send(new NicknameMessage(this.character, input));
                 break;
             case SETTINGSKULLS:
@@ -142,7 +165,7 @@ public abstract class View {
                 }
                 showMessage("Arena must be [1, 2, 3, 4]:, retry:");
                 break;
-            case DISCARD_SPAWN:
+            case DISCARDSPAWN:
                 try {
                     int number = Integer.parseInt(input);
                     if (0 >= number || number > this.selfPlayerBoard.getPowerups().size()) {
@@ -192,6 +215,34 @@ public abstract class View {
                     }
                     this.client.send(new PickupSelectedMessage(this.actionCoordinates.get(number - 1)));
                     this.actionCoordinates = new ArrayList<>();
+                } catch(NumberFormatException e) {
+                    showMessage("Invalid input, retry:");
+                    break;
+                }
+                break;
+            case SELECTWEAPON:
+                try {
+                    int number = Integer.parseInt(input);
+                    if (0 >= number || number > this.weaponsSelectionList.size()) {
+                        showMessage("Invalid input, retry:");
+                        break;
+                    }
+                    this.client.send(new WeaponPickupMessage(this.weaponsSelectionList.get(number - 1)));
+                    this.weaponsSelectionList = new ArrayList<>();
+                } catch(NumberFormatException e) {
+                    showMessage("Invalid input, retry:");
+                    break;
+                }
+                break;
+            case SWITCHWEAPON:
+                try {
+                    int number = Integer.parseInt(input);
+                    if (0 >= number || number > this.weaponsSelectionList.size()) {
+                        showMessage("Invalid input, retry:");
+                        break;
+                    }
+                    this.client.send(new WeaponSwitchMessage(this.weaponsSelectionList.get(number - 1)));
+                    this.weaponsSelectionList = new ArrayList<>();
                 } catch(NumberFormatException e) {
                     showMessage("Invalid input, retry:");
                     break;
@@ -307,6 +358,7 @@ public abstract class View {
             this.state = WAITINGSETUP;
         }
     }
+
     private void update(SkullsSetMessage message) {
         showMessage("OK, now select the Arena [1, 2, 3, 4]:");
         this.state = SETTINGARENA;
@@ -413,13 +465,13 @@ public abstract class View {
         }
         text.setLength(text.length() - 1);
         showMessage(text.toString());
-        this.state = DISCARD_SPAWN;
+        this.state = DISCARDSPAWN;
     }
 
     private void update(PlayerSpawnedMessage message) {
         int x = message.getCoordinates().getX();
         int y = message.getCoordinates().getY();
-        this.board.getSquareByCoordinates(x, y).addActivePlayer(message.getCharacter());
+        this.board.setPlayerPosition(message.getCharacter(), this.board.getSquareByCoordinates(x, y));
         if(this.character == message.getCharacter()) {
             showMessage("You spawned in [" + x + ", " + y + "]");
         } else {
@@ -428,6 +480,11 @@ public abstract class View {
     }
 
     private void update(PowerupRemoved message) {
+        if(this.character == message.getCharacter()) {
+            this.selfPlayerBoard.removePowerup(message.getPowerup().getType(), message.getPowerup().getColor());
+        } else {
+            this.getBoardByCharacter(message.getCharacter()).removePowerup();
+        }
         if(this.character == message.getCharacter()) {
             showMessage("You have discarded " +
                     message.getPowerup().getType() + " " + message.getPowerup().getColor());
@@ -557,7 +614,7 @@ public abstract class View {
     private void update(MovementMessage message) {
         int x = message.getCoordinates().getX();
         int y = message.getCoordinates().getY();
-        this.board.getSquareByCoordinates(x, y).addActivePlayer(message.getCharacter());
+        this.board.setPlayerPosition(message.getCharacter(), this.board.getSquareByCoordinates(x, y));
         if(this.character == message.getCharacter()) {
             showMessage("You moved in [" + x + ", " + y + "]");
         } else {
@@ -566,9 +623,7 @@ public abstract class View {
     }
 
     private void update(AmmosGivenMessage message) {
-        int x = message.getCoordinates().getX();
-        int y = message.getCoordinates().getY();
-        this.board.getSquareByCoordinates(x, y).removeAmmoTile();
+        this.board.getPlayerPosition(message.getCharacter()).removeAmmoTile();
         if (this.character == message.getCharacter()) {
             this.selfPlayerBoard.addAmmos(message.getAmmos());
         } else {
@@ -583,6 +638,88 @@ public abstract class View {
             } else {
                 showMessage(message.getCharacter() + " got " + ammo.getValue() + "x" + ammo.getKey());
             }
+        }
+    }
+
+    private void update(WeaponPickupSelectionMessage message) {
+        this.weaponsSelectionList = new ArrayList<>(message.getWeapons());
+        StringBuilder text = new StringBuilder();
+        text.append("Select a weapon to pickup:\n");
+        int index = 1;
+        for (Weapon weapon : message.getWeapons()) {
+            String toAppend = "[" + index + "] - " + weapon + "\n";
+            text.append(toAppend);
+            index++;
+        }
+        showMessage(text.toString());
+        this.state = SELECTWEAPON;
+    }
+
+    private void update(WeaponGivenMessage message) {
+        this.board.getPlayerPosition(message.getCharacter()).removeStoreWeapon(message.getWeapon());
+        if (this.character == message.getCharacter()) {
+            this.selfPlayerBoard.addWeapon(message.getWeapon());
+        } else {
+            this.getBoardByCharacter(message.getCharacter()).addWeapon();
+        }
+        if (this.character == message.getCharacter()) {
+            showMessage("You got " + message.getWeapon());
+        } else {
+            showMessage(message.getCharacter() + " got " + message.getWeapon());
+        }
+    }
+
+    private void update(AmmosUsedMessage message) {
+        if (this.character == message.getCharacter()) {
+            this.selfPlayerBoard.useAmmos(message.getAmmos());
+        } else {
+            this.getBoardByCharacter(message.getCharacter()).useAmmos(message.getAmmos());
+        }
+        for (Map.Entry<AmmoType, Integer> ammo : message.getAmmos().entrySet()) {
+            if (ammo.getValue() == 0) {
+                continue;
+            }
+            if (this.character == message.getCharacter()) {
+                showMessage("You used " + ammo.getValue() + "x" + ammo.getKey());
+            } else {
+                showMessage(message.getCharacter() + " used " + ammo.getValue() + "x" + ammo.getKey());
+            }
+        }
+    }
+
+    private void update(RequireWeaponSwitchMessage message) {
+        this.weaponsSelectionList = new ArrayList<>(this.selfPlayerBoard.getReadyWeapons());
+        this.weaponsSelectionList.addAll(this.selfPlayerBoard.getUnloadedWeapons());
+        StringBuilder text = new StringBuilder();
+        String toAppend = "Select a weapon to switch with " + message.getWeapon() + ":\n";
+        text.append(toAppend);
+        int index = 1;
+        for (Weapon weapon : this.weaponsSelectionList) {
+            toAppend = "[" + index + "] - " + weapon;
+            text.append(toAppend);
+            if (this.selfPlayerBoard.getReadyWeapons().contains(weapon)) {
+                text.append(" [READY]\n");
+            } else {
+                text.append(" [UNLOADED]\n");
+            }
+            index++;
+        }
+        showMessage(text.toString());
+        this.state = SWITCHWEAPON;
+    }
+
+    private void update(WeaponsSwitchedMessage message) {
+        if (message.getCharacter() == this.character) {
+            this.selfPlayerBoard.removeWeapon(message.getOldWeapon());
+            this.selfPlayerBoard.addWeapon(message.getNewWeapon());
+        } else {
+            getBoardByCharacter(message.getCharacter()).removeWeapon(message.getOldWeapon());
+            getBoardByCharacter(message.getCharacter()).addWeapon();
+        }
+        if (message.getCharacter() == this.character) {
+            showMessage("You dropped your " + message.getOldWeapon() + " to get a " + message.getNewWeapon());
+        } else {
+            showMessage(message.getCharacter() + " dropped a " + message.getOldWeapon() + " to get a " + message.getNewWeapon());
         }
     }
 

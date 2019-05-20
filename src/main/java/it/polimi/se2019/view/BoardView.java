@@ -10,13 +10,11 @@ public class BoardView {
     private List<SquareView> squares;
     private List<GameCharacter> killshotTrack;
     private Map<GameCharacter, SquareView> positions;
-    private boolean emptyWeaponsDeck;
 
     BoardView(int skulls, List<SquareView> squares) {
         this.killshotTrack = new ArrayList<>();
         this.skulls = skulls;
         this.squares = squares;
-        this.emptyWeaponsDeck = false;
         this.positions = new EnumMap<>(GameCharacter.class);
     }
 
@@ -38,44 +36,26 @@ public class BoardView {
     }
 
     public void setPlayerPosition(GameCharacter player, SquareView square) {
+        if (this.positions.get(player) != null) {
+            this.positions.get(player).removeActivePlayer(player);
+        }
         this.positions.put(player, square);
+        if (square != null) {
+            square.addActivePlayer(player);
+        }
     }
 
-    public List<PlayerBoard> getEnemyBoards() {
-        return new ArrayList<>();
-    }
-
-    public SelfPlayerBoard getSelfPlayerBoard() {
-        return null;
-    }
-
-    public Map<RoomColor, List<Weapon>> getShops() {
-        return new EnumMap<>(RoomColor.class);
+    public SquareView getPlayerPosition(GameCharacter character) {
+        return this.positions.get(character);
     }
 
     public List<GameCharacter> getKillshotTrack() {
-        return new ArrayList<>();
-    }
-
-    public boolean isEmptyWeaponsDeck() {
-        return this.emptyWeaponsDeck;
+        return new ArrayList<>(this.killshotTrack);
     }
 
     void addKillshotPoints(GameCharacter attacker, int amount) {}
 
-    void decrementSkulls(int amount) {}
-
-    void removePowerup(Powerup powerup) {}
-
-    void givePowerup(Powerup powerup) {}
-
-    void removeShopWeapon(Weapon weapon) {}
-
-    void addShopWeapon(Weapon weapon) {}
-
-    void removePlayerWeapon(GameCharacter player, Weapon weapon) {}
-
-    void addPlayerWeapon(GameCharacter player, Weapon weapon) {}
-
-    void movePlayer(GameCharacter player, int x, int y) {}
+    void decrementSkulls(int amount) {
+        this.skulls -= amount;
+    }
 }
