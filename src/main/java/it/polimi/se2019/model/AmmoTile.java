@@ -18,7 +18,7 @@ public class AmmoTile implements Serializable {
     private final boolean powerup;
     private final Map<AmmoType, Integer> ammos;
 
-    AmmoTile(boolean powerup, Map<AmmoType, Integer> ammos) {
+    public AmmoTile(boolean powerup, Map<AmmoType, Integer> ammos) {
         this.powerup = powerup;
         this.ammos = new EnumMap<>(AmmoType.class);
         this.ammos.putAll(ammos);

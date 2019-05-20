@@ -6,7 +6,7 @@ public class WeaponCard {
     private Player owner;
     private boolean ready;
 
-    WeaponCard(Weapon weaponType) {
+    public WeaponCard(Weapon weaponType) {
         this.weaponType = weaponType;
         this.owner = null;
         this.ready = true;
@@ -24,7 +24,7 @@ public class WeaponCard {
         return this.ready;
     }
 
-    void setOwner(Player owner) {
+    public void setOwner(Player owner) {
         this.owner = owner;
     }
 

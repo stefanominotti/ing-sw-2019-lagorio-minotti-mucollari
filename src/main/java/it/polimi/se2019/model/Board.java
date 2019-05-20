@@ -27,7 +27,7 @@ public class Board extends Observable {
     private List<AmmoTile> ammosDeck;
     private List<Powerup> powerupsDiscardPile;
     private List<AmmoTile> ammosDiscardPile;
-    private List<Player> killshotTrack;
+    private List<GameCharacter> killshotTrack;
     private GameState gameState;
     private Timer timer;
     private LocalDateTime gameTimerStartDate;
@@ -45,6 +45,26 @@ public class Board extends Observable {
         this.ammosDiscardPile = new ArrayList<>();
         this.killshotTrack = new ArrayList<>();
         this.timer = new Timer();
+    }
+
+    public String toJson() {
+        Gson gson = new Gson();
+        StringBuilder jObject = new StringBuilder("{");
+        jObject.append("\"skulls\": " + this.skulls + ",");
+        jObject.append("\"gameState\": " + "\"" + this.gameState + "\"" + ",");
+        jObject.append("\"currentPlayer\": " + this.currentPlayer + ",");
+        jObject.append("\"weaponsDeck\": " + gson.toJson(weaponsDeck) + ',');
+        jObject.append("\"powerupsDeck\": " + gson.toJson(powerupsDeck) + ',');
+        jObject.append("\"ammosDeck\": " + gson.toJson(ammosDeck) + ',');
+        jObject.append("\"powerupsDiscardPile\": " + gson.toJson(powerupsDiscardPile) + ',');
+        jObject.append("\"ammosDiscardPile\": " + gson.toJson(ammosDiscardPile) + ',');
+        jObject.append("\"killshotTrack\": " + gson.toJson(killshotTrack));
+        jObject.append("}");
+        return jObject.toString();
+    }
+
+    public GameState getGameState() {
+        return this.gameState;
     }
 
     private void notifyChanges(Object object) {
@@ -86,6 +106,10 @@ public class Board extends Observable {
     public void addPlayer(GameCharacter character) {
         this.players.add(new Player(character));
         notifyChanges(new PlayerCreatedMessage(character));
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
     }
 
     public void setPlayerNickname(GameCharacter player, String name) {
@@ -212,6 +236,21 @@ public class Board extends Observable {
         finalizeGameSetup();
     }
 
+    public void loadArena(String arenaNumber) {
+        this.arena = new Arena(arenaNumber);
+        Map<Coordinates, RoomColor> arenaColor = new HashMap<>();
+        Map<Coordinates, Boolean> arenaSpawn = new HashMap<>();
+        for(Room room : this.arena.getRoomList()) {
+            for(Square square : room.getSquares()) {
+                Coordinates coordinates = new Coordinates(square.getX(), square.getY());
+                RoomColor color =  room.getColor();
+                Boolean spawn = square.isSpawn();
+                arenaColor.put(coordinates, color);
+                arenaSpawn.put(coordinates, spawn);
+            }
+        }
+    }
+
     public Arena getArena() {
         return this.arena;
     }
@@ -296,6 +335,10 @@ public class Board extends Observable {
         } else {
             this.currentPlayer++;
         }
+    }
+
+    public void addFrenezyOrderPlayer(Player player) {
+        this.finalFrenzyOrder.add(player);
     }
 
     protected void fillWeaponsDeck() {

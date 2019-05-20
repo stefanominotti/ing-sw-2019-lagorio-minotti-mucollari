@@ -52,19 +52,19 @@ public class TurnController {
     }
 
     private void countScore() {
-        Map<Player, Integer> playersOrder = new LinkedHashMap<>();
+        Map<GameCharacter, Integer> playersOrder = new LinkedHashMap<>();
         int points;
-        List<Player> damages = this.activePlayer.getDamages();
-        damages.get(0).raiseScore(1);
+        List<GameCharacter> damages = this.activePlayer.getDamages();
+        this.board.getPlayerByCharacter(damages.get(0)).raiseScore(1);
         for(Player player : this.board.getPlayers()) {
             points = 0;
-            for(Player present : damages){
-                if(present == player) {
+            for(GameCharacter present : damages){
+                if(player.getCharacter() == present) {
                     points++;
                 }
             }
             if(points > 0) {
-                playersOrder.put(player, points);
+                playersOrder.put(player.getCharacter(), points);
             }
         }
         playersOrder = playersOrder.entrySet()
@@ -74,8 +74,9 @@ public class TurnController {
                         toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                                 LinkedHashMap::new));
         int index = 0;
-        for(Player player : playersOrder.keySet()) {
-            this.board.raisePlayerScore(player, this.getActiveplayer().getKillshotPoints().get(index));
+        for(GameCharacter player : playersOrder.keySet()) {
+            this.board.raisePlayerScore(this.board.getPlayerByCharacter(player),
+                    this.getActiveplayer().getKillshotPoints().get(index));
             index++;
         }
     }

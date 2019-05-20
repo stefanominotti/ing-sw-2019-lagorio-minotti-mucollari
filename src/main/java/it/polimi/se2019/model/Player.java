@@ -1,5 +1,7 @@
 package it.polimi.se2019.model;
 
+import com.google.gson.Gson;
+
 import java.util.*;
 
 public class Player {
@@ -10,10 +12,10 @@ public class Player {
     private String name;
     private final GameCharacter character;
     private int score;
-    private List<Player> damages;
+    private List<GameCharacter> damages;
     private List<Integer> killshotPoints;
     private Map<AmmoType, Integer> availableAmmos;
-    private Map<Player, Integer> revengeMarks;
+    private Map<GameCharacter, Integer> revengeMarks;
     private List<WeaponCard> weapons;
     private List<Powerup> powerups;
     private Square position;
@@ -33,6 +35,22 @@ public class Player {
         this.weapons = new ArrayList<>();
         this.powerups = new ArrayList<>();
         this.position = null;
+    }
+
+    public String toJson(){
+        Gson gson = new Gson();
+        StringBuilder jObject = new StringBuilder("{");
+        jObject.append("\"name\": " + "\"" + this.name + "\"" + ",");
+        jObject.append("\"character\": " + "\"" + this.character + "\"" + ",");
+        jObject.append("\"score\": " + this.score + ",");
+        jObject.append("\"dead\": " + this.dead + ",");
+        jObject.append("\"damages\": " + gson.toJson(this.damages) + ",");
+        jObject.append("\"killshotPoints\": " + gson.toJson(this.killshotPoints) + ",");
+        jObject.append("\"availableAmmos\": " + gson.toJson(this.availableAmmos) + ",");
+        jObject.append("\"revengeMarks\": " + gson.toJson(this.revengeMarks) + ",");
+        jObject.append("\"weapons\": " + gson.toJson(this.weapons) + ",");
+        jObject.append("\"powerups\": " + gson.toJson(this.powerups) + "}");
+        return jObject.toString();
     }
 
     public List<Integer> getKillshotPoints() {
@@ -59,7 +77,7 @@ public class Player {
         this.name = name;
     }
 
-    public List<Player> getDamages() {
+    public List<GameCharacter> getDamages() {
         return new ArrayList<>(this.damages);
     }
 
@@ -67,7 +85,7 @@ public class Player {
         return new ArrayList<>(this.weapons);
     }
 
-    public Map<Player, Integer> getRevengeMarks() {
+    public Map<GameCharacter, Integer> getRevengeMarks() {
         return new HashMap<>(this.revengeMarks);
     }
 
@@ -85,7 +103,7 @@ public class Player {
         return this.position;
     }
 
-    void addDamages(Player player, int amount) {
+    void addDamages(GameCharacter player, int amount) {
         while (amount > 0 && this.damages.size() <= MAX_DAMAGES) {
             this.damages.add(player);
             amount--;
@@ -150,7 +168,7 @@ public class Player {
         this.position = square;
     }
 
-    void addRevengeMarks(Player player, int amount) {
+    void addRevengeMarks(GameCharacter player, int amount) {
         int newAmount;
         if(this.revengeMarks.containsKey(player)) {
             newAmount = this.revengeMarks.get(player) + amount;
@@ -160,7 +178,7 @@ public class Player {
         this.revengeMarks.put(player, newAmount);
     }
 
-    void marksToDamages(Player player) {
+    void marksToDamages(GameCharacter player) {
         for(int i = 0; i < this.revengeMarks.get(player); i++) {
             if(this.damages.size() <= MAX_DAMAGES) {
                 this.damages.add(player);

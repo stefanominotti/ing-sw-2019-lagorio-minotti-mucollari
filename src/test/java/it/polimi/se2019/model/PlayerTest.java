@@ -36,9 +36,8 @@ public class PlayerTest {
     public void damagesTest() {
         GameCharacter enemyChar = GameCharacter.D_STRUCT_OR;
         this.board.addPlayer(enemyChar);
-        Player enemy = this.board.getPlayerByCharacter(enemyChar);
-        this.player.addDamages(enemy, 5);
-        List<Player> damage = Arrays.asList(enemy, enemy, enemy, enemy, enemy);
+               this.player.addDamages(enemyChar, 5);
+        List<GameCharacter> damage = Arrays.asList(enemyChar, enemyChar, enemyChar, enemyChar, enemyChar);
         assertEquals(damage, this.player.getDamages());
     }
 
@@ -56,25 +55,23 @@ public class PlayerTest {
     public void revengeMarksTest() {
         GameCharacter enemyChar1 = GameCharacter.D_STRUCT_OR;
         this.board.addPlayer(enemyChar1);
-        Player enemy1 = this.board.getPlayerByCharacter(enemyChar1);
         GameCharacter enemyChar2 = GameCharacter.DOZER;
         this.board.addPlayer(enemyChar2);
-        Player enemy2 = this.board.getPlayerByCharacter(enemyChar2);
-        this.player.addRevengeMarks(enemy1, 3);
-        this.player.addRevengeMarks(enemy2, 1);
-        Map<Player, Integer> marks = new HashMap<>();
-        marks.put(enemy1, 3);
-        marks.put(enemy2, 1);
+        this.player.addRevengeMarks(enemyChar1, 3);
+        this.player.addRevengeMarks(enemyChar2, 1);
+        Map<GameCharacter, Integer> marks = new HashMap<>();
+        marks.put(enemyChar1, 3);
+        marks.put(enemyChar2, 1);
         assertEquals(marks, this.player.getRevengeMarks());
-        this.player.marksToDamages(enemy2);
-        marks.remove(enemy2);
+        this.player.marksToDamages(enemyChar2);
+        marks.remove(enemyChar2);
         assertEquals(marks, this.player.getRevengeMarks());
-        List<Player> damage = Arrays.asList(enemy2);
+        List<GameCharacter> damage = Arrays.asList(enemyChar2);
         assertEquals(damage, this.player.getDamages());
-        this.player.marksToDamages(enemy1);
-        marks.remove(enemy1);
+        this.player.marksToDamages(enemyChar1);
+        marks.remove(enemyChar1);
         assertEquals(marks, this.player.getRevengeMarks());
-        damage = Arrays.asList(enemy2, enemy1, enemy1, enemy1);
+        damage = Arrays.asList(enemyChar2, enemyChar1, enemyChar1, enemyChar1);
         assertEquals(damage, this.player.getDamages());
     }
 

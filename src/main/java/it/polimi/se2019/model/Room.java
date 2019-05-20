@@ -21,7 +21,7 @@ public class Room {
         return new ArrayList<>(this.squares);
     }
 
-    boolean hasSpawn() {
+    public boolean hasSpawn() {
         for(Square square : this.squares) {
             if (square.isSpawn()) {
                 return true;
@@ -30,7 +30,7 @@ public class Room {
         return false;
     }
 
-    Square getSpawn() {
+    public Square getSpawn() throws IllegalStateException {
         for(Square square : this.squares) {
             if(square.isSpawn()) {
                 return square;

@@ -17,7 +17,7 @@ public class Arena {
     private int number;
     private List<Room> rooms;
 
-    Arena(String filename){
+    public Arena(String filename){
         this.rooms = null;
         String path = ROOT + filename + ".json";
         ClassLoader classLoader = getClass().getClassLoader();
@@ -38,6 +38,10 @@ public class Arena {
                 square.setNearbySquares();
             }
         }
+    }
+
+    public String toJson() {
+        return String.valueOf(this.number);
     }
 
     public List<Room> getRoomList() {

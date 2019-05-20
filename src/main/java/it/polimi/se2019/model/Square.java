@@ -143,7 +143,7 @@ public class Square {
         this.activePlayers.remove(player);
     }
 
-    void addAmmoTile(AmmoTile tile) {
+    public void addAmmoTile(AmmoTile tile) {
         this.availableAmmoTile = tile;
     }
 
@@ -151,7 +151,7 @@ public class Square {
         this.availableAmmoTile = null;
     }
 
-    void addWeapon(WeaponCard weapon) {
+    public void addWeapon(WeaponCard weapon) {
         this.weaponsStore.add(weapon);
     }
 
@@ -193,3 +193,4 @@ public class Square {
     }
 
 }
+

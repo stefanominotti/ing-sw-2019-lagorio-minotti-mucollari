@@ -7,7 +7,7 @@ public class Powerup implements Serializable {
     private PowerupType type;
     private AmmoType color;
 
-    Powerup(PowerupType type, AmmoType color) {
+    public Powerup(PowerupType type, AmmoType color) {
         this.type = type;
         this.color = color;
     }
