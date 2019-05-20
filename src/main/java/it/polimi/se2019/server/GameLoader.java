@@ -22,20 +22,19 @@ public class GameLoader {
     private JsonObject jsonElement;
     private Gson gson;
 
-    public GameLoader() throws FileNotFoundException{
+    public GameLoader() {
 
-        this.reader = new FileReader(PATH + "game_state_data.json");
-        try {
-            this.writer = new FileWriter(PATH + "game_state_w.json");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         this.parser = new JsonParser();
         this.gson = new Gson();
     }
 
     public Board loadBoard() {
 
+        try {
+            this.reader = new FileReader(PATH + "game_state_data.json");
+        } catch (IOException E) {
+            return new Board();
+        }
         this.jsonElement = (JsonObject)parser.parse(reader);
         this.players = new ArrayList<>();
         JsonArray frenezyOrder = jsonElement.getAsJsonObject("board_other").getAsJsonArray("finalFrenezyOrder");
@@ -118,6 +117,7 @@ public class GameLoader {
         jObject.deleteCharAt(jObject.length() - 1);
         jObject.append("}}}");
         try {
+            this.writer = new FileWriter(PATH + "game_state_data.json");
             this.writer.write(jObject.toString());
             this.writer.flush();
         } catch (IOException e) {

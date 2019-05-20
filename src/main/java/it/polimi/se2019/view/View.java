@@ -33,6 +33,12 @@ public abstract class View {
         String messageType = message.getMessageType().getName()
                 .replace("it.polimi.se2019.model.messages.", "");;
         switch (messageType) {
+            case "ReconnectionMessage":
+                update((ReconnectionMessage) message);
+                break;
+            case "RequireNicknameMessage":
+                update((RequireNicknameMessage) message);
+                break;
             case "PlayerCreatedMessage":
                 update((PlayerCreatedMessage) message);
                 break;
@@ -135,17 +141,35 @@ public abstract class View {
         return null;
     }
 
+    private void update(ReconnectionMessage message) {
+        showMessage("A game already exists, insert your nickname to reconnect:");
+        this.state = RECONNECTING;
+    }
+
+    private void update(RequireNicknameMessage message) {
+        showMessage("Insert nickname: ");
+        this.state = TYPINGNICKNAME;
+    }
+
     void handleInput(String input) throws RemoteException {
         if (input == null) {
             return;
         }
         switch (this.state) {
+            case RECONNECTING:
+                if (input.equals("")) {
+                    showMessage("Invalid username, retry: ");
+                    break;
+                }
+                this.client.send(new NicknameRecconnectingMessage(input));
+                break;
+
             case TYPINGNICKNAME:
                 if (input.equals("")) {
                     showMessage("Invalid username, retry: ");
                     break;
                 }
-                this.client.send(new NicknameMessage(this.character, input));
+                this.client.send(new NicknameMessage(input));
                 break;
             case SETTINGSKULLS:
                 int skulls;
@@ -311,40 +335,35 @@ public abstract class View {
         System.exit(0);
     }
 
-    private void update(NicknameDuplicatedMessage message) throws RemoteException {
+    private void update(NicknameDuplicatedMessage message){
         showMessage("Nickname is already in use. Insert another nickname: ");
     }
 
-    private void update(PlayerCreatedMessage message) throws RemoteException {
+    private void update(PlayerCreatedMessage message){
         this.character = message.getCharacter();
-        showMessage("Insert nickname: ");
-        this.state = TYPINGNICKNAME;
+        this.selfPlayerBoard = new SelfPlayerBoard(message.getCharacter(), message.getNickname());
+        showMessage("Nickname " + message.getNickname() + " accepted! You are " + message.getCharacter());
+        for (Map.Entry<GameCharacter, String> player : message.getOtherPlayers().entrySet()) {
+            boolean present = false;
+            for (PlayerBoard p : this.enemyBoards) {
+                if (p.getCharacter() == player.getKey()) {
+                    present = true;
+                    break;
+                }
+            }
+            showMessage(player.getKey() + " - " + player.getValue() + " is in!");
+            if (present) {
+                continue;
+            }
+            this.enemyBoards.add(new PlayerBoard(player.getKey(), player.getValue()));
+        }
+        this.state = WAITINGSTART;
     }
 
     private void update(PlayerReadyMessage message) {
-        if (message.getCharacter() == this.character) {
-            this.selfPlayerBoard = new SelfPlayerBoard(message.getCharacter(), message.getNickname());
-            showMessage("Nickname " + message.getNickname() + " accepted! You are " + message.getCharacter());
-            for (Map.Entry<GameCharacter, String> player : message.getOtherPlayers().entrySet()) {
-                boolean present = false;
-                for (PlayerBoard p : this.enemyBoards) {
-                    if (p.getCharacter() == player.getKey()) {
-                        present = true;
-                        break;
-                    }
-                }
-                showMessage(player.getKey() + " - " + player.getValue() + " is in!");
-                if (present) {
-                    continue;
-                }
-                this.enemyBoards.add(new PlayerBoard(player.getKey(), player.getValue()));
-            }
-            this.state = WAITINGSTART;
-        } else {
-            this.enemyBoards.add(new PlayerBoard(message.getCharacter(), message.getNickname()));
-            if (this.state == WAITINGSTART) {
-                showMessage(message.getNickname() + " - " + message.getCharacter() + " connected!");
-            }
+        this.enemyBoards.add(new PlayerBoard(message.getCharacter(), message.getNickname()));
+        if (this.state == WAITINGSTART) {
+            showMessage(message.getNickname() + " - " + message.getCharacter() + " connected!");
         }
     }
 

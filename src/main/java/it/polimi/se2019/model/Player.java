@@ -21,8 +21,8 @@ public class Player {
     private Square position;
     private boolean dead;
 
-    Player(GameCharacter character) {
-        this.name = null;
+    Player(GameCharacter character, String name) {
+        this.name = name;
         this.character = character;
         this.score = 0;
         this.damages = new ArrayList<>();
@@ -71,10 +71,6 @@ public class Player {
 
     public String getNickname() {
         return this.name;
-    }
-
-    public void setNickname(String name) {
-        this.name = name;
     }
 
     public List<GameCharacter> getDamages() {

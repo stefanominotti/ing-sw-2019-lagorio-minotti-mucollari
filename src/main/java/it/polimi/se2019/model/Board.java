@@ -103,37 +103,15 @@ public class Board extends Observable {
         return null;
     }
 
-    public void addPlayer(GameCharacter character) {
-        this.players.add(new Player(character));
-        notifyChanges(new PlayerCreatedMessage(character));
-    }
-
-    public void setPlayers(List<Player> players) {
-        this.players = players;
-    }
-
-    public void setPlayerNickname(GameCharacter player, String name) {
-        if (getPlayerByCharacter(player) == null) {
-            notifyChanges(new GameAlreadyStartedMessage(player));
-            return;
-        }
-        for (Player p : this.players) {
-            if (p.getCharacter() == player || p.getNickname() == null) {
-                continue;
-            }
-            if (p.getNickname().equals(name)) {
-                notifyChanges(new NicknameDuplicatedMessage(player));
-                return;
-            }
-        }
-        getPlayerByCharacter(player).setNickname(name);
+    public void addPlayer(GameCharacter character, String nickname) {
+        this.players.add(new Player(character, nickname));
         Map<GameCharacter, String> others = new EnumMap<>(GameCharacter.class);
         for (Player p : this.players) {
-            if (p.getNickname() != null && p.getCharacter() != player) {
+            if (p.getNickname() != null && p.getCharacter() != character) {
                 others.put(p.getCharacter(), p.getNickname());
             }
         }
-        notifyChanges(new PlayerReadyMessage(player, name, others));
+        notifyChanges(new PlayerCreatedMessage(character, nickname, others));
 
         if (getValidPlayers().size() > 3) {
             long remainingTime = STARTTIME/1000L -
@@ -151,6 +129,10 @@ public class Board extends Observable {
             notifyChanges(new GameSetupTimerStartedMessage(STARTTIME/1000L));
             this.gameTimerStartDate = LocalDateTime.now();
         }
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
     }
 
     private void finalizePlayersCreation() {

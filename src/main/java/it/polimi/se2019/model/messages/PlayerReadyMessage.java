@@ -8,13 +8,11 @@ public class PlayerReadyMessage extends Message {
 
     private GameCharacter character;
     private String nickname;
-    private Map<GameCharacter, String> otherPlayers;
 
-    public PlayerReadyMessage(GameCharacter character, String nickname, Map<GameCharacter, String> otherPlayers) {
+    public PlayerReadyMessage(GameCharacter character, String nickname) {
         setMessageType(this.getClass());
         this.character = character;
         this.nickname = nickname;
-        this.otherPlayers = otherPlayers;
     }
 
     public GameCharacter getCharacter() {
@@ -23,9 +21,5 @@ public class PlayerReadyMessage extends Message {
 
     public String getNickname() {
         return this.nickname;
-    }
-
-    public Map<GameCharacter, String> getOtherPlayers() {
-        return this.otherPlayers;
     }
 }

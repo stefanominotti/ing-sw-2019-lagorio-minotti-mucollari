@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.omg.PortableServer.LIFESPAN_POLICY_ID;
 
+import java.io.FileNotFoundException;
 import java.util.*;
 
 import static it.polimi.se2019.model.PowerupType.TARGETING_SCOPE;

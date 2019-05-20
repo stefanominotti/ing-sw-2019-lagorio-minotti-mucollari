@@ -3,20 +3,25 @@ package it.polimi.se2019.server;
 import it.polimi.se2019.controller.GameController;
 import it.polimi.se2019.model.Board;
 import it.polimi.se2019.model.GameCharacter;
-import it.polimi.se2019.model.messages.ClientDisconnectedMessage;
-import it.polimi.se2019.model.messages.ClientReadyMessage;
-import it.polimi.se2019.model.messages.Message;
+import it.polimi.se2019.model.Player;
+import it.polimi.se2019.model.messages.*;
 import it.polimi.se2019.view.VirtualView;
 
+import java.io.FileNotFoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Server {
 
+    private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
+
     private Map<GameCharacter, VirtualClientInterface> clients;
+    private GameLoader gameLoader;
     private VirtualView view;
     private GameController controller;
     private Board model;
@@ -29,14 +34,17 @@ public class Server {
 
     public static void main(String[] args) throws RemoteException {
         Server server = new Server();
-        server.startMVC();
+        server.gameLoader = new GameLoader();
+        server.startMVC(server.gameLoader.loadBoard());
         new SocketServer(server);
         new RMIProtocolServer(server);
         System.out.println("Waiting for clients.\n");
     }
 
-    private void startMVC() {
-        this.model = new Board();
+
+
+    private void startMVC(Board board) {
+        this.model = board;
         this.view = new VirtualView(this);
         this.controller = new GameController(this.model, this.view);
         this.view.addObserver(this.controller);
@@ -61,12 +69,17 @@ public class Server {
 
     void addClient(VirtualClientInterface client) {
         ((Thread) client).start();
-        for(GameCharacter character : GameCharacter.values()) {
-            if (!this.clients.containsKey(character)) {
-                this.clients.put(character, client);
-                System.out.println("A new client connected.");
-                this.view.forwardMessage(new ClientReadyMessage(character));
-                break;
+        if(this.model.getArena() != null) {
+            try {
+                client.send(new ReconnectionMessage());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                client.send(new RequireNicknameMessage());
+            } catch (RemoteException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -89,6 +102,7 @@ public class Server {
     }
 
     public void removeClient(GameCharacter character) {
+
         this.clients.get(character).exit();
         this.clients.remove(character);
         System.out.println("Client disconnected.");
@@ -122,8 +136,40 @@ public class Server {
         }
     }
 
-    void receiveMessage(Message message) {
-        this.view.forwardMessage(message);
+    void receiveMessage(Message message, VirtualClientInterface client) throws RemoteException {
+        String messageType = message.getMessageType().getName()
+                .replace("it.polimi.se2019.model.messages.", "");;
+        switch (messageType) {
+            case "NicknameRecconnectingMessage":
+                for(Player player : this.model.getPlayers()) {
+                    if(player.getNickname().equals(((NicknameRecconnectingMessage)message).getNickname())) {
+                        this.clients.put(player.getCharacter(), client);
+                        System.out.println("A new client connected.");
+                        this.view.forwardMessage(new ClientReconnectedMessage(player.getCharacter()));
+                        return;
+                    }
+                }
+                break;
+            case "NicknameMessage":
+                for(Player player : this.model.getPlayers()) {
+                    if (player.getNickname().equals(((NicknameMessage) message).getNickname())) {
+                        client.send(new NicknameDuplicatedMessage());
+                        return;
+                    }
+                }
+                for(GameCharacter character : GameCharacter.values()) {
+                    if (!this.clients.containsKey(character)) {
+                        this.clients.put(character, client);
+                        System.out.println("A new client connected.");
+                        this.view.forwardMessage(
+                                new ClientReadyMessage(character, ((NicknameMessage) message).getNickname()));
+                        return;
+                    }
+                }
+                break;
+            default:
+                this.view.forwardMessage(message);
+        }
     }
 
     void notifyDisconnection(VirtualClientInterface client) {

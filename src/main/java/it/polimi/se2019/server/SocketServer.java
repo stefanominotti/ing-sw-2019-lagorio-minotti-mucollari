@@ -5,6 +5,7 @@ import it.polimi.se2019.model.messages.LobbyFullMessage;
 import it.polimi.se2019.model.messages.Message;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 
 class SocketServer {
 
@@ -36,8 +37,12 @@ class SocketServer {
         this.server.notifyDisconnection(client);
     }
 
-    void notify(Message message) {
-        this.server.receiveMessage(message);
+    void notify(Message message, VirtualClientInterface client) {
+        try {
+            this.server.receiveMessage(message, client);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
 }

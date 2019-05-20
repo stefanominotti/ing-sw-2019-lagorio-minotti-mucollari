@@ -32,8 +32,8 @@ public class GameController implements Observer {
             case "ClientReadyMessage":
                 update((ClientReadyMessage) message);
                 break;
-            case "NicknameMessage":
-                update((NicknameMessage) message);
+            case "ClientReconnectedMessage":
+                update((ClientReconnectedMessage) message);
                 break;
             case "ClientDisconnectedMessage":
                 update((ClientDisconnectedMessage) message);
@@ -70,11 +70,11 @@ public class GameController implements Observer {
     }
 
     private void update(ClientReadyMessage message) {
-        this.model.addPlayer(message.getCharacter());
+        this.model.addPlayer(message.getCharacter(), message.getNickname());
     }
 
-    private void update(NicknameMessage message) {
-        this.model.setPlayerNickname(message.getCharacter(), message.getNickname());
+    private void update(ClientReconnectedMessage message) {
+        //this.model.ReconectPlayerNickname(message.getCharacter(), message.getNickname());
     }
 
     private void update(ClientDisconnectedMessage message) {

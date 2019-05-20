@@ -50,7 +50,7 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
                 ObjectInputStream inputStream = new ObjectInputStream((this.socket.getInputStream()));
                 Message message = (Message) inputStream.readObject();
                 if (message != null) {
-                    this.server.notify(message);
+                    this.server.notify(message, this);
                 }
             }
         } catch (IOException e) {

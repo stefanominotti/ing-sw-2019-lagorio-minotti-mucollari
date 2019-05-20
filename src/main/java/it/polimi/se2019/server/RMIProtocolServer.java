@@ -10,14 +10,18 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerInterface {
 
     private final static int PORT = 1099;
     private transient Server server;
+    private Map<RMIClientInterface, RMIVirtualClient> clientCorrespondency;
 
     RMIProtocolServer(Server server) throws RemoteException {
         this.server = server;
+        this.clientCorrespondency = new HashMap<>();
 
         try {
             LocateRegistry.createRegistry(PORT);
@@ -44,6 +48,7 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
         if (this.server.getClientsNumber() == 5) {
             client.notify(new LobbyFullMessage());
         } else {
+            this.clientCorrespondency.put(client, virtualClient);
             this.server.addClient(virtualClient);
         }
     }
@@ -58,6 +63,10 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
 
     @Override
     public void notify(Message message, RMIClientInterface client) {
-        server.receiveMessage(message);
+        try {
+            this.server.receiveMessage(message, this.clientCorrespondency.get(client));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 }
