@@ -149,6 +149,7 @@ public class Server {
                         return;
                     }
                 }
+                client.send(new NotFoundNameMessage(((NicknameRecconnectingMessage)message).getNickname()));
                 break;
             case "NicknameMessage":
                 for(Player player : this.model.getPlayers()) {

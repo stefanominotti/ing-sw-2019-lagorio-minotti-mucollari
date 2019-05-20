@@ -36,6 +36,9 @@ public abstract class View {
             case "ReconnectionMessage":
                 update((ReconnectionMessage) message);
                 break;
+            case "NotFoundNameMessage":
+                update((NotFoundNameMessage) message);
+                break;
             case "RequireNicknameMessage":
                 update((RequireNicknameMessage) message);
                 break;
@@ -144,6 +147,10 @@ public abstract class View {
     private void update(ReconnectionMessage message) {
         showMessage("A game already exists, insert your nickname to reconnect:");
         this.state = RECONNECTING;
+    }
+
+    private void update(NotFoundNameMessage message) {
+        showMessage(message.getNickname() + "not found, Insert another nickname:");
     }
 
     private void update(RequireNicknameMessage message) {

@@ -74,7 +74,9 @@ public class GameController implements Observer {
     }
 
     private void update(ClientReconnectedMessage message) {
-        //this.model.ReconectPlayerNickname(message.getCharacter(), message.getNickname());
+        //inviare uno stato della sua playerboard
+        //attendere che almeno tre giocatori si connettano
+        //continuare la partita
     }
 
     private void update(ClientDisconnectedMessage message) {
@@ -90,7 +92,7 @@ public class GameController implements Observer {
     }
 
     private void update(StartTurnMessage message) {
-
+        this.turnController.startTurn(message.getTurnType(), message.getPlayer());
     }
 
     private void update(PowerupSelectedMessage message) {
