@@ -65,6 +65,9 @@ public class GameController implements Observer {
             case "WeaponSwitchMessage":
                 update((WeaponSwitchMessage) message);
                 break;
+            case "RechargeWeaponMessage":
+                update((RechargeWeaponMessage) message);
+                break;
 
         }
     }
@@ -117,6 +120,10 @@ public class GameController implements Observer {
 
     private void update(WeaponSwitchMessage message) {
         this.turnController.switchWeapon(message.getWeapon());
+    }
+
+    private void update(RechargeWeaponMessage message) {
+        this.turnController.rechargeWeapon(message.getWeapon());
     }
 
     void send(SingleReceiverMessage message) {

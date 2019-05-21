@@ -13,6 +13,7 @@ public class RequireWeaponLoadMessage extends Message implements SingleReceiverM
     private List<Weapon> weapons;
 
     public RequireWeaponLoadMessage(GameCharacter character, List<Weapon> unloadedWeapons) {
+        setMessageType(this.getClass());
         this.character = character;
         this.weapons = unloadedWeapons;
     }

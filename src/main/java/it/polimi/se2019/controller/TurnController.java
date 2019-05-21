@@ -36,17 +36,27 @@ public class TurnController {
         switch (type) {
             case FIRST_TURN:
                 this.movesLeft = 2;
-                this.state = TurnState.FIRST_RESPAWNING;
+                this.state = FIRST_RESPAWNING;
                 this.board.drawPowerup(this.activePlayer);
                 this.board.drawPowerup(this.activePlayer);
                 this.controller.send(new DiscardToSpawnMessage(player));
                 break;
             case AFTER_DEATH:
                 this.movesLeft = 0;
-                this.state = TurnState.DEATH_RESPAWNING;
+                this.state = DEATH_RESPAWNING;
                 countScore();
                 this.board.drawPowerup(this.activePlayer);
                 this.controller.send(new DiscardToSpawnMessage(player));
+                break;
+            case NORMAL:
+                this.movesLeft = 2;
+                if (this.finalFrenzy) {
+                    // manda azioni frenesia finale
+                } else {
+                    List<ActionType> availableActions = Arrays.asList(ActionType.MOVE, ActionType.PICKUP, ActionType.SHOT);
+                    this.controller.send(new AvailableActionsMessage(this.activePlayer.getCharacter(), availableActions));
+                }
+                this.state = SELECTACTION;
                 break;
         }
     }
@@ -101,7 +111,7 @@ public class TurnController {
                     this.state = TurnState.SELECTACTION;
                 }
                 if (this.state == TurnState.DEATH_RESPAWNING){
-                    this.board.endTurn();
+                    this.board.endTurn(this.activePlayer);
                 }
             }
         }
@@ -153,6 +163,7 @@ public class TurnController {
     }
 
     void handleAction(ActionType action) {
+        this.movesLeft--;
         switch (action) {
             case ENDTURN:
                 this.state = ENDING;
@@ -167,12 +178,11 @@ public class TurnController {
                 calculatePickupAction();
                 break;
         }
-        this.movesLeft--;
     }
 
     void handleEndAction() {
         if (this.movesLeft == 0) {
-            // chiedi di ricaricare e termina turno
+            handleRecharge();
             return;
         }
         if (this.finalFrenzy) {
@@ -252,7 +262,6 @@ public class TurnController {
         List<Weapon> unloadedWeapons = new ArrayList<>();
         for (WeaponCard weapon : this.activePlayer.getWeapons()) {
             if (weapon.isReady()) {
-                unloadedWeapons.add(weapon.getWeaponType());
                 continue;
             }
             Map<AmmoType, Integer> requiredAmmo = new EnumMap<>(AmmoType.class);
@@ -281,5 +290,26 @@ public class TurnController {
         this.controller.send(new RequireWeaponLoadMessage(this.activePlayer.getCharacter(), unloadedWeapons));
     }
 
-    void endTurn() {}
+    void rechargeWeapon(Weapon weapon) {
+        if (weapon == null) {
+            endTurn();
+            return;
+        }
+        Map<AmmoType, Integer> requiredAmmo = new EnumMap<>(AmmoType.class);
+        requiredAmmo.putAll(weapon.getBuyCost());
+        int toSum = requiredAmmo.get(weapon.getColor()) + 1;
+        requiredAmmo.put(weapon.getColor(), toSum);
+        this.board.useAmmos(this.activePlayer, requiredAmmo);
+        for (WeaponCard w : this.activePlayer.getWeapons()) {
+            if (w.getWeaponType() == weapon) {
+                this.board.loadWeapon(this.activePlayer, w);
+                break;
+            }
+        }
+        handleRecharge();
+    }
+
+    void endTurn() {
+        this.board.endTurn(this.activePlayer);
+    }
 }

@@ -45,6 +45,7 @@ public class Board extends Observable {
         this.ammosDiscardPile = new ArrayList<>();
         this.killshotTrack = new ArrayList<>();
         this.timer = new Timer();
+        this.deathPlayers = new ArrayList<>();
     }
 
     public String toJson() {
@@ -268,12 +269,15 @@ public class Board extends Observable {
         this.deathPlayers.add(player);
     }
 
-    public void endTurn() {
-        if(this.gameState == FIRSTTURN && this.currentPlayer == this.players.size() -1) {
+    public void endTurn(Player player) {
+        if(this.gameState == FIRSTTURN && this.currentPlayer == this.players.size() - 1) {
             this.gameState = INGAME;
         }
+        if (player == this.players.get(this.currentPlayer)) {
+            notifyChanges(new EndTurnMessage(player.getCharacter()));
+        }
         Player nextPlayer;
-        if(this.deathPlayers.size() > 0) {
+        if(!this.deathPlayers.isEmpty()) {
             nextPlayer = this.deathPlayers.get(0);
         } else {
             incrementCurrentPlayer();
@@ -431,6 +435,16 @@ public class Board extends Observable {
         notifyChanges(new WeaponsSwitchedMessage(player.getCharacter(), oldCard.getWeaponType(), newCard.getWeaponType()));
     }
 
+    public void loadWeapon(Player player, WeaponCard weapon) {
+        for (WeaponCard w : player.getWeapons()) {
+            if (w == weapon) {
+                w.setReady(true);
+                notifyChanges(new RechargeWeaponMessage(w.getWeaponType(), player.getCharacter()));
+                return;
+            }
+        }
+    }
+
     public void giveWeapon(Player player, WeaponCard weapon) {
         player.getPosition().removeWeapon(weapon);
         player.addWeapon(weapon);
@@ -470,10 +484,6 @@ public class Board extends Observable {
     public boolean verifyGameFinished() {
         return this.skulls == 0;
     }
-
-    public void handleDeadPlayer(Player player) {}
-
-    public void handleEndTurn() {}
 
     public void raisePlayerScore(Player p, int score) {
         p.raiseScore(score);

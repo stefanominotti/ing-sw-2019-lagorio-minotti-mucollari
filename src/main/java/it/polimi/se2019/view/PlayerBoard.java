@@ -89,19 +89,19 @@ public class PlayerBoard {
         }
     }
 
-    void unloadWeapon(Weapon weapon) {
-        this.unloadedWeapons.add(weapon);
+    void removePowerup() {
+        this.powerupsNumber--;
+    }
+
+    List<Weapon> getUnloadedWeapons() {
+        return new ArrayList<>(this.unloadedWeapons);
     }
 
     void reloadWeapon(Weapon weapon) {
         this.unloadedWeapons.remove(weapon);
     }
 
-    void removePowerup() {
-        this.powerupsNumber--;
-    }
-
-    public List<Weapon> getUnloadedWeapons() {
-        return new ArrayList<>(this.unloadedWeapons);
+    void unloadWeapon(Weapon weapon) {
+        this.unloadedWeapons.add(weapon);
     }
 }

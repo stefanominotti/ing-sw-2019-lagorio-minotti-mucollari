@@ -132,6 +132,12 @@ public abstract class View {
             case "RequireWeaponLoadMessage":
                 update((RequireWeaponLoadMessage) message);
                 break;
+            case "RechargeWeaponMessage":
+                update((RechargeWeaponMessage) message);
+                break;
+            case "EndTurnMessage":
+                update((EndTurnMessage) message);
+                break;
         }
     }
 
@@ -142,20 +148,6 @@ public abstract class View {
             }
         }
         return null;
-    }
-
-    private void update(ReconnectionMessage message) {
-        showMessage("A game already exists, insert your nickname to reconnect:");
-        this.state = RECONNECTING;
-    }
-
-    private void update(NotFoundNameMessage message) {
-        showMessage(message.getNickname() + "not found, Insert another nickname:");
-    }
-
-    private void update(RequireNicknameMessage message) {
-        showMessage("Insert nickname: ");
-        this.state = TYPINGNICKNAME;
     }
 
     void handleInput(String input) throws RemoteException {
@@ -296,7 +288,7 @@ public abstract class View {
                     } else {
                         selection = this.weaponsSelectionList.get(number);
                     }
-                    this.client.send(null); //TODO;
+                    this.client.send(new RechargeWeaponMessage(selection, this.character));
                     this.weaponsSelectionList = new ArrayList<>();
                 } catch(NumberFormatException e) {
                     showMessage("Invalid input, retry:");
@@ -304,6 +296,20 @@ public abstract class View {
                 }
                 break;
         }
+    }
+
+    private void update(ReconnectionMessage message) {
+        showMessage("A game already exists, insert your nickname to reconnect:");
+        this.state = RECONNECTING;
+    }
+
+    private void update(NotFoundNameMessage message) {
+        showMessage(message.getNickname() + "not found, Insert another nickname:");
+    }
+
+    private void update(RequireNicknameMessage message) {
+        showMessage("Insert nickname: ");
+        this.state = TYPINGNICKNAME;
     }
 
     private void update(MasterChangedMessage message) {
@@ -419,7 +425,7 @@ public abstract class View {
         showMessage("This is the Arena:");
         StringBuilder builder = new StringBuilder();
         List<SquareView> squares = new ArrayList<>();
-        for(Coordinates square : message.getArenaColors().keySet()){
+        for(Coordinates square : message.getArenaColors().keySet()) {
             RoomColor color = message.getArenaColors().get(square);
             Boolean spawn = message.getArenaSpawn().get(square);
             squares.add(new SquareView(square.getX(), square.getY(), color, spawn));
@@ -617,7 +623,7 @@ public abstract class View {
             text.append("]\n\n");
             number++;
         }
-        text.setLength(text.length() - 1);
+        text.setLength(text.length() - 2);
         showMessage(text.toString());
         this.state = SELECTMOVEMENT;
     }
@@ -656,7 +662,7 @@ public abstract class View {
             text.append("]\n\n");
             number++;
         }
-        text.setLength(text.length() - 1);
+        text.setLength(text.length() - 2);
         showMessage(text.toString());
         this.state = SELECTPICKUP;
     }
@@ -701,6 +707,7 @@ public abstract class View {
             text.append(toAppend);
             index++;
         }
+        text.setLength(text.length() - 1);
         showMessage(text.toString());
         this.state = SELECTWEAPON;
     }
@@ -763,8 +770,11 @@ public abstract class View {
             this.selfPlayerBoard.removeWeapon(message.getOldWeapon());
             this.selfPlayerBoard.addWeapon(message.getNewWeapon());
         } else {
-            getBoardByCharacter(message.getCharacter()).removeWeapon(message.getOldWeapon());
-            getBoardByCharacter(message.getCharacter()).addWeapon();
+            PlayerBoard playerBoard = getBoardByCharacter(message.getCharacter());
+            if (playerBoard != null) {
+                playerBoard.removeWeapon(message.getOldWeapon());
+                playerBoard.addWeapon();
+            }
         }
         if (message.getCharacter() == this.character) {
             showMessage("You dropped your " + message.getOldWeapon() + " to get a " + message.getNewWeapon());
@@ -779,12 +789,36 @@ public abstract class View {
         text.append("Select a weapon to recharge or skip:\n");
         int index = 1;
         for (Weapon weapon : message.getWeapons()) {
-            String toAppend = "[" + index + "] - " + weapon;
+            String toAppend = "[" + index + "] - " + weapon + "\n";
             text.append(toAppend);
             index++;
         }
         showMessage(text.toString());
         this.state = RECHARGEWEAPON;
+    }
+
+    private void update(RechargeWeaponMessage message) {
+        if (message.getCharacter() == this.character) {
+            this.selfPlayerBoard.reloadWeapon(message.getWeapon());
+        } else {
+            PlayerBoard playerBoard = getBoardByCharacter(message.getCharacter());
+            if (playerBoard != null) {
+                playerBoard.reloadWeapon(message.getWeapon());
+            }
+        }
+        if (message.getCharacter() == this.character) {
+            showMessage("Your " + message.getWeapon() + " is now ready to fire");
+        } else {
+            showMessage(message.getCharacter() + " realoaded " + message.getWeapon());
+        }
+    }
+
+    private void update(EndTurnMessage message) {
+        if (message.getCharacter() == this.character) {
+            showMessage("Turn finished");
+        } else {
+            showMessage(message.getCharacter() + "'s turn finished");
+        }
     }
 
     public abstract void showMessage(String message);

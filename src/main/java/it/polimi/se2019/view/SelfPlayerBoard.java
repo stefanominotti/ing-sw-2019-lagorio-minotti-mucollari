@@ -46,6 +46,7 @@ public class SelfPlayerBoard extends PlayerBoard {
         this.readyWeapons.add(weapon);
     }
 
+    @Override
     void removeWeapon(Weapon weapon) {
         super.removeWeapon(weapon);
         if (this.readyWeapons.contains(weapon)) {
@@ -53,7 +54,19 @@ public class SelfPlayerBoard extends PlayerBoard {
         }
     }
 
-    public List<Weapon> getReadyWeapons() {
+    List<Weapon> getReadyWeapons() {
         return new ArrayList<>(this.readyWeapons);
+    }
+
+    @Override
+    void reloadWeapon(Weapon weapon) {
+        super.reloadWeapon(weapon);
+        this.readyWeapons.add(weapon);
+    }
+
+    @Override
+    void unloadWeapon(Weapon weapon) {
+        super.unloadWeapon(weapon);
+        this.readyWeapons.remove(weapon);
     }
 }
