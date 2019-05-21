@@ -20,6 +20,7 @@ public class Player {
     private List<Powerup> powerups;
     private Square position;
     private boolean dead;
+    private boolean connected;
 
     Player(GameCharacter character, String name) {
         this.name = name;
@@ -35,6 +36,7 @@ public class Player {
         this.weapons = new ArrayList<>();
         this.powerups = new ArrayList<>();
         this.position = null;
+        this.connected = true;
     }
 
     public String toJson(){
@@ -44,6 +46,7 @@ public class Player {
         jObject.append("\"character\": " + "\"" + this.character + "\"" + ",");
         jObject.append("\"score\": " + this.score + ",");
         jObject.append("\"dead\": " + this.dead + ",");
+        jObject.append("\"connected\": " + false + ",");
         jObject.append("\"damages\": " + gson.toJson(this.damages) + ",");
         jObject.append("\"killshotPoints\": " + gson.toJson(this.killshotPoints) + ",");
         jObject.append("\"availableAmmos\": " + gson.toJson(this.availableAmmos) + ",");
@@ -51,6 +54,14 @@ public class Player {
         jObject.append("\"weapons\": " + gson.toJson(this.weapons) + ",");
         jObject.append("\"powerups\": " + gson.toJson(this.powerups) + "}");
         return jObject.toString();
+    }
+
+    public void connect() {
+        this.connected = true;
+    }
+
+    public boolean isConnected() {
+        return this.connected;
     }
 
     public List<Integer> getKillshotPoints() {

@@ -62,11 +62,12 @@ public class Board extends Observable {
         jObject.append("\"powerupsDiscardPile\": " + gson.toJson(powerupsDiscardPile) + ',');
         jObject.append("\"ammosDiscardPile\": " + gson.toJson(ammosDiscardPile) + ',');
         jObject.append("\"killshotTrack\": " + gson.toJson(killshotTrack));
-        jObject.append("}");
+        jObject.append("},");
+        jObject.append("\"finalFrenzyOrder\":" + gson.toJson(this.finalFrenzyOrder));
         return jObject.toString();
     }
 
-    public void  CreateModelView(Player player) {
+    public void  createModelView(Player player) {
         List<SquareView> squareViews = new ArrayList<>();
         for(Square square : this.arena.getAllSquares()) {
             List<GameCharacter> activePlayers = new ArrayList<>();
@@ -318,9 +319,6 @@ public class Board extends Observable {
         if(this.gameState == FIRSTTURN && this.currentPlayer == this.players.size() - 1) {
             this.gameState = INGAME;
         }
-        if (player == this.players.get(this.currentPlayer)) {
-            notifyChanges(new EndTurnMessage(player.getCharacter()));
-        }
         Player nextPlayer;
         if(!this.deathPlayers.isEmpty()) {
             nextPlayer = this.deathPlayers.get(0);
@@ -328,10 +326,11 @@ public class Board extends Observable {
             incrementCurrentPlayer();
             nextPlayer = this.players.get(this.currentPlayer);
         }
+        notifyChanges(new EndTurnMessage(player.getCharacter()));
         startTurn(nextPlayer);
     }
 
-    private void startTurn(Player player) {
+    public void startTurn(Player player) {
         TurnType type;
         if(player.isDead()) {
             type = TurnType.AFTER_DEATH;
@@ -365,6 +364,10 @@ public class Board extends Observable {
         } else {
             this.currentPlayer++;
         }
+    }
+
+    public int getCurrentPlayer() {
+        return this.currentPlayer;
     }
 
     public void addFrenzyOrderPlayer(Player player) {

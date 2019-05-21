@@ -78,8 +78,21 @@ public class GameController implements Observer {
     }
 
     private void update(ClientReconnectedMessage message) {
-        for(Player player : this.model.getPlayers()) {
-            this.model.CreateModelView(player);
+        int counter = 0;
+        Player player = this.model.getPlayerByCharacter(message.getCharacter());
+        player.connect();
+        sendAll(new PlayerReadyMessage(player.getCharacter(), player.getNickname()));
+        this.model.createModelView(player);
+        for(Player boardPlayer : this.model.getPlayers()) {
+            if(boardPlayer.isConnected()) {
+               counter++;
+            } else {
+                return;
+            }
+        }
+        if(counter == this.model.getPlayers().size()){
+            //avvisa tutti che la partita è pronta
+            this.model.startTurn(this.model.getPlayers().get(this.model.getCurrentPlayer()));
         }
         //attendere che almeno tre giocatori si connettano
         //continuare la partita

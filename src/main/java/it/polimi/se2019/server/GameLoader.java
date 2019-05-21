@@ -6,9 +6,13 @@ import it.polimi.se2019.model.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class GameLoader {
+
+    private static final Logger LOGGER = Logger.getLogger(GameLoader.class.getName());
 
     private static final String PATH = "documents/";
     private FileReader reader;
@@ -24,6 +28,7 @@ public class GameLoader {
 
         this.parser = new JsonParser();
         this.gson = new Gson();
+        this.board = new Board();
     }
 
     public Board loadBoard() {
@@ -31,11 +36,11 @@ public class GameLoader {
         try {
             this.reader = new FileReader(PATH + "game_state_data.json");
         } catch (IOException E) {
-            return new Board();
+            return this.board;
         }
         this.jsonElement = (JsonObject)parser.parse(reader);
         this.players = new ArrayList<>();
-        JsonArray frenezyOrder = jsonElement.getAsJsonObject("board_other").getAsJsonArray("finalFrenezyOrder");
+        JsonArray frenezyOrder = jsonElement.getAsJsonArray("finalFrenezyOrder");
         JsonArray jsonPlayers = jsonElement.getAsJsonArray("players");
         JsonObject weapon_square = jsonElement.getAsJsonObject("others").getAsJsonObject("weapon_square");
         JsonArray ammos_square = jsonElement.getAsJsonObject("others").getAsJsonArray("ammos_square");
@@ -45,17 +50,21 @@ public class GameLoader {
         this.board.loadArena(gson.fromJson(jsonElement.get("arena"), String.class));
         for (JsonElement jsonPlayer : jsonPlayers) {
             Player player = gson.fromJson(jsonPlayer.getAsJsonObject().get("player"), Player.class);
-            int posX = gson.fromJson(
-                    jsonPlayer.getAsJsonObject().get("player_position").getAsJsonObject().get("x"), int.class);
-            int posY = gson.fromJson(
-                    jsonPlayer.getAsJsonObject().get("player_position").getAsJsonObject().get("y"), int.class);
-            Square square = this.board.getArena().getSquareByCoordinate(posX, posY);
-            this.board.movePlayer(player, square);
             for (WeaponCard weapon : player.getWeapons()) {
                 weapon.setOwner(player);
             }
             if (player.isDead()) {
                 this.board.addDeadPlayer(player);
+            }
+            try {
+                int posX = gson.fromJson(
+                        jsonPlayer.getAsJsonObject().get("player_position").getAsJsonObject().get("x"), int.class);
+                int posY = gson.fromJson(
+                        jsonPlayer.getAsJsonObject().get("player_position").getAsJsonObject().get("y"), int.class);
+                Square square = this.board.getArena().getSquareByCoordinate(posX, posY);
+                this.board.movePlayer(player, square);
+            } catch (NullPointerException e) {
+
             }
             this.players.add(player);
         }
@@ -89,8 +98,12 @@ public class GameLoader {
         for(Player player : this.board.getPlayers()){
             jObject.append("{\"player\":" + player.toJson() + ",");
             jObject.append("\"player_position\":{");
-            jObject.append("\"x\":" + player.getPosition().getX() + ",");
-            jObject.append("\"y\":" + player.getPosition().getX() + "}},");
+            try {
+                jObject.append("\"x\":" + player.getPosition().getX() + ",");
+                jObject.append("\"y\":" + player.getPosition().getY() + "}},");
+            } catch (NullPointerException e) {
+                jObject.append("}},");
+            }
         }
         jObject.deleteCharAt(jObject.length() - 1);
         jObject.append("],");
@@ -100,7 +113,7 @@ public class GameLoader {
         for(Square square : this.board.getArena().getAllSquares()) {
             if(!square.isSpawn()) {
                 jObject.append("{\"x\":" + square.getX() + ",");
-                jObject.append("\"y\":" + square.getX() + ",");
+                jObject.append("\"y\":" + square.getY() + ",");
                 jObject.append("\"tile\":" + gson.toJson(square.getAvailableAmmoTile()) + "},");
             }
         }
@@ -119,7 +132,7 @@ public class GameLoader {
             this.writer.write(jObject.toString());
             this.writer.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE,"Error writing data", e);
         }
 
 

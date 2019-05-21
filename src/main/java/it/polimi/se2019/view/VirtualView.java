@@ -72,6 +72,9 @@ public class VirtualView extends Observable implements Observer {
                 case "RequireWeaponLoadMessage":
                     updateOne((SingleReceiverMessage) message);
                     break;
+                case "EndTurnMessage":
+                    update((EndTurnMessage) message);
+                    break;
                 default:
                     updateAll((Message) message);
                     break;
@@ -121,6 +124,11 @@ public class VirtualView extends Observable implements Observer {
         } else {
             this.server.send(message.getPlayer(), message);
         }
+    }
+
+    private void update(EndTurnMessage message) throws RemoteException{
+        this.server.saveGame();
+        this.server.sendAll(message);
     }
 
     public void send(SingleReceiverMessage message) throws RemoteException {

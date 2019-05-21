@@ -39,8 +39,8 @@ public abstract class View {
             case "LoadViewMessage":
                 update((LoadViewMessage) message);
                 break;
-            case "NotFoundNameMessage":
-                update((NotFoundNameMessage) message);
+            case "NotAvailableNameMessage":
+                update((NotAvailableNameMessage) message);
                 break;
             case "RequireNicknameMessage":
                 update((RequireNicknameMessage) message);
@@ -327,8 +327,12 @@ public abstract class View {
         showMessage("You are " + this.character + ", wait other players");
     }
 
-    private void update(NotFoundNameMessage message) {
-        showMessage(message.getNickname() + " not found, Insert another nickname:");
+    private void update(NotAvailableNameMessage message) {
+        if(!message.isPresent()) {
+            showMessage(message.getNickname() + " not found, Insert another nickname:");
+        } else {
+            showMessage(message.getNickname() + " already used, Insert another nickname:");
+        }
     }
 
     private void update(RequireNicknameMessage message) {

@@ -7,13 +7,11 @@ import it.polimi.se2019.model.Player;
 import it.polimi.se2019.model.messages.*;
 import it.polimi.se2019.view.VirtualView;
 
-import java.io.FileNotFoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Server {
@@ -156,7 +154,12 @@ public class Server {
         switch (messageType) {
             case "NicknameRecconnectingMessage":
                 for(Player player : this.model.getPlayers()) {
-                    if(player.getNickname().equals(((NicknameRecconnectingMessage)message).getNickname())) {
+                    if(player.getNickname().equals(((NicknameRecconnectingMessage)message).getNickname())){
+                        if(this.clients.containsKey(player.getCharacter())) {
+                            client.send(new NotAvailableNameMessage(
+                                    ((NicknameRecconnectingMessage)message).getNickname(), true));
+                            return;
+                        }
                         this.clients.put(player.getCharacter(), client);
                         this.temporaryClients.remove(client);
                         System.out.println("A new client connected.");
@@ -164,7 +167,7 @@ public class Server {
                         return;
                     }
                 }
-                client.send(new NotFoundNameMessage(((NicknameRecconnectingMessage)message).getNickname()));
+                client.send(new NotAvailableNameMessage(((NicknameRecconnectingMessage)message).getNickname(), false));
                 break;
             case "NicknameMessage":
                 for(Player player : this.model.getPlayers()) {
@@ -187,6 +190,10 @@ public class Server {
             default:
                 this.view.forwardMessage(message);
         }
+    }
+
+    public void saveGame() {
+        this.gameLoader.saveBoard();
     }
 
     void notifyDisconnection(VirtualClientInterface client) {

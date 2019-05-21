@@ -10,4 +10,8 @@ public class ClientReconnectedMessage extends Message {
         setMessageType(this.getClass());
         this.character = character;
     }
+
+    public GameCharacter getCharacter() {
+        return this.character;
+    }
 }

@@ -33,7 +33,7 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
             writer.writeObject(message);
             writer.flush();
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error on sending Message", e);;
+            LOGGER.log(Level.SEVERE, "Error on sending Message", e);
         }
     }
 
