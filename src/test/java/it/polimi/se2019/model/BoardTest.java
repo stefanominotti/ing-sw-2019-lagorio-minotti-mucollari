@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -77,12 +78,24 @@ public class BoardTest {
         p3.setPosition(arena.getSquareByCoordinate(2, 1));
         p4.setPosition(arena.getSquareByCoordinate(3, 1));
         p5.setPosition(arena.getSquareByCoordinate(1, 1));
-        List<Player> result = board.getPlayersOnCardinalDirection(p2, CardinalPoint.SOUTH);
-        for (Player p : result) {
-            System.out.println(p.getCharacter());
-        }
+        List<Player> result = new ArrayList<>();
+
+        result.add(p5);
+        assertEquals(result, board.getPlayersOnCardinalDirection(p2, CardinalPoint.NORTH));
+        result = new ArrayList<>();
+
+        result.add(p5);
+        assertEquals(result,board.getPlayersOnCardinalDirection(p2, CardinalPoint.SOUTH));
+        result = new ArrayList<>();
+
+        result.add(p3);
+        result.add(p4);
+        result.add(p5);
+        assertEquals(result,board.getPlayersOnCardinalDirection(p2, CardinalPoint.EAST));
+        result = new ArrayList<>();
+
+        result.add(p1);
+        result.add(p5);
+        assertEquals(result,board.getPlayersOnCardinalDirection(p2, CardinalPoint.WEST));
     }
-
-
-
 }
