@@ -15,8 +15,8 @@ public class PlayerBoard {
     private List<GameCharacter> damages;
     private List<Integer> killshotPoints;
     private List<Weapon> unloadedWeapons;
-    int weaponsNumber;
-    int powerupsNumber;
+    private int weaponsNumber;
+    private int powerupsNumber;
 
     PlayerBoard(GameCharacter character, String nickname) {
         this.nickname = nickname;
@@ -31,6 +31,41 @@ public class PlayerBoard {
         this.weaponsNumber = 0;
         this.powerupsNumber = 0;
         this.unloadedWeapons = new ArrayList<>();
+    }
+
+    public PlayerBoard(GameCharacter character, String nickname, Map<AmmoType, Integer> availableAmmos,
+                       Map<GameCharacter, Integer> revengeMarks, List<GameCharacter> damages,
+                       List<Integer> killshotPoints, List<Weapon> unloadedWeapons, int weaponsNumber,
+                       int powerupsNumber) {
+        this.nickname = nickname;
+        this.character = character;
+        this.damages = damages;
+        this.killshotPoints = killshotPoints;
+        this.availableAmmos = availableAmmos;
+        this.revengeMarks = revengeMarks;
+        this.weaponsNumber = weaponsNumber;
+        this.powerupsNumber = powerupsNumber;
+        this.unloadedWeapons = new ArrayList<>(unloadedWeapons);
+    }
+
+    List<Integer> getKillshotPoints() {
+        return new ArrayList<>(this.killshotPoints);
+    }
+
+    Map<GameCharacter, Integer> getRevengeMarks(){
+        return new HashMap<>(this.revengeMarks);
+    }
+
+    Map<AmmoType, Integer> getAvailableAmmos() {
+        return new HashMap<>(this.availableAmmos);
+    }
+
+    int getWeaponsNumber() {
+        return this.weaponsNumber;
+    }
+
+    int getPowerupsNumber() {
+        return this.powerupsNumber;
     }
 
     void addPowerup() {

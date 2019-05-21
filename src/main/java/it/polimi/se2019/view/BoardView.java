@@ -18,6 +18,19 @@ public class BoardView {
         this.positions = new EnumMap<>(GameCharacter.class);
     }
 
+    BoardView(int skulls, List<SquareView> squares,
+              List<GameCharacter> killshotTrack) {
+        this.skulls = skulls;
+        this.squares = squares;
+        this.killshotTrack = killshotTrack;
+        this.positions = new EnumMap<>(GameCharacter.class);
+        for(SquareView square : this.squares) {
+            for(GameCharacter player : square.getActivePlayers()) {
+                this.positions.put(player, square);
+            }
+        }
+    }
+
     public int getSkulls() {
         return this.skulls;
     }

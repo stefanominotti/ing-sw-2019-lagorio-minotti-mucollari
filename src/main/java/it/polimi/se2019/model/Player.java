@@ -9,7 +9,7 @@ public class Player {
     public static final int MAX_AMMOS = 3;
     public static final int MAX_DAMAGES = 12;
 
-    private String name;
+    private final String name;
     private final GameCharacter character;
     private int score;
     private List<GameCharacter> damages;

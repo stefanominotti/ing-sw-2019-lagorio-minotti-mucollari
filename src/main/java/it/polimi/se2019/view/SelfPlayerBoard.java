@@ -18,6 +18,15 @@ public class SelfPlayerBoard extends PlayerBoard {
         this.score = 0;
     }
 
+    public SelfPlayerBoard(PlayerBoard playerBoard,  List<Weapon> readyWeapons, List<Powerup> powerups, int score) {
+        super(playerBoard.getCharacter(), playerBoard.getNickname(), playerBoard.getAvailableAmmos(),
+                playerBoard.getRevengeMarks(), playerBoard.getDamages(), playerBoard.getKillshotPoints(),
+                playerBoard.getUnloadedWeapons(), playerBoard.getWeaponsNumber(), playerBoard.getPowerupsNumber());
+        this.readyWeapons = readyWeapons;
+        this.powerups = powerups;
+        this.score = score;
+    }
+
     List<Powerup> getPowerups() {
         return new ArrayList<>(this.powerups);
     }

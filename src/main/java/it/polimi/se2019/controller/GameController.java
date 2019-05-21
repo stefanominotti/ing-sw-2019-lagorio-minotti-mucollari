@@ -1,6 +1,7 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Board;
+import it.polimi.se2019.model.Player;
 import it.polimi.se2019.model.messages.*;
 import it.polimi.se2019.view.VirtualView;
 
@@ -77,7 +78,9 @@ public class GameController implements Observer {
     }
 
     private void update(ClientReconnectedMessage message) {
-        //inviare uno stato della sua playerboard
+        for(Player player : this.model.getPlayers()) {
+            this.model.CreateModelView(player);
+        }
         //attendere che almeno tre giocatori si connettano
         //continuare la partita
     }

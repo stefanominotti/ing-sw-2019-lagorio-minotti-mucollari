@@ -2,11 +2,12 @@ package it.polimi.se2019.view;
 
 import it.polimi.se2019.model.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class SquareView {
+public class SquareView implements Serializable {
 
     private int x;
     private int y;
@@ -27,6 +28,17 @@ public class SquareView {
         } else {
             this.store = null;
         }
+    }
+
+    public SquareView(int x, int y, RoomColor color, boolean spawn,
+                      List<GameCharacter> activePlayers, AmmoTile availableAmmoTile, List<Weapon> store) {
+        this.x = x;
+        this.y = y;
+        this.spawn = spawn;
+        this.color = color;
+        this.activePlayers = activePlayers;
+        this.availableAmmoTile= availableAmmoTile;
+        this.store = store;
     }
 
     int getX() {

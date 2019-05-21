@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import it.polimi.se2019.model.messages.*;
+import it.polimi.se2019.view.PlayerBoard;
+import it.polimi.se2019.view.SquareView;
 
 import java.io.InputStream;
 import java.time.Duration;
@@ -62,6 +64,46 @@ public class Board extends Observable {
         jObject.append("\"killshotTrack\": " + gson.toJson(killshotTrack));
         jObject.append("}");
         return jObject.toString();
+    }
+
+    public void  CreateModelView(Player player) {
+        List<SquareView> squareViews = new ArrayList<>();
+        for(Square square : this.arena.getAllSquares()) {
+            List<GameCharacter> activePlayers = new ArrayList<>();
+            for(Player character : square.getActivePlayers()) {
+                activePlayers.add(character.getCharacter());
+            }
+            List<Weapon> weapons = null;
+            if(square.isSpawn()) {
+                weapons = new ArrayList<>();
+                for (WeaponCard weaponCard : square.getWeaponsStore()) {
+                    weapons.add(weaponCard.getWeaponType());
+                }
+            }
+            squareViews.add(new SquareView(
+                    square.getX(), square.getY(), square.getRoom().getColor(), square.isSpawn(),
+                    activePlayers, square.getAvailableAmmoTile(), weapons));
+        }
+
+        List<PlayerBoard> playerBoards = new ArrayList<>();
+        List<Weapon> playerWeapons = new ArrayList<>();
+        for(Player character : this.players) {
+            List<Weapon> weapons = new ArrayList<>();
+            for(WeaponCard weaponCard : player.getWeapons()) {
+                if(!weaponCard.isReady()) {
+                    weapons.add(weaponCard.getWeaponType());
+                }
+                if(weaponCard.isReady() && character == player){
+                    playerWeapons.add(weaponCard.getWeaponType());
+                }
+            }
+            playerBoards.add(new PlayerBoard(character.getCharacter(), character.getNickname(),
+                    character.getAvailableAmmos(), character.getRevengeMarks(), character.getDamages(),
+                    character.getKillshotPoints(), weapons, character.getWeapons().size(),
+                    character.getPowerups().size()));
+        }
+        notifyChanges(new LoadViewMessage(player.getCharacter(), player.getNickname(), this.skulls, squareViews,
+                this.killshotTrack, playerBoards, playerWeapons, player.getPowerups(), player.getScore()));
     }
 
     public GameState getGameState() {
@@ -452,7 +494,7 @@ public class Board extends Observable {
     }
 
     public void giveAmmoTile(Player player, AmmoTile tile) {
-        if(tile.hasPowerup() && player.getPowerupsNumber() < 3) {
+        if(tile.hasPowerup() && player.getPowerups().size() < 3) {
             drawPowerup(player);
         }
         Map<AmmoType, Integer> addedAmmos = player.addAmmos(tile.getAmmos());
@@ -467,7 +509,9 @@ public class Board extends Observable {
     }
 
     public void movePlayer(Player player, Square square) {
-        player.getPosition().removePlayer(player);
+        if(player.getPosition() != null) {
+            player.getPosition().removePlayer(player);
+        }
         square.addPlayer(player);
         player.setPosition(square);
         notifyChanges(new MovementMessage(player.getCharacter(), new Coordinates(square.getX(), square.getY())));

@@ -117,6 +117,6 @@ public class PlayerTest {
         this.player.addPowerup(powerup);
         this.player.addPowerup(powerup1);
         assertEquals(number, player.getPowerups().size());
-        assertEquals(number, player.getPowerupsNumber());
+        assertEquals(number, player.getPowerups().size());
     }
 }

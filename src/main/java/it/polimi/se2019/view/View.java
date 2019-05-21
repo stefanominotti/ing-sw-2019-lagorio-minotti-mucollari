@@ -36,6 +36,9 @@ public abstract class View {
             case "ReconnectionMessage":
                 update((ReconnectionMessage) message);
                 break;
+            case "LoadViewMessage":
+                update((LoadViewMessage) message);
+                break;
             case "NotFoundNameMessage":
                 update((NotFoundNameMessage) message);
                 break;
@@ -303,8 +306,24 @@ public abstract class View {
         this.state = RECONNECTING;
     }
 
+    public void update(LoadViewMessage message) {
+        this.character = message.getCharacter();
+        this.state = WAITINGSTART;
+        this.enemyBoards = new ArrayList<>();
+        this.board = new BoardView(message.getSkulls(), message.getSquares(), message.getKillshotTrack());
+        for(PlayerBoard playerBoard : message.getPayerBoards()) {
+            if(playerBoard.getCharacter() == message.getCharacter()){
+                selfPlayerBoard = new SelfPlayerBoard(playerBoard, message.getReadyWeapons(),
+                        message.getPowerups(), message.getScore());
+            } else {
+                this.enemyBoards.add(playerBoard);
+            }
+        }
+        showMessage("You are " + this.character + ", wait other players");
+    }
+
     private void update(NotFoundNameMessage message) {
-        showMessage(message.getNickname() + "not found, Insert another nickname:");
+        showMessage(message.getNickname() + " not found, Insert another nickname:");
     }
 
     private void update(RequireNicknameMessage message) {

@@ -30,6 +30,9 @@ public class VirtualView extends Observable implements Observer {
                 .replace("it.polimi.se2019.model.messages.", "");
         try {
             switch (messageType) {
+                case "LoadViewMessage":
+                    updateOne((SingleReceiverMessage) message);
+                    break;
                 case "PlayerCreatedMessage":
                     update((PlayerCreatedMessage) message);
                     break;
