@@ -1,5 +1,6 @@
 package it.polimi.se2019.view;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import it.polimi.se2019.model.*;
 
 import java.io.Serializable;
@@ -16,12 +17,13 @@ public class SquareView implements Serializable {
     private List<GameCharacter> activePlayers;
     private AmmoTile availableAmmoTile;
     private List<Weapon> store;
-
-    SquareView(int x, int y, RoomColor color, boolean spawn) {
+    private Map<CardinalPoint, Boolean> nearbyAccessibility;
+    SquareView(int x, int y, RoomColor color, boolean spawn, Map<CardinalPoint, Boolean> map) {
         this.x = x;
         this.y = y;
         this.spawn = spawn;
         this.color = color;
+        this.nearbyAccessibility = map;
         this.activePlayers = new ArrayList<>();
         if(spawn) {
             this.store = new ArrayList<>();
@@ -30,8 +32,8 @@ public class SquareView implements Serializable {
         }
     }
 
-    public SquareView(int x, int y, RoomColor color, boolean spawn,
-                      List<GameCharacter> activePlayers, AmmoTile availableAmmoTile, List<Weapon> store) {
+    public SquareView(int x, int y, RoomColor color, boolean spawn, List<GameCharacter> activePlayers,
+                      AmmoTile availableAmmoTile, List<Weapon> store, Map<CardinalPoint, Boolean> map) {
         this.x = x;
         this.y = y;
         this.spawn = spawn;
@@ -39,6 +41,7 @@ public class SquareView implements Serializable {
         this.activePlayers = activePlayers;
         this.availableAmmoTile= availableAmmoTile;
         this.store = store;
+        this.nearbyAccessibility = map;
     }
 
     int getX() {

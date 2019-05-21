@@ -4,9 +4,10 @@ import it.polimi.se2019.model.AmmoType;
 import it.polimi.se2019.model.GameCharacter;
 import it.polimi.se2019.model.Weapon;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class PlayerBoard {
+public class PlayerBoard implements Serializable {
 
     private GameCharacter character;
     private String nickname;

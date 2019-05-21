@@ -82,7 +82,7 @@ public class Board extends Observable {
             }
             squareViews.add(new SquareView(
                     square.getX(), square.getY(), square.getRoom().getColor(), square.isSpawn(),
-                    activePlayers, square.getAvailableAmmoTile(), weapons));
+                    activePlayers, square.getAvailableAmmoTile(), weapons, square.getNearbyAccessibility()));
         }
 
         List<PlayerBoard> playerBoards = new ArrayList<>();
@@ -247,6 +247,7 @@ public class Board extends Observable {
         this.arena = new Arena(arenaNumber);
         Map<Coordinates, RoomColor> arenaColor = new HashMap<>();
         Map<Coordinates, Boolean> arenaSpawn = new HashMap<>();
+        Map<Coordinates, Map<CardinalPoint, Boolean>> nearbyAccessibility = new HashMap<>();
         for(Room room : this.arena.getRoomList()) {
             for(Square square : room.getSquares()) {
                 Coordinates coordinates = new Coordinates(square.getX(), square.getY());
@@ -254,9 +255,11 @@ public class Board extends Observable {
                 Boolean spawn = square.isSpawn();
                 arenaColor.put(coordinates, color);
                 arenaSpawn.put(coordinates, spawn);
+                Map <CardinalPoint, Boolean> localAccessibility = new EnumMap<>(square.getNearbyAccessibility());
+                nearbyAccessibility.put(coordinates, localAccessibility);
             }
         }
-        notifyChanges(new GameSetMessage(this.skulls, Integer.parseInt(arenaNumber), arenaColor, arenaSpawn));
+        notifyChanges(new GameSetMessage(this.skulls, Integer.parseInt(arenaNumber), arenaColor, arenaSpawn, nearbyAccessibility));
         finalizeGameSetup();
     }
 

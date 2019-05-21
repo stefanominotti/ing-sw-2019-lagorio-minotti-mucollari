@@ -447,7 +447,8 @@ public abstract class View {
         for(Coordinates square : message.getArenaColors().keySet()) {
             RoomColor color = message.getArenaColors().get(square);
             Boolean spawn = message.getArenaSpawn().get(square);
-            squares.add(new SquareView(square.getX(), square.getY(), color, spawn));
+            Map<CardinalPoint, Boolean> map = message.getNearbyAccessibility().get(square);
+            squares.add(new SquareView(square.getX(), square.getY(), color, spawn, map));
             String text = "Square [" + square.getX() + ", " + square.getY() + "] is " + color;
             builder.append(text);
             if(spawn) {
