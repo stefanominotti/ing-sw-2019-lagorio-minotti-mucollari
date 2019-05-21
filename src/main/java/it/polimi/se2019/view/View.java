@@ -210,11 +210,16 @@ public abstract class View {
             case SELECTACTION:
                 try {
                     int number = Integer.parseInt(input);
-                    if (0 >= number || number > this.turnActions.size()) {
+                    if (0 >= number || number > this.turnActions.size() + 1) {
                         showMessage("Invalid input, retry:");
                         break;
                     }
-                    this.client.send(new ActionSelectedMessage(this.turnActions.get(number - 1)));
+                    if (number == 1) {
+                        showMessage(this.board.arenaToString());
+                        showActions();
+                        break;
+                    }
+                    this.client.send(new ActionSelectedMessage(this.turnActions.get(number - 2)));
                     this.turnActions = new ArrayList<>();
                 } catch(NumberFormatException e) {
                     showMessage("Invalid input, retry:");
@@ -308,7 +313,7 @@ public abstract class View {
 
     public void update(LoadViewMessage message) {
         this.character = message.getCharacter();
-        this.state = WAITINGSTART;
+        this.state = WAITINGSETUP;
         this.enemyBoards = new ArrayList<>();
         this.board = new BoardView(message.getSkulls(), message.getSquares(), message.getKillshotTrack());
         for(PlayerBoard playerBoard : message.getPayerBoards()) {
@@ -393,8 +398,10 @@ public abstract class View {
     }
 
     private void update(PlayerReadyMessage message) {
-        this.enemyBoards.add(new PlayerBoard(message.getCharacter(), message.getNickname()));
         if (this.state == WAITINGSTART) {
+            this.enemyBoards.add(new PlayerBoard(message.getCharacter(), message.getNickname()));
+        }
+        if(message.getCharacter() != this.character) {
             showMessage(message.getNickname() + " - " + message.getCharacter() + " connected!");
         }
     }
@@ -570,14 +577,13 @@ public abstract class View {
         }
     }
 
-    private void update(AvailableActionsMessage message) {
-        this.turnActions = new ArrayList<>(message.getActions());
-        this.turnActions.add(ActionType.ENDTURN);
+    private void showActions() {
         StringBuilder text = new StringBuilder();
         text.append("Select one of these actions:\n");
-        int number = 1;
-        for (ActionType action : message.getActions()) {
-            String toAppend;
+        String toAppend = "[1] - Show the arena\n";
+        text.append(toAppend);
+        int number = 2;
+        for (ActionType action : this.turnActions) {
             switch (action) {
                 case MOVE:
                     toAppend = "[" + number + "] - Move yourself by up to 3 squares\n";
@@ -599,13 +605,20 @@ public abstract class View {
                     }
                     text.append(toAppend);
                     break;
+                case ENDTURN:
+                    toAppend = "[" + number + "] - End your turn\n";
+                    text.append(toAppend);
             }
             number++;
         }
-        String toAppend = "[" + number + "] - End your turn\n";
-        text.append(toAppend);
         text.setLength(text.length() - 1);
         showMessage(text.toString());
+    }
+
+    private void update(AvailableActionsMessage message) {
+        this.turnActions = new ArrayList<>(message.getActions());
+        this.turnActions.add(ActionType.ENDTURN);
+        showActions();
         this.state = SELECTACTION;
     }
 
