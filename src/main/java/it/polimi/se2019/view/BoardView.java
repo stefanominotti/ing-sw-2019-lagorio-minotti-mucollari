@@ -16,6 +16,9 @@ public class BoardView {
         this.skulls = skulls;
         this.squares = squares;
         this.positions = new EnumMap<>(GameCharacter.class);
+        for (SquareView square : this.squares) {
+            square.setBoard(this);
+        }
     }
 
     BoardView(int skulls, List<SquareView> squares,
@@ -28,6 +31,7 @@ public class BoardView {
             for(GameCharacter player : square.getActivePlayers()) {
                 this.positions.put(player, square);
             }
+            square.setBoard(this);
         }
     }
 
@@ -45,7 +49,7 @@ public class BoardView {
                 return square;
             }
         }
-        throw new IllegalStateException("No square with given coordinates");
+        return null;
     }
 
     public void setPlayerPosition(GameCharacter player, SquareView square) {
@@ -78,20 +82,19 @@ public class BoardView {
             String row;
             List<String[]> squares = new ArrayList<>();
             for (int j=0; j<4; j++) {
-                SquareView square;
-                try {
-                    square = getSquareByCoordinates(j, i);
-                } catch (IllegalStateException e) {
+                SquareView square = getSquareByCoordinates(j, i);
+                if (square == null) {
                     squares.add(emptySquare().split("\n"));
-                    continue;
+                } else {
+                    squares.add(square.toString().split("\n"));
                 }
-                squares.add(square.toString().split("\n"));
             }
             for(int j=0; j<10; j++) {
                 String line = squares.get(0)[j] + squares.get(1)[j] + squares.get(2)[j] + squares.get(3)[j];
                 builder.append(line + "\n");
             }
         }
+
         return builder.toString();
     }
 

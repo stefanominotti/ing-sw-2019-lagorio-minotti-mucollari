@@ -139,7 +139,7 @@
           "x": 1,
           "y": 1,
           "nearbyAccessibility": {
-            "EAST": false,
+            "EAST": true,
             "WEST": false,
             "NORTH": true,
             "SOUTH": true

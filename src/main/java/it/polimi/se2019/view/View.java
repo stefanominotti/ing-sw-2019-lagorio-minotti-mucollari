@@ -451,28 +451,22 @@ public abstract class View {
     }
 
     private void update(GameSetMessage message) {
-        showMessage("Master choose " + message.getSkulls() + " Skulls and Arena " + message.getArenaNumber());
-        showMessage("This is the Arena:");
-        StringBuilder builder = new StringBuilder();
         List<SquareView> squares = new ArrayList<>();
         for(Coordinates square : message.getArenaColors().keySet()) {
             RoomColor color = message.getArenaColors().get(square);
             Boolean spawn = message.getArenaSpawn().get(square);
             Map<CardinalPoint, Boolean> map = message.getNearbyAccessibility().get(square);
             squares.add(new SquareView(square.getX(), square.getY(), color, spawn, map));
-            String text = "Square [" + square.getX() + ", " + square.getY() + "] is " + color;
-            builder.append(text);
-            if(spawn) {
-                builder.append(" [Spawn]");
-            }
-            builder.append("\n");
         }
         this.board = new BoardView(message.getSkulls(), squares);
         for(PlayerBoard enemy : this.enemyBoards) {
             this.board.setPlayerPosition(enemy.getCharacter(), null);
         }
         this.board.setPlayerPosition(this.character, null);
-        showMessage(builder.toString());
+
+        showMessage("Master choose " + message.getSkulls() + " Skulls and Arena " + message.getArenaNumber());
+        showMessage("This is the Arena:");
+        showMessage(this.board.arenaToString());
     }
 
     private void update(ArenaFilledMessage message) {
@@ -487,34 +481,7 @@ public abstract class View {
             }
         }
         showMessage("Ammo tiles and Weapons placed:");
-        StringBuilder builder = new StringBuilder();
-        for(SquareView square : this.board.getSquares()) {
-            String text = "[" + square.getX() + ", " + square.getY() + "], " + square.getColor();
-            builder.append(text);
-            if(!square.isSpawn()) {
-                builder.append( "\nTile: [");
-                if(square.getAvailableAmmoTile().hasPowerup()) {
-                    builder.append("POWERUP, ");
-                }
-                for(Map.Entry<AmmoType, Integer> ammos : square.getAvailableAmmoTile().getAmmos().entrySet()) {
-                    if(ammos.getValue() != 0) {
-                        String toAppend = ammos.getKey() + "x" + ammos.getValue() + ", ";
-                        builder.append(toAppend);
-                    }
-                }
-            } else {
-                builder.append( "\nStore: [");
-                for(Weapon weapon : square.getStore()) {
-                    String toAppend = weapon + ", ";
-                    builder.append(toAppend);
-                }
-            }
-            builder.setLength(builder.length() - 2);
-            builder.append("]");
-            showMessage(builder.toString());
-            builder = new StringBuilder();
-        }
-
+        showMessage(this.board.arenaToString());
     }
 
     private void update(StartTurnMessage message) throws RemoteException {
