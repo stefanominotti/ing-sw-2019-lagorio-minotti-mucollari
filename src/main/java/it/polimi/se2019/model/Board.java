@@ -311,9 +311,9 @@ public class Board extends Observable {
             incrementCurrentPlayer();
             nextPlayer = this.players.get(this.currentPlayer);
         }
-        notifyChanges(new EndTurnMessage(player.getCharacter()));
         fillAmmoTiles();
         fillWeaponStores();
+        notifyChanges(new EndTurnMessage(player.getCharacter()));
         startTurn(nextPlayer);
     }
 

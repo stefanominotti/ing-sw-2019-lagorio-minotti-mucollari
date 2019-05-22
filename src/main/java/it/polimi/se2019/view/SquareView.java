@@ -153,7 +153,7 @@ public class SquareView implements Serializable {
         }
 
         SquareView rightSquare = getSquareAtDirection(CardinalPoint.EAST);
-        if (this.nearbyAccessibility.get(CardinalPoint.EAST) && rightSquare.color == this.color) {
+        if (rightSquare != null) {
             rightVertical.add("‾");
             for (int i=0; i<8; i++) {
                 rightVertical.add(" ");

@@ -465,10 +465,6 @@ public abstract class View {
             squares.add(new SquareView(square.getX(), square.getY(), color, spawn, map));
         }
         this.board = new BoardView(message.getSkulls(), squares);
-        for(PlayerBoard enemy : this.enemyBoards) {
-            this.board.setPlayerPosition(enemy.getCharacter(), null);
-        }
-        this.board.setPlayerPosition(this.character, null);
 
         showMessage("Master choose " + message.getSkulls() + " Skulls and Arena " + message.getArenaNumber());
         showMessage("This is the Arena:");
