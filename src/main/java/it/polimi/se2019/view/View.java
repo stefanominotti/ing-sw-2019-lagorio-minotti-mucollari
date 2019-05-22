@@ -141,6 +141,12 @@ public abstract class View {
             case "EndTurnMessage":
                 update((EndTurnMessage) message);
                 break;
+            case "WeaponStoresRefilledMessage":
+                update((WeaponStoresRefilledMessage) message);
+                break;
+            case "AmmoTilesRefilledMessage":
+                update((AmmoTilesRefilledMessage) message);
+                break;
         }
     }
 
@@ -470,16 +476,6 @@ public abstract class View {
     }
 
     private void update(ArenaFilledMessage message) {
-        for(Map.Entry<Coordinates, AmmoTile> square: message.getAmmos().entrySet()) {
-            this.board.getSquareByCoordinates(square.getKey().getX(), square.getKey().getY())
-                    .setAvailableAmmoTile(square.getValue());
-        }
-        for(Map.Entry<Coordinates, List<Weapon>> store: message.getStores().entrySet()) {
-            SquareView square = this.board.getSquareByCoordinates(store.getKey().getX(), store.getKey().getY());
-            for(Weapon weapon : store.getValue()) {
-                square.addStoreWeapon(weapon);
-            }
-        }
         showMessage("Ammo tiles and Weapons placed:");
         showMessage(this.board.arenaToString());
     }
@@ -823,6 +819,24 @@ public abstract class View {
         } else {
             showMessage(message.getCharacter() + "'s turn finished");
         }
+    }
+
+    private void update(WeaponStoresRefilledMessage message) {
+        for (Map.Entry<Coordinates, Weapon> weapon : message.getWeapons().entrySet()) {
+            int x = weapon.getKey().getX();
+            int y = weapon.getKey().getY();
+            this.board.getSquareByCoordinates(x, y).addStoreWeapon(weapon.getValue());
+        }
+        showMessage("Weapon stores filled");
+    }
+
+    private void update(AmmoTilesRefilledMessage message) {
+        for (Map.Entry<Coordinates, AmmoTile> tile : message.getTiles().entrySet()) {
+            int x = tile.getKey().getX();
+            int y = tile.getKey().getY();
+            this.board.getSquareByCoordinates(x, y).setAvailableAmmoTile(tile.getValue());
+        }
+        showMessage("Ammo tiles filled");
     }
 
     public abstract void showMessage(String message);

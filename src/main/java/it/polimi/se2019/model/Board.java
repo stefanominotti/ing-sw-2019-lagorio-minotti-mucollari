@@ -289,23 +289,8 @@ public class Board extends Observable {
         fillPowerupsDeck();
         fillWeaponStores();
         fillAmmoTiles();
-        Map<Coordinates, AmmoTile> ammos = new HashMap<>();
-        Map<Coordinates, List<Weapon>> stores = new HashMap<>();
-        for(Room room : this.arena.getRoomList()) {
-            for(Square square : room.getSquares()) {
-                Coordinates coordinates = new Coordinates(square.getX(), square.getY());
-                if(square.isSpawn()) {
-                    List<Weapon> weapons = new ArrayList<>();
-                    for(WeaponCard card : square.getWeaponsStore()) {
-                        weapons.add(card.getWeaponType());
-                    }
-                    stores.put(coordinates, weapons);
-                } else {
-                    ammos.put(coordinates, square.getAvailableAmmoTile());
-                }
-            }
-        }
-        notifyChanges(new ArenaFilledMessage(ammos, stores));
+
+        notifyChanges(new ArenaFilledMessage());
         this.gameState = FIRSTTURN;
         this.currentPlayer = 0;
         startTurn(this.players.get(this.currentPlayer));
@@ -327,6 +312,8 @@ public class Board extends Observable {
             nextPlayer = this.players.get(this.currentPlayer);
         }
         notifyChanges(new EndTurnMessage(player.getCharacter()));
+        fillAmmoTiles();
+        fillWeaponStores();
         startTurn(nextPlayer);
     }
 
@@ -423,6 +410,7 @@ public class Board extends Observable {
     }
 
     public void fillWeaponStores() {
+        Map<Coordinates, Weapon> added = new HashMap<>();
         for(Room room : this.arena.getRoomList()) {
             for(Square square : room.getSquares()) {
                 if(!square.isSpawn()) {
@@ -430,30 +418,43 @@ public class Board extends Observable {
                 }
                 while(square.getWeaponsStore().size() < MAX_WEAPONS_STORE) {
                     if (this.weaponsDeck.isEmpty()) {
+                        if (!added.isEmpty()) {
+                            notifyChanges(new WeaponStoresRefilledMessage(added));
+                        }
                         return;
                     }
+                    Weapon toAdd = this.weaponsDeck.get(0).getWeaponType();
                     square.addWeapon(this.weaponsDeck.get(0));
+                    added.put(new Coordinates(square.getX(), square.getY()), toAdd);
                     this.weaponsDeck.remove(0);
                 }
             }
         }
+
+        if (!added.isEmpty()) {
+            notifyChanges(new WeaponStoresRefilledMessage(added));
+        }
     }
 
     public void fillAmmoTiles() {
+        Map<Coordinates, AmmoTile> added = new HashMap<>();
         for(Room room : this.arena.getRoomList()) {
             for(Square square : room.getSquares()) {
                 if(square.isSpawn()) {
                     continue;
                 }
-                if(square.getAvailableAmmoTile() != null) {
-                    continue;
+                if(square.getAvailableAmmoTile() == null) {
+                    if (this.ammosDeck.isEmpty()) {
+                        fillAmmosDeck();
+                    }
+                    square.addAmmoTile(this.ammosDeck.get(0));
+                    this.ammosDeck.remove(0);
+                    added.put(new Coordinates(square.getX(), square.getY()), square.getAvailableAmmoTile());
                 }
-                if (this.ammosDeck.isEmpty()) {
-                    fillAmmosDeck();
-                }
-                square.addAmmoTile(this.ammosDeck.get(0));
-                this.ammosDeck.remove(0);
             }
+        }
+        if (!added.isEmpty()) {
+            notifyChanges(new AmmoTilesRefilledMessage(added));
         }
     }
 

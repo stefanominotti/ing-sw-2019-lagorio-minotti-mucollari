@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static it.polimi.se2019.model.CardinalPoint.NORTH;
-import static it.polimi.se2019.model.CardinalPoint.WEST;
+import static it.polimi.se2019.model.CardinalPoint.*;
+import static it.polimi.se2019.view.SquareStringUtils.center;
 
 public class SquareView implements Serializable {
 
@@ -109,7 +109,7 @@ public class SquareView implements Serializable {
         this.availableAmmoTile = null;
     }
 
-    SquareView getSquareAtDirection(CardinalPoint direction) {
+    private SquareView getSquareAtDirection(CardinalPoint direction) {
         switch(direction) {
             case NORTH:
                 return this.board.getSquareByCoordinates(this.x, this.y - 1);
@@ -133,7 +133,7 @@ public class SquareView implements Serializable {
         if (this.nearbyAccessibility.get(WEST) && leftSquare.color == this.color) {
             leftVertical.add("‾");
            for (int i=0; i<8; i++) {
-               leftVertical.add(" ");
+               leftVertical.add("·");
            }
            leftVertical.add("_");
         } else if (this.nearbyAccessibility.get(WEST) && leftSquare.color != this.color) {
@@ -147,11 +147,9 @@ public class SquareView implements Serializable {
             leftVertical.add("│");
             leftVertical.add("│");
         } else {
-            leftVertical.add("│");
-            for (int i=0; i<8; i++) {
+            for (int i=0; i<10; i++) {
                 leftVertical.add("│");
             }
-            leftVertical.add("│");
         }
 
         SquareView rightSquare = getSquareAtDirection(CardinalPoint.EAST);
@@ -160,33 +158,34 @@ public class SquareView implements Serializable {
             for (int i=0; i<8; i++) {
                 rightVertical.add(" ");
             }
-            rightVertical.add("_");
-        } else if (this.nearbyAccessibility.get(CardinalPoint.EAST) && rightSquare.color != this.color) {
-            rightVertical.add("│");
-            rightVertical.add("│");
-            rightVertical.add("│");
-            for (int i=0; i<4; i++) {
+            if (getSquareAtDirection(SOUTH) != null) {
                 rightVertical.add(" ");
+            } else {
+                rightVertical.add("_");
             }
-            rightVertical.add("│");
-            rightVertical.add("│");
-            rightVertical.add("│");
         } else {
-            rightVertical.add("│");
-            for (int i=0; i<8; i++) {
+            for (int i=0; i<10; i++) {
                 rightVertical.add("│");
             }
-            rightVertical.add("│");
         }
 
         String left = leftVertical.get(verticalIndex);
         String right = rightVertical.get(verticalIndex);
         verticalIndex++;
         if (this.nearbyAccessibility.get(NORTH) && getSquareAtDirection(NORTH).color == this.color) {
-            builder.append(left + "                     " + right + "\n");
+            if (getSquareAtDirection(EAST) != null) {
+                right = " ";
+            }
+            builder.append(left + " ·  ·  ·  ·  ·  ·  · " + right + "\n");
         } else if (this.nearbyAccessibility.get(NORTH) && getSquareAtDirection(NORTH).color != this.color) {
+            if (getSquareAtDirection(EAST) != null) {
+                right = "‾";
+            }
             builder.append(left + "‾‾‾‾‾‾         ‾‾‾‾‾‾" + right + "\n");
         } else {
+            if (getSquareAtDirection(EAST) != null) {
+                right = "‾";
+            }
             builder.append(left + "‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾" + right + "\n");
         }
 
@@ -279,24 +278,19 @@ public class SquareView implements Serializable {
 
         left = leftVertical.get(verticalIndex);
         right = rightVertical.get(verticalIndex);
-        if (this.nearbyAccessibility.get(CardinalPoint.SOUTH) && getSquareAtDirection(CardinalPoint.SOUTH).color == this.color) {
+        if (getSquareAtDirection(SOUTH) != null) {
+            if(this.nearbyAccessibility.get(WEST) && getSquareAtDirection(WEST).color == this.color) {
+                left = " ";
+            }
             builder.append(left + "                     " + right + "\n");
-        } else if (this.nearbyAccessibility.get(CardinalPoint.SOUTH) && getSquareAtDirection(CardinalPoint.SOUTH).color != this.color) {
+        } else if (this.nearbyAccessibility.get(SOUTH) && getSquareAtDirection(SOUTH).color == this.color) {
+            builder.append(left + " ·  ·  ·  ·  ·  ·  · " + right + "\n");
+        } else if (this.nearbyAccessibility.get(SOUTH) && getSquareAtDirection(SOUTH).color != this.color) {
             builder.append(left + "______         ______" + right + "\n");
         } else {
             builder.append(left + "_____________________" + right + "\n");
         }
 
         return builder.toString();
-    }
-
-    static String center(String text, int len){
-        if (len <= text.length())
-            return text.substring(0, len);
-        int before = (len - text.length())/2;
-        if (before == 0)
-            return String.format("%-" + len + "s", text);
-        int rest = len - before;
-        return String.format("%" + before + "s%-" + rest + "s", "", text);
     }
 }

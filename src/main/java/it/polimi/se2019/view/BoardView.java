@@ -4,6 +4,8 @@ import it.polimi.se2019.model.*;
 
 import java.util.*;
 
+import static it.polimi.se2019.view.SquareStringUtils.*;
+
 public class BoardView {
 
     private int skulls;
@@ -78,31 +80,42 @@ public class BoardView {
 
     public String arenaToString() {
         StringBuilder builder = new StringBuilder();
+
+        builder.append("  ");
+        for(int i=0; i<4; i++) {
+            builder.append(center(String.valueOf(i), 23));
+        }
+        builder.append("\n");
+
         for (int i=0; i<3; i++) {
             String row;
-            List<String[]> squares = new ArrayList<>();
-            for (int j=0; j<4; j++) {
+            List<List<String>> squares = new ArrayList<>();
+            for (int j = 0; j < 4; j++) {
                 SquareView square = getSquareByCoordinates(j, i);
                 if (square == null) {
-                    squares.add(emptySquare().split("\n"));
+                    squares.add(Arrays.asList(emptySquare().split("\n")));
                 } else {
-                    squares.add(square.toString().split("\n"));
+                    squares.add(Arrays.asList(square.toString().split("\n")));
                 }
             }
-            for(int j=0; j<10; j++) {
-                String line = squares.get(0)[j] + squares.get(1)[j] + squares.get(2)[j] + squares.get(3)[j];
-                builder.append(line + "\n");
+            if (i == 1) {
+                squares.add(Arrays.asList(legendSquare(new ArrayList<>(this.positions.keySet())).split("\n")));
+            }
+            for (int j = 0; j < 10; j++) {
+                int count = 0;
+                for (List<String> square : squares) {
+                    if (count == 0 && j == 4) {
+                        builder.append(i + " ");
+                    } else if (count == 0) {
+                        builder.append("  ");
+                    }
+                    builder.append(square.get(j));
+                    count++;
+                }
+                builder.append("\n");
             }
         }
 
-        return builder.toString();
-    }
-
-    public String emptySquare() {
-        StringBuilder builder = new StringBuilder();
-        for (int i=0; i<23; i++) {
-            builder.append("                       \n");
-        }
         return builder.toString();
     }
 }
