@@ -586,4 +586,43 @@ public class Board extends Observable {
         }
         return result;
     }
+
+    public List<Player> getVisiblePlayers (Player player){
+        List<Player> visiblePlayers = new ArrayList<>();
+
+        for(Square s : arena.getAllSquares()){
+            for (Player p : players){
+                if(p.getPosition() == s && p != player){
+                    if (player.getPosition().canSee(p.getPosition())){
+                        visiblePlayers.add(p);
+                    }
+                }
+            }
+        }
+        return visiblePlayers;
+    }
+
+    public List<Player> getPlayersByDistance (Square square, int amount){
+        List<Player> players = new ArrayList<>();
+        if (amount == 0){
+            players.addAll(square.getActivePlayers());
+        }
+        else {
+            for(Square s : this.getArena().getAllSquares()){
+                if (square.minimumDistanceFrom(s) == amount && s != square){
+                    players.addAll(s.getActivePlayers());
+                }
+            }
+        }
+        return players;
+    }
+    public List<Player> getPlayersByDistance (Player player, int amount){
+        List<Player> players = new ArrayList<>();
+        players.addAll(getPlayersByDistance(player.getPosition(), amount));
+        if(players.contains(player)) {
+            players.remove(player);
+        }
+        return players;
+    }
+
 }

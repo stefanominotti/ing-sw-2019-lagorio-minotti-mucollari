@@ -48,16 +48,7 @@
         "amount": [
           "MAX"
         ],
-        "positionType": "ROOM",
-        "positionConstraints": [
-          {
-            "type": "DISTANCE",
-            "distanceValues": [
-              "0"
-            ],
-            "target": "ROOM"
-          }
-        ]
+        "positionType": "ROOM"
       }
     }
   ],
