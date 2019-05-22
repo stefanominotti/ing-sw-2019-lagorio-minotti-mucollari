@@ -9,6 +9,7 @@ public class Player {
     public static final int MAX_AMMOS = 3;
     public static final int MAX_DAMAGES = 12;
 
+    private final String token;
     private final String name;
     private final GameCharacter character;
     private int score;
@@ -22,7 +23,8 @@ public class Player {
     private boolean dead;
     private boolean connected;
 
-    Player(GameCharacter character, String name) {
+    Player(GameCharacter character, String name, String token) {
+        this.token = token;
         this.name = name;
         this.character = character;
         this.score = 0;
@@ -42,6 +44,7 @@ public class Player {
     public String toJson(){
         Gson gson = new Gson();
         StringBuilder jObject = new StringBuilder("{");
+        jObject.append("\"token\": " + "\"" + this.token + "\"" + ",");
         jObject.append("\"name\": " + "\"" + this.name + "\"" + ",");
         jObject.append("\"character\": " + "\"" + this.character + "\"" + ",");
         jObject.append("\"score\": " + this.score + ",");
@@ -54,6 +57,13 @@ public class Player {
         jObject.append("\"weapons\": " + gson.toJson(this.weapons) + ",");
         jObject.append("\"powerups\": " + gson.toJson(this.powerups) + "}");
         return jObject.toString();
+    }
+
+    public GameCharacter veryfiPlayer(String token) {
+        if(this.token.equals(token)) {
+            return this.character;
+        }
+        return null;
     }
 
     public void connect() {

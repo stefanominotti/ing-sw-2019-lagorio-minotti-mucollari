@@ -23,35 +23,35 @@ public class BoardTest {
 
     @Test
     public void getPlayersTest() {
-        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1");
+        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
         assertNotNull(this.board.getPlayers());
         assertEquals(1, this.board.getPlayers().size());
     }
 
     @Test
     public void getValidPlayersTest() {
-        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1");
+        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
         assertNotNull(this.board.getPlayers());
         assertEquals(1, this.board.getPlayers().size());
     }
 
     @Test
     public void getValidCharactersTest() {
-        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1");
+        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
         assertNotNull(this.board.getValidCharacters());
         assertEquals(Arrays.asList(GameCharacter.BANSHEE), this.board.getValidCharacters());
     }
 
     @Test
     public void getPlayerByCharacter() {
-        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1");
+        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
         assertNotNull(this.board.getValidCharacters());
         assertEquals(this.board.getPlayers().get(0), this.board.getPlayerByCharacter(GameCharacter.BANSHEE));
     }
 
     @Test
     public void skullTest() {
-        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1");
+        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
         this.board.setSkulls(5);
         assertEquals(5, this.board.getSkulls());
     }
@@ -61,11 +61,11 @@ public class BoardTest {
         Arena arena = new Arena("1");
         board.loadArena("1");
 
-        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1");
-        this.board.addPlayer(GameCharacter.D_STRUCT_OR, "playerTest2");
-        this.board.addPlayer(GameCharacter.SPROG, "playerTest3");
-        this.board.addPlayer(GameCharacter.DOZER, "playerTest4");
-        this.board.addPlayer(GameCharacter.VIOLETTA, "playerTest5");
+        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
+        this.board.addPlayer(GameCharacter.D_STRUCT_OR, "playerTest2", "token");
+        this.board.addPlayer(GameCharacter.SPROG, "playerTest3", "token");
+        this.board.addPlayer(GameCharacter.DOZER, "playerTest4", "token");
+        this.board.addPlayer(GameCharacter.VIOLETTA, "playerTest5", "token");
         Player p1 = board.getPlayerByCharacter(GameCharacter.BANSHEE);
         Player p2 = board.getPlayerByCharacter(GameCharacter.D_STRUCT_OR);
         Player p3 = board.getPlayerByCharacter(GameCharacter.SPROG);
@@ -102,11 +102,11 @@ public class BoardTest {
     public void getVisiblePlayersTest() {
         board.loadArena("1");
 
-        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1");
-        this.board.addPlayer(GameCharacter.D_STRUCT_OR, "playerTest2");
-        this.board.addPlayer(GameCharacter.SPROG, "playerTest3");
-        this.board.addPlayer(GameCharacter.DOZER, "playerTest4");
-        this.board.addPlayer(GameCharacter.VIOLETTA, "playerTest5");
+        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
+        this.board.addPlayer(GameCharacter.D_STRUCT_OR, "playerTest2", "token");
+        this.board.addPlayer(GameCharacter.SPROG, "playerTest3", "token");
+        this.board.addPlayer(GameCharacter.DOZER, "playerTest4", "token");
+        this.board.addPlayer(GameCharacter.VIOLETTA, "playerTest5", "token");
         Player p1 = board.getPlayerByCharacter(GameCharacter.BANSHEE);
         Player p2 = board.getPlayerByCharacter(GameCharacter.D_STRUCT_OR);
         Player p3 = board.getPlayerByCharacter(GameCharacter.SPROG);
@@ -145,11 +145,11 @@ public class BoardTest {
     public void getPlayersByDistanceTest() {
         board.loadArena("1");
 
-        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1");
-        this.board.addPlayer(GameCharacter.D_STRUCT_OR, "playerTest2");
-        this.board.addPlayer(GameCharacter.SPROG, "playerTest3");
-        this.board.addPlayer(GameCharacter.DOZER, "playerTest4");
-        this.board.addPlayer(GameCharacter.VIOLETTA, "playerTest5");
+        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
+        this.board.addPlayer(GameCharacter.D_STRUCT_OR, "playerTest2", "token");
+        this.board.addPlayer(GameCharacter.SPROG, "playerTest3", "token");
+        this.board.addPlayer(GameCharacter.DOZER, "playerTest4", "token");
+        this.board.addPlayer(GameCharacter.VIOLETTA, "playerTest5", "token");
         Player p1 = board.getPlayerByCharacter(GameCharacter.BANSHEE);
         Player p2 = board.getPlayerByCharacter(GameCharacter.D_STRUCT_OR);
         Player p3 = board.getPlayerByCharacter(GameCharacter.SPROG);

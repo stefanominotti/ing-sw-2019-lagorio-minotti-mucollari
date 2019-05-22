@@ -16,7 +16,7 @@ public class PlayerTest {
     @Before
     public void setUp() {
         this.board = new Board();
-        this.board.addPlayer(CHARACTER, "testNickname");
+        this.board.addPlayer(CHARACTER, "testNickname", "token");
         this.player = this.board.getPlayerByCharacter(CHARACTER);
     }
 
@@ -29,7 +29,7 @@ public class PlayerTest {
     @Test
     public void damagesTest() {
         GameCharacter enemyChar = GameCharacter.D_STRUCT_OR;
-        this.board.addPlayer(enemyChar, "testNickname");
+        this.board.addPlayer(enemyChar, "testNickname", "token");
                this.player.addDamages(enemyChar, 5);
         List<GameCharacter> damage = Arrays.asList(enemyChar, enemyChar, enemyChar, enemyChar, enemyChar);
         assertEquals(damage, this.player.getDamages());
@@ -48,9 +48,9 @@ public class PlayerTest {
     @Test
     public void revengeMarksTest() {
         GameCharacter enemyChar1 = GameCharacter.D_STRUCT_OR;
-        this.board.addPlayer(enemyChar1, "testNickname");
+        this.board.addPlayer(enemyChar1, "testNickname", "token");
         GameCharacter enemyChar2 = GameCharacter.DOZER;
-        this.board.addPlayer(enemyChar2, "testNickname2");
+        this.board.addPlayer(enemyChar2, "testNickname2", "token");
         this.player.addRevengeMarks(enemyChar1, 3);
         this.player.addRevengeMarks(enemyChar2, 1);
         Map<GameCharacter, Integer> marks = new HashMap<>();

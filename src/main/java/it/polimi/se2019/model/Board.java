@@ -147,8 +147,8 @@ public class Board extends Observable {
         return null;
     }
 
-    public void addPlayer(GameCharacter character, String nickname) {
-        this.players.add(new Player(character, nickname));
+    public void addPlayer(GameCharacter character, String nickname, String token) {
+        this.players.add(new Player(character, nickname, token));
         Map<GameCharacter, String> others = new EnumMap<>(GameCharacter.class);
         for (Player p : this.players) {
             if (p.getNickname() != null && p.getCharacter() != character) {

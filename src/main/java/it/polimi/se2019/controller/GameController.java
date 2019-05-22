@@ -74,7 +74,7 @@ public class GameController implements Observer {
     }
 
     private void update(ClientReadyMessage message) {
-        this.model.addPlayer(message.getCharacter(), message.getNickname());
+        this.model.addPlayer(message.getCharacter(), message.getNickname(), message.getToken());
     }
 
     private void update(ClientReconnectedMessage message) {

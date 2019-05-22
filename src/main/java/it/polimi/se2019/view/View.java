@@ -5,14 +5,25 @@ import it.polimi.se2019.controller.ActionType;
 import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.messages.*;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.rmi.RemoteException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static it.polimi.se2019.view.ClientState.*;
 
 public abstract class View {
+
+    private static final Logger LOGGER = Logger.getLogger(View.class.getName());
 
     private GameCharacter character;
     private AbstractClient client;
@@ -23,6 +34,7 @@ public abstract class View {
     private List<ActionType> turnActions;
     private List<Coordinates> actionCoordinates;
     private List<Weapon> weaponsSelectionList;
+    private List<GameCharacter> charactersAvailable;
 
     View(AbstractClient client) {
         this.client = client;
@@ -39,11 +51,14 @@ public abstract class View {
             case "LoadViewMessage":
                 update((LoadViewMessage) message);
                 break;
-            case "NotAvailableNameMessage":
-                update((NotAvailableNameMessage) message);
+            case "TextMessage":
+                update((TextMessage) message);
                 break;
             case "RequireNicknameMessage":
                 update((RequireNicknameMessage) message);
+                break;
+            case "CharacterMessage":
+                update((CharacterMessage) message);
                 break;
             case "PlayerCreatedMessage":
                 update((PlayerCreatedMessage) message);
@@ -178,6 +193,20 @@ public abstract class View {
                     break;
                 }
                 this.client.send(new NicknameMessage(input));
+                break;
+            case CHOOSINGCHARACTER:
+                int select;
+                try {
+                    select = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    showMessage("Invalid number, retry: ");
+                    break;
+                }
+                if (select > this.charactersAvailable.size() || select <= 0) {
+                    showMessage("Invalid number, retry: ");
+                    break;
+                }
+                this.client.send(new CharacterMessage(charactersAvailable.get(select-1), generateToken()));
                 break;
             case SETTINGSKULLS:
                 int skulls;
@@ -378,9 +407,14 @@ public abstract class View {
         }
     }
 
-    private void update(ReconnectionMessage message) {
-        showMessage("A game already exists, insert your nickname to reconnect:");
+    private void update(TextMessage message) {
+        showMessage(message.getText());
+    }
+
+    private void update(ReconnectionMessage message) throws RemoteException {
+        showMessage("A game already exists, trying to reconnect.");
         this.state = RECONNECTING;
+        client.send(new ReconnectionMessage(getToken()));
     }
 
     public void update(LoadViewMessage message) {
@@ -399,17 +433,18 @@ public abstract class View {
         showMessage("You are " + this.character + ", wait other players");
     }
 
-    private void update(NotAvailableNameMessage message) {
-        if(!message.isPresent()) {
-            showMessage(message.getNickname() + " not found, Insert another nickname:");
-        } else {
-            showMessage(message.getNickname() + " already used, Insert another nickname:");
-        }
-    }
-
     private void update(RequireNicknameMessage message) {
         showMessage("Insert nickname: ");
         this.state = TYPINGNICKNAME;
+    }
+
+    private void update(CharacterMessage message) {
+        showMessage("Choose one of these characters:");
+        this.charactersAvailable = message.getAvailables();
+        for(GameCharacter character : this.charactersAvailable) {
+            showMessage("[" + String.valueOf(this.charactersAvailable.indexOf(character)+1) + "]" + character);
+        }
+        this.state = CHOOSINGCHARACTER;
     }
 
     private void update(MasterChangedMessage message) {
@@ -840,4 +875,60 @@ public abstract class View {
     }
 
     public abstract void showMessage(String message);
+
+    private String generateToken() {
+
+        String message = UUID.randomUUID().toString();
+
+        //Creating the MessageDigest object
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            LOGGER.log(Level.SEVERE,"Error SHA-256 algorithm", e);
+        }
+        //Passing data to the created MessageDigest Object
+        md.update(message.getBytes());
+        //Compute the message digest
+        byte[] digest = md.digest();
+        //Converting the byte array in to HexString format
+        StringBuffer hexString = new StringBuffer();
+        for (int i = 0;i<digest.length;i++) {
+            hexString.append(Integer.toHexString(0xFF & digest[i]));
+        }
+        try {
+            FileWriter writer = new FileWriter("documents/token.txt");
+            writer.write(message);
+            writer.flush();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE,"Error writing data", e);
+        }
+        return hexString.toString();
+    }
+
+    private String getToken() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("documents/token.txt"));
+            String message = reader.readLine();
+            MessageDigest md = null;
+            try {
+                md = MessageDigest.getInstance("SHA-256");
+            } catch (NoSuchAlgorithmException e) {
+                LOGGER.log(Level.SEVERE,"Error SHA-256 algorithm", e);
+            }
+            //Passing data to the created MessageDigest Object
+            md.update(message.getBytes());
+            //Compute the message digest
+            byte[] digest = md.digest();
+            //Converting the byte array in to HexString format
+            StringBuffer hexString = new StringBuffer();
+            for (int i = 0;i<digest.length;i++) {
+                hexString.append(Integer.toHexString(0xFF & digest[i]));
+            }
+            return hexString.toString();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error corrupt data", e);
+        }
+        return null;
+    }
 }
