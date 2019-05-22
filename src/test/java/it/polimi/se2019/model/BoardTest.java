@@ -1,25 +1,12 @@
 package it.polimi.se2019.model;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import it.polimi.se2019.view.BoardView;
 import org.junit.Before;
 import org.junit.Test;
-import org.omg.Messaging.SYNC_WITH_TRANSPORT;
-
-import javax.swing.plaf.synth.SynthEditorPaneUI;
 
 import static org.junit.Assert.*;
-
-import java.awt.image.AreaAveragingScaleFilter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
-
 
 public class BoardTest {
     Board board;
