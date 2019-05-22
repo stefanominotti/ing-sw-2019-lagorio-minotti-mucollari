@@ -5,5 +5,6 @@ public enum ActionType {
     ENDTURN,
     MOVE,
     PICKUP,
-    SHOT;
+    SHOT,
+    CANCEL;
 }

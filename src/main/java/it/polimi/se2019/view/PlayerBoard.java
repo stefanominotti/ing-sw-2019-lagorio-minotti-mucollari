@@ -2,6 +2,7 @@ package it.polimi.se2019.view;
 
 import it.polimi.se2019.model.AmmoType;
 import it.polimi.se2019.model.GameCharacter;
+import it.polimi.se2019.model.Powerup;
 import it.polimi.se2019.model.Weapon;
 
 import java.io.Serializable;
@@ -12,7 +13,7 @@ public class PlayerBoard implements Serializable {
     private GameCharacter character;
     private String nickname;
     private Map<AmmoType, Integer> availableAmmos;
-    private Map<GameCharacter, Integer> revengeMarks;
+    private List<GameCharacter> revengeMarks;
     private List<GameCharacter> damages;
     private List<Integer> killshotPoints;
     private List<Weapon> unloadedWeapons;
@@ -28,14 +29,14 @@ public class PlayerBoard implements Serializable {
         this.availableAmmos.put(AmmoType.BLUE, 1);
         this.availableAmmos.put(AmmoType.RED, 1);
         this.availableAmmos.put(AmmoType.YELLOW, 1);
-        this.revengeMarks = new EnumMap<>(GameCharacter.class);
+        this.revengeMarks = new ArrayList<>();
         this.weaponsNumber = 0;
         this.powerupsNumber = 0;
         this.unloadedWeapons = new ArrayList<>();
     }
 
     public PlayerBoard(GameCharacter character, String nickname, Map<AmmoType, Integer> availableAmmos,
-                       Map<GameCharacter, Integer> revengeMarks, List<GameCharacter> damages,
+                       List<GameCharacter> revengeMarks, List<GameCharacter> damages,
                        List<Integer> killshotPoints, List<Weapon> unloadedWeapons, int weaponsNumber,
                        int powerupsNumber) {
         this.nickname = nickname;
@@ -53,8 +54,8 @@ public class PlayerBoard implements Serializable {
         return new ArrayList<>(this.killshotPoints);
     }
 
-    Map<GameCharacter, Integer> getRevengeMarks(){
-        return new HashMap<>(this.revengeMarks);
+    List<GameCharacter> getRevengeMarks(){
+        return new ArrayList<>(this.revengeMarks);
     }
 
     Map<AmmoType, Integer> getAvailableAmmos() {
@@ -92,11 +93,15 @@ public class PlayerBoard implements Serializable {
     }
 
     void addMarks(GameCharacter target, int amount) {
-        int newAmount = this.revengeMarks.get(target) + amount;
-        this.revengeMarks.put(target, newAmount);
+        for (int i=0; i<amount; i++) {
+            this.revengeMarks.add(target);
+        }
     }
 
     void removeMarks(GameCharacter target) {
+        while (this.revengeMarks.contains(target)) {
+            this.revengeMarks.remove(target);
+        }
         this.revengeMarks.remove(target);
     }
 
@@ -139,5 +144,72 @@ public class PlayerBoard implements Serializable {
 
     void unloadWeapon(Weapon weapon) {
         this.unloadedWeapons.add(weapon);
+    }
+
+    public String toString() {
+
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("Nickname:  " + this.nickname + "\n");
+
+        builder.append("Character: " + this.character + " (" + this.character.getIdentifier() + ")\n\n");
+
+        builder.append("Revenge marks: ");
+        for (GameCharacter c : this.revengeMarks) {
+            builder.append(c.getIdentifier() + " ");
+        }
+        if(!this.revengeMarks.isEmpty()) {
+            builder.setLength(builder.length() - 1);
+        }
+        builder.append("\n\n");
+
+        builder.append("Damages:  ");
+        int i = 0;
+        for (GameCharacter c : this.damages) {
+            if (i == 2 || i == 5 || i == 10) {
+                builder.append("| " + c.getIdentifier() + " ");
+            } else {
+                builder.append(c.getIdentifier() + " ");
+            }
+            i++;
+        }
+        while (i<12-this.damages.size()) {
+            if (i == 2 || i == 5 || i == 10) {
+                builder.append("| _ ");
+            } else {
+                builder.append("_ ");
+            }
+            i++;
+        }
+        builder.append("\n");
+
+        builder.append("Killshot: ");
+        for(i=0; i<6-this.killshotPoints.size(); i++) {
+            builder.append("x ");
+        }
+        for (Integer p : this.killshotPoints) {
+            builder.append(p + " ");
+        }
+        builder.append("\n\n");
+
+        builder.append("Available ammos:    ");
+        for(Map.Entry<AmmoType, Integer> ammo : this.availableAmmos.entrySet()) {
+            for(i=0; i<ammo.getValue(); i++) {
+                builder.append(ammo.getKey().getIdentifier() + " ");
+            }
+        }
+        builder.append("\n");
+
+        builder.append("Available powerups: " + this.powerupsNumber + "\n");
+        builder.append("Ready weapons:      " + (this.weaponsNumber - this.unloadedWeapons.size()) + "\n");
+
+        builder.append("Unloaded weapons:   ");
+        for(Weapon w : this.unloadedWeapons) {
+            builder.append(w + ", ");
+        }
+        builder.setLength(builder.length() - 2);
+        builder.append("\n");
+
+        return builder.toString();
     }
 }

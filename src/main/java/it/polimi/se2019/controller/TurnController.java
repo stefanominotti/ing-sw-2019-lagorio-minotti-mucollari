@@ -14,7 +14,6 @@ public class TurnController {
     private Board board;
     private Player activePlayer;
     private int movesLeft;
-    private ActionType selectedAction;
     private TurnState state;
     private Player powerupTarget;
     private boolean finalFrenzy;
@@ -165,6 +164,9 @@ public class TurnController {
     void handleAction(ActionType action) {
         this.movesLeft--;
         switch (action) {
+            case CANCEL:
+                cancelAction();
+                break;
             case ENDTURN:
                 this.state = ENDING;
                 handleRecharge();
@@ -177,6 +179,17 @@ public class TurnController {
                 this.state = PICKINGUP;
                 calculatePickupAction();
                 break;
+        }
+    }
+
+    void cancelAction() {
+        if(!this.finalFrenzy) {
+            this.movesLeft++;
+            List<ActionType> availableActions = Arrays.asList(ActionType.MOVE, ActionType.PICKUP, ActionType.SHOT);
+            this.controller.send(new AvailableActionsMessage(this.activePlayer.getCharacter(), availableActions));
+            this.state = TurnState.SELECTACTION;
+        } else {
+            // manda azioni frenesia
         }
     }
 

@@ -123,7 +123,7 @@ public class SquareView implements Serializable {
         return null;
     }
 
-    public String toString() {
+    public String toString(boolean marked) {
 
         StringBuilder builder = new StringBuilder();
         List<String> leftVertical = new ArrayList<>();
@@ -205,7 +205,11 @@ public class SquareView implements Serializable {
         left = leftVertical.get(verticalIndex);
         right = rightVertical.get(verticalIndex);
         verticalIndex++;
-        builder.append(left + "                     " + right + "\n");
+        if (marked) {
+            builder.append(left + center("***", 21) + right + "\n");
+        } else {
+            builder.append(left + "                     " + right + "\n");
+        }
 
         left = leftVertical.get(verticalIndex);
         right = rightVertical.get(verticalIndex);

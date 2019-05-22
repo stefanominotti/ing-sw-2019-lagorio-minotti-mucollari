@@ -216,7 +216,7 @@ public abstract class View {
             case SELECTACTION:
                 try {
                     int number = Integer.parseInt(input);
-                    if (0 >= number || number > this.turnActions.size() + 1) {
+                    if (0 >= number || number > this.turnActions.size() + 3) {
                         showMessage("Invalid input, retry:");
                         break;
                     }
@@ -225,41 +225,107 @@ public abstract class View {
                         showActions();
                         break;
                     }
-                    this.client.send(new ActionSelectedMessage(this.turnActions.get(number - 2)));
+                    if (number == 2) {
+                        showMessage(this.selfPlayerBoard.toString());
+                        showActions();
+                        break;
+                    }
+                    if (number == 3) {
+                        int index = 1;
+                        StringBuilder builder = new StringBuilder("Select a player to show:\n");
+                        for (PlayerBoard board : this.enemyBoards) {
+                            builder.append("[" + index + "] - " + board.getCharacter() + "\n");
+                            index++;
+                        }
+                        builder.setLength(builder.length() - 1);
+                        showMessage(builder.toString());
+                        this.state = SELECTBOARDTOSHOW;
+                        break;
+                    }
+                    this.client.send(new ActionSelectedMessage(this.turnActions.get(number - 4)));
                     this.turnActions = new ArrayList<>();
                 } catch(NumberFormatException e) {
                     showMessage("Invalid input, retry:");
                     break;
                 }
                 break;
+            case SELECTBOARDTOSHOW:
+                try {
+                    int number = Integer.parseInt(input);
+                    if (0 >= number || number > this.enemyBoards.size()) {
+                        showMessage("Invalid input, retry:");
+                        break;
+                    }
+                    showMessage(this.enemyBoards.get(number - 1).toString());
+                    showActions();
+                    this.state = SELECTACTION;
+                    break;
+                } catch(NumberFormatException e) {
+                    showMessage("Invalid input, retry:");
+                    break;
+                }
             case SELECTMOVEMENT:
+                if (input.toUpperCase().equals("C")) {
+                    this.client.send(new ActionSelectedMessage(ActionType.CANCEL));
+                    break;
+                }
+                if (input.split(",").length != 2) {
+                    showMessage("Invalid input, retry:");
+                    break;
+                }
                 try {
-                    int number = Integer.parseInt(input);
-                    if (0 >= number || number > this.actionCoordinates.size()) {
+                    int x = Integer.parseInt(input.split(",")[0]);
+                    int y = Integer.parseInt(input.split(",")[1]);
+                    boolean valid = false;
+                    for (Coordinates c : this.actionCoordinates) {
+                        if (c.getX() == x && c.getY() == y) {
+                            this.client.send(new MovementSelectedMessage(new Coordinates(x, y)));
+                            this.actionCoordinates = new ArrayList<>();
+                            valid = true;
+                            break;
+                        }
+                    }
+                    if(!valid) {
                         showMessage("Invalid input, retry:");
                         break;
                     }
-                    this.client.send(new MovementSelectedMessage(this.actionCoordinates.get(number - 1)));
-                    this.actionCoordinates = new ArrayList<>();
+                    break;
+
                 } catch(NumberFormatException e) {
                     showMessage("Invalid input, retry:");
                     break;
                 }
-                break;
             case SELECTPICKUP:
+                if (input.toUpperCase().equals("C")) {
+                    this.client.send(new ActionSelectedMessage(ActionType.CANCEL));
+                    break;
+                }
+                if (input.split(",").length != 2) {
+                    showMessage("Invalid input, retry:");
+                    break;
+                }
                 try {
-                    int number = Integer.parseInt(input);
-                    if (0 >= number || number > this.actionCoordinates.size()) {
+                    int x = Integer.parseInt(input.split(",")[0]);
+                    int y = Integer.parseInt(input.split(",")[1]);
+                    boolean valid = false;
+                    for (Coordinates c : this.actionCoordinates) {
+                        if (c.getX() == x && c.getY() == y) {
+                            this.client.send(new PickupSelectedMessage(new Coordinates(x, y)));
+                            this.actionCoordinates = new ArrayList<>();
+                            valid = true;
+                            break;
+                        }
+                    }
+                    if(!valid) {
                         showMessage("Invalid input, retry:");
                         break;
                     }
-                    this.client.send(new PickupSelectedMessage(this.actionCoordinates.get(number - 1)));
-                    this.actionCoordinates = new ArrayList<>();
+                    break;
+
                 } catch(NumberFormatException e) {
                     showMessage("Invalid input, retry:");
                     break;
                 }
-                break;
             case SELECTWEAPON:
                 try {
                     int number = Integer.parseInt(input);
@@ -543,9 +609,11 @@ public abstract class View {
     private void showActions() {
         StringBuilder text = new StringBuilder();
         text.append("Select one of these actions:\n");
-        String toAppend = "[1] - Show the arena\n";
-        text.append(toAppend);
-        int number = 2;
+        text.append("[1] - Show the arena\n");
+        text.append("[2] - Show your board\n");
+        text.append("[3] - Show enemy boards\n");
+        int number = 4;
+        String toAppend;
         for (ActionType action : this.turnActions) {
             switch (action) {
                 case MOVE:
@@ -587,79 +655,15 @@ public abstract class View {
 
     private void update(AvailableMoveActionMessage message) {
         this.actionCoordinates = message.getMovements();
-        StringBuilder text = new StringBuilder();
-        text.append("Select one of these squares:\n");
-        int number = 1;
-        for(Coordinates coordinates : message.getMovements()) {
-            SquareView square = this.board.getSquareByCoordinates(coordinates.getX(), coordinates.getY());
-            String toAppend = "[" + number + "] - [" + square.getX() + ", " + square.getY() + "], " + square.getColor();
-            text.append(toAppend);
-            if(!square.isSpawn()) {
-                if(square.getAvailableAmmoTile() == null) {
-                    continue;
-                }
-                text.append( "\nTile: [");
-                if(square.getAvailableAmmoTile().hasPowerup()) {
-                    text.append("POWERUP, ");
-                }
-                for(Map.Entry<AmmoType, Integer> ammos : square.getAvailableAmmoTile().getAmmos().entrySet()) {
-                    if(ammos.getValue() != 0) {
-                        toAppend = ammos.getKey() + "x" + ammos.getValue() + ", ";
-                        text.append(toAppend);
-                    }
-                }
-            } else {
-                text.append( "\nStore: [");
-                for(Weapon weapon : square.getStore()) {
-                    toAppend = weapon + ", ";
-                    text.append(toAppend);
-                }
-            }
-            text.setLength(text.length() - 2);
-            text.append("]\n\n");
-            number++;
-        }
-        text.setLength(text.length() - 2);
-        showMessage(text.toString());
+        showMessage(this.board.arenaToString(message.getMovements()));
+        showMessage("You can move in the squares marked with '***'\nInsert [x,y] or type 'C' to cancel:");
         this.state = SELECTMOVEMENT;
     }
 
     private void update(AvailablePickupActionMessage message) {
         this.actionCoordinates = message.getMovements();
-        StringBuilder text = new StringBuilder();
-        text.append("Select one of these squares:\n");
-        int number = 1;
-        for(Coordinates coordinates : message.getMovements()) {
-            SquareView square = this.board.getSquareByCoordinates(coordinates.getX(), coordinates.getY());
-            String toAppend = "[" + number + "] - [" + square.getX() + ", " + square.getY() + "], " + square.getColor();
-            text.append(toAppend);
-            if(!square.isSpawn()) {
-                if(square.getAvailableAmmoTile() == null) {
-                    continue;
-                }
-                text.append( "\nTile: [");
-                if(square.getAvailableAmmoTile().hasPowerup()) {
-                    text.append("POWERUP, ");
-                }
-                for(Map.Entry<AmmoType, Integer> ammos : square.getAvailableAmmoTile().getAmmos().entrySet()) {
-                    if(ammos.getValue() != 0) {
-                        toAppend = ammos.getKey() + "x" + ammos.getValue() + ", ";
-                        text.append(toAppend);
-                    }
-                }
-            } else {
-                text.append( "\nStore: [");
-                for(Weapon weapon : square.getStore()) {
-                    toAppend = weapon + ", ";
-                    text.append(toAppend);
-                }
-            }
-            text.setLength(text.length() - 2);
-            text.append("]\n\n");
-            number++;
-        }
-        text.setLength(text.length() - 2);
-        showMessage(text.toString());
+        showMessage(this.board.arenaToString(message.getMovements()));
+        showMessage("You can move and pickup in the squares marked with '***'\nInsert [x,y] or type 'C' to cancel:");
         this.state = SELECTPICKUP;
     }
 

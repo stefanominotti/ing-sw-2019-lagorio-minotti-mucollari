@@ -95,7 +95,60 @@ public class BoardView {
                 if (square == null) {
                     squares.add(Arrays.asList(emptySquare().split("\n")));
                 } else {
-                    squares.add(Arrays.asList(square.toString().split("\n")));
+                    squares.add(Arrays.asList(square.toString(false).split("\n")));
+                }
+            }
+            if (i == 1) {
+                squares.add(Arrays.asList(legendSquare(new ArrayList<>(this.positions.keySet())).split("\n")));
+            }
+            for (int j = 0; j < 10; j++) {
+                int count = 0;
+                for (List<String> square : squares) {
+                    if (count == 0 && j == 4) {
+                        builder.append(i + " ");
+                    } else if (count == 0) {
+                        builder.append("  ");
+                    }
+                    builder.append(square.get(j));
+                    count++;
+                }
+                builder.append("\n");
+            }
+        }
+
+        return builder.toString();
+    }
+
+    public String arenaToString(List<Coordinates> markedCoordinates) {
+
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("  ");
+        for(int i=0; i<4; i++) {
+            builder.append(center(String.valueOf(i), 23));
+        }
+        builder.append("\n");
+
+        for (int i=0; i<3; i++) {
+            String row;
+            List<List<String>> squares = new ArrayList<>();
+            for (int j = 0; j < 4; j++) {
+                boolean marked = false;
+                SquareView square = getSquareByCoordinates(j, i);
+                if (square == null) {
+                    squares.add(Arrays.asList(emptySquare().split("\n")));
+                } else {
+                    for (Coordinates c : markedCoordinates) {
+                        if (c.getX() == j && c.getY() == i) {
+                            marked = true;
+                            break;
+                        }
+                    }
+                    if (marked) {
+                        squares.add(Arrays.asList(square.toString(true).split("\n")));
+                    } else {
+                        squares.add(Arrays.asList(square.toString(false).split("\n")));
+                    }
                 }
             }
             if (i == 1) {

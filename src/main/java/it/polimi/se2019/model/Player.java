@@ -15,7 +15,7 @@ public class Player {
     private List<GameCharacter> damages;
     private List<Integer> killshotPoints;
     private Map<AmmoType, Integer> availableAmmos;
-    private Map<GameCharacter, Integer> revengeMarks;
+    private List<GameCharacter> revengeMarks;
     private List<WeaponCard> weapons;
     private List<Powerup> powerups;
     private Square position;
@@ -32,7 +32,7 @@ public class Player {
         this.availableAmmos.put(AmmoType.BLUE, 1);
         this.availableAmmos.put(AmmoType.RED, 1);
         this.availableAmmos.put(AmmoType.YELLOW, 1);
-        this.revengeMarks = new HashMap<>();
+        this.revengeMarks = new ArrayList<>();
         this.weapons = new ArrayList<>();
         this.powerups = new ArrayList<>();
         this.position = null;
@@ -92,8 +92,8 @@ public class Player {
         return new ArrayList<>(this.weapons);
     }
 
-    public Map<GameCharacter, Integer> getRevengeMarks() {
-        return new HashMap<>(this.revengeMarks);
+    public List<GameCharacter> getRevengeMarks() {
+        return new ArrayList<>(this.revengeMarks);
     }
 
     public Map<AmmoType, Integer> getAvailableAmmos() {
@@ -175,21 +175,20 @@ public class Player {
         this.position = square;
     }
 
-    void addRevengeMarks(GameCharacter player, int amount) {
-        int newAmount;
-        if(this.revengeMarks.containsKey(player)) {
-            newAmount = this.revengeMarks.get(player) + amount;
-        } else {
-            newAmount = amount;
+    void addRevengeMarks(GameCharacter target, int amount) {
+        for (int i=0; i<amount; i++) {
+            this.revengeMarks.add(target);
         }
-        this.revengeMarks.put(player, newAmount);
     }
 
     void marksToDamages(GameCharacter player) {
-        for(int i = 0; i < this.revengeMarks.get(player); i++) {
-            if(this.damages.size() <= MAX_DAMAGES) {
+        for(GameCharacter c : this.revengeMarks) {
+            if(this.damages.size() <= MAX_DAMAGES && c == player) {
                 this.damages.add(player);
             }
+        }
+        while (this.revengeMarks.contains(player)) {
+            this.revengeMarks.remove(player);
         }
         this.revengeMarks.remove(player);
     }
