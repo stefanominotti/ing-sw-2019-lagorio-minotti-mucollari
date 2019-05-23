@@ -45,14 +45,14 @@ public abstract class View {
         String messageType = message.getMessageType().getName()
                 .replace("it.polimi.se2019.model.messages.", "");;
         switch (messageType) {
+            case "InvalidTokenMessage":
+                update((InvalidTokenMessage) message);
+                break;
             case "ReconnectionMessage":
                 update((ReconnectionMessage) message);
                 break;
             case "LoadViewMessage":
                 update((LoadViewMessage) message);
-                break;
-            case "TextMessage":
-                update((TextMessage) message);
                 break;
             case "RequireNicknameMessage":
                 update((RequireNicknameMessage) message);
@@ -408,8 +408,9 @@ public abstract class View {
         }
     }
 
-    private void update(TextMessage message) {
-        showMessage(message.getText());
+    private void update(InvalidTokenMessage message) {
+        showMessage("Invalid token");
+        System.exit(0);
     }
 
     private void update(ReconnectionMessage message) throws RemoteException {
@@ -440,11 +441,15 @@ public abstract class View {
     }
 
     private void update(CharacterMessage message) {
-        showMessage("Choose one of these characters:");
+        if(this.charactersAvailable != null) {
+            showMessage("Character already choosen");
+        }
+        StringBuilder builder = new StringBuilder("Choose one of these characters:\n");
         this.charactersAvailable = message.getAvailables();
         for(GameCharacter character : this.charactersAvailable) {
-            showMessage("[" + (this.charactersAvailable.indexOf(character) + 1) + "] - " + character);
+            builder.append("[" + (this.charactersAvailable.indexOf(character) + 1) + "] - " + character + "\n");
         }
+        showMessage(builder.toString());
         this.state = CHOOSINGCHARACTER;
     }
 
@@ -486,6 +491,7 @@ public abstract class View {
 
     private void update(NicknameDuplicatedMessage message){
         showMessage("Nickname is already in use. Insert another nickname: ");
+        this.state = TYPINGNICKNAME;
     }
 
     private void update(PlayerCreatedMessage message){

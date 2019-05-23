@@ -17,7 +17,7 @@ public class Server {
     private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
     private Map<GameCharacter, VirtualClientInterface> clients;
-    private Map<VirtualClientInterface, String> cientsNickname;
+    private Map<VirtualClientInterface, String> clientNicknames;
     private GameLoader gameLoader;
     private VirtualView view;
     private GameController controller;
@@ -29,7 +29,7 @@ public class Server {
         this.clients = new EnumMap<>(GameCharacter.class);
         this.connectionAllowed = true;
         this.temporaryClients = new ArrayList<>();
-        this.cientsNickname = new HashMap<>();
+        this.clientNicknames = new HashMap<>();
     }
 
     public static void main(String[] args) throws RemoteException {
@@ -99,7 +99,7 @@ public class Server {
                 break;
             }
         }
-        this.cientsNickname.remove(client);
+        this.clientNicknames.remove(client);
         System.out.println("Client disconnected.");
     }
 
@@ -114,7 +114,7 @@ public class Server {
         for (VirtualClientInterface client : this.temporaryClients) {
             client.send(message);
             client.exit();
-            this.cientsNickname.remove(client);
+            this.clientNicknames.remove(client);
         }
         this.temporaryClients = new ArrayList<>();
     }
@@ -163,7 +163,7 @@ public class Server {
                         return;
                     }
                 }
-                this.cientsNickname.put(client, ((NicknameMessage) message).getNickname());
+                this.clientNicknames.put(client, ((NicknameMessage) message).getNickname());
                 for(GameCharacter character : GameCharacter.values()){
                     if(!this.clients.containsKey(character)){
                         availables.add(character);
@@ -172,9 +172,14 @@ public class Server {
                 client.send(new CharacterMessage(availables));
                 break;
             case "CharacterMessage":
+                for(Player player : this.model.getPlayers()) {
+                    if (player.getNickname().equals(this.clientNicknames.get(client))) {
+                        client.send(new NicknameDuplicatedMessage());
+                        return;
+                    }
+                }
                 GameCharacter playerCharacter = ((CharacterMessage) message).getCharacter();
                 if(this.clients.containsKey(playerCharacter)) {
-                    client.send(new TextMessage("Character already choosen."));
                     for(GameCharacter character : GameCharacter.values()){
                         if(!this.clients.containsKey(character)){
                             availables.add(character);
@@ -188,8 +193,8 @@ public class Server {
                 System.out.println("A new client connected.");
                 this.view.forwardMessage(
                         new ClientReadyMessage(((CharacterMessage) message).getCharacter(),
-                                this.cientsNickname.get(client), ((CharacterMessage) message).getToken()));
-                this.cientsNickname.remove(client);
+                                this.clientNicknames.get(client), ((CharacterMessage) message).getToken()));
+                this.clientNicknames.remove(client);
                 break;
             case "ReconnectionMessage":
                 for(Player player : this.model.getPlayers()) {
@@ -197,13 +202,13 @@ public class Server {
                     if(character != null) {
                         this.clients.put(player.getCharacter(), client);
                         this.temporaryClients.remove(client);
-                        this.cientsNickname.remove(client);
+                        this.clientNicknames.remove(client);
                         System.out.println("A new client connected.");
                         this.view.forwardMessage(new ClientReconnectedMessage(player.getCharacter()));
                         return;
                     }
                 }
-                client.send(new TextMessage("Token does not match"));
+                client.send(new InvalidTokenMessage());
                 break;
             default:
                 this.view.forwardMessage(message);
