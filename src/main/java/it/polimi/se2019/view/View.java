@@ -250,6 +250,7 @@ public abstract class View {
                         break;
                     }
                     if (number == 1) {
+                        showMessage(this.board.killshotTrackToString());
                         showMessage(this.board.arenaToString());
                         showActions();
                         break;
@@ -442,7 +443,7 @@ public abstract class View {
         showMessage("Choose one of these characters:");
         this.charactersAvailable = message.getAvailables();
         for(GameCharacter character : this.charactersAvailable) {
-            showMessage("[" + String.valueOf(this.charactersAvailable.indexOf(character)+1) + "]" + character);
+            showMessage("[" + (this.charactersAvailable.indexOf(character) + 1) + "] - " + character);
         }
         this.state = CHOOSINGCHARACTER;
     }
@@ -644,7 +645,7 @@ public abstract class View {
     private void showActions() {
         StringBuilder text = new StringBuilder();
         text.append("Select one of these actions:\n");
-        text.append("[1] - Show the arena\n");
+        text.append("[1] - Show arena and killshot track\n");
         text.append("[2] - Show your board\n");
         text.append("[3] - Show enemy boards\n");
         int number = 4;

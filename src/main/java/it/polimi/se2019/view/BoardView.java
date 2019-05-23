@@ -10,11 +10,11 @@ public class BoardView {
 
     private int skulls;
     private List<SquareView> squares;
-    private List<GameCharacter> killshotTrack;
+    private Map<Integer, List<GameCharacter>> killshotTrack;
     private Map<GameCharacter, SquareView> positions;
 
     BoardView(int skulls, List<SquareView> squares) {
-        this.killshotTrack = new ArrayList<>();
+        this.killshotTrack = new HashMap<>();
         this.skulls = skulls;
         this.squares = squares;
         this.positions = new EnumMap<>(GameCharacter.class);
@@ -24,7 +24,7 @@ public class BoardView {
     }
 
     BoardView(int skulls, List<SquareView> squares,
-              List<GameCharacter> killshotTrack) {
+              Map<Integer, List<GameCharacter>> killshotTrack) {
         this.skulls = skulls;
         this.squares = squares;
         this.killshotTrack = killshotTrack;
@@ -68,58 +68,23 @@ public class BoardView {
         return this.positions.get(character);
     }
 
-    public List<GameCharacter> getKillshotTrack() {
-        return new ArrayList<>(this.killshotTrack);
+    public Map<Integer, List<GameCharacter>> getKillshotTrack() {
+        return new HashMap<>(this.killshotTrack);
     }
 
-    void addKillshotPoints(GameCharacter attacker, int amount) {}
+    void addKillshotPoints(GameCharacter attacker, int skullNumber) {
+        this.killshotTrack.get(skullNumber).add(attacker);
+    }
 
     void decrementSkulls(int amount) {
         this.skulls -= amount;
     }
 
-    public String arenaToString() {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("  ");
-        for(int i=0; i<4; i++) {
-            builder.append(center(String.valueOf(i), 23));
-        }
-        builder.append("\n");
-
-        for (int i=0; i<3; i++) {
-            String row;
-            List<List<String>> squares = new ArrayList<>();
-            for (int j = 0; j < 4; j++) {
-                SquareView square = getSquareByCoordinates(j, i);
-                if (square == null) {
-                    squares.add(Arrays.asList(emptySquare().split("\n")));
-                } else {
-                    squares.add(Arrays.asList(square.toString(false).split("\n")));
-                }
-            }
-            if (i == 1) {
-                squares.add(Arrays.asList(legendSquare(new ArrayList<>(this.positions.keySet())).split("\n")));
-            }
-            for (int j = 0; j < 10; j++) {
-                int count = 0;
-                for (List<String> square : squares) {
-                    if (count == 0 && j == 4) {
-                        builder.append(i + " ");
-                    } else if (count == 0) {
-                        builder.append("  ");
-                    }
-                    builder.append(square.get(j));
-                    count++;
-                }
-                builder.append("\n");
-            }
-        }
-
-        return builder.toString();
+    String arenaToString() {
+        return arenaToString(new ArrayList<>());
     }
 
-    public String arenaToString(List<Coordinates> markedCoordinates) {
+    String arenaToString(List<Coordinates> markedCoordinates) {
 
         StringBuilder builder = new StringBuilder();
 
@@ -169,6 +134,26 @@ public class BoardView {
             }
         }
 
+        return builder.toString();
+    }
+
+    String killshotTrackToString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Skulls left: " + this.skulls + "\n");
+        builder.append("Kill points: ");
+        for (Map.Entry<Integer, List<GameCharacter>> kill : this.killshotTrack.entrySet()) {
+            int i = 0;
+            for (GameCharacter c : kill.getValue()) {
+                builder.append(c.getIdentifier() + " ");
+                i++;
+            }
+            while (i<2) {
+                builder.append("_ ");
+            }
+            builder.append("|");
+        }
+        builder.setLength(builder.length() - 1);
+        builder.append("\n");
         return builder.toString();
     }
 }

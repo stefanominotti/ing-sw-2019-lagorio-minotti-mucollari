@@ -29,7 +29,7 @@ public class Board extends Observable {
     private List<AmmoTile> ammosDeck;
     private List<Powerup> powerupsDiscardPile;
     private List<AmmoTile> ammosDiscardPile;
-    private List<GameCharacter> killshotTrack;
+    private Map<Integer, List<GameCharacter>> killshotTrack;
     private GameState gameState;
     private Timer timer;
     private LocalDateTime gameTimerStartDate;
@@ -45,7 +45,7 @@ public class Board extends Observable {
         this.ammosDeck = new ArrayList<>();
         this.powerupsDiscardPile = new ArrayList<>();
         this.ammosDiscardPile = new ArrayList<>();
-        this.killshotTrack = new ArrayList<>();
+        this.killshotTrack = new HashMap<>();
         this.timer = new Timer();
         this.deathPlayers = new ArrayList<>();
     }
@@ -56,12 +56,12 @@ public class Board extends Observable {
         jObject.append("\"skulls\": " + this.skulls + ",");
         jObject.append("\"gameState\": " + "\"" + this.gameState + "\"" + ",");
         jObject.append("\"currentPlayer\": " + this.currentPlayer + ",");
-        jObject.append("\"weaponsDeck\": " + gson.toJson(weaponsDeck) + ',');
-        jObject.append("\"powerupsDeck\": " + gson.toJson(powerupsDeck) + ',');
-        jObject.append("\"ammosDeck\": " + gson.toJson(ammosDeck) + ',');
-        jObject.append("\"powerupsDiscardPile\": " + gson.toJson(powerupsDiscardPile) + ',');
-        jObject.append("\"ammosDiscardPile\": " + gson.toJson(ammosDiscardPile) + ',');
-        jObject.append("\"killshotTrack\": " + gson.toJson(killshotTrack));
+        jObject.append("\"weaponsDeck\": " + gson.toJson(this.weaponsDeck) + ',');
+        jObject.append("\"powerupsDeck\": " + gson.toJson(this.powerupsDeck) + ',');
+        jObject.append("\"ammosDeck\": " + gson.toJson(this.ammosDeck) + ',');
+        jObject.append("\"powerupsDiscardPile\": " + gson.toJson(this.powerupsDiscardPile) + ',');
+        jObject.append("\"ammosDiscardPile\": " + gson.toJson(this.ammosDiscardPile) + ',');
+        jObject.append("\"killshotTrack\": " + gson.toJson(this.killshotTrack));
         jObject.append("},");
         jObject.append("\"finalFrenzyOrder\":" + gson.toJson(this.finalFrenzyOrder));
         return jObject.toString();
@@ -103,8 +103,12 @@ public class Board extends Observable {
                     character.getKillshotPoints(), weapons, character.getWeapons().size(),
                     character.getPowerups().size()));
         }
+        Map<Integer, List<GameCharacter>> track = new HashMap<>();
+        for (Map.Entry<Integer, List<GameCharacter>> kill : this.killshotTrack.entrySet()) {
+            track.put(kill.getKey(), new ArrayList<>(kill.getValue()));
+        }
         notifyChanges(new LoadViewMessage(player.getCharacter(), player.getNickname(), this.skulls, squareViews,
-                this.killshotTrack, playerBoards, playerWeapons, player.getPowerups(), player.getScore()));
+                track, playerBoards, playerWeapons, player.getPowerups(), player.getScore()));
     }
 
     public GameState getGameState() {
@@ -241,6 +245,9 @@ public class Board extends Observable {
 
     public void setSkulls(int skulls){
         this.skulls = skulls;
+        for (int i=0; i<this.skulls; i++) {
+            this.killshotTrack.put(i+1, new ArrayList<>());
+        }
         notifyChanges(new SkullsSetMessage(getValidPlayers().get(0).getCharacter()));
     }
 

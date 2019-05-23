@@ -7,6 +7,7 @@ import it.polimi.se2019.view.PlayerBoard;
 import it.polimi.se2019.view.SquareView;
 
 import java.util.List;
+import java.util.Map;
 
 public class LoadViewMessage extends Message implements SingleReceiverMessage {
 
@@ -14,7 +15,7 @@ public class LoadViewMessage extends Message implements SingleReceiverMessage {
     private final String nickname;
     private final int skulls;
     private final List<SquareView> squares;
-    private final List<GameCharacter> killshotTrack;
+    private final Map<Integer, List<GameCharacter>> killshotTrack;
     private final List<PlayerBoard> payerBoards;
     //self
     private final List<Weapon> readyWeapons;
@@ -22,7 +23,7 @@ public class LoadViewMessage extends Message implements SingleReceiverMessage {
     private final int score;
 
     public LoadViewMessage(GameCharacter character, String nickname, int skulls, List<SquareView> squares,
-                           List<GameCharacter> killshotTrack, List<PlayerBoard> playerBoards,
+                           Map<Integer, List<GameCharacter>> killshotTrack, List<PlayerBoard> playerBoards,
                            List<Weapon> readyWeapons, List<Powerup> powerups, int score) {
 
         setMessageType(this.getClass());
@@ -45,7 +46,7 @@ public class LoadViewMessage extends Message implements SingleReceiverMessage {
         return this.squares;
     }
 
-    public List<GameCharacter> getKillshotTrack() {
+    public Map<Integer, List<GameCharacter>> getKillshotTrack() {
         return this.killshotTrack;
     }
 
