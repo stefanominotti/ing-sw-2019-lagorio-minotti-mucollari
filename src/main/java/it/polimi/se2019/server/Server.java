@@ -153,6 +153,8 @@ public class Server {
         if (this.clients.size() == 5) {
             client.send(new GameAlreadyStartedMessage());
         }
+
+        List<GameCharacter> availables = new ArrayList<>();
         switch (messageType) {
             case "NicknameMessage":
                 for(Player player : this.model.getPlayers()) {
@@ -162,7 +164,6 @@ public class Server {
                     }
                 }
                 this.cientsNickname.put(client, ((NicknameMessage) message).getNickname());
-                List<GameCharacter> availables = new ArrayList<>();
                 for(GameCharacter character : GameCharacter.values()){
                     if(!this.clients.containsKey(character)){
                         availables.add(character);
@@ -171,7 +172,18 @@ public class Server {
                 client.send(new CharacterMessage(availables));
                 break;
             case "CharacterMessage":
-                this.clients.put(((CharacterMessage) message).getCharacter(), client);
+                GameCharacter playerCharacter = ((CharacterMessage) message).getCharacter();
+                if(this.clients.containsKey(playerCharacter)) {
+                    client.send(new TextMessage("Character already choosen."));
+                    for(GameCharacter character : GameCharacter.values()){
+                        if(!this.clients.containsKey(character)){
+                            availables.add(character);
+                        }
+                    }
+                    client.send(new CharacterMessage(availables));
+                    return;
+                }
+                this.clients.put(playerCharacter, client);
                 this.temporaryClients.remove(client);
                 System.out.println("A new client connected.");
                 this.view.forwardMessage(
@@ -182,7 +194,7 @@ public class Server {
             case "ReconnectionMessage":
                 for(Player player : this.model.getPlayers()) {
                     GameCharacter character = player.veryfiPlayer(((ReconnectionMessage) message).getToken());
-                    if(character != null && !player.isConnected()) {
+                    if(character != null) {
                         this.clients.put(player.getCharacter(), client);
                         this.temporaryClients.remove(client);
                         this.cientsNickname.remove(client);
