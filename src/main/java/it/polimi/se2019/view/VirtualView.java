@@ -1,5 +1,6 @@
 package it.polimi.se2019.view;
 
+import it.polimi.se2019.model.GameCharacter;
 import it.polimi.se2019.model.messages.*;
 import it.polimi.se2019.server.Server;
 
@@ -137,5 +138,9 @@ public class VirtualView extends Observable implements Observer {
 
     public void sendAll(Message message) throws RemoteException {
         this.server.sendAll(message);
+    }
+
+    public void sendOther(GameCharacter character, Message message) throws RemoteException {
+        this.server.sendOthers(character, message);
     }
 }

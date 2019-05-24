@@ -21,10 +21,12 @@ public class LoadViewMessage extends Message implements SingleReceiverMessage {
     private final List<Weapon> readyWeapons;
     private final List<Powerup> powerups;
     private final int score;
+    private final Map<GameCharacter, String> otherPlayers;
 
     public LoadViewMessage(GameCharacter character, String nickname, int skulls, List<SquareView> squares,
                            Map<Integer, List<GameCharacter>> killshotTrack, List<PlayerBoard> playerBoards,
-                           List<Weapon> readyWeapons, List<Powerup> powerups, int score) {
+                           List<Weapon> readyWeapons, List<Powerup> powerups, int score,
+                           Map<GameCharacter, String> otherPlayers) {
 
         setMessageType(this.getClass());
         this.character = character;
@@ -36,6 +38,7 @@ public class LoadViewMessage extends Message implements SingleReceiverMessage {
         this.readyWeapons = readyWeapons;
         this.powerups = powerups;
         this.score = score;
+        this.otherPlayers = otherPlayers;
     }
 
     public GameCharacter getCharacter() {
@@ -72,5 +75,9 @@ public class LoadViewMessage extends Message implements SingleReceiverMessage {
 
     public String getNickname() {
         return  this.nickname;
+    }
+
+    public Map<GameCharacter, String> getOtherPlayers() {
+        return this.otherPlayers;
     }
 }

@@ -1,6 +1,7 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.Board;
+import it.polimi.se2019.model.GameCharacter;
 import it.polimi.se2019.model.Player;
 import it.polimi.se2019.model.messages.*;
 import it.polimi.se2019.view.VirtualView;
@@ -81,20 +82,19 @@ public class GameController implements Observer {
         int counter = 0;
         Player player = this.model.getPlayerByCharacter(message.getCharacter());
         player.connect();
-        sendAll(new PlayerReadyMessage(player.getCharacter(), player.getNickname()));
         this.model.createModelView(player);
+        sendAll(new PlayerReadyMessage(player.getCharacter(), player.getNickname()));
         for(Player boardPlayer : this.model.getPlayers()) {
             if(boardPlayer.isConnected()) {
+
                counter++;
             } else {
                 return;
             }
         }
-        if(counter == this.model.getPlayers().size()){
-            //avvisa tutti che la partita è pronta
+        if(counter == this.model.getPlayers().size()) {
             this.model.startTurn(this.model.getPlayers().get(this.model.getCurrentPlayer()));
         }
-        //attendere che almeno tre giocatori si connettano
         //continuare la partita
     }
 
@@ -153,6 +153,14 @@ public class GameController implements Observer {
     void sendAll(Message message) {
         try {
             this.view.sendAll(message);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void sendOthers(GameCharacter character, Message message) {
+        try {
+            this.view.sendOther(character, message);
         } catch (RemoteException e) {
             e.printStackTrace();
         }

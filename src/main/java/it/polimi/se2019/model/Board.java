@@ -88,6 +88,7 @@ public class Board extends Observable {
 
         List<PlayerBoard> playerBoards = new ArrayList<>();
         List<Weapon> playerWeapons = new ArrayList<>();
+        Map<GameCharacter, String> otherPlayers = new HashMap<>();
         for(Player character : this.players) {
             List<Weapon> weapons = new ArrayList<>();
             for(WeaponCard weaponCard : player.getWeapons()) {
@@ -97,6 +98,9 @@ public class Board extends Observable {
                 if(weaponCard.isReady() && character == player){
                     playerWeapons.add(weaponCard.getWeaponType());
                 }
+            }
+            if(character.isConnected()) {
+                otherPlayers.put(character.getCharacter(), character.getNickname());
             }
             playerBoards.add(new PlayerBoard(character.getCharacter(), character.getNickname(),
                     character.getAvailableAmmos(), character.getRevengeMarks(), character.getDamages(),
@@ -108,7 +112,7 @@ public class Board extends Observable {
             track.put(kill.getKey(), new ArrayList<>(kill.getValue()));
         }
         notifyChanges(new LoadViewMessage(player.getCharacter(), player.getNickname(), this.skulls, squareViews,
-                track, playerBoards, playerWeapons, player.getPowerups(), player.getScore()));
+                track, playerBoards, playerWeapons, player.getPowerups(), player.getScore(), otherPlayers));
     }
 
     public GameState getGameState() {

@@ -433,6 +433,11 @@ public abstract class View {
             }
         }
         showMessage("You are " + this.character + ", wait other players");
+        for (Map.Entry<GameCharacter, String> player : message.getOtherPlayers().entrySet()) {
+            if(player.getKey() != this.character) {
+                showMessage(player.getKey() + " - " + player.getValue() + " is in!");
+            }
+        }
     }
 
     private void update(RequireNicknameMessage message) {
@@ -904,7 +909,8 @@ public abstract class View {
             hexString.append(Integer.toHexString(0xFF & digest[i]));
         }
         try {
-            FileWriter writer = new FileWriter("documents/token.txt");
+            String path = System.getProperty("java.io.tmpdir");
+            FileWriter writer = new FileWriter(path + "adrenalina.token");
             writer.write(message);
             writer.flush();
         } catch (IOException e) {
@@ -914,8 +920,9 @@ public abstract class View {
     }
 
     private String getToken() {
+        String path = System.getProperty("java.io.tmpdir");
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("documents/token.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader(path + "adrenalina.token"));
             String message = reader.readLine();
             MessageDigest md = null;
             try {
