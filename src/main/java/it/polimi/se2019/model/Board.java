@@ -636,4 +636,19 @@ public class Board extends Observable {
         return players;
     }
 
+    public List<Room> getVisibleRooms (Player player) {
+        List<Room> visibleRooms = new ArrayList<>();
+        Square playerSquare = player.getPosition();
+        visibleRooms.add(playerSquare.getRoom());
+
+        for(CardinalPoint point : CardinalPoint.values()) {
+            if(playerSquare.getNearbyAccessibility().get(point)) {
+                if(playerSquare.getNearbySquares().get(point).getRoom().getColor() != playerSquare.getRoom().getColor()
+                        && !visibleRooms.contains(playerSquare.getNearbySquares().get(point).getRoom().getColor())){
+                    visibleRooms.add(playerSquare.getNearbySquares().get(point).getRoom());
+                }
+            }
+        }
+        return visibleRooms;
+    }
 }
