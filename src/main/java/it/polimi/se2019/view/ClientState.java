@@ -17,5 +17,6 @@ public enum ClientState {
     SELECTWEAPON,
     SWITCHWEAPON,
     RECHARGEWEAPON,
+    PAYMENT,
     RECONNECTING;
 }

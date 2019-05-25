@@ -70,7 +70,9 @@ public class GameController implements Observer {
             case "RechargeWeaponMessage":
                 update((RechargeWeaponMessage) message);
                 break;
-
+            case "WeaponPaymentMessage":
+                update((WeaponPaymentMessage) message);
+                break;
         }
     }
 
@@ -140,6 +142,10 @@ public class GameController implements Observer {
 
     private void update(RechargeWeaponMessage message) {
         this.turnController.rechargeWeapon(message.getWeapon());
+    }
+
+    private void update(WeaponPaymentMessage message) {
+        this.turnController.payWeapon(message.getPaidAmmos(), message.getPaidPowerups());
     }
 
     void send(SingleReceiverMessage message) {

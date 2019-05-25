@@ -12,10 +12,7 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,10 +32,20 @@ public abstract class View {
     private List<Coordinates> actionCoordinates;
     private List<Weapon> weaponsSelectionList;
     private List<GameCharacter> charactersAvailable;
+    private Map<AmmoType, Integer> paymentRequired;
+    private Map<AmmoType, Integer> paidAmmos;
+    private List<Powerup> paidPowerups;
+    private Map<AmmoType, Integer> availableAmmos;
+    private List<Powerup> availablePowerups;
 
     View(AbstractClient client) {
         this.client = client;
         this.enemyBoards = new ArrayList<>();
+        this.paidAmmos = new EnumMap<>(AmmoType.class);
+        for (AmmoType type : AmmoType.values()) {
+            this.paidAmmos.put(type, 0);
+        }
+        this.paidPowerups = new ArrayList<>();
     }
 
     public void manageUpdate(Message message) throws RemoteException {
@@ -161,6 +168,9 @@ public abstract class View {
                 break;
             case "AmmoTilesRefilledMessage":
                 update((AmmoTilesRefilledMessage) message);
+                break;
+            case "RequireWeaponPaymentMessage":
+                update((RequireWeaponPaymentMessage) message);
                 break;
         }
     }
@@ -405,6 +415,69 @@ public abstract class View {
                     break;
                 }
                 break;
+            case PAYMENT:
+                try {
+                    int number = Integer.parseInt(input);
+                    List<AmmoType> payableAmmos = new ArrayList<>();
+                    List<Powerup> payablePowerups = new ArrayList<>();
+                    for (Map.Entry<AmmoType, Integer> ammo : this.availableAmmos.entrySet()) {
+                        if (ammo.getValue() != 0 && this.paymentRequired.keySet().contains(ammo.getKey()) &&
+                                this.paymentRequired.get(ammo.getKey()) != 0) {
+                            payableAmmos.add(ammo.getKey());
+                        }
+                    }
+                    for (Powerup p : this.availablePowerups) {
+                        if (this.paymentRequired.keySet().contains(p.getColor()) &&
+                                this.paymentRequired.get(p.getColor()) != 0) {
+                            payablePowerups.add(p);
+                        }
+                    }
+
+                    if (0 >= number || number > payableAmmos.size() + payablePowerups.size() + 1) {
+                        showMessage("Invalid input, retry:");
+                        break;
+                    }
+                    number = number - 1;
+                    int newValue;
+                    if (number < payableAmmos.size()) {
+                        newValue = this.paidAmmos.get(payableAmmos.get(number)) + 1;
+                        this.paidAmmos.put(payableAmmos.get(number), newValue);
+                        newValue = this.availableAmmos.get(payableAmmos.get(number)) - 1;
+                        this.availableAmmos.put(payableAmmos.get(number), newValue);
+                        newValue = this.paymentRequired.get(payableAmmos.get(number)) - 1;
+                        this.paymentRequired.put(payableAmmos.get(number), newValue);
+                    } else {
+                        number -= payableAmmos.size();
+                        this.paidPowerups.add(payablePowerups.get(number));
+                        this.availablePowerups.remove(payablePowerups.get(number));
+                        newValue = this.paymentRequired.get(payablePowerups.get(number).getColor()) - 1;
+                        this.paymentRequired.put(payablePowerups.get(number).getColor(), newValue);
+                    }
+
+                    boolean paid = true;
+                    for (Map.Entry<AmmoType, Integer> ammo : this.paymentRequired.entrySet()) {
+                        if (ammo.getValue() != 0) {
+                            paid = false;
+                            break;
+                        }
+                    }
+
+                    if(paid) {
+                        this.client.send(new WeaponPaymentMessage(this.paidPowerups, this.paidAmmos));
+                        this.paymentRequired = new EnumMap<>(AmmoType.class);
+                        this.paidAmmos = new EnumMap<>(AmmoType.class);
+                        for (AmmoType type : AmmoType.values()) {
+                            this.paidAmmos.put(type, 0);
+                        }
+                        this.paidPowerups = new ArrayList<>();
+                    } else {
+                        requirePayment();
+                    }
+                    break;
+                } catch(NumberFormatException e) {
+                    showMessage("Invalid input, retry:");
+                    break;
+                }
         }
     }
 
@@ -419,7 +492,7 @@ public abstract class View {
         client.send(new ReconnectionMessage(getToken()));
     }
 
-    public void update(LoadViewMessage message) {
+    private void update(LoadViewMessage message) {
         this.character = message.getCharacter();
         this.state = WAITINGSETUP;
         this.enemyBoards = new ArrayList<>();
@@ -454,6 +527,7 @@ public abstract class View {
         for(GameCharacter character : this.charactersAvailable) {
             builder.append("[" + (this.charactersAvailable.indexOf(character) + 1) + "] - " + character + "\n");
         }
+        builder.setLength(builder.length() - 1);
         showMessage(builder.toString());
         this.state = CHOOSINGCHARACTER;
     }
@@ -808,6 +882,7 @@ public abstract class View {
             }
             index++;
         }
+        text.setLength(text.length() - 1);
         showMessage(text.toString());
         this.state = SWITCHWEAPON;
     }
@@ -828,6 +903,42 @@ public abstract class View {
         } else {
             showMessage(message.getCharacter() + " dropped a " + message.getOldWeapon() + " to get a " + message.getNewWeapon());
         }
+    }
+
+    private void requirePayment() {
+        StringBuilder builder = new StringBuilder("Devi pagare ");
+        for (Map.Entry<AmmoType, Integer> ammo : this.paymentRequired.entrySet()) {
+            if (ammo.getValue() == 0) {
+                continue;
+            }
+            builder.append(ammo.getValue() + "x" + ammo.getKey() + ", ");
+        }
+        builder.setLength((builder.length() - 1));
+        builder.append("\nSeleziona munizioni o powerup:\n");
+        int index = 1;
+        for (Map.Entry<AmmoType, Integer> ammo : this.availableAmmos.entrySet()) {
+            if (ammo.getValue() != 0 && this.paymentRequired.keySet().contains(ammo.getKey()) &&
+                    this.paymentRequired.get(ammo.getKey()) != 0) {
+                builder.append("[" + index + "] - " + ammo.getKey() + " ammo\n");
+                index++;
+            }
+        }
+        for (Powerup p : this.availablePowerups) {
+            if (this.paymentRequired.keySet().contains(p.getColor()) && this.paymentRequired.get(p.getColor()) != 0) {
+                builder.append("[" + index + "] - " + p.getType() + " " + p.getColor() + "\n");
+                index++;
+            }
+        }
+        builder.setLength(builder.length() - 1);
+        showMessage(builder.toString());
+    }
+
+    private void update(RequireWeaponPaymentMessage message) {
+        this.paymentRequired = message.getBuyCost();
+        this.availableAmmos = new EnumMap<>(this.selfPlayerBoard.getAvailableAmmos());
+        this.availablePowerups = new ArrayList<>(this.selfPlayerBoard.getPowerups());
+        requirePayment();
+        this.state = PAYMENT;
     }
 
     private void update(RequireWeaponLoadMessage message) {

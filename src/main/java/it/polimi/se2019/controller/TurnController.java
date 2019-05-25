@@ -17,7 +17,8 @@ public class TurnController {
     private TurnState state;
     private Player powerupTarget;
     private boolean finalFrenzy;
-    private WeaponCard switchingWeapon;
+    private WeaponCard weaponToGet;
+    private WeaponCard switchWeapon;
 
     public TurnController(Board board, GameController controller) {
         this.state = TurnState.SELECTACTION;
@@ -146,6 +147,34 @@ public class TurnController {
             if(s.getWeaponsStore() != null && s.getWeaponsStore().size() == 0) {
                 continue;
             }
+            if(s.getWeaponsStore() != null) {
+                List<Weapon> availableWeapons = new ArrayList<>();
+                for (WeaponCard weapon : s.getWeaponsStore()) {
+                    Map<AmmoType, Integer> availablaPayments = new EnumMap<>(AmmoType.class);
+                    for (Map.Entry<AmmoType, Integer> ammo : this.activePlayer.getAvailableAmmos().entrySet()) {
+                        int value = ammo.getValue();
+                        for (Powerup p : this.activePlayer.getPowerups()) {
+                            if (p.getColor() == ammo.getKey()) {
+                                value += 1;
+                            }
+                        }
+                        availablaPayments.put(ammo.getKey(), value);
+                    }
+                    boolean valid = true;
+                    for (Map.Entry<AmmoType, Integer> ammoCost : weapon.getWeaponType().getBuyCost().entrySet()) {
+                        if (ammoCost.getValue() > availablaPayments.get(ammoCost.getKey())) {
+                            valid = false;
+                            break;
+                        }
+                    }
+                    if (valid) {
+                        availableWeapons.add(weapon.getWeaponType());
+                    }
+                }
+                if (availableWeapons.isEmpty()) {
+                    continue;
+                }
+            }
             if(s.getAvailableAmmoTile() == null && s.getWeaponsStore() == null) {
                 continue;
             }
@@ -163,6 +192,8 @@ public class TurnController {
 
     void handleAction(ActionType action) {
         this.movesLeft--;
+        this.switchWeapon = null;
+        this.weaponToGet = null;
         switch (action) {
             case CANCEL:
                 cancelAction();
@@ -183,8 +214,8 @@ public class TurnController {
     }
 
     void cancelAction() {
+        this.movesLeft += 2;
         if(!this.finalFrenzy) {
-            this.movesLeft++;
             List<ActionType> availableActions = Arrays.asList(ActionType.MOVE, ActionType.PICKUP, ActionType.SHOT);
             this.controller.send(new AvailableActionsMessage(this.activePlayer.getCharacter(), availableActions));
             this.state = TurnState.SELECTACTION;
@@ -222,9 +253,19 @@ public class TurnController {
         if (targetSquare.getWeaponsStore() != null) {
             List<Weapon> availableWeapons = new ArrayList<>();
             for (WeaponCard weapon : this.activePlayer.getPosition().getWeaponsStore()) {
+                Map<AmmoType, Integer> availablaPayments = new EnumMap<>(AmmoType.class);
+                for (Map.Entry<AmmoType, Integer> ammo : this.activePlayer.getAvailableAmmos().entrySet()) {
+                    int value = ammo.getValue();
+                    for (Powerup p : this.activePlayer.getPowerups()) {
+                        if (p.getColor() == ammo.getKey()) {
+                            value += 1;
+                        }
+                    }
+                    availablaPayments.put(ammo.getKey(), value);
+                }
                 boolean valid = true;
                 for (Map.Entry<AmmoType, Integer> ammoCost : weapon.getWeaponType().getBuyCost().entrySet()) {
-                    if (ammoCost.getValue() > this.activePlayer.getAvailableAmmos().get(ammoCost.getKey())) {
+                    if (ammoCost.getValue() > availablaPayments.get(ammoCost.getKey())) {
                         valid = false;
                         break;
                     }
@@ -241,33 +282,63 @@ public class TurnController {
     }
 
     void pickupWeapon(Weapon weapon) {
-        if (this.activePlayer.getWeapons().size() == 3) {
-            for (WeaponCard weaponCard : this.activePlayer.getPosition().getWeaponsStore()) {
-                if (weaponCard.getWeaponType() == weapon) {
-                    this.switchingWeapon = weaponCard;
-                    break;
-                }
+        for (WeaponCard weaponCard : this.activePlayer.getPosition().getWeaponsStore()) {
+            if (weaponCard.getWeaponType() == weapon) {
+                this.weaponToGet = weaponCard;
+                break;
             }
+        }
+        if (this.activePlayer.getWeapons().size() == 3) {
             this.controller.send(new RequireWeaponSwitchMessage(this.activePlayer.getCharacter(), weapon));
             return;
         }
-        this.board.useAmmos(this.activePlayer, weapon.getBuyCost());
-        for (WeaponCard weaponCard : this.activePlayer.getPosition().getWeaponsStore()) {
-            if (weaponCard.getWeaponType() == weapon) {
-                this.board.giveWeapon(this.activePlayer, weaponCard);
+        boolean free = true;
+        for (Map.Entry<AmmoType, Integer> ammo : weapon.getBuyCost().entrySet()) {
+            if (ammo.getValue() != 0) {
+                free = false;
                 break;
             }
+        }
+        if (free) {
+            this.board.giveWeapon(this.activePlayer, this.weaponToGet);
+            handleEndAction();
+        } else {
+            this.controller.send(new RequireWeaponPaymentMessage(this.activePlayer.getCharacter(), weapon.getBuyCost()));
+        }
+    }
+
+    void payWeapon(Map<AmmoType, Integer> ammos, List<Powerup> powerups) {
+        this.board.useAmmos(this.activePlayer, ammos);
+        for (Powerup p : powerups) {
+            this.board.removePowerup(this.activePlayer, p);
+        }
+        if (this.switchWeapon == null) {
+            this.board.giveWeapon(this.activePlayer, this.weaponToGet);
+        } else {
+            this.board.switchWeapon(this.activePlayer, this.switchWeapon,  this.weaponToGet);
         }
         handleEndAction();
     }
 
     void switchWeapon(Weapon weapon) {
-        this.board.useAmmos(this.activePlayer, weapon.getBuyCost());
-        for (WeaponCard weaponCard : this.activePlayer.getPosition().getWeaponsStore()) {
+        for (WeaponCard weaponCard : this.activePlayer.getWeapons()) {
             if (weaponCard.getWeaponType() == weapon) {
-                this.board.switchWeapon(this.activePlayer, this.switchingWeapon, weaponCard);
+                this.switchWeapon = weaponCard;
                 break;
             }
+        }
+        boolean free = true;
+        for (Map.Entry<AmmoType, Integer> ammo : this.weaponToGet.getWeaponType().getBuyCost().entrySet()) {
+            if (ammo.getValue() != 0) {
+                free = false;
+                break;
+            }
+        }
+        if (free) {
+            this.board.switchWeapon(this.activePlayer, this.switchWeapon, this.weaponToGet);
+            handleEndAction();
+        } else {
+            this.controller.send(new RequireWeaponPaymentMessage(this.activePlayer.getCharacter(), this.weaponToGet.getWeaponType().getBuyCost()));
         }
     }
 
