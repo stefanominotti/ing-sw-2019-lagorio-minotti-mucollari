@@ -18,11 +18,13 @@ public class GameController implements Observer {
 
     private Board model;
     private TurnController turnController;
+    private PowerupsController powerupsController;
     private VirtualView view;
 
     public GameController(Board board, VirtualView view) {
         this.model = board;
         this.turnController = new TurnController(this.model, this);
+        this.powerupsController = new PowerupsController(this.model, this, this.turnController);
         this.view = view;
     }
 
@@ -49,8 +51,8 @@ public class GameController implements Observer {
             case "StartTurnMessage":
                 update((StartTurnMessage) message);
                 break;
-            case "PowerupSelectedMessage":
-                update((PowerupSelectedMessage) message);
+            case "PowerupDiscardMessage":
+                update((PowerupDiscardMessage) message);
                 break;
             case "ActionSelectedMessage":
                 update((ActionSelectedMessage) message);
@@ -72,6 +74,15 @@ public class GameController implements Observer {
                 break;
             case "WeaponPaymentMessage":
                 update((WeaponPaymentMessage) message);
+                break;
+            case "UsePowerupMessage":
+                update((UsePowerupMessage) message);
+                break;
+            case "PowerupPositionMessage":
+                update((PowerupPositionMessage) message);
+                break;
+            case "PowerupTargetMessage":
+                update((PowerupTargetMessage) message);
                 break;
         }
     }
@@ -116,7 +127,7 @@ public class GameController implements Observer {
         this.turnController.startTurn(message.getTurnType(), message.getPlayer());
     }
 
-    private void update(PowerupSelectedMessage message) {
+    private void update(PowerupDiscardMessage message) {
         this.turnController.handlePowerupDiscarded(message.getPowerup());
     }
 
@@ -146,6 +157,24 @@ public class GameController implements Observer {
 
     private void update(WeaponPaymentMessage message) {
         this.turnController.payWeapon(message.getPaidAmmos(), message.getPaidPowerups());
+    }
+
+    private void update(UsePowerupMessage message) {
+        if (message.getPowerup() == null && this.turnController.getActiveplayer().getCharacter() == message.getPlayer()) {
+            this.turnController.cancelPowerup();
+        } else if (message.getPowerup() == null && this.turnController.getActiveplayer().getCharacter() != message.getPlayer()) {
+            // powerup usati nel turno avversario
+        } else {
+            this.powerupsController.startEffect(message.getPlayer(), message.getPowerup());
+        }
+    }
+
+    private void update(PowerupPositionMessage message) {
+        this.powerupsController.receivePosition(message.getPosition());
+    }
+
+    private void update(PowerupTargetMessage message) {
+        this.powerupsController.receiveTarget(message.getTarget());
     }
 
     void send(SingleReceiverMessage message) {

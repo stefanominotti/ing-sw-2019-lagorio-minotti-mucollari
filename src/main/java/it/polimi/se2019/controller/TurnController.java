@@ -50,13 +50,7 @@ public class TurnController {
                 break;
             case NORMAL:
                 this.movesLeft = 2;
-                if (this.finalFrenzy) {
-                    // manda azioni frenesia finale
-                } else {
-                    List<ActionType> availableActions = Arrays.asList(ActionType.MOVE, ActionType.PICKUP, ActionType.SHOT);
-                    this.controller.send(new AvailableActionsMessage(this.activePlayer.getCharacter(), availableActions));
-                }
-                this.state = SELECTACTION;
+                sendActions();
                 break;
         }
     }
@@ -93,11 +87,8 @@ public class TurnController {
 
     void handlePowerupDiscarded(Powerup powerup) {
         this.board.removePowerup(this.activePlayer, powerup);
-
         if(this.state == TurnState.FIRST_RESPAWNING || this.state == TurnState.DEATH_RESPAWNING) {
             spawnPlayer(RoomColor.valueOf(powerup.getColor().toString()));
-        } else {
-            //usa powerup
         }
     }
 
@@ -106,9 +97,7 @@ public class TurnController {
             if(room.getColor() == color){
                 this.board.respawnPlayer(this.activePlayer, room);
                 if(this.state == TurnState.FIRST_RESPAWNING) {
-                    List<ActionType> availableActions = Arrays.asList(ActionType.MOVE, ActionType.PICKUP, ActionType.SHOT);
-                    this.controller.send(new AvailableActionsMessage(this.activePlayer.getCharacter(), availableActions));
-                    this.state = TurnState.SELECTACTION;
+                    sendActions();
                 }
                 if (this.state == TurnState.DEATH_RESPAWNING){
                     this.board.endTurn(this.activePlayer);
@@ -191,7 +180,6 @@ public class TurnController {
     }
 
     void handleAction(ActionType action) {
-        this.movesLeft--;
         this.switchWeapon = null;
         this.weaponToGet = null;
         switch (action) {
@@ -203,25 +191,81 @@ public class TurnController {
                 handleRecharge();
                 break;
             case MOVE:
+                this.movesLeft--;
                 this.state = MOVING;
                 calculateMovementAction();
                 break;
             case PICKUP:
+                this.movesLeft--;
                 this.state = PICKINGUP;
                 calculatePickupAction();
+                break;
+            case POWERUP:
+                calculatePowerupAction();
                 break;
         }
     }
 
     void cancelAction() {
-        this.movesLeft += 2;
-        if(!this.finalFrenzy) {
-            List<ActionType> availableActions = Arrays.asList(ActionType.MOVE, ActionType.PICKUP, ActionType.SHOT);
-            this.controller.send(new AvailableActionsMessage(this.activePlayer.getCharacter(), availableActions));
-            this.state = TurnState.SELECTACTION;
-        } else {
-            // manda azioni frenesia
+        this.movesLeft++;
+        sendActions();
+    }
+
+
+    void cancelPowerup() {
+        sendActions();
+    }
+
+    void calculatePowerupAction() {
+        List<Powerup> availablePowerups = new ArrayList<>();
+        for (Powerup p : this.getActiveplayer().getPowerups()) {
+            if (p.getType() == PowerupType.TELEPORTER || p.getType() == PowerupType.NEWTON) {
+                if (p.getType() == PowerupType.NEWTON) {
+                    List<GameCharacter> targets = new ArrayList<>();
+                    for (Player player : this.board.getPlayers()) {
+                        if (player.getPosition() != null && player.isConnected()  && player != this.activePlayer) {
+                            targets.add(player.getCharacter());
+                        }
+                    }
+                    if (!targets.isEmpty()) {
+                        availablePowerups.add(p);
+                    }
+                } else {
+                    availablePowerups.add(p);
+                }
+            }
         }
+        this.controller.send(new RequirePowerupUseMessage(this.activePlayer.getCharacter(), availablePowerups));
+    }
+
+    public void sendActions() {
+        List<ActionType> availableActions = new ArrayList<>();
+        if (this.finalFrenzy) {
+            // invia mosse frenesia finale
+        } else {
+            availableActions = new ArrayList<>(Arrays.asList(ActionType.MOVE, ActionType.PICKUP, ActionType.SHOT));
+        }
+        for (Powerup p : this.getActiveplayer().getPowerups()) {
+            if (p.getType() == PowerupType.TELEPORTER || p.getType() == PowerupType.NEWTON) {
+                if (p.getType() == PowerupType.NEWTON) {
+                    List<GameCharacter> targets = new ArrayList<>();
+                    for (Player player : this.board.getPlayers()) {
+                        if (player.getPosition() != null && player.isConnected()  && player != this.activePlayer) {
+                            targets.add(player.getCharacter());
+                        }
+                    }
+                    if (!targets.isEmpty()) {
+                        availableActions.add(ActionType.POWERUP);
+                        break;
+                    }
+                } else {
+                    availableActions.add(ActionType.POWERUP);
+                    break;
+                }
+            }
+        }
+        this.controller.send(new AvailableActionsMessage(this.activePlayer.getCharacter(), availableActions));
+        this.state = SELECTACTION;
     }
 
     void handleEndAction() {
@@ -229,13 +273,16 @@ public class TurnController {
             handleRecharge();
             return;
         }
-        if (this.finalFrenzy) {
-            // invia mosse frenesia finale
-            return;
-        }
-        List<ActionType> availableActions = Arrays.asList(ActionType.MOVE, ActionType.PICKUP, ActionType.SHOT);
-        this.controller.send(new AvailableActionsMessage(this.activePlayer.getCharacter(), availableActions));
+        sendActions();
         this.state = TurnState.SELECTACTION;
+    }
+
+    void handleEndPowerup() {
+        if (this.movesLeft != 0) {
+            sendActions();
+        } else {
+            // chiedi nuovamente powerup o ricarica
+        }
     }
 
     void movementAction(Coordinates coordinates) {
@@ -395,5 +442,9 @@ public class TurnController {
 
     void endTurn() {
         this.board.endTurn(this.activePlayer);
+    }
+
+    Player getActivePlayer() {
+        return this.activePlayer;
     }
 }

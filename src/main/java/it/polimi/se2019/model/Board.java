@@ -472,7 +472,7 @@ public class Board extends Observable {
     public void removePowerup(Player player, Powerup powerup) {
         player.removePowerup(player.getPowerupByType(powerup.getType(), powerup.getColor()));
         this.powerupsDiscardPile.add(powerup);
-        notifyChanges(new PowerupRemoved(player.getCharacter(), powerup));
+        notifyChanges(new PowerupRemovedMessage(player.getCharacter(), powerup));
     }
 
     public void drawPowerup(Player player) {

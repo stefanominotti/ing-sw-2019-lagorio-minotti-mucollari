@@ -37,6 +37,7 @@ public abstract class View {
     private List<Powerup> paidPowerups;
     private Map<AmmoType, Integer> availableAmmos;
     private List<Powerup> availablePowerups;
+    private List<GameCharacter> availableTargets;
 
     View(AbstractClient client) {
         this.client = client;
@@ -121,8 +122,8 @@ public abstract class View {
             case "PlayerSpawnedMessage":
                 update((PlayerSpawnedMessage) message);
                 break;
-            case "PowerupRemoved":
-                update((PowerupRemoved) message);
+            case "PowerupRemovedMessage":
+                update((PowerupRemovedMessage) message);
                 break;
             case "AvailableActionsMessage":
                 update((AvailableActionsMessage) message);
@@ -171,6 +172,15 @@ public abstract class View {
                 break;
             case "RequireWeaponPaymentMessage":
                 update((RequireWeaponPaymentMessage) message);
+                break;
+            case "RequirePowerupUseMessage":
+                update((RequirePowerupUseMessage) message);
+                break;
+            case "PowerupPositionsAvailableMessage":
+                update((PowerupPositionsAvailableMessage) message);
+                break;
+            case "PowerupTargetsAvailableMessage":
+                update((PowerupTargetsAvailableMessage) message);
                 break;
         }
     }
@@ -246,7 +256,7 @@ public abstract class View {
                         showMessage("Invalid input, retry:");
                         break;
                     }
-                    this.client.send(new PowerupSelectedMessage(this.selfPlayerBoard.getPowerups().get(number - 1)));
+                    this.client.send(new PowerupDiscardMessage(this.selfPlayerBoard.getPowerups().get(number - 1)));
                 } catch(NumberFormatException e) {
                     showMessage("Invalid input, retry:");
                     break;
@@ -478,6 +488,66 @@ public abstract class View {
                     showMessage("Invalid input, retry:");
                     break;
                 }
+            case USEPOWERUP:
+                try {
+                    int number = Integer.parseInt(input);
+                    if (0 >= number || number > this.availablePowerups.size() + 1) {
+                        showMessage("Invalid input, retry:");
+                        break;
+                    }
+                    if (number == this.availablePowerups.size() + 1) {
+                        this.client.send(new UsePowerupMessage(this.character, null));
+                        this.availablePowerups = new ArrayList<>();
+                        break;
+                    }
+                    this.client.send(new UsePowerupMessage(this.character, this.availablePowerups.get(number - 1)));
+                    this.availablePowerups = new ArrayList<>();
+                } catch(NumberFormatException e) {
+                    showMessage("Invalid input, retry:");
+                    break;
+                }
+                break;
+            case SELECTPOWERUPPOSITION:
+                if (input.split(",").length != 2) {
+                    showMessage("Invalid input, retry:");
+                    break;
+                }
+                try {
+                    int x = Integer.parseInt(input.split(",")[0]);
+                    int y = Integer.parseInt(input.split(",")[1]);
+                    boolean valid = false;
+                    for (Coordinates c : this.actionCoordinates) {
+                        if (c.getX() == x && c.getY() == y) {
+                            this.client.send(new PowerupPositionMessage(new Coordinates(x, y)));
+                            this.actionCoordinates = new ArrayList<>();
+                            valid = true;
+                            break;
+                        }
+                    }
+                    if(!valid) {
+                        showMessage("Invalid input, retry:");
+                        break;
+                    }
+                    break;
+
+                } catch(NumberFormatException e) {
+                    showMessage("Invalid input, retry:");
+                    break;
+                }
+            case SELECTPOWERUPTARGET:
+                try {
+                    int number = Integer.parseInt(input);
+                    if (0 >= number || number > this.availableTargets.size()) {
+                        showMessage("Invalid input, retry:");
+                        break;
+                    }
+                    this.client.send(new PowerupTargetMessage(this.availableTargets.get(number - 1)));
+                    this.availableTargets = new ArrayList<>();
+                } catch(NumberFormatException e) {
+                    showMessage("Invalid input, retry:");
+                    break;
+                }
+                break;
         }
     }
 
@@ -712,7 +782,7 @@ public abstract class View {
         }
     }
 
-    private void update(PowerupRemoved message) {
+    private void update(PowerupRemovedMessage message) {
         if(this.character == message.getCharacter()) {
             this.selfPlayerBoard.removePowerup(message.getPowerup().getType(), message.getPowerup().getColor());
         } else {
@@ -760,6 +830,11 @@ public abstract class View {
                 case ENDTURN:
                     toAppend = "[" + number + "] - End your turn\n";
                     text.append(toAppend);
+                    break;
+                case POWERUP:
+                    toAppend = "[" + number + "] - Use a powerup\n";
+                    text.append(toAppend);
+                    break;
             }
             number++;
         }
@@ -995,6 +1070,50 @@ public abstract class View {
             this.board.getSquareByCoordinates(x, y).setAvailableAmmoTile(tile.getValue());
         }
         showMessage("Ammo tiles filled");
+    }
+
+    private void update(RequirePowerupUseMessage message) {
+        this.availablePowerups = message.getPowerups();
+        StringBuilder text = new StringBuilder();
+        text.append("Select a powerup to use or skip:\n");
+        int index = 1;
+        for (Powerup p : message.getPowerups()) {
+            String toAppend = "[" + index + "] - " + p.getType() + " " + p.getColor() + "\n";
+            text.append(toAppend);
+            index++;
+        }
+        text.append("[" + index + "] - Cancel");
+        showMessage(text.toString());
+        this.state = USEPOWERUP;
+    }
+
+    private void update (PowerupPositionsAvailableMessage message) {
+        this.actionCoordinates = message.getPositions();
+        showMessage(this.board.arenaToString(message.getPositions()));
+        switch (message.getPowerup()) {
+            case TELEPORTER:
+                showMessage("You can move in the squares marked with '***'\nInsert [x,y]:");
+                break;
+            case NEWTON:
+                showMessage("You can move your target in the squares marked with '***'\nInsert [x,y]:");
+                break;
+        }
+        this.state = SELECTPOWERUPPOSITION;
+    }
+
+    private void update(PowerupTargetsAvailableMessage message) {
+        this.availableTargets = message.getTargets();
+        StringBuilder text = new StringBuilder();
+        text.append("Select a target:\n");
+        int index = 1;
+        for (GameCharacter c : message.getTargets()) {
+            String toAppend = "[" + index + "] - " + c + "\n";
+            text.append(toAppend);
+            index++;
+        }
+        text.setLength(text.length() - 1);
+        showMessage(text.toString());
+        this.state = SELECTPOWERUPTARGET;
     }
 
     public abstract void showMessage(String message);

@@ -79,6 +79,15 @@ public class VirtualView extends Observable implements Observer {
                 case "RequireWeaponPaymentMessage":
                     updateOne((SingleReceiverMessage) message);
                     break;
+                case "RequirePowerupUseMessage":
+                    updateOne((SingleReceiverMessage) message);
+                    break;
+                case "PowerupPositionsAvailableMessage":
+                    updateOne((SingleReceiverMessage) message);
+                    break;
+                case "PowerupTargetsAvailableMessage":
+                    updateOne((SingleReceiverMessage) message);
+                    break;
                 default:
                     updateAll((Message) message);
                     break;
