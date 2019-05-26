@@ -48,6 +48,7 @@ public class Board extends Observable {
         this.killshotTrack = new HashMap<>();
         this.timer = new Timer();
         this.deathPlayers = new ArrayList<>();
+        this.finalFrenzyOrder = new ArrayList<>();
     }
 
     public String toJson() {
@@ -334,7 +335,7 @@ public class Board extends Observable {
             type = TurnType.AFTER_DEATH;
         } else if(this.gameState == FIRSTTURN) {
             type = TurnType.FIRST_TURN;
-        } else if(this.finalFrenzyOrder != null) {
+        } else if(!this.finalFrenzyOrder.isEmpty()) {
             int currentPlayerOrder = 0;
             int firstPlayerOrder = 0;
             for(Player p : this.finalFrenzyOrder) {

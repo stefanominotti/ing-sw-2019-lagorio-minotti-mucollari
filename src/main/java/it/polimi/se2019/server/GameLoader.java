@@ -14,7 +14,7 @@ public class GameLoader {
 
     private static final Logger LOGGER = Logger.getLogger(GameLoader.class.getName());
 
-    private static final String PATH = "documents/";
+    private final String path;
     private FileReader reader;
     private FileWriter writer;
     private Board board;
@@ -26,6 +26,7 @@ public class GameLoader {
 
     public GameLoader() {
 
+        this.path = System.getProperty("user.home");
         this.parser = new JsonParser();
         this.gson = new Gson();
         this.board = new Board();
@@ -34,16 +35,16 @@ public class GameLoader {
     public Board loadBoard() {
 
         try {
-            this.reader = new FileReader(PATH + "game_state_data.json");
+            this.reader = new FileReader(this.path + "/" + "game_state_data.json");
         } catch (IOException E) {
             return this.board;
         }
         this.jsonElement = (JsonObject)parser.parse(reader);
         this.players = new ArrayList<>();
-        JsonArray frenezyOrder = jsonElement.getAsJsonArray("finalFrenezyOrder");
+        JsonArray frenzyOrder = jsonElement.getAsJsonArray("finalFrenzyOrder");
         JsonArray jsonPlayers = jsonElement.getAsJsonArray("players");
-        JsonObject weapon_square = jsonElement.getAsJsonObject("others").getAsJsonObject("weapon_square");
-        JsonArray ammos_square = jsonElement.getAsJsonObject("others").getAsJsonArray("ammos_square");
+        JsonObject weaponSquares = jsonElement.getAsJsonObject("others").getAsJsonObject("weapon_square");
+        JsonArray ammoSquares = jsonElement.getAsJsonObject("others").getAsJsonArray("ammos_square");
 
 
         this.board = gson.fromJson(jsonElement.get("board"), Board.class);
@@ -69,13 +70,13 @@ public class GameLoader {
             this.players.add(player);
         }
         this.board.setPlayers(this.players);
-        if (frenezyOrder != null) {
-            for (JsonElement frenezyElement : frenezyOrder) {
+        if (frenzyOrder != null) {
+            for (JsonElement frenzyElement : frenzyOrder) {
                 this.board.addFrenzyOrderPlayer(this.board.getPlayerByCharacter(
-                        gson.fromJson(frenezyElement.getAsJsonObject(), GameCharacter.class)));
+                        gson.fromJson(frenzyElement.getAsJsonObject(), GameCharacter.class)));
             }
         }
-        for (JsonElement ammoSquare : ammos_square) {
+        for (JsonElement ammoSquare : ammoSquares) {
             int posX = gson.fromJson(ammoSquare.getAsJsonObject().getAsJsonObject().get("x"), int.class);
             int posY = gson.fromJson(ammoSquare.getAsJsonObject().getAsJsonObject().get("y"), int.class);
             this.board.getArena().getSquareByCoordinate(posX, posY).addAmmoTile(
@@ -83,7 +84,7 @@ public class GameLoader {
         }
         for (Room room : this.board.getArena().getRoomList()) {
             if (room.hasSpawn()) {
-                for (JsonElement weapon : weapon_square.getAsJsonArray(room.getColor().toString())) {
+                for (JsonElement weapon : weaponSquares.getAsJsonArray(room.getColor().toString())) {
                     room.getSpawn().addWeapon(gson.fromJson(weapon.getAsJsonObject(), WeaponCard.class));
                 }
             }
@@ -107,7 +108,7 @@ public class GameLoader {
         }
         jObject.deleteCharAt(jObject.length() - 1);
         jObject.append("],");
-        jObject.append("\"arena\":" + "\"" + this.board.getArena().toJson()+ "\"" + ",");
+        jObject.append("\"arena\":" + "\"" + this.board.getArena().toJson() + "\"" + ",");
         jObject.append("\"others\":{");
         jObject.append("\"ammos_square\":[");
         for(Square square : this.board.getArena().getAllSquares()) {
@@ -128,7 +129,7 @@ public class GameLoader {
         jObject.deleteCharAt(jObject.length() - 1);
         jObject.append("}}}");
         try {
-            this.writer = new FileWriter(PATH + "game_state_data.json");
+            this.writer = new FileWriter(this.path + "/" + "game_state_data.json");
             this.writer.write(jObject.toString());
             this.writer.flush();
         } catch (IOException e) {
