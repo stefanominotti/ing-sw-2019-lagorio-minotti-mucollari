@@ -70,6 +70,10 @@ public class Player {
         this.connected = true;
     }
 
+    public void disconnect() {
+        this.connected = false;
+    }
+
     public boolean isConnected() {
         return this.connected;
     }

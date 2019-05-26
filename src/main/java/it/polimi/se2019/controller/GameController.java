@@ -113,6 +113,9 @@ public class GameController implements Observer {
 
     private void update(ClientDisconnectedMessage message) {
         this.model.handleDisconnection(message.getCharacter());
+        if (this.model.getPlayerByCharacter(message.getCharacter()) == this.turnController.getActivePlayer()) {
+            this.turnController.endTurn();
+        }
     }
 
     private void update(SkullsMessage message) {

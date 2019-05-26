@@ -240,6 +240,19 @@ public class Board extends Observable {
                     notifyChanges(new MasterChangedMessage(getValidPlayers().get(0).getCharacter()));
                 }
                 break;
+            default:
+                int validPlayers = 0;
+                Player disconnected = getPlayerByCharacter(player);
+                disconnected.disconnect();
+                notifyChanges(new ClientDisconnectedMessage(player, true));
+                for (Player p : this.players) {
+                    if (p.isConnected()) {
+                        validPlayers++;
+                    }
+                }
+                if (validPlayers < 3) {
+                    // termina partita TODO
+                }
         }
 
     }

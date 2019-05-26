@@ -694,6 +694,15 @@ public abstract class View {
             if (this.state == SETTINGARENA) {
                 showMessage("Select the Arena [1, 2, 3, 4]:");
             }
+        } else {
+            String nickname = "";
+            for (PlayerBoard board : this.enemyBoards) {
+                if (board.getCharacter() == message.getCharacter()) {
+                    nickname = board.getNickname();
+                    break;
+                }
+            }
+            showMessage(nickname + " - " + message.getCharacter() + " disconnected");
         }
     }
 
