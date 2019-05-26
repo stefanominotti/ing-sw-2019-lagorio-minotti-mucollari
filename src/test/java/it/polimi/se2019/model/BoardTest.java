@@ -166,7 +166,7 @@ public class BoardTest {
         players.add(p4);
         players.add(p1);
         players.add(p5);
-
+/*
         assertEquals(players, board.getPlayersByDistance(board.getArena().getSquareByCoordinate(1,1), 2));
         assertEquals(players, board.getPlayersByDistance(p2, 2));
         players.remove(p4);
@@ -174,7 +174,7 @@ public class BoardTest {
         players.remove(p1);
         assertEquals(players, board.getPlayersByDistance(p1, 0));
 
-/*        int dist = board.getArena().getSquareByCoordinate(2, 0)
+      int dist = board.getArena().getSquareByCoordinate(2, 0)
                     .minimumDistanceFrom(board.getArena().getSquareByCoordinate(3, 2));
         System.out.println(dist);
 
