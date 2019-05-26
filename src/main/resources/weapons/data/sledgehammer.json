@@ -76,7 +76,7 @@
       "effectCombo": false,
       "type": "MOVE",
       "amount": [
-        "0", "1", "2"
+        "0", "2"
       ],
       "target": {
         "type": "OTHERS",
@@ -92,7 +92,7 @@
           {
             "type": "DISTANCE",
             "distanceValues":[
-              "0", "1", "2"
+              "0", "2"
             ],
             "target": "SELF"
           }

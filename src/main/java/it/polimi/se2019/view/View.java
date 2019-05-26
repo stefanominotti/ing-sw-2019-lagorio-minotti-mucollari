@@ -1144,7 +1144,7 @@ public abstract class View {
         }
         try {
             String path = System.getProperty("user.home");
-            FileWriter writer = new FileWriter(path + "/" + "AdrenalinaClient.token");
+            FileWriter writer = new FileWriter(path + "/" + ".AdrenalinaClient.token");
             writer.write(message);
             writer.flush();
         } catch (IOException e) {
@@ -1156,7 +1156,7 @@ public abstract class View {
     private String getToken() {
         String path = System.getProperty("user.home");
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(path + "/" + "AdrenalinaClient.token"));
+            BufferedReader reader = new BufferedReader(new FileReader(path + "/" + ".AdrenalinaClient.token"));
             String message = reader.readLine();
             MessageDigest md = null;
             try {

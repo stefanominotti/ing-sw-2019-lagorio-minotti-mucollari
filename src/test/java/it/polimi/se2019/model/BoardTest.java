@@ -163,31 +163,44 @@ public class BoardTest {
         this.board.movePlayer(p5, board.getArena().getSquareByCoordinate(2, 2));
 
         List<Player> players = new ArrayList<>();
+        players.add(p2);
+        players.add(p3);
         players.add(p4);
-        players.add(p1);
-        players.add(p5);
-/*
-        assertEquals(players, board.getPlayersByDistance(board.getArena().getSquareByCoordinate(1,1), 2));
-        assertEquals(players, board.getPlayersByDistance(p2, 2));
-        players.remove(p4);
-        assertEquals(players, board.getPlayersByDistance(board.getArena().getSquareByCoordinate(2,2), 0));
-        players.remove(p1);
-        assertEquals(players, board.getPlayersByDistance(p1, 0));
 
-      int dist = board.getArena().getSquareByCoordinate(2, 0)
-                    .minimumDistanceFrom(board.getArena().getSquareByCoordinate(3, 2));
-        System.out.println(dist);
+        List<String> distances = new ArrayList<>();
+        distances.add("2");
+        distances.add("3");
 
-        for(Player p : board.getPlayersByDistance(board.getArena().getSquareByCoordinate(1,1), 2)){
+        assertEquals(players, board.getPlayersByDistance(p1, distances));
+
+        /* //DEBUG
+        for (Player p : board.getPlayersByDistance(p1, distances)) {
             System.out.println(p.getNickname());
         }
+         */
+    }
 
-        System.out.println(" ---- ");
+    @Test
+    public void getSquaresByDistanceTest() {
+        board.loadArena("1");
 
-        for(Player p : board.getPlayersByDistance(p2, 2)){
-            System.out.println(p.getNickname());
+        List<String> distances = new ArrayList<>();
+        distances.add("2");
+        distances.add("3");
+
+        List<Square> squares = new ArrayList<>();
+        squares.add(board.getArena().getSquareByCoordinate(2, 0));
+        squares.add(board.getArena().getSquareByCoordinate(1, 1));
+        squares.add(board.getArena().getSquareByCoordinate(2, 1));
+        squares.add(board.getArena().getSquareByCoordinate(1, 2));
+
+        assertEquals(squares, board.getSquaresByDistance(board.getArena().getSquareByCoordinate(0, 0), distances));
+
+        /* //DEBUG
+        for (Square s : board.getSquaresByDistance(board.getArena().getSquareByCoordinate(0, 0), distances)){
+            System.out.println(s.getX() + ", " + s.getY());
         }
-*/
+         */
     }
 
 }
