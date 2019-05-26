@@ -199,7 +199,7 @@ public class Server {
             case "ReconnectionMessage":
                 for(Player player : this.model.getPlayers()) {
                     GameCharacter character = player.veryfiPlayer(((ReconnectionMessage) message).getToken());
-                    if(character != null) {
+                    if(character != null && this.clients.containsKey(character)) {
                         this.clients.put(player.getCharacter(), client);
                         this.temporaryClients.remove(client);
                         this.clientNicknames.remove(client);

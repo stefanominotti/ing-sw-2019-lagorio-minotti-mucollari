@@ -4,13 +4,13 @@ import it.polimi.se2019.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class EffectsController {
 
     private Board board;
-    private WeaponCard weapon;
-    private Player player;
     private List<WeaponEffect> currentEffect;
+    private Weapon weapon;
     private boolean mainEffectApplied;
     private boolean secondaryEffectOneApplied;
     private boolean secondaryEffectTwoApplied;
@@ -18,7 +18,9 @@ public class EffectsController {
     private List<Player> hitByMain;
     private List<Player> hitBySecondary;
     private Player activeTarget;
-    private List<List<WeaponEffect>> availableEffects;
+    private List<List<WeaponEffect>> weaponEffects;
+    private TurnController turnController;
+    private List<WeaponEffect> effectsQueue;
 
     public EffectsController(Board board) {
         this.board = board;
@@ -28,124 +30,94 @@ public class EffectsController {
         this.secondaryEffectOneApplied = false;
         this.secondaryEffectTwoApplied = false;
         this.effectIndex = 0;
-        this.availableEffects = new ArrayList<>();
-        buildAvailableEffects(availableEffects);
+        this.weaponEffects = new ArrayList<>();
     }
 
-    private void buildAvailableEffects(List<List<WeaponEffect>> availableEffects) {
-        if (weapon.getWeaponType().getPrimaryEffect() != null) {
-            availableEffects.add(weapon.getWeaponType().getPrimaryEffect());
+    private void buildWeaponEffects(Weapon weapon) {
+        this.weapon = weapon;
+        this.weapon = weapon;
+        if (weapon.getPrimaryEffect() != null) {
+            weaponEffects.add(weapon.getPrimaryEffect());
         }
-        if (weapon.getWeaponType().getAlternativeMode() != null) {
-            availableEffects.add(weapon.getWeaponType().getAlternativeMode());
+        if (weapon.getAlternativeMode() != null) {
+            weaponEffects.add(weapon.getAlternativeMode());
         } else {
-            if (weapon.getWeaponType().getSecondaryEffectOne() != null) {
-                availableEffects.add(weapon.getWeaponType().getSecondaryEffectOne());
-                if (weapon.getWeaponType().getSecondaryEffectTwo() != null) {
-                    availableEffects.add(weapon.getWeaponType().getSecondaryEffectTwo());
+            if (weapon.getSecondaryEffectOne() != null) {
+                weaponEffects.add(weapon.getSecondaryEffectOne());
+                if (weapon.getSecondaryEffectTwo() != null) {
+                    weaponEffects.add(weapon.getSecondaryEffectTwo());
                 }
             }
         }
     }
 
-    EffectType getActiveEffectType() {
-        return null;
-    }
-
-    Player getActiveTarget() {
-        return null;
-    }
-
-    boolean canApply(List<WeaponEffect> effect) {
-        return true;
+    public List<List<WeaponEffect>> getWeaponEffects(Weapon weapon) {
+        buildWeaponEffects(weapon);
+        return weaponEffects;
     }
 
     public List<List<WeaponEffect>> getAvailableEffects() {
-        return availableEffects; //TO DO display effects: [p] primario - [a] alt - [1] sec1 - [2] sec 2 - [X] uscita
-    }
-
-    public void checkEffectChoise(String effectChosen) {
-        effectChosen = effectChosen.toLowerCase();
-
-        switch (effectChosen) {
-            case ("p"): {
-                if (!mainEffectApplied) {
-                    if (canApply(weapon.getWeaponType().getPrimaryEffect())) {
-                        // chiamata a metodo che esegue applicazione effetto
-                    } else {
-                        //messaggio effetto non applicabile
-                    }
-                } else {
-                    //messaggio azione non eseguibile
-                }
-
-            }
-
-            case ("a"): {
-                if (!mainEffectApplied && weapon.getWeaponType().getAlternativeMode() != null) {
-                    if (canApply(weapon.getWeaponType().getAlternativeMode())) {
-                        //metodi per performing action
-                        this.mainEffectApplied = true;
-                        availableEffects.remove(weapon.getWeaponType().getAlternativeMode());
-                        availableEffects.remove(weapon.getWeaponType().getPrimaryEffect());
-                    } else {
-                        //messaggio effetto non applicabile
-                    }
-                } else {
-                    //messaggio azione non eseguibile
-                }
-            }
-            case ("1"): {
-                if (mainEffectApplied && weapon.getWeaponType().getSecondaryEffectOne() != null
-                        && !this.secondaryEffectOneApplied && !checkPrimaryEffectDependency("secondaryEffectOne")) {
-                    if (canApply(weapon.getWeaponType().getSecondaryEffectOne())) {
-                        //metodi per performing action
-                        this.secondaryEffectOneApplied = true;
-                        availableEffects.remove(weapon.getWeaponType().getSecondaryEffectOne());
-                    } else {
-                        //messaggio azione non eseguibile
-                    }
-                }
-            }
-
-            case ("2"): {
-                if (mainEffectApplied && weapon.getWeaponType().getSecondaryEffectTwo() != null
-                        && !this.secondaryEffectTwoApplied && !checkPrimaryEffectDependency("secondaryEffectTwo")) {
-                    if (canApply(weapon.getWeaponType().getSecondaryEffectOne())) {
-                        //metodi per performing action
-                        this.secondaryEffectTwoApplied = true;
-                        availableEffects.remove(weapon.getWeaponType().getSecondaryEffectTwo());
-                    } else {
-                        //messaggio azione non eseguibile
-                    }
-                }
-            }
-
-            default: { //scelta non valida
+        List<List<WeaponEffect>> availableWeapons = new ArrayList<>();
+        if(!mainEffectApplied) {
+            availableWeapons.add(weapon.getPrimaryEffect());
+            if(weapon.getAlternativeMode() != null && checkCost(weapon.getAlternativeMode())) {
+                availableWeapons.add(weapon.getAlternativeMode());
             }
         }
-
+        if(!secondaryEffectOneApplied && checkCost(weapon.getSecondaryEffectOne())
+                && !weapon.getSecondaryEffectTwo().get(0).isCombo() && (
+                weapon.getPrimaryEffect().get(0).getEffectDependency().contains("secondaryEffectOne") || mainEffectApplied)) {
+            availableWeapons.add(weapon.getSecondaryEffectOne());
+        }
+        if(!secondaryEffectTwoApplied && checkCost(weapon.getSecondaryEffectTwo())
+                && !weapon.getSecondaryEffectTwo().get(0).isCombo() && (
+                !(weapon.getSecondaryEffectTwo().get(0).getEffectDependency().contains("secondaryEffectOne") &&
+                        !secondaryEffectOneApplied) &&
+                (weapon.getPrimaryEffect().get(0).getEffectDependency().contains("secondaryEffectTwo") || mainEffectApplied))) {
+            availableWeapons.add(weapon.getSecondaryEffectTwo());
+        }
+        return availableWeapons;
     }
 
-
-    boolean checkPrimaryEffectDependency(String effectDependency) {
-        for (effectIndex = 0; effectIndex < weapon.getWeaponType().getPrimaryEffect().size(); effectIndex++) {
-            if (weapon.getWeaponType().getPrimaryEffect().get(effectIndex).getEffectDependency()
-                    .contains(effectDependency)){
-                return true;
+    public boolean checkCost(List<WeaponEffect> effect) {
+        for(Map.Entry<AmmoType, Integer> cost :  effect.get(0).getCost().entrySet()) {
+            Integer powerupAmmo = 0;
+            for(Powerup powerup : turnController.getActivePlayer().getPowerups()) {
+                if(powerup.getColor() == cost.getKey()){
+                    powerupAmmo++;
+                }
+            }
+            if(cost.getValue() > turnController.getActivePlayer().getAvailableAmmos().get(cost.getKey()) + powerupAmmo) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
-    List<Square> getAvailableSquares(WeaponEffect effect, Player activePlayer) {
-        return new ArrayList<>();
-    }
+    public void efectSelected(String effectType) {
+        List<WeaponEffect> effect = null;
+        switch (effectType) {
+            case "primary":
+                effect = weapon.getPrimaryEffect();
+                break;
+            case "alternative":
+                effect = weapon.getAlternativeMode();
+                break;
+            case "secondaryOne":
+                effect = weapon.getSecondaryEffectOne();
+                break;
+            case "secondaryTwo":
+                effect = weapon.getSecondaryEffectTwo();
+                break;
+        }
+        for(WeaponEffect effectPart : effect) {
+            if(!effectPart.equals(effect.get(0)) && !effectPart.getEffectDependency().isEmpty()) {
+                //chiedi al giocatore se vuole attivare prima l'effetto secondario
+                return;
+            } else {
+                this.effectsQueue.add(effectPart);
+            }
 
-    List<List<Player>> getAvailableTargets(WeaponEffect effect, Player activePlayer) {
-        List<List<Player>> availableTargets = new ArrayList<>();
-        return availableTargets;
+        }
     }
-
-    void endAttack() { }
 }

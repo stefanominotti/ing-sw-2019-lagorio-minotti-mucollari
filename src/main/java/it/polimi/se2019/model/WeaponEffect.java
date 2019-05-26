@@ -35,7 +35,7 @@ public class WeaponEffect {
 
     public List<String> getEffectDependency() {
         if(effectDependency == null){
-            return new ArrayList<>();
+            return null;
         }
         return new ArrayList<>(this.effectDependency);
     }

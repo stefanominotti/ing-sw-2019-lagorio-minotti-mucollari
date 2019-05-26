@@ -19,6 +19,8 @@ public class TurnController {
     private boolean finalFrenzy;
     private WeaponCard weaponToGet;
     private WeaponCard switchWeapon;
+    private EffectsController effectsController;
+
 
     public TurnController(Board board, GameController controller) {
         this.state = TurnState.SELECTACTION;
@@ -435,6 +437,18 @@ public class TurnController {
         }
         handleReload();
     }
+
+    void availableWeapons() {
+        Map<Weapon, List<List<WeaponEffect>>> availableWeapons = new HashMap<>();
+        for(WeaponCard weapon : activePlayer.getWeapons()) {
+            if(weapon.isReady()) {
+                availableWeapons.put(weapon.getWeaponType(),
+                        this.effectsController.getWeaponEffects((weapon.getWeaponType())));
+            }
+        }
+        this.controller.send(new AvailableWeaponsMessage(this.activePlayer.getCharacter(), availableWeapons));
+    }
+
 
     void endTurn() {
         this.board.endTurn(this.activePlayer);
