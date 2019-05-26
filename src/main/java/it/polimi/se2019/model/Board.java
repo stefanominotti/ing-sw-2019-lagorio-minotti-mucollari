@@ -614,25 +614,33 @@ public class Board extends Observable {
         return visiblePlayers;
     }
 
-    public List<Player> getPlayersByDistance (Square square, int amount){
+    //Usare se il target è uno Square
+    public List<Player> getPlayersByDistance (Square square, List<String> amount){
         List<Player> players = new ArrayList<>();
-        if (amount == 0){
+        if (amount.size() == 1 && amount.get(0) == "0") {
             players.addAll(square.getActivePlayers());
         }
         else {
-            for(Square s : this.getArena().getAllSquares()){
-                if (square.minimumDistanceFrom(s) == amount && s != square){
-                    players.addAll(s.getActivePlayers());
-                }
+            for(Square s : getSquaresByDistance(square, amount)) {
+                players.addAll(s.getActivePlayers());
             }
+
         }
         return players;
     }
-    public List<Player> getPlayersByDistance (Player player, int amount){
+
+    //Usare se il target è un Player
+    public List<Player> getPlayersByDistance (Player player, List<String> amount){
         List<Player> players = new ArrayList<>();
-        players.addAll(getPlayersByDistance(player.getPosition(), amount));
-        if(players.contains(player)) {
+        if (amount.size() == 1 && amount.get(0) == "0") {
+            players.addAll(player.getPosition().getActivePlayers());
             players.remove(player);
+        }
+        else {
+            for(Square s : getSquaresByDistance(player.getPosition(), amount)) {
+                players.addAll(s.getActivePlayers());
+            }
+
         }
         return players;
     }
@@ -652,4 +660,44 @@ public class Board extends Observable {
         }
         return visibleRooms;
     }
+
+    public List<Square> getSquaresByDistance (Square square, List<String> amount){
+        List<Square> availableSquares = new ArrayList<>();
+        if (amount.size() == 1) {
+            if (amount.get(0) == "0") {
+                availableSquares.add(square);
+            }
+        }
+        if (amount.size() == 2) {
+            if (amount.contains("MAX")) {
+                for(Square s: arena.getAllSquares()){
+                    if(square.minimumDistanceFrom(s) >= Integer.parseInt(amount.get(0))
+                            && s != square) {
+                        availableSquares.add(s);
+                    }
+                }
+            }
+            else {
+                for(Square s: arena.getAllSquares()){
+                    if(square.minimumDistanceFrom(s) >= Integer.parseInt(amount.get(0))
+                            && square.minimumDistanceFrom(s) <= Integer.parseInt(amount.get(1))
+                            && s != square) {
+                        availableSquares.add(s);
+                    }
+                }
+            }
+        }
+        return availableSquares;
+    }
+
+    public List<Square> getVisibleSquares (Player player){
+        List<Square> availableSquares = new ArrayList<>();
+        for (Square s : arena.getAllSquares()) {
+            if (player.getPosition().canSee(s)){
+                availableSquares.add(s);
+            }
+        }
+        return availableSquares;
+    }
+
 }
