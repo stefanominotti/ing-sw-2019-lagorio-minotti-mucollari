@@ -17,6 +17,7 @@ public class TurnController {
     private TurnState state;
     private Player powerupTarget;
     private boolean finalFrenzy;
+    private boolean beforeFirstPlayer;
     private WeaponCard weaponToGet;
     private WeaponCard switchWeapon;
     private EffectsController effectsController;
@@ -52,6 +53,18 @@ public class TurnController {
                 break;
             case NORMAL:
                 this.movesLeft = 2;
+                sendActions();
+                break;
+            case FINAL_FRENZY_FIRST:
+                this.movesLeft = 2;
+                this.finalFrenzy = true;
+                this.beforeFirstPlayer = true;
+                sendActions();
+                break;
+            case FINAL_FRENZY_AFTER:
+                this.movesLeft = 1;
+                this.finalFrenzy = true;
+                this.beforeFirstPlayer = false;
                 sendActions();
                 break;
         }
@@ -109,6 +122,10 @@ public class TurnController {
     }
 
     void calculateMovementAction() {
+        int maxDistance = 3;
+        if (this.finalFrenzy) {
+            maxDistance = 4;
+        }
         Square position = this.activePlayer.getPosition();
         List<Coordinates> movements = new ArrayList<>();
         for (Square s : this.board.getArena().getAllSquares()) {
@@ -117,7 +134,7 @@ public class TurnController {
             }
             List<List<Square>> paths = position.pathsTo(s);
             for (List<Square> path : paths) {
-                if (path.size() - 1 <= 3) {
+                if (path.size() - 1 <= maxDistance) {
                     movements.add(new Coordinates(s.getX(), s.getY()));
                     break;
                 }
@@ -130,8 +147,10 @@ public class TurnController {
     void calculatePickupAction() {
         Square position = this.activePlayer.getPosition();
         int maxDistance = 1;
-        if (this.activePlayer.getDamages().size() > 2) {
+        if (this.activePlayer.getDamages().size() > 2 || (this.finalFrenzy && this.beforeFirstPlayer)) {
             maxDistance = 2;
+        } else if (this.finalFrenzy) {
+            maxDistance = 3;
         }
         List<Coordinates> movements = new ArrayList<>();
         for (Square s : this.board.getArena().getAllSquares()) {
@@ -246,8 +265,10 @@ public class TurnController {
                 availableActions.add(ActionType.RELOAD);
             }
         } else {
-            if (this.finalFrenzy) {
-                // invia mosse frenesia finale
+            if (this.finalFrenzy && this.beforeFirstPlayer) {
+                availableActions = new ArrayList<>(Arrays.asList(ActionType.MOVE, ActionType.PICKUP, ActionType.SHOT));
+            } else if (this.finalFrenzy && !this.beforeFirstPlayer) {
+                availableActions = new ArrayList<>(Arrays.asList(ActionType.PICKUP, ActionType.SHOT));
             } else {
                 availableActions = new ArrayList<>(Arrays.asList(ActionType.MOVE, ActionType.PICKUP, ActionType.SHOT));
             }
@@ -435,7 +456,11 @@ public class TurnController {
                 break;
             }
         }
-        handleReload();
+        if (this.movesLeft != 0) {
+            // muoviti e spara (frenesia finale)
+        } else {
+            handleReload();
+        }
     }
 
     void availableWeapons() {
