@@ -152,7 +152,7 @@ public class GameController implements Observer {
     }
 
     private void update(RechargeWeaponMessage message) {
-        this.turnController.rechargeWeapon(message.getWeapon());
+        this.turnController.reloadWeapon(message.getWeapon());
     }
 
     private void update(WeaponPaymentMessage message) {
@@ -160,9 +160,9 @@ public class GameController implements Observer {
     }
 
     private void update(UsePowerupMessage message) {
-        if (message.getPowerup() == null && this.turnController.getActiveplayer().getCharacter() == message.getPlayer()) {
+        if (message.getPowerup() == null && this.turnController.getActivePlayer().getCharacter() == message.getPlayer()) {
             this.turnController.cancelPowerup();
-        } else if (message.getPowerup() == null && this.turnController.getActiveplayer().getCharacter() != message.getPlayer()) {
+        } else if (message.getPowerup() == null && this.turnController.getActivePlayer().getCharacter() != message.getPlayer()) {
             // powerup usati nel turno avversario
         } else {
             this.powerupsController.startEffect(message.getPlayer(), message.getPowerup());

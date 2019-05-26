@@ -835,6 +835,10 @@ public abstract class View {
                     toAppend = "[" + number + "] - Use a powerup\n";
                     text.append(toAppend);
                     break;
+                case RELOAD:
+                    toAppend = "[" + number + "] - Reload weapons\n";
+                    text.append(toAppend);
+                    break;
             }
             number++;
         }

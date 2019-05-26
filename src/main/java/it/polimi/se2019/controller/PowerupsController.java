@@ -53,18 +53,36 @@ public class PowerupsController {
             case NEWTON:
                 int x = this.target.getPosition().getX();
                 int y = this.target.getPosition().getY();
-                for (int i=1; i<3; i++) {
-                    if(this.board.getArena().getSquareByCoordinate(x+i, y) != null) {
-                        positions.add(new Coordinates(x+i, y));
+                Square current = this.board.getArena().getSquareByCoordinate(x + 1, y);
+                if (current != null && current.getNearbyAccessibility().get(CardinalPoint.WEST)) {
+                    positions.add(new Coordinates(x+1, y));
+                    current = this.board.getArena().getSquareByCoordinate(x + 2, y);
+                    if (current != null && current.getNearbyAccessibility().get(CardinalPoint.WEST)) {
+                        positions.add(new Coordinates(x+2, y));
                     }
-                    if(this.board.getArena().getSquareByCoordinate(x-i, y) != null) {
-                        positions.add(new Coordinates(x-i, y));
+                }
+                current = this.board.getArena().getSquareByCoordinate(x - 1, y);
+                if (current != null && current.getNearbyAccessibility().get(CardinalPoint.EAST)) {
+                    positions.add(new Coordinates(x-1, y));
+                    current = this.board.getArena().getSquareByCoordinate(x - 2, y);
+                    if (current != null && current.getNearbyAccessibility().get(CardinalPoint.EAST)) {
+                        positions.add(new Coordinates(x-2, y));
                     }
-                    if(this.board.getArena().getSquareByCoordinate(x, y+i) != null) {
-                        positions.add(new Coordinates(x, y+i));
+                }
+                current = this.board.getArena().getSquareByCoordinate(x, y - 1);
+                if (current != null && current.getNearbyAccessibility().get(CardinalPoint.SOUTH)) {
+                    positions.add(new Coordinates(x, y-1));
+                    current = this.board.getArena().getSquareByCoordinate(x, y - 2);
+                    if (current != null && current.getNearbyAccessibility().get(CardinalPoint.SOUTH)) {
+                        positions.add(new Coordinates(x, y-2));
                     }
-                    if(this.board.getArena().getSquareByCoordinate(x, y-i) != null) {
-                        positions.add(new Coordinates(x, y-i));
+                }
+                current = this.board.getArena().getSquareByCoordinate(x, y + 1);
+                if (current != null && current.getNearbyAccessibility().get(CardinalPoint.NORTH)) {
+                    positions.add(new Coordinates(x, y+1));
+                    current = this.board.getArena().getSquareByCoordinate(x, y + 2);
+                    if (current != null && current.getNearbyAccessibility().get(CardinalPoint.NORTH)) {
+                        positions.add(new Coordinates(x, y+2));
                     }
                 }
                 break;
@@ -91,4 +109,41 @@ public class PowerupsController {
         this.board.movePlayer(this.target, this.board.getArena().getSquareByCoordinate(position.getX(), position.getY()));
         this.turnController.handleEndPowerup();
     }
+
+    public List<Player> getNewtonTargets(Player p) {
+        List<Player> targets = new ArrayList<>();
+        for (Player target : this.board.getPlayers()) {
+            if (!target.isConnected() || target.getPosition() == null || target == p) {
+                continue;
+            }
+            int x = target.getPosition().getX();
+            int y = target.getPosition().getY();
+            Square current = this.board.getArena().getSquareByCoordinate(x + 1, y);
+            if (current != null && current.getNearbyAccessibility().get(CardinalPoint.WEST)) {
+                targets.add(target);
+                continue;
+            }
+            current = this.board.getArena().getSquareByCoordinate(x - 1, y);
+            if (current != null && current.getNearbyAccessibility().get(CardinalPoint.EAST)) {
+                targets.add(target);
+                continue;
+            }
+            current = this.board.getArena().getSquareByCoordinate(x, y + 1);
+            if (current != null && current.getNearbyAccessibility().get(CardinalPoint.SOUTH)) {
+                targets.add(target);
+                continue;
+            }
+            current = this.board.getArena().getSquareByCoordinate(x, y - 1);
+            if (current != null && current.getNearbyAccessibility().get(CardinalPoint.NORTH)) {
+                targets.add(target);
+                continue;
+            }
+        }
+        return targets;
+    }
+
+    public List<Player> getNewtonTargets() {
+        return getNewtonTargets(this.activePlayer);
+    }
+
 }

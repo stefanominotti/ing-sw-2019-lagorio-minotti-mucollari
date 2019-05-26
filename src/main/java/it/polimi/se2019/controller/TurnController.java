@@ -27,7 +27,7 @@ public class TurnController {
         this.movesLeft = 2;
     }
 
-    Player getActiveplayer() {
+    Player getActivePlayer() {
         return this.activePlayer;
     }
 
@@ -80,7 +80,7 @@ public class TurnController {
         int index = 0;
         for(GameCharacter player : playersOrder.keySet()) {
             this.board.raisePlayerScore(this.board.getPlayerByCharacter(player),
-                    this.getActiveplayer().getKillshotPoints().get(index));
+                    this.activePlayer.getKillshotPoints().get(index));
             index++;
         }
     }
@@ -187,21 +187,21 @@ public class TurnController {
                 cancelAction();
                 break;
             case ENDTURN:
-                this.state = ENDING;
-                handleRecharge();
+                handleReload();
                 break;
             case MOVE:
                 this.movesLeft--;
-                this.state = MOVING;
                 calculateMovementAction();
                 break;
             case PICKUP:
                 this.movesLeft--;
-                this.state = PICKINGUP;
                 calculatePickupAction();
                 break;
             case POWERUP:
                 calculatePowerupAction();
+                break;
+            case RELOAD:
+                handleReload();
                 break;
         }
     }
@@ -211,14 +211,13 @@ public class TurnController {
         sendActions();
     }
 
-
     void cancelPowerup() {
         sendActions();
     }
 
     void calculatePowerupAction() {
         List<Powerup> availablePowerups = new ArrayList<>();
-        for (Powerup p : this.getActiveplayer().getPowerups()) {
+        for (Powerup p : this.activePlayer.getPowerups()) {
             if (p.getType() == PowerupType.TELEPORTER || p.getType() == PowerupType.NEWTON) {
                 if (p.getType() == PowerupType.NEWTON) {
                     List<GameCharacter> targets = new ArrayList<>();
@@ -240,49 +239,38 @@ public class TurnController {
 
     public void sendActions() {
         List<ActionType> availableActions = new ArrayList<>();
-        if (this.finalFrenzy) {
-            // invia mosse frenesia finale
-        } else {
-            availableActions = new ArrayList<>(Arrays.asList(ActionType.MOVE, ActionType.PICKUP, ActionType.SHOT));
-        }
-        for (Powerup p : this.getActiveplayer().getPowerups()) {
-            if (p.getType() == PowerupType.TELEPORTER || p.getType() == PowerupType.NEWTON) {
-                if (p.getType() == PowerupType.NEWTON) {
-                    List<GameCharacter> targets = new ArrayList<>();
-                    for (Player player : this.board.getPlayers()) {
-                        if (player.getPosition() != null && player.isConnected()  && player != this.activePlayer) {
-                            targets.add(player.getCharacter());
-                        }
-                    }
-                    if (!targets.isEmpty()) {
-                        availableActions.add(ActionType.POWERUP);
-                        break;
-                    }
-                } else {
-                    availableActions.add(ActionType.POWERUP);
-                    break;
-                }
+        if (this.movesLeft == 0) {
+            if (canReload()) {
+                availableActions.add(ActionType.RELOAD);
             }
+        } else {
+            if (this.finalFrenzy) {
+                // invia mosse frenesia finale
+            } else {
+                availableActions = new ArrayList<>(Arrays.asList(ActionType.MOVE, ActionType.PICKUP, ActionType.SHOT));
+            }
+        }
+        for (Powerup p : this.activePlayer.getPowerups()) {
+            if (p.getType() == PowerupType.TELEPORTER || (p.getType() == PowerupType.NEWTON && canUseNewton())) {
+                availableActions.add(ActionType.POWERUP);
+                break;
+            }
+        }
+        if(availableActions.isEmpty()) {
+            endTurn();
+            return;
         }
         this.controller.send(new AvailableActionsMessage(this.activePlayer.getCharacter(), availableActions));
         this.state = SELECTACTION;
     }
 
     void handleEndAction() {
-        if (this.movesLeft == 0) {
-            handleRecharge();
-            return;
-        }
         sendActions();
         this.state = TurnState.SELECTACTION;
     }
 
     void handleEndPowerup() {
-        if (this.movesLeft != 0) {
-            sendActions();
-        } else {
-            // chiedi nuovamente powerup o ricarica
-        }
+        sendActions();
     }
 
     void movementAction(Coordinates coordinates) {
@@ -389,7 +377,7 @@ public class TurnController {
         }
     }
 
-    void handleRecharge() {
+    List<Weapon> getRechargeableWeapons() {
         List<Weapon> unloadedWeapons = new ArrayList<>();
         for (WeaponCard weapon : this.activePlayer.getWeapons()) {
             if (weapon.isReady()) {
@@ -410,18 +398,26 @@ public class TurnController {
                 unloadedWeapons.add(weapon.getWeaponType());
             }
         }
-        if (unloadedWeapons.isEmpty() && !this.finalFrenzy) {
+        return unloadedWeapons;
+    }
+
+    boolean canReload() {
+        return !getRechargeableWeapons().isEmpty();
+    }
+
+    void handleReload() {
+        if (!canReload() && !this.finalFrenzy) {
             endTurn();
             return;
         }
-        if (!unloadedWeapons.isEmpty() && this.finalFrenzy) {
+        if (canReload() && this.finalFrenzy) {
             // gestione ricarica durante azione frenesia finale
             return;
         }
-        this.controller.send(new RequireWeaponLoadMessage(this.activePlayer.getCharacter(), unloadedWeapons));
+        this.controller.send(new RequireWeaponLoadMessage(this.activePlayer.getCharacter(), getRechargeableWeapons()));
     }
 
-    void rechargeWeapon(Weapon weapon) {
+    void reloadWeapon(Weapon weapon) {
         if (weapon == null) {
             endTurn();
             return;
@@ -437,14 +433,41 @@ public class TurnController {
                 break;
             }
         }
-        handleRecharge();
+        handleReload();
     }
 
     void endTurn() {
         this.board.endTurn(this.activePlayer);
     }
 
-    Player getActivePlayer() {
-        return this.activePlayer;
+    public boolean canUseNewton() {
+        List<Player> targets = new ArrayList<>();
+        for (Player target : this.board.getPlayers()) {
+            if (!target.isConnected() || target.getPosition() == null || target == this.activePlayer) {
+                continue;
+            }
+            int x = target.getPosition().getX();
+            int y = target.getPosition().getY();
+            Square current = this.board.getArena().getSquareByCoordinate(x + 1, y);
+            if (current != null && current.getNearbyAccessibility().get(CardinalPoint.WEST)) {
+                return true;
+            }
+            current = this.board.getArena().getSquareByCoordinate(x - 1, y);
+            if (current != null && current.getNearbyAccessibility().get(CardinalPoint.EAST)) {
+                targets.add(target);
+                return true;
+            }
+            current = this.board.getArena().getSquareByCoordinate(x, y + 1);
+            if (current != null && current.getNearbyAccessibility().get(CardinalPoint.SOUTH)) {
+                targets.add(target);
+                return true;
+            }
+            current = this.board.getArena().getSquareByCoordinate(x, y - 1);
+            if (current != null && current.getNearbyAccessibility().get(CardinalPoint.NORTH)) {
+                targets.add(target);
+                return true;
+            }
+        }
+        return false;
     }
 }
