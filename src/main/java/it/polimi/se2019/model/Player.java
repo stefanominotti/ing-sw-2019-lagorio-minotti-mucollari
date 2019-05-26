@@ -59,7 +59,7 @@ public class Player {
         return jObject.toString();
     }
 
-    public GameCharacter veryfiPlayer(String token) {
+    public GameCharacter verifyPlayer(String token) {
         if(this.token.equals(token)) {
             return this.character;
         }
