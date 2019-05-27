@@ -93,7 +93,7 @@ public class PowerupsController {
     private void requireTarget() {
         List<GameCharacter> targets = new ArrayList<>();
         for (Player p : this.board.getPlayers()) {
-            if (p.getPosition() != null && p.isConnected() && p != this.activePlayer) {
+            if (p.getPosition() != null && p != this.activePlayer) {
                 targets.add(p.getCharacter());
             }
         }
@@ -113,7 +113,7 @@ public class PowerupsController {
     public List<Player> getNewtonTargets(Player p) {
         List<Player> targets = new ArrayList<>();
         for (Player target : this.board.getPlayers()) {
-            if (!target.isConnected() || target.getPosition() == null || target == p) {
+            if (target.getPosition() == null || target == p) {
                 continue;
             }
             int x = target.getPosition().getX();

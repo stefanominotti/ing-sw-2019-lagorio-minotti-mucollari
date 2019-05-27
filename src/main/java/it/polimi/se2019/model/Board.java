@@ -157,6 +157,10 @@ public class Board extends Observable {
     }
 
     public void addPlayer(GameCharacter character, String nickname, String token) {
+        if (getPlayerByCharacter(character) != null) {
+            getPlayerByCharacter(character).connect();
+            return;
+        }
         this.players.add(new Player(character, nickname, token));
         Map<GameCharacter, String> others = new EnumMap<>(GameCharacter.class);
         for (Player p : this.players) {
@@ -330,8 +334,12 @@ public class Board extends Observable {
             this.gameState = INGAME;
         }
         Player nextPlayer;
-        if(!this.deathPlayers.isEmpty()) {
-            nextPlayer = this.deathPlayers.get(0);
+        if(availableDeathPlayers()) {
+            int index = 0;
+            do {
+                nextPlayer = this.deathPlayers.get(index);
+                index++;
+            } while (!nextPlayer.isConnected());
         } else {
             incrementCurrentPlayer();
             nextPlayer = this.players.get(this.currentPlayer);
@@ -340,6 +348,18 @@ public class Board extends Observable {
         fillWeaponStores();
         notifyChanges(new EndTurnMessage(player.getCharacter()));
         startTurn(nextPlayer);
+    }
+
+    public boolean availableDeathPlayers() {
+        if (this.deathPlayers.isEmpty()) {
+            return false;
+        }
+        for (Player p : this.deathPlayers) {
+            if (p.isConnected()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void startTurn(Player player) {
@@ -375,6 +395,9 @@ public class Board extends Observable {
             this.currentPlayer = 0;
         } else {
             this.currentPlayer++;
+        }
+        if (!this.players.get(this.currentPlayer).isConnected()) {
+            incrementCurrentPlayer();
         }
     }
 
@@ -680,7 +703,7 @@ public class Board extends Observable {
     public List<Square> getSquaresByDistance (Square square, List<String> amount) {
         List<Square> availableSquares = new ArrayList<>();
         if (amount.size() == 1) {
-            for (Square s : arena.getAllSquares()) {
+            for (Square s : this.arena.getAllSquares()) {
                 if (square.minimumDistanceFrom(s) == Integer.parseInt(amount.get(0))) {
                     availableSquares.add(s);
                 }
@@ -688,7 +711,7 @@ public class Board extends Observable {
         }
         if (amount.size() == 2) {
             if (amount.contains("MAX")) {
-                for(Square s: arena.getAllSquares()) {
+                for(Square s: this.arena.getAllSquares()) {
                     if(square.minimumDistanceFrom(s) >= Integer.parseInt(amount.get(0))
                             && s != square) {
                         availableSquares.add(s);
@@ -696,7 +719,7 @@ public class Board extends Observable {
                 }
             }
             else {
-                for(Square s: arena.getAllSquares()) {
+                for(Square s: this.arena.getAllSquares()) {
                     if(square.minimumDistanceFrom(s) >= Integer.parseInt(amount.get(0))
                             && square.minimumDistanceFrom(s) <= Integer.parseInt(amount.get(1))
                             && s != square) {
