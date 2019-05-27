@@ -7,6 +7,8 @@ import it.polimi.se2019.model.messages.*;
 import it.polimi.se2019.view.PlayerBoard;
 import it.polimi.se2019.view.SquareView;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -18,9 +20,11 @@ import static java.util.stream.Collectors.toMap;
 
 public class Board extends Observable {
 
-    private static final long STARTTIME = 10L*1000L;
     private static final int MAX_WEAPONS_STORE = 3;
 
+    private long startTimer;
+    private long turnTimer;
+    private long respawnTimer;
     private int skulls;
     private Arena arena;
     private List<Player> players;
@@ -49,6 +53,7 @@ public class Board extends Observable {
         this.timer = new Timer();
         this.deathPlayers = new ArrayList<>();
         this.finalFrenzyOrder = new ArrayList<>();
+        loadTimers();
     }
 
     public String toJson() {
@@ -171,7 +176,7 @@ public class Board extends Observable {
         notifyChanges(new PlayerCreatedMessage(character, nickname, others));
 
         if (getValidPlayers().size() > 3) {
-            long remainingTime = STARTTIME/1000L -
+            long remainingTime = this.startTimer /1000L -
                     Duration.between(this.gameTimerStartDate, LocalDateTime.now()).getSeconds();
             notifyChanges(new GameSetupTimerStartedMessage(remainingTime));
         }
@@ -182,8 +187,8 @@ public class Board extends Observable {
                 public void run() {
                     finalizePlayersCreation();
                 }
-            }, STARTTIME);
-            notifyChanges(new GameSetupTimerStartedMessage(STARTTIME/1000L));
+            }, this.startTimer);
+            notifyChanges(new GameSetupTimerStartedMessage(this.startTimer /1000L));
             this.gameTimerStartDate = LocalDateTime.now();
         }
     }
@@ -271,6 +276,27 @@ public class Board extends Observable {
             this.killshotTrack.put(i+1, new ArrayList<>());
         }
         notifyChanges(new SkullsSetMessage(getValidPlayers().get(0).getCharacter()));
+    }
+
+    public void loadTimers() {
+        String path = System.getProperty("user.home");
+        FileReader reader;
+        try {
+            reader = new FileReader(path + "/" + "settings.json");
+        } catch (IOException E) {
+            this.startTimer = 10L*1000L;
+            this.turnTimer = 100L*1000L;
+            this.respawnTimer = 30L*1000L;
+            return;
+        }
+
+        Gson gson = new Gson();
+        JsonParser parser = new JsonParser();
+        JsonObject jsonElement = (JsonObject)parser.parse(reader);
+
+        this.startTimer = gson.fromJson(jsonElement.get("startTimer"), Long.class);
+        this.turnTimer = gson.fromJson(jsonElement.get("turnTimer"), Long.class);
+        this.respawnTimer = gson.fromJson(jsonElement.get("respawnTimer"), Long.class);
     }
 
     public void createArena(String arenaNumber) {
@@ -366,7 +392,7 @@ public class Board extends Observable {
         TurnType type;
         if(player.isDead()) {
             type = TurnType.AFTER_DEATH;
-        } else if(this.gameState == FIRSTTURN) {
+        } else if(this.gameState == FIRSTTURN || player.getPosition() == null) {
             type = TurnType.FIRST_TURN;
         } else if(!this.finalFrenzyOrder.isEmpty()) {
             int currentPlayerOrder = 0;
@@ -399,6 +425,25 @@ public class Board extends Observable {
         if (!this.players.get(this.currentPlayer).isConnected()) {
             incrementCurrentPlayer();
         }
+    }
+
+    public void startTurnTimer(Player player) {
+        if (player == this.players.get(this.currentPlayer)) {
+            this.timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    endTurn(player);
+                }
+            }, this.turnTimer);
+        } else {
+            this.timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    endTurn(player);
+                }
+            }, this.respawnTimer);
+        }
+        this.gameTimerStartDate = LocalDateTime.now();
     }
 
     public int getCurrentPlayer() {

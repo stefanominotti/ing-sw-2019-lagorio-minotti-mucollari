@@ -40,8 +40,10 @@ public class TurnController {
             case FIRST_TURN:
                 this.movesLeft = 2;
                 this.state = FIRST_RESPAWNING;
-                this.board.drawPowerup(this.activePlayer);
-                this.board.drawPowerup(this.activePlayer);
+                if (this.activePlayer.getPowerups().size() != 2) {
+                    this.board.drawPowerup(this.activePlayer);
+                    this.board.drawPowerup(this.activePlayer);
+                }
                 this.controller.send(new DiscardToSpawnMessage(player));
                 break;
             case AFTER_DEATH:
@@ -68,6 +70,7 @@ public class TurnController {
                 sendActions();
                 break;
         }
+        this.board.startTurnTimer(this.activePlayer);
     }
 
     private void countScore() {

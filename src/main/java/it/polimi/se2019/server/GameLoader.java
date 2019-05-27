@@ -15,13 +15,9 @@ public class GameLoader {
     private static final Logger LOGGER = Logger.getLogger(GameLoader.class.getName());
 
     private final String path;
-    private FileReader reader;
-    private FileWriter writer;
     private Board board;
-    private List<Player> players;
 
     private JsonParser parser;
-    private JsonObject jsonElement;
     private Gson gson;
 
     public GameLoader() {
@@ -33,14 +29,17 @@ public class GameLoader {
     }
 
     public Board loadBoard() {
-
+        FileReader reader;
+        JsonObject jsonElement;
+        List<Player> players;
+        
         try {
-            this.reader = new FileReader(this.path + "/" + "game_state_data.json");
+            reader = new FileReader(this.path + "/" + "game_state_data.json");
         } catch (IOException E) {
             return this.board;
         }
-        this.jsonElement = (JsonObject)parser.parse(reader);
-        this.players = new ArrayList<>();
+        jsonElement = (JsonObject)this.parser.parse(reader);
+        players = new ArrayList<>();
         JsonArray frenzyOrder = jsonElement.getAsJsonArray("finalFrenzyOrder");
         JsonArray jsonPlayers = jsonElement.getAsJsonArray("players");
         JsonObject weaponSquares = jsonElement.getAsJsonObject("others").getAsJsonObject("weapon_square");
@@ -48,9 +47,10 @@ public class GameLoader {
 
 
         this.board = gson.fromJson(jsonElement.get("board"), Board.class);
-        this.board.loadArena(gson.fromJson(jsonElement.get("arena"), String.class));
+        this.board.loadTimers();
+        this.board.loadArena(this.gson.fromJson(jsonElement.get("arena"), String.class));
         for (JsonElement jsonPlayer : jsonPlayers) {
-            Player player = gson.fromJson(jsonPlayer.getAsJsonObject().get("player"), Player.class);
+            Player player = this.gson.fromJson(jsonPlayer.getAsJsonObject().get("player"), Player.class);
             for (WeaponCard weapon : player.getWeapons()) {
                 weapon.setOwner(player);
             }
@@ -58,34 +58,34 @@ public class GameLoader {
                 this.board.addDeadPlayer(player);
             }
             try {
-                int posX = gson.fromJson(
+                int posX = this.gson.fromJson(
                         jsonPlayer.getAsJsonObject().get("player_position").getAsJsonObject().get("x"), int.class);
-                int posY = gson.fromJson(
+                int posY = this.gson.fromJson(
                         jsonPlayer.getAsJsonObject().get("player_position").getAsJsonObject().get("y"), int.class);
                 Square square = this.board.getArena().getSquareByCoordinate(posX, posY);
                 this.board.movePlayer(player, square);
             } catch (NullPointerException e) {
 
             }
-            this.players.add(player);
+            players.add(player);
         }
-        this.board.setPlayers(this.players);
+        this.board.setPlayers(players);
         if (frenzyOrder != null) {
             for (JsonElement frenzyElement : frenzyOrder) {
                 this.board.addFrenzyOrderPlayer(this.board.getPlayerByCharacter(
-                        gson.fromJson(frenzyElement.getAsJsonObject(), GameCharacter.class)));
+                        this.gson.fromJson(frenzyElement.getAsJsonObject(), GameCharacter.class)));
             }
         }
         for (JsonElement ammoSquare : ammoSquares) {
             int posX = gson.fromJson(ammoSquare.getAsJsonObject().getAsJsonObject().get("x"), int.class);
             int posY = gson.fromJson(ammoSquare.getAsJsonObject().getAsJsonObject().get("y"), int.class);
             this.board.getArena().getSquareByCoordinate(posX, posY).addAmmoTile(
-                    gson.fromJson(ammoSquare.getAsJsonObject().get("tile"), AmmoTile.class));
+                    this.gson.fromJson(ammoSquare.getAsJsonObject().get("tile"), AmmoTile.class));
         }
         for (Room room : this.board.getArena().getRoomList()) {
             if (room.hasSpawn()) {
                 for (JsonElement weapon : weaponSquares.getAsJsonArray(room.getColor().toString())) {
-                    room.getSpawn().addWeapon(gson.fromJson(weapon.getAsJsonObject(), WeaponCard.class));
+                    room.getSpawn().addWeapon(this.gson.fromJson(weapon.getAsJsonObject(), WeaponCard.class));
                 }
             }
         }
@@ -93,6 +93,8 @@ public class GameLoader {
     }
 
     public void saveBoard() {
+        FileWriter writer;
+        
         StringBuilder jObject = new StringBuilder("{");
         jObject.append("\"board\":" + this.board.toJson() + ",");
         jObject.append(("\"players\":["));
@@ -115,7 +117,7 @@ public class GameLoader {
             if(!square.isSpawn()) {
                 jObject.append("{\"x\":" + square.getX() + ",");
                 jObject.append("\"y\":" + square.getY() + ",");
-                jObject.append("\"tile\":" + gson.toJson(square.getAvailableAmmoTile()) + "},");
+                jObject.append("\"tile\":" + this.gson.toJson(square.getAvailableAmmoTile()) + "},");
             }
         }
         jObject.deleteCharAt(jObject.length() - 1);
@@ -123,15 +125,15 @@ public class GameLoader {
         jObject.append("\"weapon_square\":{");
         for(Room room : this.board.getArena().getRoomList()) {
             if(room.hasSpawn()) {
-                jObject.append("\"" + room.getColor() + "\":" + gson.toJson(room.getSpawn().getWeaponsStore()) + ",");
+                jObject.append("\"" + room.getColor() + "\":" + this.gson.toJson(room.getSpawn().getWeaponsStore()) + ",");
             }
         }
         jObject.deleteCharAt(jObject.length() - 1);
         jObject.append("}}}");
         try {
-            this.writer = new FileWriter(this.path + "/" + "game_state_data.json");
-            this.writer.write(jObject.toString());
-            this.writer.flush();
+            writer = new FileWriter(this.path + "/" + "game_state_data.json");
+            writer.write(jObject.toString());
+            writer.flush();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE,"Error writing data", e);
         }
