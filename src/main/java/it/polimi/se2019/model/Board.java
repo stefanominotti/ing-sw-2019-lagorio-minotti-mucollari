@@ -731,4 +731,62 @@ public class Board extends Observable {
         return availableSquares;
     }
 
+    public List<Player> getPlayersOnCardinalDirection(Square square, CardinalPoint cardinalPoint) {
+        List<Player> players = new ArrayList<>();
+
+        for(Square s : getSquaresOnCardinalDirection(square, cardinalPoint)){
+            players.addAll(s.getActivePlayers());
+        }
+        return players;
+    }
+
+    public List<Square> getSquaresOnCardinalDirection(Square square, CardinalPoint cardinalPoint) {
+        List<Square> squares = new ArrayList<>();
+
+        switch(cardinalPoint) {
+            case NORTH:
+                for(Square s : this.getArena().getAllSquares()) {
+                    if(s.getX() == square.getX()
+                            && s.getY() < square.getY()
+                            && s != square) {
+                        squares.add(s);
+                    }
+                }
+                return squares;
+
+            case SOUTH:
+                for(Square s : this.getArena().getAllSquares()) {
+                    if(s.getX() == square.getX()
+                            && s.getY() > square.getY()
+                            && s != square) {
+                        squares.add(s);
+                    }
+
+                }
+                return squares;
+
+            case EAST:
+                for(Square s : this.getArena().getAllSquares()) {
+                    if(s.getY() == square.getY()
+                            && s.getX() > square.getX()
+                            && s != square) {
+                        squares.add(s);
+                    }
+                }
+                return squares;
+
+
+            case WEST:
+                for(Square s : this.getArena().getAllSquares()) {
+                    if (s.getY() == square.getY()
+                            && s.getX() < square.getX()
+                            && s != square) {
+                        squares.add(s);
+                    }
+                }
+                return squares;
+        }
+        return squares;
+    }
+
 }

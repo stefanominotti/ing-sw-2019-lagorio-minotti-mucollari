@@ -55,49 +55,7 @@ public class BoardTest {
         this.board.setSkulls(5);
         assertEquals(5, this.board.getSkulls());
     }
-
-    @Test
-    public void getPlayerOnCardinalDirectionTest() {
-        Arena arena = new Arena("1");
-        board.loadArena("1");
-
-        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
-        this.board.addPlayer(GameCharacter.D_STRUCT_OR, "playerTest2", "token");
-        this.board.addPlayer(GameCharacter.SPROG, "playerTest3", "token");
-        this.board.addPlayer(GameCharacter.DOZER, "playerTest4", "token");
-        this.board.addPlayer(GameCharacter.VIOLETTA, "playerTest5", "token");
-        Player p1 = board.getPlayerByCharacter(GameCharacter.BANSHEE);
-        Player p2 = board.getPlayerByCharacter(GameCharacter.D_STRUCT_OR);
-        Player p3 = board.getPlayerByCharacter(GameCharacter.SPROG);
-        Player p4 = board.getPlayerByCharacter(GameCharacter.DOZER);
-        Player p5 = board.getPlayerByCharacter(GameCharacter.VIOLETTA);
-
-        p1.setPosition(arena.getSquareByCoordinate(0, 1));
-        p2.setPosition(arena.getSquareByCoordinate(1, 1));
-        p3.setPosition(arena.getSquareByCoordinate(2, 1));
-        p4.setPosition(arena.getSquareByCoordinate(3, 1));
-        p5.setPosition(arena.getSquareByCoordinate(1, 1));
-        List<Player> result = new ArrayList<>();
-
-        result.add(p5);
-        assertEquals(result, board.getPlayersOnCardinalDirection(p2, CardinalPoint.NORTH));
-        result = new ArrayList<>();
-
-        result.add(p5);
-        assertEquals(result, board.getPlayersOnCardinalDirection(p2, CardinalPoint.SOUTH));
-        result = new ArrayList<>();
-
-        result.add(p3);
-        result.add(p4);
-        result.add(p5);
-        assertEquals(result, board.getPlayersOnCardinalDirection(p2, CardinalPoint.EAST));
-        result = new ArrayList<>();
-
-        result.add(p1);
-        result.add(p5);
-        assertEquals(result, board.getPlayersOnCardinalDirection(p2, CardinalPoint.WEST));
-    }
-
+    
     @Test
     public void getVisiblePlayersTest() {
         board.loadArena("1");
@@ -201,6 +159,56 @@ public class BoardTest {
             System.out.println(s.getX() + ", " + s.getY());
         }
          */
+    }
+
+    @Test
+    public void getSquaresOnCardinalDirectionTest() {
+        board.loadArena("1");
+
+        List<Square> squares = new ArrayList<>();
+        squares.add(board.getArena().getSquareByCoordinate(1, 1));
+        squares.add(board.getArena().getSquareByCoordinate(2, 1));
+        squares.add(board.getArena().getSquareByCoordinate(3, 1));
+
+        assertEquals(squares, board.getSquaresOnCardinalDirection(board.getArena().getSquareByCoordinate(0, 1), CardinalPoint.EAST));
+        /* //DEBUG
+        for(Square s : board.getSquaresOnCardinalDirection(board.getArena().getSquareByCoordinate(0, 1), CardinalPoint.EAST)) {
+            System.out.println(s.getX() + ", " + s.getY());
+            for(Player p : s.getActivePlayers()) {
+                p.getNickname();
+            }
+        }
+         */
+
+    }
+
+    @Test
+    public void getPlayersOnCardinalDirectionTest() {
+        board.loadArena("1");
+
+        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
+        this.board.addPlayer(GameCharacter.D_STRUCT_OR, "playerTest2", "token");
+        this.board.addPlayer(GameCharacter.SPROG, "playerTest3", "token");
+        this.board.addPlayer(GameCharacter.DOZER, "playerTest4", "token");
+        this.board.addPlayer(GameCharacter.VIOLETTA, "playerTest5", "token");
+        Player p1 = board.getPlayerByCharacter(GameCharacter.BANSHEE);
+        Player p2 = board.getPlayerByCharacter(GameCharacter.D_STRUCT_OR);
+        Player p3 = board.getPlayerByCharacter(GameCharacter.SPROG);
+        Player p4 = board.getPlayerByCharacter(GameCharacter.DOZER);
+        Player p5 = board.getPlayerByCharacter(GameCharacter.VIOLETTA);
+
+        this.board.movePlayer(p1, board.getArena().getSquareByCoordinate(0, 1));
+        this.board.movePlayer(p2, board.getArena().getSquareByCoordinate(1, 1));
+        this.board.movePlayer(p3, board.getArena().getSquareByCoordinate(2, 1));
+        this.board.movePlayer(p4, board.getArena().getSquareByCoordinate(3, 1));
+        this.board.movePlayer(p5, board.getArena().getSquareByCoordinate(2, 2));
+
+        List<Player> players = new ArrayList<>();
+        players.add(p2);
+        players.add(p3);
+        players.add(p4);
+
+        assertEquals(players, board.getPlayersOnCardinalDirection(p1.getPosition(), CardinalPoint.EAST));
     }
 
 }
