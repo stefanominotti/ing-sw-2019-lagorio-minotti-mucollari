@@ -834,4 +834,10 @@ public class Board extends Observable {
         return squares;
     }
 
+    public List<Player> getNoVisiblePlayers (Player player) {
+        List<Player> players = new ArrayList<>(this.players);
+        players.removeAll(getVisiblePlayers(player));
+        return players;
+    }
+
 }
