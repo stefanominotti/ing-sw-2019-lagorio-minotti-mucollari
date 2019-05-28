@@ -22,6 +22,10 @@ public class TurnController {
     private WeaponCard switchWeapon;
     private EffectsController effectsController;
 
+    //for test only
+    public void setActivePlayer(Player player) {
+        this.activePlayer = player;
+    }
 
     public TurnController(Board board, GameController controller) {
         this.state = TurnState.SELECTACTION;

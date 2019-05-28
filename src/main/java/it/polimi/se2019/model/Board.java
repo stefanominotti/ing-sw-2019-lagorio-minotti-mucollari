@@ -840,4 +840,13 @@ public class Board extends Observable {
         return players;
     }
 
+    public CardinalPoint getCardinalFromSquares(Square square1, Square square2) {
+        for(CardinalPoint cardinal : CardinalPoint.values()){
+            if(square1.getNearbySquares().get(cardinal).equals(square2)) {
+                return cardinal;
+            }
+        }
+        return null;
+    }
+
 }

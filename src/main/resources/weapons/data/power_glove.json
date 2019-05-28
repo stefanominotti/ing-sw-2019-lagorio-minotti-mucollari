@@ -169,6 +169,10 @@
         "positionType": "EVERYWHERE",
         "positionConstraints": [
           {
+            "type": "VISIBLE",
+            "target": "SQUARE"
+          },
+          {
             "type": "SAMEDIRECTION",
             "target": "SQUARE"
           },

@@ -12,7 +12,6 @@ public class EffectTarget {
     private final TargetPositionType positionType;
     private final List<PositionConstraint> positionConstraints;
     private final List<PositionConstraint> afterPositionConstraints;
-
     private final Set<TargetConstraint> targetConstraints;
 
     EffectTarget(TargetType type, List<String> amount, TargetPositionType positionType,
@@ -36,24 +35,30 @@ public class EffectTarget {
     }
 
     public List<String> getAmount() {
+        if(this.amount == null) {
+            return null;
+        }
         return new ArrayList<>(this.amount);
     }
 
     public List<PositionConstraint> getPositionConstraints() {
         if (positionConstraints == null){
-            return new ArrayList<>();
+            return null;
         }
             return new ArrayList<>(this.positionConstraints);
         }
 
     public List<PositionConstraint> getAfterPositionConstraints() {
         if (afterPositionConstraints == null){
-            return new ArrayList<>();
+            return null;
         }
         return new ArrayList<>(this.afterPositionConstraints);
     }
 
     public Set<TargetConstraint> getTargetConstraints() {
+        if(this.targetConstraints == null) {
+            return null;
+        }
         return EnumSet.copyOf(this.targetConstraints);
     }
 }

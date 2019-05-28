@@ -42,7 +42,7 @@
         "positionConstraints": [
           {
             "type": "SAMEDIRECTION",
-            "target": "CARDINALDIRECTION"
+            "target": "SELF"
           }
         ]
       }
@@ -84,7 +84,7 @@
         "positionConstraints": [
           {
             "type": "SAMEDIRECTION",
-            "target": "CARDINALDIRECTION"
+            "target": "SELF"
           }
         ]
       }

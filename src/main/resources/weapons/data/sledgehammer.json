@@ -71,6 +71,18 @@
         ]
       }
     },
+    {
+      "effectRequired": true,
+      "effectCombo": false,
+      "type": "SELECT",
+      "target": {
+        "type": "CARDINALDIRECTION",
+        "amount": [
+          "1"
+        ],
+        "positionType": "EVERYWHERE"
+      }
+    },
     { 
       "effectRequired": true,
       "effectCombo": false,
@@ -87,7 +99,7 @@
         "afterPositionConstraints": [
           {
             "type": "SAMEDIRECTION",
-            "target": "SELF"
+            "target": "SQUARE"
           },
           {
             "type": "DISTANCE",
