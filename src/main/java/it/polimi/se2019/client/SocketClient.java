@@ -44,13 +44,13 @@ public class SocketClient extends AbstractClient implements Runnable {
             try {
                 inputStream = new ObjectInputStream((this.socket.getInputStream()));
             } catch (EOFException e) {
-                showMessage("Connection error");
+                LOGGER.log(Level.SEVERE, "Connection error");
                 System.exit(0);
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "Error on creating Stream", e);
             }
             if (inputStream == null) {
-                showMessage("Connection error");
+                LOGGER.log(Level.SEVERE, "Connection error");
                 System.exit(0);
             }
             try {

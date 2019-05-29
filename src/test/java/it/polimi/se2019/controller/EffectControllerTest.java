@@ -21,7 +21,7 @@ public class EffectControllerTest {
         this.board = (new GameLoader()).loadBoard();
         this.turnController = new TurnController(this.board, null);
         this.controller = new EffectsController(this.board, turnController);
-        this.turnController.setActivePlayer(this.board.getPlayers().get(this.board.getCurrentPlayer()));
+        //this.turnController.setActivePlayer(this.board.getPlayers().get(this.board.getCurrentPlayer()));
         Player player = this.board.getPlayers().get(this.board.getCurrentPlayer());
 
         for(WeaponEffect effect : weapon.getPrimaryEffect()) {
@@ -49,7 +49,7 @@ public class EffectControllerTest {
         this.board = (new GameLoader()).loadBoard();
         this.turnController = new TurnController(this.board, null);
         this.controller = new EffectsController(this.board, turnController);
-        this.turnController.setActivePlayer(this.board.getPlayers().get(this.board.getCurrentPlayer()));
+        //this.turnController.setActivePlayer(this.board.getPlayers().get(this.board.getCurrentPlayer()));
         Player player = this.board.getPlayers().get(this.board.getCurrentPlayer());
 
         for(WeaponEffect effect : weapon.getPrimaryEffect()) {

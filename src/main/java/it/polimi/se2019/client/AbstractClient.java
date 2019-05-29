@@ -33,8 +33,4 @@ public abstract class AbstractClient {
         this.view.manageUpdate(message);
     }
 
-    void showMessage(String message) {
-        this.view.showMessage(message);
-    }
-
 }
