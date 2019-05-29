@@ -1,0 +1,20 @@
+.background-pane{
+    -fx-background-image: url("../../backgrounds/signup_background.jpeg");
+    -fx-background-repeat: stretch;
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+}
+
+.root {
+	-fx-background-color: #DDDDDD;
+}
+
+.cardPane {
+	-fx-background-color: white;
+	-fx-background-radius: 8px;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+.topPane {
+	-fx-background-color: #ffc107;
+}
