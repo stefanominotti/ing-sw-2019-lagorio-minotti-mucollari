@@ -4,6 +4,25 @@ import it.polimi.se2019.client.AbstractClient;
 import it.polimi.se2019.controller.ActionType;
 import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.messages.*;
+import it.polimi.se2019.model.messages.ammos.AmmosMessage;
+import it.polimi.se2019.model.messages.board.*;
+import it.polimi.se2019.model.messages.client.*;
+import it.polimi.se2019.model.messages.nickname.NicknameMessage;
+import it.polimi.se2019.model.messages.nickname.NicknameMessageType;
+import it.polimi.se2019.model.messages.payment.PaymentMessage;
+import it.polimi.se2019.model.messages.payment.PaymentSentMessage;
+import it.polimi.se2019.model.messages.payment.PaymentType;
+import it.polimi.se2019.model.messages.player.*;
+import it.polimi.se2019.model.messages.powerups.PowerupMessage;
+import it.polimi.se2019.model.messages.powerups.PowerupMessageType;
+import it.polimi.se2019.model.messages.selections.SelectionMessageType;
+import it.polimi.se2019.model.messages.selections.SelectionReceivedMessage;
+import it.polimi.se2019.model.messages.selections.SelectionSentMessage;
+import it.polimi.se2019.model.messages.timer.TimerMessage;
+import it.polimi.se2019.model.messages.timer.TimerMessageType;
+import it.polimi.se2019.model.messages.turn.TurnMessage;
+import it.polimi.se2019.model.messages.weapon.WeaponMessage;
+import it.polimi.se2019.model.messages.weapon.WeaponSwitchMessage;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -38,6 +57,8 @@ public abstract class View {
     private Map<AmmoType, Integer> availableAmmos;
     private List<Powerup> availablePowerups;
     private List<GameCharacter> availableTargets;
+    private PaymentType currentPayment;
+    private PowerupType activePowerup;
 
     View(AbstractClient client) {
         this.client = client;
@@ -50,137 +71,39 @@ public abstract class View {
     }
 
     public void manageUpdate(Message message) throws RemoteException {
-        String messageType = message.getMessageType().getName()
-                .replace("it.polimi.se2019.model.messages.", "");;
-        switch (messageType) {
-            case "InvalidTokenMessage":
-                update((InvalidTokenMessage) message);
+        switch (message.getMessageType()) {
+            case NICKNAME_MESSAGE:
+                update((NicknameMessage) message);
                 break;
-            case "ReconnectionMessage":
-                update((ReconnectionMessage) message);
+            case PLAYER_MESSAGE:
+                update((PlayerMessage) message);
                 break;
-            case "LoadViewMessage":
-                update((LoadViewMessage) message);
+            case CLIENT_MESSAGE:
+                update((ClientMessage) message);
                 break;
-            case "RequireNicknameMessage":
-                update((RequireNicknameMessage) message);
+            case TIMER_MESSAGE:
+                update((TimerMessage) message);
                 break;
-            case "CharacterMessage":
-                update((CharacterMessage) message);
+            case BOARD_MESSAGE:
+                update((BoardMessage) message);
                 break;
-            case "PlayerCreatedMessage":
-                update((PlayerCreatedMessage) message);
+            case POWERUP_MESSAGE:
+                update((PowerupMessage) message);
                 break;
-            case "PlayerReadyMessage":
-                update((PlayerReadyMessage) message);
+            case AMMOS_MESSAGE:
+                update((AmmosMessage) message);
                 break;
-            case "LobbyFullMessage":
-                update((LobbyFullMessage) message);
+            case WEAPON_MESSAGE:
+                update((WeaponMessage) message);
                 break;
-            case "GameAlreadyStartedMessage":
-                update((GameAlreadyStartedMessage) message);
+            case TURN_MESSAGE:
+                update((TurnMessage) message);
                 break;
-            case "NicknameDuplicatedMessage":
-                update((NicknameDuplicatedMessage) message);
+            case PAYMENT_MESSAGE:
+                update((PaymentMessage) message);
                 break;
-            case "ClientDisconnectedMessage":
-                update((ClientDisconnectedMessage) message);
-                break;
-            case "StartGameSetupMessage":
-                update((StartGameSetupMessage) message);
-                break;
-            case "GameSetupTimerStartedMessage":
-                update((GameSetupTimerStartedMessage) message);
-                break;
-            case "GameSetupTimerResetMessage":
-                update((GameSetupTimerResetMessage) message);
-                break;
-            case "SkullsSetMessage":
-                update((SkullsSetMessage) message);
-                break;
-            case "GameSetMessage":
-                update((GameSetMessage) message);
-                break;
-            case "GameSetupInterruptedMessage":
-                update((GameSetupInterruptedMessage) message);
-                break;
-            case "MasterChangedMessage":
-                update((MasterChangedMessage) message);
-                break;
-            case "ArenaFilledMessage":
-                update((ArenaFilledMessage) message);
-                break;
-            case "StartTurnMessage":
-                update((StartTurnMessage) message);
-                break;
-            case "DiscardToSpawnMessage":
-                update((DiscardToSpawnMessage) message);
-                break;
-            case "PowerupDrawnMessage":
-                update((PowerupDrawnMessage) message);
-                break;
-            case "PlayerSpawnedMessage":
-                update((PlayerSpawnedMessage) message);
-                break;
-            case "PowerupRemovedMessage":
-                update((PowerupRemovedMessage) message);
-                break;
-            case "AvailableActionsMessage":
-                update((AvailableActionsMessage) message);
-                break;
-            case "AvailableMoveActionMessage":
-                update((AvailableMoveActionMessage) message);
-                break;
-            case "AvailablePickupActionMessage":
-                update((AvailablePickupActionMessage) message);
-                break;
-            case "MovementMessage":
-                update((MovementMessage) message);
-                break;
-            case "AmmosGivenMessage":
-                update((AmmosGivenMessage) message);
-                break;
-            case "WeaponPickupSelectionMessage":
-                update((WeaponPickupSelectionMessage) message);
-                break;
-            case "WeaponGivenMessage":
-                update((WeaponGivenMessage) message);
-                break;
-            case "AmmosUsedMessage":
-                update((AmmosUsedMessage) message);
-                break;
-            case "RequireWeaponSwitchMessage":
-                update((RequireWeaponSwitchMessage) message);
-                break;
-            case "WeaponsSwitchedMessage":
-                update((WeaponsSwitchedMessage) message);
-                break;
-            case "RequireWeaponLoadMessage":
-                update((RequireWeaponLoadMessage) message);
-                break;
-            case "RechargeWeaponMessage":
-                update((RechargeWeaponMessage) message);
-                break;
-            case "EndTurnMessage":
-                update((EndTurnMessage) message);
-                break;
-            case "WeaponStoresRefilledMessage":
-                update((WeaponStoresRefilledMessage) message);
-                break;
-            case "AmmoTilesRefilledMessage":
-                update((AmmoTilesRefilledMessage) message);
-                break;
-            case "RequireWeaponPaymentMessage":
-                update((RequireWeaponPaymentMessage) message);
-                break;
-            case "RequirePowerupUseMessage":
-                update((RequirePowerupUseMessage) message);
-                break;
-            case "PowerupPositionsAvailableMessage":
-                update((PowerupPositionsAvailableMessage) message);
-                break;
-            case "PowerupTargetsAvailableMessage":
-                update((PowerupTargetsAvailableMessage) message);
+            case SELECTION_SENT_MESSAGE:
+                update((SelectionSentMessage) message);
                 break;
         }
     }
@@ -199,20 +122,12 @@ public abstract class View {
             return;
         }
         switch (this.state) {
-            case RECONNECTING:
-                if (input.equals("")) {
-                    showMessage("Invalid username, retry: ");
-                    break;
-                }
-                this.client.send(new NicknameRecconnectingMessage(input));
-                break;
-
             case TYPINGNICKNAME:
                 if (input.equals("")) {
                     showMessage("Invalid username, retry: ");
                     break;
                 }
-                this.client.send(new NicknameMessage(input));
+                this.client.send(new NicknameMessage(NicknameMessageType.CONNECTED, input));
                 break;
             case CHOOSINGCHARACTER:
                 int select;
@@ -226,7 +141,7 @@ public abstract class View {
                     showMessage("Invalid number, retry: ");
                     break;
                 }
-                this.client.send(new CharacterMessage(charactersAvailable.get(select-1), generateToken()));
+                this.client.send(new CharacterMessage(this.charactersAvailable.get(select-1), generateToken()));
                 break;
             case SETTINGSKULLS:
                 int skulls;
@@ -256,7 +171,8 @@ public abstract class View {
                         showMessage("Invalid input, retry:");
                         break;
                     }
-                    this.client.send(new PowerupDiscardMessage(this.selfPlayerBoard.getPowerups().get(number - 1)));
+                    this.client.send(new SelectionReceivedMessage(SelectionMessageType.DISCARD_POWERUP, this.character,
+                            this.selfPlayerBoard.getPowerups().get(number - 1)));
                 } catch(NumberFormatException e) {
                     showMessage("Invalid input, retry:");
                     break;
@@ -292,7 +208,8 @@ public abstract class View {
                         this.state = SELECTBOARDTOSHOW;
                         break;
                     }
-                    this.client.send(new ActionSelectedMessage(this.turnActions.get(number - 4)));
+                    this.client.send(new SelectionReceivedMessage(SelectionMessageType.ACTION, this.character,
+                            this.turnActions.get(number - 4)));
                     this.turnActions = new ArrayList<>();
                 } catch(NumberFormatException e) {
                     showMessage("Invalid input, retry:");
@@ -316,7 +233,8 @@ public abstract class View {
                 }
             case SELECTMOVEMENT:
                 if (input.toUpperCase().equals("C")) {
-                    this.client.send(new ActionSelectedMessage(ActionType.CANCEL));
+                    this.client.send(new SelectionReceivedMessage(SelectionMessageType.ACTION, this.character,
+                            ActionType.CANCEL));
                     break;
                 }
                 if (input.split(",").length != 2) {
@@ -329,7 +247,8 @@ public abstract class View {
                     boolean valid = false;
                     for (Coordinates c : this.actionCoordinates) {
                         if (c.getX() == x && c.getY() == y) {
-                            this.client.send(new MovementSelectedMessage(new Coordinates(x, y)));
+                            this.client.send(new SelectionReceivedMessage(SelectionMessageType.MOVE, this.character,
+                                    new Coordinates(x, y)));
                             this.actionCoordinates = new ArrayList<>();
                             valid = true;
                             break;
@@ -347,7 +266,8 @@ public abstract class View {
                 }
             case SELECTPICKUP:
                 if (input.toUpperCase().equals("C")) {
-                    this.client.send(new ActionSelectedMessage(ActionType.CANCEL));
+                    this.client.send(new SelectionReceivedMessage(SelectionMessageType.ACTION, this.character,
+                            ActionType.CANCEL));
                     break;
                 }
                 if (input.split(",").length != 2) {
@@ -360,7 +280,8 @@ public abstract class View {
                     boolean valid = false;
                     for (Coordinates c : this.actionCoordinates) {
                         if (c.getX() == x && c.getY() == y) {
-                            this.client.send(new PickupSelectedMessage(new Coordinates(x, y)));
+                            this.client.send(new SelectionReceivedMessage(SelectionMessageType.PICKUP, this.character,
+                                    new Coordinates(x, y)));
                             this.actionCoordinates = new ArrayList<>();
                             valid = true;
                             break;
@@ -383,7 +304,8 @@ public abstract class View {
                         showMessage("Invalid input, retry:");
                         break;
                     }
-                    this.client.send(new WeaponPickupMessage(this.weaponsSelectionList.get(number - 1)));
+                    this.client.send(new SelectionReceivedMessage(SelectionMessageType.PICKUP_WEAPON, this.character,
+                            this.weaponsSelectionList.get(number - 1)));
                     this.weaponsSelectionList = new ArrayList<>();
                 } catch(NumberFormatException e) {
                     showMessage("Invalid input, retry:");
@@ -397,7 +319,8 @@ public abstract class View {
                         showMessage("Invalid input, retry:");
                         break;
                     }
-                    this.client.send(new WeaponSwitchMessage(this.weaponsSelectionList.get(number - 1)));
+                    this.client.send(new SelectionReceivedMessage(SelectionMessageType.SWITCH, this.character,
+                            this.weaponsSelectionList.get(number - 1)));
                     this.weaponsSelectionList = new ArrayList<>();
                 } catch(NumberFormatException e) {
                     showMessage("Invalid input, retry:");
@@ -418,7 +341,8 @@ public abstract class View {
                     } else {
                         selection = this.weaponsSelectionList.get(number);
                     }
-                    this.client.send(new RechargeWeaponMessage(selection, this.character));
+                    this.client.send(new SelectionReceivedMessage(SelectionMessageType.RELOAD, this.character,
+                            selection));
                     this.weaponsSelectionList = new ArrayList<>();
                 } catch(NumberFormatException e) {
                     showMessage("Invalid input, retry:");
@@ -473,7 +397,8 @@ public abstract class View {
                     }
 
                     if(paid) {
-                        this.client.send(new WeaponPaymentMessage(this.paidPowerups, this.paidAmmos));
+                        this.client.send(new PaymentSentMessage(this.currentPayment, this.character, this.paidAmmos,
+                                this.paidPowerups));
                         this.paymentRequired = new EnumMap<>(AmmoType.class);
                         this.paidAmmos = new EnumMap<>(AmmoType.class);
                         for (AmmoType type : AmmoType.values()) {
@@ -496,11 +421,14 @@ public abstract class View {
                         break;
                     }
                     if (number == this.availablePowerups.size() + 1) {
-                        this.client.send(new UsePowerupMessage(this.character, null));
+                        this.client.send(new SelectionReceivedMessage(SelectionMessageType.USE_POWERUP, this.character,
+                                null));
                         this.availablePowerups = new ArrayList<>();
                         break;
                     }
-                    this.client.send(new UsePowerupMessage(this.character, this.availablePowerups.get(number - 1)));
+                    this.client.send(new SelectionReceivedMessage(SelectionMessageType.USE_POWERUP, this.character,
+                            this.availablePowerups.get(number - 1)));
+                    this.activePowerup = this.availablePowerups.get(number - 1).getType();
                     this.availablePowerups = new ArrayList<>();
                 } catch(NumberFormatException e) {
                     showMessage("Invalid input, retry:");
@@ -518,7 +446,8 @@ public abstract class View {
                     boolean valid = false;
                     for (Coordinates c : this.actionCoordinates) {
                         if (c.getX() == x && c.getY() == y) {
-                            this.client.send(new PowerupPositionMessage(new Coordinates(x, y)));
+                            this.client.send(new SelectionReceivedMessage(SelectionMessageType.POWERUP_POSITION,
+                                    this.character, new Coordinates(x, y)));
                             this.actionCoordinates = new ArrayList<>();
                             valid = true;
                             break;
@@ -541,7 +470,8 @@ public abstract class View {
                         showMessage("Invalid input, retry:");
                         break;
                     }
-                    this.client.send(new PowerupTargetMessage(this.availableTargets.get(number - 1)));
+                    this.client.send(new SelectionReceivedMessage(SelectionMessageType.POWERUP_TARGET, this.character,
+                            this.availableTargets.get(number - 1)));
                     this.availableTargets = new ArrayList<>();
                 } catch(NumberFormatException e) {
                     showMessage("Invalid input, retry:");
@@ -551,103 +481,80 @@ public abstract class View {
         }
     }
 
-    private void update(InvalidTokenMessage message) {
-        showMessage("Invalid token");
-        System.exit(0);
-    }
-
-    private void update(ReconnectionMessage message) throws RemoteException {
-        showMessage("A game already exists, trying to reconnect.");
-        this.state = RECONNECTING;
-        client.send(new ReconnectionMessage(getToken()));
-    }
-
-    private void update(LoadViewMessage message) {
-        this.character = message.getCharacter();
-        this.state = WAITINGSETUP;
-        this.enemyBoards = new ArrayList<>();
-        this.board = new BoardView(message.getSkulls(), message.getSquares(), message.getKillshotTrack());
-        for(PlayerBoard playerBoard : message.getPayerBoards()) {
-            if(playerBoard.getCharacter() == message.getCharacter()){
-                selfPlayerBoard = new SelfPlayerBoard(playerBoard, message.getReadyWeapons(),
-                        message.getPowerups(), message.getScore());
-            } else {
-                this.enemyBoards.add(playerBoard);
-            }
-        }
-        showMessage("You are " + this.character);
-        for (Map.Entry<GameCharacter, String> player : message.getOtherPlayers().entrySet()) {
-            if(player.getKey() != this.character) {
-                showMessage(player.getKey() + " - " + player.getValue() + " is in!");
-            }
+    private void update(NicknameMessage message) {
+        switch (message.getType()) {
+            case REQUIRE:
+                handleNicknameRequest();
+                break;
+            case DUPLICATED:
+                handleNicknameDuplicated();
+                break;
         }
     }
 
-    private void update(RequireNicknameMessage message) {
+    private void handleNicknameRequest() {
         showMessage("Insert nickname: ");
         this.state = TYPINGNICKNAME;
     }
 
-    private void update(CharacterMessage message) {
-        if(this.charactersAvailable != null) {
-            showMessage("Character already choosen");
-        }
-        StringBuilder builder = new StringBuilder("Choose one of these characters:\n");
-        this.charactersAvailable = message.getAvailables();
-        for(GameCharacter character : this.charactersAvailable) {
-            builder.append("[" + (this.charactersAvailable.indexOf(character) + 1) + "] - " + character + "\n");
-        }
-        builder.setLength(builder.length() - 1);
-        showMessage(builder.toString());
-        this.state = CHOOSINGCHARACTER;
-    }
-
-    private void update(MasterChangedMessage message) {
-        if (message.getCharacter() == this.character) {
-            showMessage("Master disconnected, you are the new master. Set skull number for the game:");
-            this.state = SETTINGSKULLS;
-        } else {
-            showMessage("Master disconnected, the new master is setting up the game");
-        }
-    }
-
-    private void update(GameSetupInterruptedMessage message) {
-        showMessage("Too few players, game setup interrupted");
-        this.state = WAITINGSTART;
-    }
-
-    private void update(GameSetupTimerResetMessage message) {
-        if (this.state == WAITINGSTART) {
-            showMessage("Need more players to start the game");
-        }
-    }
-
-    private void update(GameSetupTimerStartedMessage message) {
-        if (this.state == WAITINGSTART) {
-            showMessage("Game setup will start in " + message.getTime() + " seconds...");
-        }
-    }
-
-    private void update(LobbyFullMessage message) {
-        showMessage("Lobby is full");
-        System.exit(0);
-    }
-
-    private void update(GameAlreadyStartedMessage message) {
-        showMessage("Game already started, sorry");
-        System.exit(0);
-    }
-
-    private void update(NicknameDuplicatedMessage message){
+    private void handleNicknameDuplicated() {
         showMessage("Nickname is already in use. Insert another nickname: ");
         this.state = TYPINGNICKNAME;
     }
 
-    private void update(PlayerCreatedMessage message){
-        this.character = message.getCharacter();
-        this.selfPlayerBoard = new SelfPlayerBoard(message.getCharacter(), message.getNickname());
-        showMessage("Nickname " + message.getNickname() + " accepted! You are " + message.getCharacter());
-        for (Map.Entry<GameCharacter, String> player : message.getOtherPlayers().entrySet()) {
+    private void update(TimerMessage message) {
+        switch(message.getTimerType()) {
+            case SETUP:
+                handleGameSetupTimer(message.getType(), message.getTime());
+        }
+    }
+
+    private void handleGameSetupTimer(TimerMessageType action, long duration) {
+        if (this.state == WAITINGSTART) {
+            switch (action) {
+                case START:
+                    showMessage("Game setup will start in " + duration + " seconds...");
+                    break;
+                case STOP:
+                    showMessage("Need more players to start the game");
+                    break;
+            }
+        }
+    }
+
+    private void update(PlayerMessage message) {
+        switch (message.getType()) {
+            case CREATED:
+                handlePlayerCreated(message.getCharacter(), ((PlayerCreatedMessage) message).getNickname(),
+                        ((PlayerCreatedMessage) message).getOtherPlayers());
+                break;
+            case READY:
+                handleReadyPlayer(message.getCharacter(), ((PlayerReadyMessage) message).getNickname());
+                break;
+            case SPAWNED:
+                handleSpawnedPlayer(message.getCharacter(), ((SpawnMessage) message).getCoordinates());
+                break;
+            case SKULLS_SET:
+                handleSkullsSet();
+                break;
+            case MASTER_CHANGED:
+                handleMasterChanged(message.getCharacter());
+                break;
+            case START_SETUP:
+                handleStartSetup(message.getCharacter());
+                break;
+            case MOVE:
+                handleMovement(message.getCharacter(), ((MovementMessage) message).getCoordinates());
+                break;
+        }
+    }
+
+    private void handlePlayerCreated(GameCharacter character, String nickname, Map<GameCharacter,
+            String> otherPlayers) {
+        this.character = character;
+        this.selfPlayerBoard = new SelfPlayerBoard(character, nickname);
+        showMessage("Nickname " + nickname + " accepted! You are " + character);
+        for (Map.Entry<GameCharacter, String> player : otherPlayers.entrySet()) {
             boolean present = false;
             for (PlayerBoard p : this.enemyBoards) {
                 if (p.getCharacter() == player.getKey()) {
@@ -664,21 +571,128 @@ public abstract class View {
         this.state = WAITINGSTART;
     }
 
-    private void update(PlayerReadyMessage message) {
+    private void handleReadyPlayer(GameCharacter character, String nickname) {
         if (this.state == WAITINGSTART) {
-            this.enemyBoards.add(new PlayerBoard(message.getCharacter(), message.getNickname()));
+            this.enemyBoards.add(new PlayerBoard(character, nickname));
         }
-        if(message.getCharacter() != this.character) {
-            showMessage(message.getNickname() + " - " + message.getCharacter() + " connected!");
+        if(character != this.character) {
+            showMessage(nickname + " - " + character + " connected!");
         }
     }
 
-    private void update(ClientDisconnectedMessage message) {
+    private void handleSpawnedPlayer(GameCharacter character, Coordinates coordinates) {
+        int x = coordinates.getX();
+        int y = coordinates.getY();
+        this.board.setPlayerPosition(character, this.board.getSquareByCoordinates(x, y));
+        if(this.character == character) {
+            showMessage("You spawned in [" + x + ", " + y + "]");
+        } else {
+            showMessage(character + " spawned in [" + x + ", " + y + "]");
+        }
+    }
+
+    private void handleSkullsSet() {
+        showMessage("OK, now select the Arena [1, 2, 3, 4]:");
+        this.state = SETTINGARENA;
+    }
+
+    private void handleMasterChanged(GameCharacter character) {
+        if (character == this.character) {
+            showMessage("Master disconnected, you are the new master. Set skull number for the game:");
+            this.state = SETTINGSKULLS;
+        } else {
+            showMessage("Master disconnected, the new master is setting up the game");
+        }
+    }
+
+    private void handleStartSetup(GameCharacter character) {
+        if (character == this.character) {
+            showMessage("You are the master, set Skulls number for the game:");
+            this.state = SETTINGSKULLS;
+
+        } else {
+            showMessage("Master player is setting up the game, wait");
+            this.state = WAITINGSETUP;
+        }
+    }
+
+    private void handleMovement(GameCharacter character, Coordinates coordinates) {
+        int x = coordinates.getX();
+        int y = coordinates.getY();
+        this.board.setPlayerPosition(character, this.board.getSquareByCoordinates(x, y));
+        if(this.character == character) {
+            showMessage("You moved in [" + x + ", " + y + "]");
+        } else {
+            showMessage(character + " moved in [" + x + ", " + y + "]");
+        }
+    }
+
+    private void update(ClientMessage message) throws RemoteException {
+        switch (message.getType()) {
+            case INVALID_TOKEN:
+                handleInvalidToken();
+                break;
+            case LOBBY_FULL:
+                handleFullLobby();
+                break;
+            case CLIENT_RECONNECTION:
+                handleReconnectionRequest();
+                break;
+            case CHARACTER_SELECTION:
+                handleCharacterSelectionRequest(((CharacterMessage) message).getAvailables());
+                break;
+            case DISCONNECTED:
+                handleClientDisconnected(message.getCharacter());
+                break;
+            case GAME_ALREADY_STARTED:
+                handleGameAlreadyStarted();
+                break;
+            case LOAD_VIEW:
+                loadView(message.getCharacter(), ((LoadViewMessage) message).getSkulls(),
+                        ((LoadViewMessage) message).getSquares(), ((LoadViewMessage) message).getKillshotTrack(),
+                        ((LoadViewMessage) message).getPayerBoards(), ((LoadViewMessage) message).getReadyWeapons(),
+                        ((LoadViewMessage) message).getPowerups(), ((LoadViewMessage) message).getScore(),
+                        ((LoadViewMessage) message).getOtherPlayers());
+                break;
+        }
+    }
+
+    private void handleInvalidToken() {
+        showMessage("Invalid token");
+        System.exit(0);
+    }
+
+    private void handleFullLobby() {
+        showMessage("Lobby is full");
+        System.exit(0);
+    }
+
+    private void handleReconnectionRequest() throws RemoteException {
+        showMessage("A game already exists, trying to reconnect.");
+        this.state = RECONNECTING;
+        this.client.send(new ReconnectionMessage(getToken()));
+    }
+
+    private void handleCharacterSelectionRequest(List<GameCharacter> availables) {
+        if(this.charactersAvailable != null) {
+            showMessage("Character already choosen");
+        }
+        StringBuilder builder = new StringBuilder("Choose one of these characters:\n");
+        this.charactersAvailable = availables;
+        for(GameCharacter character : this.charactersAvailable) {
+            builder.append("[" + (this.charactersAvailable.indexOf(character) + 1) + "] - " + character + "\n");
+        }
+        builder.setLength(builder.length() - 1);
+        showMessage(builder.toString());
+        this.state = CHOOSINGCHARACTER;
+    }
+
+    private void handleClientDisconnected(GameCharacter character) {
         if (this.state == TYPINGNICKNAME || this.state == WAITINGSTART || this.state == WAITINGSETUP ||
                 this.state == SETTINGSKULLS || this.state == SETTINGARENA) {
             String nickname = "";
             for (PlayerBoard board : this.enemyBoards) {
-                if (board.getCharacter() == message.getCharacter()) {
+                if (board.getCharacter() == character) {
                     nickname = board.getNickname();
                     this.enemyBoards.remove(board);
                     break;
@@ -686,7 +700,7 @@ public abstract class View {
             }
             if (this.state == WAITINGSTART || this.state == WAITINGSETUP || this.state == SETTINGSKULLS ||
                     this.state == SETTINGARENA) {
-                showMessage(nickname + " - " + message.getCharacter() + " disconnected");
+                showMessage(nickname + " - " + character + " disconnected");
             }
             if (this.state == SETTINGSKULLS) {
                 showMessage("Set Skulls number for the game:");
@@ -697,112 +711,77 @@ public abstract class View {
         } else {
             String nickname = "";
             for (PlayerBoard board : this.enemyBoards) {
-                if (board.getCharacter() == message.getCharacter()) {
+                if (board.getCharacter() == character) {
                     nickname = board.getNickname();
                     break;
                 }
             }
-            showMessage(nickname + " - " + message.getCharacter() + " disconnected");
+            showMessage(nickname + " - " + character + " disconnected");
         }
     }
 
-    private void update(StartGameSetupMessage message) {
-        if (message.getCharacter() == this.character) {
-            showMessage("You are the master, set Skulls number for the game:");
-            this.state = SETTINGSKULLS;
+    private void handleGameAlreadyStarted() {
+        showMessage("Game already started, sorry");
+        System.exit(0);
+    }
 
-        } else {
-            showMessage("Master player is setting up the game, wait");
-            this.state = WAITINGSETUP;
+    private void loadView(GameCharacter character, int skulls, List<SquareView> squares,
+                        Map<Integer, List<GameCharacter>> killshotTrack, List<PlayerBoard> playerBoards,
+                        List<Weapon> weapons, List<Powerup> powerups, int score, Map<GameCharacter, String> others) {
+        this.character = character;
+        this.state = WAITINGSETUP;
+        this.enemyBoards = new ArrayList<>();
+        this.board = new BoardView(skulls, squares, killshotTrack);
+        for(PlayerBoard playerBoard : playerBoards) {
+            if(playerBoard.getCharacter() == character){
+                this.selfPlayerBoard = new SelfPlayerBoard(playerBoard, weapons, powerups, score);
+            } else {
+                this.enemyBoards.add(playerBoard);
+            }
+        }
+        showMessage("You are " + this.character);
+        for (Map.Entry<GameCharacter, String> player : others.entrySet()) {
+            if(player.getKey() != this.character) {
+                showMessage(player.getKey() + " - " + player.getValue() + " is in!");
+            }
         }
     }
 
-    private void update(SkullsSetMessage message) {
-        showMessage("OK, now select the Arena [1, 2, 3, 4]:");
-        this.state = SETTINGARENA;
-    }
-
-    private void update(GameSetMessage message) {
-        List<SquareView> squares = new ArrayList<>();
-        for(Coordinates square : message.getArenaColors().keySet()) {
-            RoomColor color = message.getArenaColors().get(square);
-            Boolean spawn = message.getArenaSpawn().get(square);
-            Map<CardinalPoint, Boolean> map = message.getNearbyAccessibility().get(square);
-            squares.add(new SquareView(square.getX(), square.getY(), color, spawn, map));
-        }
-        this.board = new BoardView(message.getSkulls(), squares);
-
-        showMessage("Master choose " + message.getSkulls() + " Skulls and Arena " + message.getArenaNumber());
-        showMessage("This is the Arena:");
-        showMessage(this.board.arenaToString());
-    }
-
-    private void update(ArenaFilledMessage message) {
-        showMessage("Ammo tiles and Weapons placed:");
-        showMessage(this.board.arenaToString());
-    }
-
-    private void update(StartTurnMessage message) throws RemoteException {
-        if(message.getPlayer() != this.character) {
-            this.state = OTHERTURN;
-            showMessage(message.getPlayer() + " is playing");
-        } else {
-            this.state = YOURTURN;
-            showMessage("It's your turn!");
-            this.client.send(message);
+    private void update(PowerupMessage message) {
+        switch(message.getType()) {
+            case ADD:
+                handlePowerupAdded(message.getCharacter(), message.getPowerup());
+                break;
+            default:
+                handlePowerupRemoved(message.getCharacter(), message.getPowerup(), message.getType());
         }
     }
 
-    private void update(PowerupDrawnMessage message) {
-        if(message.getPlayer() != this.character) {
-            PlayerBoard playerBoard = getBoardByCharacter(message.getPlayer());
+    private void handlePowerupAdded(GameCharacter character, Powerup powerup) {
+        if(character != this.character) {
+            PlayerBoard playerBoard = getBoardByCharacter(character);
             if(playerBoard != null) {
                 playerBoard.addPowerup();
-                showMessage(message.getPlayer() + " has drawn a Powerup");
+                showMessage(character + " has drawn a Powerup");
             }
         } else {
-            this.selfPlayerBoard.addPowerup(message.getPowerup());
-            showMessage("You have drawn " + message.getPowerup().getType() + " " + message.getPowerup().getColor());
+            this.selfPlayerBoard.addPowerup(powerup);
+            showMessage("You have drawn " + powerup.getType() + " " + powerup.getColor());
         }
     }
 
-    private void update(DiscardToSpawnMessage message) {
-        StringBuilder text = new StringBuilder();
-        text.append("Discard a Powerup to spawn:\n");
-        List<Powerup> powerups = this.selfPlayerBoard.getPowerups();
-        for(int i=0; i<powerups.size(); i++) {
-            int index = i + 1;
-            String toAppend = "[" + index + "] - " + powerups.get(i).getType() + " " + powerups.get(i).getColor() + "\n";
-            text.append(toAppend);
-        }
-        text.setLength(text.length() - 1);
-        showMessage(text.toString());
-        this.state = DISCARDSPAWN;
-    }
-
-    private void update(PlayerSpawnedMessage message) {
-        int x = message.getCoordinates().getX();
-        int y = message.getCoordinates().getY();
-        this.board.setPlayerPosition(message.getCharacter(), this.board.getSquareByCoordinates(x, y));
-        if(this.character == message.getCharacter()) {
-            showMessage("You spawned in [" + x + ", " + y + "]");
+    private void handlePowerupRemoved(GameCharacter character, Powerup powerup, PowerupMessageType type) {
+        if(this.character == character) {
+            this.selfPlayerBoard.removePowerup(powerup.getType(), powerup.getColor());
         } else {
-            showMessage(message.getCharacter() + " spawned in [" + x + ", " + y + "]");
+            this.getBoardByCharacter(character).removePowerup();
         }
-    }
-
-    private void update(PowerupRemovedMessage message) {
-        if(this.character == message.getCharacter()) {
-            this.selfPlayerBoard.removePowerup(message.getPowerup().getType(), message.getPowerup().getColor());
-        } else {
-            this.getBoardByCharacter(message.getCharacter()).removePowerup();
-        }
-        if(this.character == message.getCharacter()) {
+        if(this.character == character) {
             showMessage("You have discarded " +
-                    message.getPowerup().getType() + " " + message.getPowerup().getColor());
+                    powerup.getType() + " " + powerup.getColor());
         } else {
-            showMessage(message.getCharacter() + " has discarded " +
-                    message.getPowerup().getType() + " " + message.getPowerup().getColor());
+            showMessage(character + " has discarded " +
+                    powerup.getType() + " " + powerup.getColor());
         }
     }
 
@@ -855,146 +834,118 @@ public abstract class View {
         showMessage(text.toString());
     }
 
-    private void update(AvailableActionsMessage message) {
-        this.turnActions = new ArrayList<>(message.getActions());
-        this.turnActions.add(ActionType.ENDTURN);
-        showActions();
-        this.state = SELECTACTION;
-    }
-
-    private void update(AvailableMoveActionMessage message) {
-        this.actionCoordinates = message.getMovements();
-        showMessage(this.board.arenaToString(message.getMovements()));
-        showMessage("You can move in the squares marked with '***'\nInsert [x,y] or type 'C' to cancel:");
-        this.state = SELECTMOVEMENT;
-    }
-
-    private void update(AvailablePickupActionMessage message) {
-        this.actionCoordinates = message.getMovements();
-        showMessage(this.board.arenaToString(message.getMovements()));
-        showMessage("You can move and pickup in the squares marked with '***'\nInsert [x,y] or type 'C' to cancel:");
-        this.state = SELECTPICKUP;
-    }
-
-    private void update(MovementMessage message) {
-        int x = message.getCoordinates().getX();
-        int y = message.getCoordinates().getY();
-        this.board.setPlayerPosition(message.getCharacter(), this.board.getSquareByCoordinates(x, y));
-        if(this.character == message.getCharacter()) {
-            showMessage("You moved in [" + x + ", " + y + "]");
-        } else {
-            showMessage(message.getCharacter() + " moved in [" + x + ", " + y + "]");
+    private void update(AmmosMessage message) {
+        switch (message.getType()) {
+            case ADD:
+                handleAddAmmos(message.getCharacter(), message.getAmmos());
+                break;
+            case REMOVE:
+                handleRemoveAmmos(message.getCharacter(), message.getAmmos());
         }
     }
 
-    private void update(AmmosGivenMessage message) {
-        this.board.getPlayerPosition(message.getCharacter()).removeAmmoTile();
-        if (this.character == message.getCharacter()) {
-            this.selfPlayerBoard.addAmmos(message.getAmmos());
+    private void handleAddAmmos(GameCharacter character, Map<AmmoType, Integer> ammos) {
+        this.board.getPlayerPosition(character).removeAmmoTile();
+        if (this.character == character) {
+            this.selfPlayerBoard.addAmmos(ammos);
         } else {
-            this.getBoardByCharacter(message.getCharacter()).addAmmos(message.getAmmos());
+            this.getBoardByCharacter(character).addAmmos(ammos);
         }
-        for (Map.Entry<AmmoType, Integer> ammo : message.getAmmos().entrySet()) {
+        for (Map.Entry<AmmoType, Integer> ammo : ammos.entrySet()) {
             if (ammo.getValue() == 0) {
                 continue;
             }
-            if (this.character == message.getCharacter()) {
+            if (this.character == character) {
                 showMessage("You got " + ammo.getValue() + "x" + ammo.getKey());
             } else {
-                showMessage(message.getCharacter() + " got " + ammo.getValue() + "x" + ammo.getKey());
+                showMessage(character + " got " + ammo.getValue() + "x" + ammo.getKey());
             }
         }
     }
 
-    private void update(WeaponPickupSelectionMessage message) {
-        this.weaponsSelectionList = new ArrayList<>(message.getWeapons());
-        StringBuilder text = new StringBuilder();
-        text.append("Select a weapon to pickup:\n");
-        int index = 1;
-        for (Weapon weapon : message.getWeapons()) {
-            String toAppend = "[" + index + "] - " + weapon + "\n";
-            text.append(toAppend);
-            index++;
-        }
-        text.setLength(text.length() - 1);
-        showMessage(text.toString());
-        this.state = SELECTWEAPON;
-    }
-
-    private void update(WeaponGivenMessage message) {
-        this.board.getPlayerPosition(message.getCharacter()).removeStoreWeapon(message.getWeapon());
-        if (this.character == message.getCharacter()) {
-            this.selfPlayerBoard.addWeapon(message.getWeapon());
+    private void handleRemoveAmmos(GameCharacter character, Map<AmmoType, Integer> ammos) {
+        if (this.character == character) {
+            this.selfPlayerBoard.useAmmos(ammos);
         } else {
-            this.getBoardByCharacter(message.getCharacter()).addWeapon();
+            this.getBoardByCharacter(character).useAmmos(ammos);
         }
-        if (this.character == message.getCharacter()) {
-            showMessage("You got " + message.getWeapon());
-        } else {
-            showMessage(message.getCharacter() + " got " + message.getWeapon());
-        }
-    }
-
-    private void update(AmmosUsedMessage message) {
-        if (this.character == message.getCharacter()) {
-            this.selfPlayerBoard.useAmmos(message.getAmmos());
-        } else {
-            this.getBoardByCharacter(message.getCharacter()).useAmmos(message.getAmmos());
-        }
-        for (Map.Entry<AmmoType, Integer> ammo : message.getAmmos().entrySet()) {
+        for (Map.Entry<AmmoType, Integer> ammo : ammos.entrySet()) {
             if (ammo.getValue() == 0) {
                 continue;
             }
-            if (this.character == message.getCharacter()) {
+            if (this.character == character) {
                 showMessage("You used " + ammo.getValue() + "x" + ammo.getKey());
             } else {
-                showMessage(message.getCharacter() + " used " + ammo.getValue() + "x" + ammo.getKey());
+                showMessage(character + " used " + ammo.getValue() + "x" + ammo.getKey());
             }
         }
     }
 
-    private void update(RequireWeaponSwitchMessage message) {
-        this.weaponsSelectionList = new ArrayList<>(this.selfPlayerBoard.getReadyWeapons());
-        this.weaponsSelectionList.addAll(this.selfPlayerBoard.getUnloadedWeapons());
-        StringBuilder text = new StringBuilder();
-        String toAppend = "Select a weapon to switch with " + message.getWeapon() + ":\n";
-        text.append(toAppend);
-        int index = 1;
-        for (Weapon weapon : this.weaponsSelectionList) {
-            toAppend = "[" + index + "] - " + weapon;
-            text.append(toAppend);
-            if (this.selfPlayerBoard.getReadyWeapons().contains(weapon)) {
-                text.append(" [READY]\n");
-            } else {
-                text.append(" [UNLOADED]\n");
-            }
-            index++;
+    private void update(WeaponMessage message) {
+        switch(message.getType()) {
+            case PICKUP:
+                handleWeaponPickup(message.getCharacter(), message.getWeapon());
+                break;
+            case SWITCH:
+                handleWeaponSwitch(message.getCharacter(), ((WeaponSwitchMessage) message).getSwitchWeapon(),
+                        message.getWeapon());
+                break;
+            case RELOAD:
+                handleWeaponReload(message.getCharacter(), message.getWeapon());
+                break;
         }
-        text.setLength(text.length() - 1);
-        showMessage(text.toString());
-        this.state = SWITCHWEAPON;
     }
 
-    private void update(WeaponsSwitchedMessage message) {
-        if (message.getCharacter() == this.character) {
-            this.selfPlayerBoard.removeWeapon(message.getOldWeapon());
-            this.selfPlayerBoard.addWeapon(message.getNewWeapon());
+    private void handleWeaponPickup(GameCharacter character, Weapon weapon) {
+        this.board.getPlayerPosition(character).removeStoreWeapon(weapon);
+        if (this.character == character) {
+            this.selfPlayerBoard.addWeapon(weapon);
         } else {
-            PlayerBoard playerBoard = getBoardByCharacter(message.getCharacter());
+            this.getBoardByCharacter(character).addWeapon();
+        }
+        if (this.character == character) {
+            showMessage("You got " + weapon);
+        } else {
+            showMessage(character + " got " + weapon);
+        }
+    }
+
+    private void handleWeaponSwitch(GameCharacter character, Weapon oldWeapon, Weapon newWeapon) {
+        if (character == this.character) {
+            this.selfPlayerBoard.removeWeapon(oldWeapon);
+            this.selfPlayerBoard.addWeapon(newWeapon);
+        } else {
+            PlayerBoard playerBoard = getBoardByCharacter(character);
             if (playerBoard != null) {
-                playerBoard.removeWeapon(message.getOldWeapon());
+                playerBoard.removeWeapon(oldWeapon);
                 playerBoard.addWeapon();
             }
         }
-        if (message.getCharacter() == this.character) {
-            showMessage("You dropped your " + message.getOldWeapon() + " to get a " + message.getNewWeapon());
+        if (character == this.character) {
+            showMessage("You dropped your " + oldWeapon + " to get a " + newWeapon);
         } else {
-            showMessage(message.getCharacter() + " dropped a " + message.getOldWeapon() + " to get a " + message.getNewWeapon());
+            showMessage(character + " dropped a " + oldWeapon + " to get a " + newWeapon);
+        }
+    }
+
+    private void handleWeaponReload(GameCharacter character, Weapon weapon) {
+        if (character == this.character) {
+            this.selfPlayerBoard.reloadWeapon(weapon);
+        } else {
+            PlayerBoard playerBoard = getBoardByCharacter(character);
+            if (playerBoard != null) {
+                playerBoard.reloadWeapon(weapon);
+            }
+        }
+        if (character == this.character) {
+            showMessage("Your " + weapon + " is now ready to fire");
+        } else {
+            showMessage(character + " realoaded " + weapon);
         }
     }
 
     private void requirePayment() {
-        StringBuilder builder = new StringBuilder("Devi pagare ");
+        StringBuilder builder = new StringBuilder("You must pay ");
         for (Map.Entry<AmmoType, Integer> ammo : this.paymentRequired.entrySet()) {
             if (ammo.getValue() == 0) {
                 continue;
@@ -1002,7 +953,7 @@ public abstract class View {
             builder.append(ammo.getValue() + "x" + ammo.getKey() + ", ");
         }
         builder.setLength((builder.length() - 1));
-        builder.append("\nSeleziona munizioni o powerup:\n");
+        builder.append("\nSelect ammos or powerups:\n");
         int index = 1;
         for (Map.Entry<AmmoType, Integer> ammo : this.availableAmmos.entrySet()) {
             if (ammo.getValue() != 0 && this.paymentRequired.keySet().contains(ammo.getKey()) &&
@@ -1021,54 +972,91 @@ public abstract class View {
         showMessage(builder.toString());
     }
 
-    private void update(RequireWeaponPaymentMessage message) {
-        this.paymentRequired = message.getBuyCost();
+    private void update(PaymentMessage message) {
+        handlePayment(message.getPaymentType(), message.getAmmos());
+    }
+
+    private void handlePayment(PaymentType type, Map<AmmoType, Integer> request) {
+        this.paymentRequired = request;
+        this.currentPayment = type;
         this.availableAmmos = new EnumMap<>(this.selfPlayerBoard.getAvailableAmmos());
         this.availablePowerups = new ArrayList<>(this.selfPlayerBoard.getPowerups());
         requirePayment();
         this.state = PAYMENT;
     }
 
-    private void update(RequireWeaponLoadMessage message) {
-        this.weaponsSelectionList = new ArrayList<>(message.getWeapons());
-        StringBuilder text = new StringBuilder();
-        text.append("Select a weapon to recharge or skip:\n");
-        int index = 1;
-        for (Weapon weapon : message.getWeapons()) {
-            String toAppend = "[" + index + "] - " + weapon + "\n";
-            text.append(toAppend);
-            index++;
-        }
-        showMessage(text.toString());
-        this.state = RECHARGEWEAPON;
-    }
-
-    private void update(RechargeWeaponMessage message) {
-        if (message.getCharacter() == this.character) {
-            this.selfPlayerBoard.reloadWeapon(message.getWeapon());
-        } else {
-            PlayerBoard playerBoard = getBoardByCharacter(message.getCharacter());
-            if (playerBoard != null) {
-                playerBoard.reloadWeapon(message.getWeapon());
-            }
-        }
-        if (message.getCharacter() == this.character) {
-            showMessage("Your " + message.getWeapon() + " is now ready to fire");
-        } else {
-            showMessage(message.getCharacter() + " realoaded " + message.getWeapon());
+    private void update(TurnMessage message) throws RemoteException {
+        switch(message.getType()) {
+            case START:
+                handleStartTurn(message, message.getCharacter());
+                break;
+            case END:
+                handleEndTurn(message.getCharacter());
+                break;
         }
     }
 
-    private void update(EndTurnMessage message) {
-        if (message.getCharacter() == this.character) {
+    private void handleStartTurn(TurnMessage message, GameCharacter character) throws RemoteException {
+        if(character != this.character) {
+            this.state = OTHERTURN;
+            showMessage(character + " is playing");
+        } else {
+            this.state = YOURTURN;
+            showMessage("It's your turn!");
+            this.client.send(message);
+        }
+    }
+
+    private void handleEndTurn(GameCharacter character) {
+        if (character == this.character) {
             showMessage("Turn finished");
         } else {
-            showMessage(message.getCharacter() + "'s turn finished");
+            showMessage(character + "'s turn finished");
         }
     }
 
-    private void update(WeaponStoresRefilledMessage message) {
-        for (Map.Entry<Coordinates, Weapon> weapon : message.getWeapons().entrySet()) {
+    private void update(BoardMessage message) {
+        switch (message.getType()) {
+            case SETUP_INTERRUPTED:
+                handleSetupInterrupted();
+                break;
+            case GAME_SET:
+                handleGameSet(((GameSetMessage) message).getSquareColors(), ((GameSetMessage) message).getSpawnPoints(),
+                        ((GameSetMessage) message).getNearbyAccessibility(), ((GameSetMessage) message).getSkulls(),
+                        ((GameSetMessage) message).getArenaNumber());
+                break;
+            case WEAPON_STORES_REFILLED:
+                handleStoresRefilled(((WeaponStoresRefilledMessage) message).getWeapons());
+                break;
+            case AMMO_TILES_REFILLED:
+                handleTilesRefilled(((AmmoTilesRefilledMessage) message).getTiles());
+                break;
+        }
+    }
+
+    private void handleSetupInterrupted() {
+        showMessage("Too few players, game setup interrupted");
+        this.state = WAITINGSTART;
+    }
+
+    private void handleGameSet(Map<Coordinates, RoomColor> colors, Map<Coordinates, Boolean> spawns,
+                        Map<Coordinates, Map<CardinalPoint, Boolean>> nearbyAccessibility, int skulls, int arena) {
+        List<SquareView> squares = new ArrayList<>();
+        for(Coordinates square : colors.keySet()) {
+            RoomColor color = colors.get(square);
+            Boolean spawn = spawns.get(square);
+            Map<CardinalPoint, Boolean> map = nearbyAccessibility.get(square);
+            squares.add(new SquareView(square.getX(), square.getY(), color, spawn, map));
+        }
+        this.board = new BoardView(skulls, squares);
+
+        showMessage("Master choose " + skulls + " Skulls and Arena " + arena);
+        showMessage("This is the Arena:");
+        showMessage(this.board.arenaToString());
+    }
+
+    private void handleStoresRefilled(Map<Coordinates, Weapon> weapons) {
+        for (Map.Entry<Coordinates, Weapon> weapon : weapons.entrySet()) {
             int x = weapon.getKey().getX();
             int y = weapon.getKey().getY();
             this.board.getSquareByCoordinates(x, y).addStoreWeapon(weapon.getValue());
@@ -1076,8 +1064,8 @@ public abstract class View {
         showMessage("Weapon stores filled");
     }
 
-    private void update(AmmoTilesRefilledMessage message) {
-        for (Map.Entry<Coordinates, AmmoTile> tile : message.getTiles().entrySet()) {
+    private void handleTilesRefilled(Map<Coordinates, AmmoTile> tiles) {
+        for (Map.Entry<Coordinates, AmmoTile> tile : tiles.entrySet()) {
             int x = tile.getKey().getX();
             int y = tile.getKey().getY();
             this.board.getSquareByCoordinates(x, y).setAvailableAmmoTile(tile.getValue());
@@ -1085,25 +1073,95 @@ public abstract class View {
         showMessage("Ammo tiles filled");
     }
 
-    private void update(RequirePowerupUseMessage message) {
-        this.availablePowerups = message.getPowerups();
+    private void update(SelectionSentMessage message) {
+        switch (message.getType()) {
+            case SWITCH:
+                handleWeaponSwitchRequest((List<Weapon>) message.getList());
+                break;
+            case PICKUP:
+                handlePickupActionRequest((List<Coordinates>) message.getList());
+                break;
+            case MOVE:
+                handleMovementActionRequest((List<Coordinates>) message.getList());
+                break;
+            case POWERUP_TARGET:
+                handlePowerupTargetRequest((List<GameCharacter>) message.getList());
+                break;
+            case POWERUP_POSITION:
+                handlePowerupPositionRequest((List<Coordinates>) message.getList());
+                break;
+            case RELOAD:
+                handleReloadRequest((List<Weapon>) message.getList());
+                break;
+            case DISCARD_POWERUP:
+                handleDiscardPowerupRequest((List<Powerup>) message.getList());
+                break;
+            case USE_POWERUP:
+                handleUsePowerupRequest((List<Powerup>) message.getList());
+                break;
+            case PICKUP_WEAPON:
+                handleWeaponPickupRequest((List<Weapon>) message.getList());
+                break;
+            case ACTION:
+                handleActionSelectionRequest((List<ActionType>) message.getList());
+                break;
+        }
+    }
+
+    private void handleWeaponSwitchRequest(List<Weapon> weapons) {
+        this.weaponsSelectionList = weapons;
         StringBuilder text = new StringBuilder();
-        text.append("Select a powerup to use or skip:\n");
+        String toAppend = "Select a weapon to switch:\n";
+        text.append(toAppend);
         int index = 1;
-        for (Powerup p : message.getPowerups()) {
-            String toAppend = "[" + index + "] - " + p.getType() + " " + p.getColor() + "\n";
+        for (Weapon weapon : weapons) {
+            toAppend = "[" + index + "] - " + weapon;
+            text.append(toAppend);
+            if (this.selfPlayerBoard.getReadyWeapons().contains(weapon)) {
+                text.append(" [READY]\n");
+            } else {
+                text.append(" [UNLOADED]\n");
+            }
+            index++;
+        }
+        text.setLength(text.length() - 1);
+        showMessage(text.toString());
+        this.state = SWITCHWEAPON;
+    }
+
+    private void handlePickupActionRequest(List<Coordinates> coordinates) {
+        this.actionCoordinates = coordinates;
+        showMessage(this.board.arenaToString(coordinates));
+        showMessage("You can move and pickup in the squares marked with '***'\nInsert [x,y] or type 'C' to cancel:");
+        this.state = SELECTPICKUP;
+    }
+
+    private void handleMovementActionRequest(List<Coordinates> coordinates) {
+        this.actionCoordinates = coordinates;
+        showMessage(this.board.arenaToString(coordinates));
+        showMessage("You can move in the squares marked with '***'\nInsert [x,y] or type 'C' to cancel:");
+        this.state = SELECTMOVEMENT;
+    }
+
+    private void handlePowerupTargetRequest(List<GameCharacter> targets) {
+        this.availableTargets = targets;
+        StringBuilder text = new StringBuilder();
+        text.append("Select a target:\n");
+        int index = 1;
+        for (GameCharacter c : targets) {
+            String toAppend = "[" + index + "] - " + c + "\n";
             text.append(toAppend);
             index++;
         }
-        text.append("[" + index + "] - Cancel");
+        text.setLength(text.length() - 1);
         showMessage(text.toString());
-        this.state = USEPOWERUP;
+        this.state = SELECTPOWERUPTARGET;
     }
 
-    private void update (PowerupPositionsAvailableMessage message) {
-        this.actionCoordinates = message.getPositions();
-        showMessage(this.board.arenaToString(message.getPositions()));
-        switch (message.getPowerup()) {
+    private void handlePowerupPositionRequest(List<Coordinates> coordinates) {
+        this.actionCoordinates = coordinates;
+        showMessage(this.board.arenaToString(coordinates));
+        switch (this.activePowerup) {
             case TELEPORTER:
                 showMessage("You can move in the squares marked with '***'\nInsert [x,y]:");
                 break;
@@ -1114,19 +1172,68 @@ public abstract class View {
         this.state = SELECTPOWERUPPOSITION;
     }
 
-    private void update(PowerupTargetsAvailableMessage message) {
-        this.availableTargets = message.getTargets();
+    private void handleReloadRequest(List<Weapon> weapons) {
+        this.weaponsSelectionList = new ArrayList<>(weapons);
         StringBuilder text = new StringBuilder();
-        text.append("Select a target:\n");
+        text.append("Select a weapon to recharge or skip:\n");
         int index = 1;
-        for (GameCharacter c : message.getTargets()) {
-            String toAppend = "[" + index + "] - " + c + "\n";
+        for (Weapon weapon : weapons) {
+            String toAppend = "[" + index + "] - " + weapon + "\n";
+            text.append(toAppend);
+            index++;
+        }
+        showMessage(text.toString());
+        this.state = RECHARGEWEAPON;
+    }
+
+    private void handleDiscardPowerupRequest(List<Powerup> powerups) {
+        StringBuilder text = new StringBuilder();
+        text.append("Discard a Powerup to spawn:\n");
+        for(int i=0; i<powerups.size(); i++) {
+            int index = i + 1;
+            String toAppend = "[" + index + "] - " + powerups.get(i).getType() + " " + powerups.get(i).getColor() + "\n";
+            text.append(toAppend);
+        }
+        text.setLength(text.length() - 1);
+        showMessage(text.toString());
+        this.state = DISCARDSPAWN;
+    }
+
+    private void handleUsePowerupRequest(List<Powerup> powerups) {
+        this.availablePowerups = powerups;
+        StringBuilder text = new StringBuilder();
+        text.append("Select a powerup to use or skip:\n");
+        int index = 1;
+        for (Powerup p : powerups) {
+            String toAppend = "[" + index + "] - " + p.getType() + " " + p.getColor() + "\n";
+            text.append(toAppend);
+            index++;
+        }
+        text.append("[" + index + "] - Cancel");
+        showMessage(text.toString());
+        this.state = USEPOWERUP;
+    }
+
+    private void handleWeaponPickupRequest(List<Weapon> weapons) {
+        this.weaponsSelectionList = new ArrayList<>(weapons);
+        StringBuilder text = new StringBuilder();
+        text.append("Select a weapon to pickup:\n");
+        int index = 1;
+        for (Weapon weapon : weapons) {
+            String toAppend = "[" + index + "] - " + weapon + "\n";
             text.append(toAppend);
             index++;
         }
         text.setLength(text.length() - 1);
         showMessage(text.toString());
-        this.state = SELECTPOWERUPTARGET;
+        this.state = SELECTWEAPON;
+    }
+
+    private void handleActionSelectionRequest(List<ActionType> actions) {
+        this.turnActions = new ArrayList<>(actions);
+        this.turnActions.add(ActionType.ENDTURN);
+        showActions();
+        this.state = SELECTACTION;
     }
 
     public abstract void showMessage(String message);

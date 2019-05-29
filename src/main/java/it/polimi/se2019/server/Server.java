@@ -5,6 +5,9 @@ import it.polimi.se2019.model.Board;
 import it.polimi.se2019.model.GameCharacter;
 import it.polimi.se2019.model.Player;
 import it.polimi.se2019.model.messages.*;
+import it.polimi.se2019.model.messages.client.*;
+import it.polimi.se2019.model.messages.nickname.NicknameMessage;
+import it.polimi.se2019.model.messages.nickname.NicknameMessageType;
 import it.polimi.se2019.view.VirtualView;
 
 import java.rmi.RemoteException;
@@ -78,7 +81,7 @@ public class Server {
             }
         } else {
             try {
-                client.send(new RequireNicknameMessage());
+                client.send(new NicknameMessage(NicknameMessageType.REQUIRE));
             } catch (RemoteException e) {
                 LOGGER.log(Level.SEVERE, ("Error on sending message: "), e);
             }
@@ -148,18 +151,15 @@ public class Server {
     }
 
     void receiveMessage(Message message, VirtualClientInterface client) throws RemoteException {
-        String messageType = message.getMessageType().getName()
-                .replace("it.polimi.se2019.model.messages.", "");
         if (this.clients.size() == 5) {
-            client.send(new GameAlreadyStartedMessage());
+            client.send(new ClientMessage(ClientMessageType.GAME_ALREADY_STARTED, null));
         }
-
         List<GameCharacter> availables = new ArrayList<>();
-        switch (messageType) {
-            case "NicknameMessage":
+        switch (message.getMessageType()) {
+            case NICKNAME_MESSAGE:
                 for(Player player : this.model.getPlayers()) {
                     if (player.getNickname().equals(((NicknameMessage) message).getNickname())) {
-                        client.send(new NicknameDuplicatedMessage());
+                        client.send(new NicknameMessage(NicknameMessageType.DUPLICATED));
                         return;
                     }
                 }
@@ -171,44 +171,46 @@ public class Server {
                 }
                 client.send(new CharacterMessage(availables));
                 break;
-            case "CharacterMessage":
-                for(Player player : this.model.getPlayers()) {
-                    if (player.getNickname().equals(this.clientNicknames.get(client))) {
-                        client.send(new NicknameDuplicatedMessage());
-                        return;
-                    }
-                }
-                GameCharacter playerCharacter = ((CharacterMessage) message).getCharacter();
-                if(this.clients.containsKey(playerCharacter)) {
-                    for(GameCharacter character : GameCharacter.values()){
-                        if(!this.clients.containsKey(character)){
-                            availables.add(character);
+            case CLIENT_MESSAGE:
+                if (((ClientMessage) message).getType() == ClientMessageType.CHARACTER_SELECTION) {
+                    for (Player player : this.model.getPlayers()) {
+                        if (player.getNickname().equals(this.clientNicknames.get(client))) {
+                            client.send(new NicknameMessage(NicknameMessageType.DUPLICATED));
+                            return;
                         }
                     }
-                    client.send(new CharacterMessage(availables));
-                    return;
-                }
-                this.clients.put(playerCharacter, client);
-                this.temporaryClients.remove(client);
-                System.out.println("A new client connected.");
-                this.view.forwardMessage(
-                        new ClientReadyMessage(((CharacterMessage) message).getCharacter(),
-                                this.clientNicknames.get(client), ((CharacterMessage) message).getToken()));
-                this.clientNicknames.remove(client);
-                break;
-            case "ReconnectionMessage":
-                for(Player player : this.model.getPlayers()) {
-                    GameCharacter character = player.verifyPlayer(((ReconnectionMessage) message).getToken());
-                    if(character != null && !this.clients.containsKey(character)) {
-                        this.clients.put(player.getCharacter(), client);
-                        this.temporaryClients.remove(client);
-                        this.clientNicknames.remove(client);
-                        System.out.println("A new client connected.");
-                        this.view.forwardMessage(new ClientReconnectedMessage(player.getCharacter()));
+                    GameCharacter playerCharacter = ((CharacterMessage) message).getCharacter();
+                    if (this.clients.containsKey(playerCharacter)) {
+                        for (GameCharacter character : GameCharacter.values()) {
+                            if (!this.clients.containsKey(character)) {
+                                availables.add(character);
+                            }
+                        }
+                        client.send(new CharacterMessage(availables));
                         return;
                     }
+                    this.clients.put(playerCharacter, client);
+                    this.temporaryClients.remove(client);
+                    System.out.println("A new client connected.");
+                    this.view.forwardMessage(
+                            new ClientReadyMessage(((CharacterMessage) message).getCharacter(),
+                                    this.clientNicknames.get(client), ((CharacterMessage) message).getToken()));
+                    this.clientNicknames.remove(client);
+                } else {
+                    for (Player player : this.model.getPlayers()) {
+                        GameCharacter character = player.verifyPlayer(((ReconnectionMessage) message).getToken());
+                        if (character != null && !this.clients.containsKey(character)) {
+                            this.clients.put(player.getCharacter(), client);
+                            this.temporaryClients.remove(client);
+                            this.clientNicknames.remove(client);
+                            System.out.println("A new client connected.");
+                            this.view.forwardMessage(new ClientMessage(ClientMessageType.RECONNECTED,
+                                    player.getCharacter()));
+                            return;
+                        }
+                    }
+                    client.send(new ClientMessage(ClientMessageType.INVALID_TOKEN));
                 }
-                client.send(new InvalidTokenMessage());
                 break;
             default:
                 this.view.forwardMessage(message);

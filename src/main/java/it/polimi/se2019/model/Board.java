@@ -3,7 +3,24 @@ package it.polimi.se2019.model;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import it.polimi.se2019.model.messages.*;
+import it.polimi.se2019.model.messages.ammos.AmmosMessage;
+import it.polimi.se2019.model.messages.ammos.AmmosMessageType;
+import it.polimi.se2019.model.messages.board.*;
+import it.polimi.se2019.model.messages.client.ClientDisconnectedMessage;
+import it.polimi.se2019.model.messages.client.ClientMessage;
+import it.polimi.se2019.model.messages.client.ClientMessageType;
+import it.polimi.se2019.model.messages.client.LoadViewMessage;
+import it.polimi.se2019.model.messages.player.*;
+import it.polimi.se2019.model.messages.powerups.PowerupMessage;
+import it.polimi.se2019.model.messages.powerups.PowerupMessageType;
+import it.polimi.se2019.model.messages.timer.TimerMessage;
+import it.polimi.se2019.model.messages.timer.TimerMessageType;
+import it.polimi.se2019.model.messages.timer.TimerType;
+import it.polimi.se2019.model.messages.turn.TurnMessage;
+import it.polimi.se2019.model.messages.turn.TurnMessageType;
+import it.polimi.se2019.model.messages.weapon.WeaponMessage;
+import it.polimi.se2019.model.messages.weapon.WeaponMessageType;
+import it.polimi.se2019.model.messages.weapon.WeaponSwitchMessage;
 import it.polimi.se2019.view.PlayerBoard;
 import it.polimi.se2019.view.SquareView;
 
@@ -178,7 +195,7 @@ public class Board extends Observable {
         if (getValidPlayers().size() > 3) {
             long remainingTime = this.startTimer /1000L -
                     Duration.between(this.gameTimerStartDate, LocalDateTime.now()).getSeconds();
-            notifyChanges(new GameSetupTimerStartedMessage(remainingTime));
+            notifyChanges(new TimerMessage(TimerMessageType.UPDATE, TimerType.SETUP, remainingTime));
         }
 
         if (getValidPlayers().size() == 3) {
@@ -188,7 +205,7 @@ public class Board extends Observable {
                     finalizePlayersCreation();
                 }
             }, this.startTimer);
-            notifyChanges(new GameSetupTimerStartedMessage(this.startTimer /1000L));
+            notifyChanges(new TimerMessage(TimerMessageType.START, TimerType.SETUP,this.startTimer /1000L));
             this.gameTimerStartDate = LocalDateTime.now();
         }
     }
@@ -208,8 +225,8 @@ public class Board extends Observable {
         for (Player p : toRemove) {
             this.players.remove(p);
         }
-        notifyChanges(new GameAlreadyStartedMessage());
-        notifyChanges(new StartGameSetupMessage(getValidPlayers().get(0).getCharacter()));
+        notifyChanges(new ClientMessage(ClientMessageType.GAME_ALREADY_STARTED, null));
+        notifyChanges(new PlayerMessage(PlayerMessageType.START_SETUP, this.players.get(0).getCharacter()));
     }
 
     public void handleDisconnection(GameCharacter player) {
@@ -228,7 +245,7 @@ public class Board extends Observable {
                     this.timer.cancel();
                     this.gameTimerStartDate = null;
                     this.timer = new Timer();
-                    notifyChanges(new GameSetupTimerResetMessage());
+                    notifyChanges(new TimerMessage(TimerMessageType.STOP, TimerType.SETUP));
                 }
                 break;
             case SETTINGUPGAME:
@@ -242,11 +259,12 @@ public class Board extends Observable {
                     this.gameState = ACCEPTINGPLAYERS;
                     this.gameTimerStartDate = null;
                     this.timer = new Timer();
-                    notifyChanges(new GameSetupInterruptedMessage());
+                    notifyChanges(new BoardMessage(BoardMessageType.SETUP_INTERRUPTED));
                     break;
                 }
                 if (isMaster) {
-                    notifyChanges(new MasterChangedMessage(getValidPlayers().get(0).getCharacter()));
+                    notifyChanges(new PlayerMessage(PlayerMessageType.MASTER_CHANGED,
+                            this.players.get(0).getCharacter()));
                 }
                 break;
             default:
@@ -275,7 +293,7 @@ public class Board extends Observable {
         for (int i=0; i<this.skulls; i++) {
             this.killshotTrack.put(i+1, new ArrayList<>());
         }
-        notifyChanges(new SkullsSetMessage(getValidPlayers().get(0).getCharacter()));
+        notifyChanges(new PlayerMessage(PlayerMessageType.SKULLS_SET, this.players.get(0).getCharacter()));
     }
 
     public void loadTimers() {
@@ -345,7 +363,6 @@ public class Board extends Observable {
         fillWeaponStores();
         fillAmmoTiles();
 
-        notifyChanges(new ArenaFilledMessage());
         this.gameState = FIRSTTURN;
         this.currentPlayer = 0;
         startTurn(this.players.get(this.currentPlayer));
@@ -372,7 +389,7 @@ public class Board extends Observable {
         }
         fillAmmoTiles();
         fillWeaponStores();
-        notifyChanges(new EndTurnMessage(player.getCharacter()));
+        notifyChanges(new TurnMessage(TurnMessageType.END, player.getCharacter()));
         startTurn(nextPlayer);
     }
 
@@ -413,7 +430,7 @@ public class Board extends Observable {
         } else {
             type = TurnType.NORMAL;
         }
-        notifyChanges(new StartTurnMessage(type, player.getCharacter()));
+        notifyChanges(new TurnMessage(TurnMessageType.START, type, player.getCharacter()));
     }
 
     private void incrementCurrentPlayer() {
@@ -554,7 +571,7 @@ public class Board extends Observable {
     public void removePowerup(Player player, Powerup powerup) {
         player.removePowerup(player.getPowerupByType(powerup.getType(), powerup.getColor()));
         this.powerupsDiscardPile.add(powerup);
-        notifyChanges(new PowerupRemovedMessage(player.getCharacter(), powerup));
+        notifyChanges(new PowerupMessage(PowerupMessageType.DISCARD, player.getCharacter(), powerup));
     }
 
     public void drawPowerup(Player player) {
@@ -564,8 +581,8 @@ public class Board extends Observable {
         Powerup powerup = this.powerupsDeck.get(0);
         player.addPowerup(powerup);
         this.powerupsDeck.remove(powerup);
-        notifyChanges(new PowerupDrawnMessage(player.getCharacter(), powerup));
-        notifyChanges(new PowerupDrawnMessage(player.getCharacter(), null));
+        notifyChanges(new PowerupMessage(PowerupMessageType.ADD, player.getCharacter(), powerup));
+        notifyChanges(new PowerupMessage(PowerupMessageType.ADD, player.getCharacter(), null));
     }
 
     public void switchWeapon(Player player, WeaponCard oldCard, WeaponCard newCard) {
@@ -574,14 +591,14 @@ public class Board extends Observable {
         oldCard.setReady(true);
         player.getPosition().addWeapon(oldCard);
         player.addWeapon(newCard);
-        notifyChanges(new WeaponsSwitchedMessage(player.getCharacter(), oldCard.getWeaponType(), newCard.getWeaponType()));
+        notifyChanges(new WeaponSwitchMessage(newCard.getWeaponType(), oldCard.getWeaponType(), player.getCharacter()));
     }
 
     public void loadWeapon(Player player, WeaponCard weapon) {
         for (WeaponCard w : player.getWeapons()) {
             if (w == weapon) {
                 w.setReady(true);
-                notifyChanges(new RechargeWeaponMessage(w.getWeaponType(), player.getCharacter()));
+                notifyChanges(new WeaponMessage(WeaponMessageType.RELOAD, w.getWeaponType(), player.getCharacter()));
                 return;
             }
         }
@@ -590,7 +607,7 @@ public class Board extends Observable {
     public void giveWeapon(Player player, WeaponCard weapon) {
         player.getPosition().removeWeapon(weapon);
         player.addWeapon(weapon);
-        notifyChanges(new WeaponGivenMessage(player.getCharacter(), weapon.getWeaponType()));
+        notifyChanges(new WeaponMessage(WeaponMessageType.PICKUP, weapon.getWeaponType(), player.getCharacter()));
     }
 
     public void giveAmmoTile(Player player, AmmoTile tile) {
@@ -600,12 +617,12 @@ public class Board extends Observable {
         Map<AmmoType, Integer> addedAmmos = player.addAmmos(tile.getAmmos());
         this.ammosDiscardPile.add(tile);
         player.getPosition().removeAmmoTile();
-        notifyChanges(new AmmosGivenMessage(player.getCharacter(), addedAmmos));
+        notifyChanges(new AmmosMessage(AmmosMessageType.ADD, player.getCharacter(), addedAmmos));
     }
 
     public void useAmmos(Player player, Map<AmmoType, Integer> usedAmmos) {
         player.removeAmmos(usedAmmos);
-        notifyChanges(new AmmosUsedMessage(player.getCharacter(), usedAmmos));
+        notifyChanges(new AmmosMessage(AmmosMessageType.REMOVE, player.getCharacter(), usedAmmos));
     }
 
     public void movePlayer(Player player, Square square) {
@@ -621,7 +638,7 @@ public class Board extends Observable {
         Square square = room.getSpawn();
         player.setPosition(square);
         square.addPlayer(player);
-        notifyChanges(new PlayerSpawnedMessage(player.getCharacter(),
+        notifyChanges(new SpawnMessage(player.getCharacter(),
                 new Coordinates(square.getX(), square.getY())));
     }
 
@@ -848,5 +865,4 @@ public class Board extends Observable {
         }
         return null;
     }
-
 }

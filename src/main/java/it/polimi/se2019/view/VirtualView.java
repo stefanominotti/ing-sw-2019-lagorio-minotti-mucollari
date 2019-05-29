@@ -2,6 +2,19 @@ package it.polimi.se2019.view;
 
 import it.polimi.se2019.model.GameCharacter;
 import it.polimi.se2019.model.messages.*;
+import it.polimi.se2019.model.messages.board.BoardMessage;
+import it.polimi.se2019.model.messages.board.BoardMessageType;
+import it.polimi.se2019.model.messages.client.ClientDisconnectedMessage;
+import it.polimi.se2019.model.messages.client.ClientMessage;
+import it.polimi.se2019.model.messages.payment.PaymentMessage;
+import it.polimi.se2019.model.messages.payment.PaymentMessageType;
+import it.polimi.se2019.model.messages.player.PlayerCreatedMessage;
+import it.polimi.se2019.model.messages.player.PlayerMessage;
+import it.polimi.se2019.model.messages.player.PlayerMessageType;
+import it.polimi.se2019.model.messages.player.PlayerReadyMessage;
+import it.polimi.se2019.model.messages.powerups.PowerupMessage;
+import it.polimi.se2019.model.messages.turn.TurnMessage;
+import it.polimi.se2019.model.messages.turn.TurnMessageType;
 import it.polimi.se2019.server.Server;
 
 import java.rmi.RemoteException;
@@ -27,69 +40,31 @@ public class VirtualView extends Observable implements Observer {
 
     @Override
     public void update(Observable model, Object message) {
-        String messageType = ((Message) message).getMessageType().getName()
-                .replace("it.polimi.se2019.model.messages.", "");
         try {
-            switch (messageType) {
-                case "LoadViewMessage":
-                    updateOne((SingleReceiverMessage) message);
+            switch (((Message) message).getMessageType()) {
+                case PLAYER_MESSAGE:
+                    update((PlayerMessage) message);
                     break;
-                case "PlayerCreatedMessage":
-                    update((PlayerCreatedMessage) message);
+                case CLIENT_MESSAGE:
+                    update((ClientMessage) message);
                     break;
-                case "GameAlreadyStartedMessage":
-                    update((GameAlreadyStartedMessage) message);
+                case BOARD_MESSAGE:
+                    update((BoardMessage) message);
                     break;
-                case "ClientDisconnectedMessage":
-                    update((ClientDisconnectedMessage) message);
+                case POWERUP_MESSAGE:
+                    update((PowerupMessage) message);
                     break;
-                case "StartGameSetupMessage":
-                    update((StartGameSetupMessage) message);
+                case SELECTION_SENT_MESSAGE:
+                    send((SingleReceiverMessage) message);
                     break;
-                case "SkullsSetMessage":
-                    updateOne((SingleReceiverMessage) message);
+                case TURN_MESSAGE:
+                    update((TurnMessage) message);
                     break;
-                case "GameSetupInterruptedMessage":
-                    update((GameSetupInterruptedMessage) message);
-                    break;
-                case "PowerupDrawnMessage":
-                    update((PowerupDrawnMessage) message);
-                    break;
-                case "AvailableActionsMessage":
-                    updateOne((SingleReceiverMessage) message);
-                    break;
-                case "AvailableMoveActionMessage":
-                    updateOne((SingleReceiverMessage) message);
-                    break;
-                case "AvailablePickupActionMessage":
-                    updateOne((SingleReceiverMessage) message);
-                    break;
-                case "WeaponPickupSelectionMessage":
-                    updateOne((SingleReceiverMessage) message);
-                    break;
-                case "RequireWeaponSwitchMessage":
-                    updateOne((SingleReceiverMessage) message);
-                    break;
-                case "RequireWeaponLoadMessage":
-                    updateOne((SingleReceiverMessage) message);
-                    break;
-                case "EndTurnMessage":
-                    update((EndTurnMessage) message);
-                    break;
-                case "RequireWeaponPaymentMessage":
-                    updateOne((SingleReceiverMessage) message);
-                    break;
-                case "RequirePowerupUseMessage":
-                    updateOne((SingleReceiverMessage) message);
-                    break;
-                case "PowerupPositionsAvailableMessage":
-                    updateOne((SingleReceiverMessage) message);
-                    break;
-                case "PowerupTargetsAvailableMessage":
-                    updateOne((SingleReceiverMessage) message);
+                case PAYMENT_MESSAGE:
+                    update((PaymentMessage) message);
                     break;
                 default:
-                    updateAll((Message) message);
+                    sendAll((Message) message);
                     break;
             }
         } catch (RemoteException e) {
@@ -97,50 +72,64 @@ public class VirtualView extends Observable implements Observer {
         }
     }
 
-    private void updateAll(Message message) throws RemoteException {
-        this.server.sendAll(message);
+    private void update(BoardMessage message) throws RemoteException {
+        if (message.getType() == BoardMessageType.SETUP_INTERRUPTED) {
+            this.server.setConnectionAllowed(true);
+        }
+        sendAll(message);
     }
 
-    private void updateOne(SingleReceiverMessage message) throws RemoteException {
-        this.server.send(message.getCharacter(), (Message) message);
-    }
-
-    private void update(PlayerCreatedMessage message) throws RemoteException {
-        this.server.send(message.getCharacter(), message);
-        this.server.sendOthers(message.getCharacter(),
-                new PlayerReadyMessage(message.getCharacter(), message.getNickname()));
-    }
-
-    private void update(ClientDisconnectedMessage message) throws RemoteException {
-        this.server.removeClient(message.getCharacter());
-        this.server.setConnectionAllowed(message.isReconnectionAllowed());
-        updateAll(message);
-    }
-
-    private void update(GameAlreadyStartedMessage message) throws RemoteException {
-        this.server.removeTemporaryClients(message);
-    }
-
-    private void update(StartGameSetupMessage message) throws RemoteException {
-        this.server.setConnectionAllowed(false);
-        updateAll(message);
-    }
-
-    private void update(GameSetupInterruptedMessage message) throws RemoteException {
-        this.server.setConnectionAllowed(true);
-        updateAll(message);
-    }
-
-    private void update(PowerupDrawnMessage message) throws RemoteException {
-        if(message.getPowerup() == null) {
-            this.server.sendOthers(message.getPlayer(), message);
+    private void update(PaymentMessage message) throws RemoteException {
+        if (message.getType() == PaymentMessageType.REQUEST) {
+            send(message);
         } else {
-            this.server.send(message.getPlayer(), message);
+            sendAll(message);
         }
     }
 
-    private void update(EndTurnMessage message) throws RemoteException{
-        this.server.saveGame();
+    private void update(PlayerMessage message) throws RemoteException {
+        if (message.getType() == PlayerMessageType.CREATED) {
+            send(message);
+            sendOthers(message.getCharacter(),
+                    new PlayerReadyMessage(message.getCharacter(), ((PlayerCreatedMessage) message).getNickname()));
+        } else if (message.getType() == PlayerMessageType.SKULLS_SET) {
+            send(message);
+        } else if (message.getType() == PlayerMessageType.START_SETUP) {
+            this.server.setConnectionAllowed(false);
+            sendAll(message);
+        } else {
+            sendAll(message);
+        }
+    }
+
+    private void update(ClientMessage message) throws RemoteException {
+        switch (message.getType()) {
+            case DISCONNECTED:
+                this.server.removeClient(message.getCharacter());
+                this.server.setConnectionAllowed(((ClientDisconnectedMessage) message).isReconnectionAllowed());
+                sendAll(message);
+                break;
+            case GAME_ALREADY_STARTED:
+                this.server.removeTemporaryClients(message);
+                break;
+            case LOAD_VIEW:
+                send(message);
+                break;
+        }
+    }
+
+    private void update(PowerupMessage message) throws RemoteException {
+        if(message.getPowerup() == null) {
+            sendOthers(message.getCharacter(), message);
+        } else {
+            send(message);
+        }
+    }
+
+    private void update(TurnMessage message) throws RemoteException {
+        if (message.getType() == TurnMessageType.END) {
+            this.server.saveGame();
+        }
         this.server.sendAll(message);
     }
 
@@ -152,7 +141,7 @@ public class VirtualView extends Observable implements Observer {
         this.server.sendAll(message);
     }
 
-    public void sendOther(GameCharacter character, Message message) throws RemoteException {
+    public void sendOthers(GameCharacter character, Message message) throws RemoteException {
         this.server.sendOthers(character, message);
     }
 }

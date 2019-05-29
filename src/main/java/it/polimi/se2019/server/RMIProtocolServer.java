@@ -1,9 +1,9 @@
 package it.polimi.se2019.server;
 
 import it.polimi.se2019.client.RMIClientInterface;
-import it.polimi.se2019.model.messages.GameAlreadyStartedMessage;
-import it.polimi.se2019.model.messages.LobbyFullMessage;
 import it.polimi.se2019.model.messages.Message;
+import it.polimi.se2019.model.messages.client.ClientMessage;
+import it.polimi.se2019.model.messages.client.ClientMessageType;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -42,11 +42,11 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
     public void addClient(RMIClientInterface client) throws RemoteException {
         RMIVirtualClient virtualClient = new RMIVirtualClient(client, this);
         if (!this.server.isConnectionAllowed()) {
-            client.notify(new GameAlreadyStartedMessage());
+            client.notify(new ClientMessage(ClientMessageType.GAME_ALREADY_STARTED, null));
             return;
         }
         if (this.server.getClientsNumber() == 5) {
-            client.notify(new LobbyFullMessage());
+            client.notify(new ClientMessage(ClientMessageType.LOBBY_FULL));
         } else {
             this.clientCorrespondency.put(client, virtualClient);
             this.server.addClient(virtualClient);

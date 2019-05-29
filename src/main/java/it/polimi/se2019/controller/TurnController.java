@@ -2,8 +2,15 @@ package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.messages.*;
+import it.polimi.se2019.model.messages.payment.PaymentMessage;
+import it.polimi.se2019.model.messages.payment.PaymentMessageType;
+import it.polimi.se2019.model.messages.payment.PaymentType;
+import it.polimi.se2019.model.messages.selections.SelectionMessageType;
+import it.polimi.se2019.model.messages.selections.SelectionSentMessage;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import static it.polimi.se2019.controller.TurnState.*;
 import static java.util.stream.Collectors.toMap;
@@ -22,10 +29,6 @@ public class TurnController {
     private WeaponCard switchWeapon;
     private EffectsController effectsController;
 
-    //for test only
-    public void setActivePlayer(Player player) {
-        this.activePlayer = player;
-    }
 
     public TurnController(Board board, GameController controller) {
         this.state = TurnState.SELECTACTION;
@@ -48,14 +51,16 @@ public class TurnController {
                     this.board.drawPowerup(this.activePlayer);
                     this.board.drawPowerup(this.activePlayer);
                 }
-                this.controller.send(new DiscardToSpawnMessage(player));
+                this.controller.send(new SelectionSentMessage<>(SelectionMessageType.DISCARD_POWERUP, player,
+                        new ArrayList<>(this.activePlayer.getPowerups())));
                 break;
             case AFTER_DEATH:
                 this.movesLeft = 0;
                 this.state = DEATH_RESPAWNING;
                 countScore();
                 this.board.drawPowerup(this.activePlayer);
-                this.controller.send(new DiscardToSpawnMessage(player));
+                this.controller.send(new SelectionSentMessage<>(SelectionMessageType.DISCARD_POWERUP, player,
+                        new ArrayList<>(this.activePlayer.getPowerups())));
                 break;
             case NORMAL:
                 this.movesLeft = 2;
@@ -148,7 +153,8 @@ public class TurnController {
             }
         }
 
-        this.controller.send(new AvailableMoveActionMessage(this.activePlayer.getCharacter(), movements));
+        this.controller.send(new SelectionSentMessage<>(SelectionMessageType.MOVE, this.activePlayer.getCharacter(),
+                movements));
     }
 
     void calculatePickupAction() {
@@ -204,7 +210,8 @@ public class TurnController {
             }
         }
 
-        this.controller.send(new AvailablePickupActionMessage(this.activePlayer.getCharacter(), movements));
+        this.controller.send(new SelectionSentMessage<>(SelectionMessageType.PICKUP,
+                this.activePlayer.getCharacter(), movements));
     }
 
     void handleAction(ActionType action) {
@@ -262,7 +269,8 @@ public class TurnController {
                 }
             }
         }
-        this.controller.send(new RequirePowerupUseMessage(this.activePlayer.getCharacter(), availablePowerups));
+        this.controller.send(new SelectionSentMessage<>(SelectionMessageType.USE_POWERUP,
+                this.activePlayer.getCharacter(), availablePowerups));
     }
 
     public void sendActions() {
@@ -290,7 +298,8 @@ public class TurnController {
             endTurn();
             return;
         }
-        this.controller.send(new AvailableActionsMessage(this.activePlayer.getCharacter(), availableActions));
+        this.controller.send(new SelectionSentMessage<>(SelectionMessageType.ACTION, this.activePlayer.getCharacter(),
+                availableActions));
         this.state = SELECTACTION;
     }
 
@@ -339,7 +348,8 @@ public class TurnController {
                     availableWeapons.add(weapon.getWeaponType());
                 }
             }
-            this.controller.send(new WeaponPickupSelectionMessage(this.activePlayer.getCharacter(), availableWeapons));
+            this.controller.send(new SelectionSentMessage<>(SelectionMessageType.PICKUP_WEAPON,
+                    this.activePlayer.getCharacter(), availableWeapons));
             return;
         }
         this.board.giveAmmoTile(this.activePlayer, targetSquare.getAvailableAmmoTile());
@@ -354,7 +364,12 @@ public class TurnController {
             }
         }
         if (this.activePlayer.getWeapons().size() == 3) {
-            this.controller.send(new RequireWeaponSwitchMessage(this.activePlayer.getCharacter(), weapon));
+            List<Weapon> toSend = new ArrayList<>();
+            for (WeaponCard w : this.activePlayer.getWeapons()) {
+                toSend.add(w.getWeaponType());
+            }
+            this.controller.send(new SelectionSentMessage<>(SelectionMessageType.SWITCH,
+                    this.activePlayer.getCharacter(), toSend));
             return;
         }
         boolean free = true;
@@ -368,7 +383,8 @@ public class TurnController {
             this.board.giveWeapon(this.activePlayer, this.weaponToGet);
             handleEndAction();
         } else {
-            this.controller.send(new RequireWeaponPaymentMessage(this.activePlayer.getCharacter(), weapon.getBuyCost()));
+            this.controller.send(new PaymentMessage(PaymentMessageType.REQUEST, PaymentType.WEAPON,
+                    this.activePlayer.getCharacter(), weapon.getBuyCost()));
         }
     }
 
@@ -403,7 +419,8 @@ public class TurnController {
             this.board.switchWeapon(this.activePlayer, this.switchWeapon, this.weaponToGet);
             handleEndAction();
         } else {
-            this.controller.send(new RequireWeaponPaymentMessage(this.activePlayer.getCharacter(), this.weaponToGet.getWeaponType().getBuyCost()));
+            this.controller.send(new PaymentMessage(PaymentMessageType.REQUEST, PaymentType.WEAPON,
+                    this.activePlayer.getCharacter(), this.weaponToGet.getWeaponType().getBuyCost()));
         }
     }
 
@@ -444,7 +461,8 @@ public class TurnController {
             // gestione ricarica durante azione frenesia finale
             return;
         }
-        this.controller.send(new RequireWeaponLoadMessage(this.activePlayer.getCharacter(), getRechargeableWeapons()));
+        this.controller.send(new SelectionSentMessage<>(SelectionMessageType.RELOAD,
+                this.activePlayer.getCharacter(), getRechargeableWeapons()));
     }
 
     void reloadWeapon(Weapon weapon) {

@@ -1,9 +1,17 @@
 package it.polimi.se2019.controller;
 
-import it.polimi.se2019.model.Board;
-import it.polimi.se2019.model.GameCharacter;
-import it.polimi.se2019.model.Player;
+import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.messages.*;
+import it.polimi.se2019.model.messages.board.ArenaMessage;
+import it.polimi.se2019.model.messages.board.BoardMessage;
+import it.polimi.se2019.model.messages.board.SkullsMessage;
+import it.polimi.se2019.model.messages.client.ClientMessage;
+import it.polimi.se2019.model.messages.client.ClientReadyMessage;
+import it.polimi.se2019.model.messages.payment.PaymentMessage;
+import it.polimi.se2019.model.messages.payment.PaymentSentMessage;
+import it.polimi.se2019.model.messages.player.PlayerReadyMessage;
+import it.polimi.se2019.model.messages.selections.SelectionReceivedMessage;
+import it.polimi.se2019.model.messages.turn.TurnMessage;
 import it.polimi.se2019.view.VirtualView;
 
 import java.rmi.RemoteException;
@@ -30,70 +38,47 @@ public class GameController implements Observer {
 
     @Override
     public void update(Observable view, Object message) {
-        String messageType = ((Message) message).getMessageType().getName()
-                .replace("it.polimi.se2019.model.messages.", "");
-        switch (messageType) {
-            case "ClientReadyMessage":
-                update((ClientReadyMessage) message);
+        switch (((Message) message).getMessageType()) {
+            case CLIENT_MESSAGE:
+                update((ClientMessage) message);
                 break;
-            case "ClientReconnectedMessage":
-                update((ClientReconnectedMessage) message);
+            case BOARD_MESSAGE:
+                update((BoardMessage) message);
                 break;
-            case "ClientDisconnectedMessage":
-                update((ClientDisconnectedMessage) message);
+            case TURN_MESSAGE:
+                update((TurnMessage) message);
                 break;
-            case "SkullsMessage":
-                update((SkullsMessage) message);
+            case PAYMENT_MESSAGE:
+                update((PaymentMessage) message);
                 break;
-            case "ArenaMessage":
-                update((ArenaMessage) message);
-                break;
-            case "StartTurnMessage":
-                update((StartTurnMessage) message);
-                break;
-            case "PowerupDiscardMessage":
-                update((PowerupDiscardMessage) message);
-                break;
-            case "ActionSelectedMessage":
-                update((ActionSelectedMessage) message);
-                break;
-            case "MovementSelectedMessage":
-                update((MovementSelectedMessage) message);
-                break;
-            case "PickupSelectedMessage":
-                update((PickupSelectedMessage) message);
-                break;
-            case "WeaponPickupMessage":
-                update((WeaponPickupMessage) message);
-                break;
-            case "WeaponSwitchMessage":
-                update((WeaponSwitchMessage) message);
-                break;
-            case "RechargeWeaponMessage":
-                update((RechargeWeaponMessage) message);
-                break;
-            case "WeaponPaymentMessage":
-                update((WeaponPaymentMessage) message);
-                break;
-            case "UsePowerupMessage":
-                update((UsePowerupMessage) message);
-                break;
-            case "PowerupPositionMessage":
-                update((PowerupPositionMessage) message);
-                break;
-            case "PowerupTargetMessage":
-                update((PowerupTargetMessage) message);
+            case SELECTION_RECEIVED_MESSAGE:
+                update((SelectionReceivedMessage) message);
                 break;
         }
     }
 
-    private void update(ClientReadyMessage message) {
-        this.model.addPlayer(message.getCharacter(), message.getNickname(), message.getToken());
+    private void update(ClientMessage message) {
+        switch (message.getType()) {
+            case READY:
+                handleClientReady(message.getCharacter(), ((ClientReadyMessage) message).getNickname(),
+                        ((ClientReadyMessage) message).getToken());
+                break;
+            case RECONNECTED:
+                handleClientReconnected(message.getCharacter());
+                break;
+            case DISCONNECTED:
+                handleClientDisconnected(message.getCharacter());
+        }
+
     }
 
-    private void update(ClientReconnectedMessage message) {
+    private void handleClientReady(GameCharacter character, String nickname, String token) {
+        this.model.addPlayer(character, nickname, token);
+    }
+
+    private void handleClientReconnected(GameCharacter character) {
         int counter = 0;
-        Player player = this.model.getPlayerByCharacter(message.getCharacter());
+        Player player = this.model.getPlayerByCharacter(character);
         player.connect();
         this.model.createModelView(player);
         sendAll(new PlayerReadyMessage(player.getCharacter(), player.getNickname()));
@@ -111,73 +96,124 @@ public class GameController implements Observer {
         //continuare la partita
     }
 
-    private void update(ClientDisconnectedMessage message) {
-        this.model.handleDisconnection(message.getCharacter());
-        if (this.model.getPlayerByCharacter(message.getCharacter()) == this.turnController.getActivePlayer()) {
+    private void handleClientDisconnected(GameCharacter character) {
+        this.model.handleDisconnection(character);
+        if (this.model.getPlayerByCharacter(character) == this.turnController.getActivePlayer()) {
             this.turnController.endTurn();
         }
     }
 
-    private void update(SkullsMessage message) {
-        this.model.setSkulls(message.getSkulls());
-    }
-
-    private void update(ArenaMessage message) {
-        this.model.createArena(message.getArena());
-    }
-
-    private void update(StartTurnMessage message) {
-        this.turnController.startTurn(message.getTurnType(), message.getPlayer());
-    }
-
-    private void update(PowerupDiscardMessage message) {
-        this.turnController.handlePowerupDiscarded(message.getPowerup());
-    }
-
-    private void update(ActionSelectedMessage message) {
-        this.turnController.handleAction(message.getAction());
-    }
-
-    private void update(MovementSelectedMessage message) {
-        this.turnController.movementAction(message.getCoordinates());
-    }
-
-    private void update(PickupSelectedMessage message) {
-        this.turnController.pickupAction(message.getCoordinates());
-    }
-
-    private void update(WeaponPickupMessage message) {
-        this.turnController.pickupWeapon(message.getWeapon());
-    }
-
-    private void update(WeaponSwitchMessage message) {
-        this.turnController.switchWeapon(message.getWeapon());
-    }
-
-    private void update(RechargeWeaponMessage message) {
-        this.turnController.reloadWeapon(message.getWeapon());
-    }
-
-    private void update(WeaponPaymentMessage message) {
-        this.turnController.payWeapon(message.getPaidAmmos(), message.getPaidPowerups());
-    }
-
-    private void update(UsePowerupMessage message) {
-        if (message.getPowerup() == null && this.turnController.getActivePlayer().getCharacter() == message.getPlayer()) {
-            this.turnController.cancelPowerup();
-        } else if (message.getPowerup() == null && this.turnController.getActivePlayer().getCharacter() != message.getPlayer()) {
-            // powerup usati nel turno avversario
-        } else {
-            this.powerupsController.startEffect(message.getPlayer(), message.getPowerup());
+    private void update(BoardMessage message) {
+        switch(message.getType()) {
+            case ARENA:
+                handleArenaReceived(((ArenaMessage) message).getArena());
+                break;
+            case SKULLS:
+                handleSkullsReceived(((SkullsMessage) message).getSkulls());
+                break;
         }
     }
 
-    private void update(PowerupPositionMessage message) {
-        this.powerupsController.receivePosition(message.getPosition());
+    private void handleArenaReceived(String arena) {
+        this.model.createArena(arena);
     }
 
-    private void update(PowerupTargetMessage message) {
-        this.powerupsController.receiveTarget(message.getTarget());
+    private void handleSkullsReceived(int skulls) {
+        this.model.setSkulls(skulls);
+    }
+
+    private void update(TurnMessage message) {
+        this.turnController.startTurn(message.getTurnType(), message.getCharacter());
+    }
+
+    private void update(SelectionReceivedMessage message) {
+        switch (message.getType()) {
+            case SWITCH:
+                handleWeaponSwitchSelection((Weapon) message.getSelection());
+                break;
+            case PICKUP:
+                handlePickupSelection((Coordinates) message.getSelection());
+                break;
+            case MOVE:
+                handleMovementSelection((Coordinates) message.getSelection());
+                break;
+            case POWERUP_TARGET:
+                handlePowerupTargetSelection((GameCharacter) message.getSelection());
+                break;
+            case POWERUP_POSITION:
+                handlePowerupPositionSelection((Coordinates) message.getSelection());
+                break;
+            case RELOAD:
+                handleReloadSelection((Weapon) message.getSelection());
+                break;
+            case DISCARD_POWERUP:
+                handlePowerupDiscardSelection((Powerup) message.getSelection());
+                break;
+            case USE_POWERUP:
+                handleUsePowerupSelection(message.getCharacter(), (Powerup) message.getSelection());
+                break;
+            case PICKUP_WEAPON:
+                handleWeaponPickupSelection((Weapon) message.getSelection());
+                break;
+            case ACTION:
+                handleActionSelection((ActionType) message.getSelection());
+                break;
+        }
+    }
+
+    private void handlePowerupDiscardSelection(Powerup powerup) {
+        this.turnController.handlePowerupDiscarded(powerup);
+    }
+
+    private void handleActionSelection(ActionType action) {
+        this.turnController.handleAction(action);
+    }
+
+    private void handleMovementSelection(Coordinates coordinates) {
+        this.turnController.movementAction(coordinates);
+    }
+
+    private void handlePickupSelection(Coordinates coordinates) {
+        this.turnController.pickupAction(coordinates);
+    }
+
+    private void handleWeaponPickupSelection(Weapon weapon) {
+        this.turnController.pickupWeapon(weapon);
+    }
+
+    private void handleWeaponSwitchSelection(Weapon weapon) {
+        this.turnController.switchWeapon(weapon);
+    }
+
+    private void handleReloadSelection(Weapon weapon) {
+        this.turnController.reloadWeapon(weapon);
+    }
+
+    private void handleUsePowerupSelection(GameCharacter player, Powerup powerup) {
+        if (powerup == null && this.turnController.getActivePlayer().getCharacter() == player) {
+            this.turnController.cancelPowerup();
+        } else if (powerup == null && this.turnController.getActivePlayer().getCharacter() != player) {
+            // powerup usati nel turno avversario
+        } else {
+            this.powerupsController.startEffect(player, powerup);
+        }
+    }
+
+    private void handlePowerupPositionSelection(Coordinates coordinates) {
+        this.powerupsController.receivePosition(coordinates);
+    }
+
+    private void handlePowerupTargetSelection(GameCharacter character) {
+        this.powerupsController.receiveTarget(character);
+    }
+
+    private void update(PaymentMessage message) {
+        switch (message.getPaymentType()) {
+            case WEAPON:
+                this.turnController.payWeapon(message.getAmmos(), ((PaymentSentMessage) message).getPowerups());
+                break;
+        }
+
     }
 
     void send(SingleReceiverMessage message) {
@@ -198,7 +234,7 @@ public class GameController implements Observer {
 
     void sendOthers(GameCharacter character, Message message) {
         try {
-            this.view.sendOther(character, message);
+            this.view.sendOthers(character, message);
         } catch (RemoteException e) {
             e.printStackTrace();
         }

@@ -1,8 +1,8 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.model.messages.PowerupPositionsAvailableMessage;
-import it.polimi.se2019.model.messages.PowerupTargetsAvailableMessage;
+import it.polimi.se2019.model.messages.selections.SelectionMessageType;
+import it.polimi.se2019.model.messages.selections.SelectionSentMessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +87,8 @@ public class PowerupsController {
                 }
                 break;
         }
-        this.controller.send(new PowerupPositionsAvailableMessage(this.activePlayer.getCharacter(), positions, this.activePowerup));
+        this.controller.send(new SelectionSentMessage<>(SelectionMessageType.POWERUP_POSITION,
+                this.activePlayer.getCharacter(), positions));
     }
 
     private void requireTarget() {
@@ -97,7 +98,8 @@ public class PowerupsController {
                 targets.add(p.getCharacter());
             }
         }
-        this.controller.send(new PowerupTargetsAvailableMessage(this.activePlayer.getCharacter(), targets, this.activePowerup));
+        this.controller.send(new SelectionSentMessage<>(SelectionMessageType.POWERUP_TARGET,
+                this.activePlayer.getCharacter(), targets));
     }
 
     public void receiveTarget(GameCharacter target) {

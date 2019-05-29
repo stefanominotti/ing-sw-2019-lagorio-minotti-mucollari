@@ -1,0 +1,21 @@
+package it.polimi.se2019.model.messages.player;
+
+import it.polimi.se2019.controller.ActionType;
+import it.polimi.se2019.model.Coordinates;
+import it.polimi.se2019.model.GameCharacter;
+import it.polimi.se2019.model.messages.Message;
+
+public class MovementMessage extends PlayerMessage {
+
+    private ActionType actionType;
+    private Coordinates coordinates;
+
+    public MovementMessage(GameCharacter character, Coordinates coordinates) {
+        super(PlayerMessageType.MOVE, character);
+        this.coordinates = coordinates;
+    }
+
+    public Coordinates getCoordinates() {
+        return this.coordinates;
+    }
+}
