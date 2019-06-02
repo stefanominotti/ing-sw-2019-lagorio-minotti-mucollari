@@ -69,6 +69,9 @@
       "effectRequired": true,
       "effectCombo": false,
       "type": "SELECT",
+      "amount": [
+        "1"
+      ],
       "target": {
         "type": "SQUARE",
         "amount": [
@@ -79,8 +82,12 @@
           {
             "type": "DISTANCE",
             "distanceValues":[
-              "1"
+              "0"
             ],
+            "target": "OTHERS"
+          },
+          {
+            "type": "VISIBLE",
             "target": "SELF"
           }
         ]

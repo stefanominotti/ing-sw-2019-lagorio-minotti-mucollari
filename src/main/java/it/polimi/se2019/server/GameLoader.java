@@ -14,18 +14,23 @@ public class GameLoader {
 
     private static final Logger LOGGER = Logger.getLogger(GameLoader.class.getName());
 
-    private final String path;
+    private final String configPath = System.getProperty("user.home");
     private Board board;
-
+    private String filePath;
     private JsonParser parser;
     private Gson gson;
 
     public GameLoader() {
-
-        this.path = System.getProperty("user.home");
+        FileReader configReader = null;
+        try {
+            configReader = new FileReader(this.configPath + "/" + "config.json");
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "no config file found", e);
+        }
         this.parser = new JsonParser();
         this.gson = new Gson();
         this.board = new Board();
+        this.filePath = ((JsonObject)this.parser.parse(configReader)).get("path").getAsString();
     }
 
     public Board loadBoard() {
@@ -34,7 +39,7 @@ public class GameLoader {
         List<Player> players;
         
         try {
-            reader = new FileReader(this.path + "/" + "game_state_data.json");
+            reader = new FileReader(this.filePath);
         } catch (IOException E) {
             return this.board;
         }
@@ -131,7 +136,7 @@ public class GameLoader {
         jObject.deleteCharAt(jObject.length() - 1);
         jObject.append("}}}");
         try {
-            writer = new FileWriter(this.path + "/" + "game_state_data.json");
+            writer = new FileWriter(this.filePath);
             writer.write(jObject.toString());
             writer.flush();
         } catch (IOException e) {

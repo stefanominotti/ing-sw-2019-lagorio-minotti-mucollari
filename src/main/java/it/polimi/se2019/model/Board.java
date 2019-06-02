@@ -651,52 +651,6 @@ public class Board extends Observable {
         notifyChanges(new ScoreMessage(p.getCharacter(), p.getScore()));
     }
 
-    public List<Player> getPlayersOnCardinalDirection(Player activePlayer, CardinalPoint cardinalPoint) {
-        List<Player> result = new ArrayList<>();
-        switch (cardinalPoint) {
-            case NORTH:
-                for (Player p : this.players) {
-                    if (p.getPosition().getX() == activePlayer.getPosition().getX()
-                            && p.getPosition().getY() <= activePlayer.getPosition().getY()
-                            && p != activePlayer) {
-                        result.add(p);
-                    }
-                }
-                return result;
-
-            case SOUTH:
-                for (Player p : this.players) {
-                    if (p.getPosition().getX() == activePlayer.getPosition().getX()
-                            && p.getPosition().getY() >= activePlayer.getPosition().getY()
-                            && p != activePlayer) {
-                        result.add(p);
-                    }
-                }
-                return result;
-
-            case EAST:
-                for (Player p : this.players) {
-                    if (p.getPosition().getY() == activePlayer.getPosition().getY()
-                            && p.getPosition().getX() >= activePlayer.getPosition().getX()
-                            && p != activePlayer) {
-                        result.add(p);
-                    }
-                }
-                return result;
-
-            case WEST:
-                for (Player p : this.players) {
-                    if (p.getPosition().getY() == activePlayer.getPosition().getY()
-                            && p.getPosition().getX() <= activePlayer.getPosition().getX()
-                            && p != activePlayer) {
-                        result.add(p);
-                    }
-                }
-                return result;
-        }
-        return result;
-    }
-
     public List<Player> getVisiblePlayers (Player player){
         List<Player> visiblePlayers = new ArrayList<>();
 
@@ -793,6 +747,65 @@ public class Board extends Observable {
         return availableSquares;
     }
 
+    public void attackPlayer(GameCharacter player, GameCharacter target, int damage, EffectType type) {
+        switch (type) {
+            case DAMAGE:
+                getPlayerByCharacter(target).addDamages(player ,damage);
+                //notify
+                break;
+            case MARK:
+                getPlayerByCharacter(target).addRevengeMarks(player ,damage);
+                //notify
+        }
+
+    }
+
+    public List<Square> getSquaresByDistance (Player player, List<String> amount) {
+        return getSquaresByDistance(player.getPosition(), amount);
+    }
+
+    public List<Player> getPlayersOnCardinalDirection(Player activePlayer, CardinalPoint cardinalPoint) {
+        List<Player> result = new ArrayList<>();
+        switch (cardinalPoint) {
+            case NORTH:
+                for (Player p : this.players) {
+                    if (p.getPosition().getX() == activePlayer.getPosition().getX()
+                            && p.getPosition().getY() < activePlayer.getPosition().getY()) {
+                        result.add(p);
+                    }
+                }
+                return result;
+
+            case SOUTH:
+                for (Player p : this.players) {
+                    if (p.getPosition().getX() == activePlayer.getPosition().getX()
+                            && p.getPosition().getY() > activePlayer.getPosition().getY()) {
+                        result.add(p);
+                    }
+                }
+                return result;
+
+            case EAST:
+                for (Player p : this.players) {
+                    if (p.getPosition().getY() == activePlayer.getPosition().getY()
+                            && p.getPosition().getX() > activePlayer.getPosition().getX()) {
+                        result.add(p);
+                    }
+                }
+                return result;
+
+            case WEST:
+                for (Player p : this.players) {
+                    if (p.getPosition().getY() == activePlayer.getPosition().getY()
+                            && p.getPosition().getX() < activePlayer.getPosition().getX()) {
+                        result.add(p);
+                    }
+                }
+                return result;
+        }
+        return result;
+    }
+
     public List<Player> getPlayersOnCardinalDirection(Square square, CardinalPoint cardinalPoint) {
         List<Player> players = new ArrayList<>();
 
@@ -809,8 +822,7 @@ public class Board extends Observable {
             case NORTH:
                 for(Square s : this.getArena().getAllSquares()) {
                     if(s.getX() == square.getX()
-                            && s.getY() < square.getY()
-                            && s != square) {
+                            && s.getY() < square.getY()) {
                         squares.add(s);
                     }
                 }
@@ -819,8 +831,7 @@ public class Board extends Observable {
             case SOUTH:
                 for(Square s : this.getArena().getAllSquares()) {
                     if(s.getX() == square.getX()
-                            && s.getY() > square.getY()
-                            && s != square) {
+                            && s.getY() > square.getY()) {
                         squares.add(s);
                     }
 
@@ -830,8 +841,7 @@ public class Board extends Observable {
             case EAST:
                 for(Square s : this.getArena().getAllSquares()) {
                     if(s.getY() == square.getY()
-                            && s.getX() > square.getX()
-                            && s != square) {
+                            && s.getX() > square.getX()) {
                         squares.add(s);
                     }
                 }
@@ -841,12 +851,52 @@ public class Board extends Observable {
             case WEST:
                 for(Square s : this.getArena().getAllSquares()) {
                     if (s.getY() == square.getY()
-                            && s.getX() < square.getX()
-                            && s != square) {
+                            && s.getX() < square.getX()) {
                         squares.add(s);
                     }
                 }
                 return squares;
+        }
+        return squares;
+    }
+
+    public List<Square> getVisibleSquaresOnCardinalDirection(Player player, CardinalPoint cardinalPoint) {
+        List<Square> squares = new ArrayList<>();
+        int x = player.getPosition().getX();
+        int y = player.getPosition().getY();
+        switch (cardinalPoint) {
+            case EAST:
+                for(int i = x + 1; i <= 3; i++) {
+                    Square square = arena.getSquareByCoordinate(i, y);
+                    if(square != null && player.getPosition().canSee(square)) {
+                        squares.add(square);
+                    }
+                }
+                break;
+            case WEST:
+                for(int i = x - 1; i >= 0; i--) {
+                    Square square = arena.getSquareByCoordinate(i, y);
+                    if(square != null && player.getPosition().canSee(square)) {
+                        squares.add(square);
+                    }
+                }
+                break;
+            case NORTH:
+                for(int i = y - 1; i >= 0; i--) {
+                    Square square = arena.getSquareByCoordinate(x, i);
+                    if(square != null && player.getPosition().canSee(square)) {
+                        squares.add(square);
+                    }
+                }
+                break;
+            case SOUTH:
+                for(int i = y + 1; i <= 3; i++) {
+                    Square square = arena.getSquareByCoordinate(x, i);
+                    if(square != null && player.getPosition().canSee(square)) {
+                        squares.add(square);
+                    }
+                }
+                break;
         }
         return squares;
     }
@@ -859,7 +909,7 @@ public class Board extends Observable {
 
     public CardinalPoint getCardinalFromSquares(Square square1, Square square2) {
         for(CardinalPoint cardinal : CardinalPoint.values()){
-            if(square1.getNearbySquares().get(cardinal).equals(square2)) {
+            if(square1.getNearbySquares().get(cardinal) != null && square1.getNearbySquares().get(cardinal).equals(square2)) {
                 return cardinal;
             }
         }

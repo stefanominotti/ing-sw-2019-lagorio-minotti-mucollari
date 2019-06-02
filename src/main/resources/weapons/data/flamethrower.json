@@ -18,6 +18,9 @@
       "effectRequired": true,
       "effectCombo": false,
       "type": "SELECT",
+      "amount": [
+        "1"
+      ],
       "target": {
         "type": "SQUARE",
         "amount": [
@@ -25,6 +28,13 @@
         ],
         "positionType": "EVERYWHERE",
         "positionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
+            "target": "OTHERS"
+          },
           {
             "type": "DISTANCE",
             "distanceValues":[
@@ -63,6 +73,9 @@
       "effectRequired": true,
       "effectCombo": false,
       "type": "SELECT",
+      "amount": [
+        "1"
+      ],
         "target": {
           "type": "SQUARE",
           "amount": [
@@ -70,6 +83,13 @@
           ],
           "positionType": "EVERYWHERE",
           "positionConstraints": [
+            {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
+            "target": "OTHERS"
+            },
             {
               "type": "SAMEDIRECTION",
               "target": "SQUARE"
@@ -99,13 +119,9 @@
         "positionType": "EVERYWHERE",
         "positionConstraints": [
           {
-            "type": "SAMEDIRECTION",
-            "target": "SQUARE"
-          },
-          {
             "type": "DISTANCE",
             "distanceValues":[
-              "1"
+              "0"
             ],
             "target": "SQUARE"
           }
@@ -124,6 +140,9 @@
       "effectRequired": true,
       "effectCombo": false,
       "type": "SELECT",
+      "amount": [
+        "1"
+      ],
       "target": {
         "type": "SQUARE",
         "amount": [
@@ -131,6 +150,13 @@
         ],
         "positionType": "EVERYWHERE",
         "positionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
+            "target": "OTHERS"
+          },
           {
             "type": "DISTANCE",
             "distanceValues":[
@@ -169,12 +195,22 @@
       "effectRequired": true,
       "effectCombo": false,
       "type": "SELECT",
+      "amount": [
+        "1"
+      ],
         "target": {
           "type": "SQUARE",
           "amount": [
             "1"
           ],
           "positionConstraints": [
+            {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
+            "target": "OTHERS"
+          },
             {
               "type": "SAMEDIRECTION",
               "target": "SQUARE"
@@ -204,13 +240,9 @@
         "positionType": "SAMESQUARE",
         "positionConstraints": [
           {
-            "type": "SAMEDIRECTION",
-            "target": "SQUARE"
-          },
-          {
             "type": "DISTANCE",
             "distanceValues":[
-              "1"
+              "0"
             ],
             "target": "SQUARE"
           }

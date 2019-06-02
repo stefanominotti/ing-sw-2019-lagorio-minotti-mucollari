@@ -185,7 +185,7 @@ public class Player {
         this.powerups.remove(powerup);
     }
 
-    void setPosition(Square square) {
+    public void setPosition(Square square) {
         this.position = square;
     }
 
@@ -204,7 +204,6 @@ public class Player {
         while (this.revengeMarks.contains(player)) {
             this.revengeMarks.remove(player);
         }
-        this.revengeMarks.remove(player);
     }
 
     int getPowerupsNumber() {

@@ -68,4 +68,13 @@ public class Arena {
 
         return squares;
     }
+
+    public Room getRoombyColor(RoomColor color) {
+        for(Room room : this.rooms) {
+            if(room.getColor() == color) {
+                return room;
+            }
+        }
+        return null;
+    }
 }

@@ -18,6 +18,9 @@
       "effectRequired": true,
       "effectCombo": false,
       "type": "SELECT",
+      "amount": [
+        "1"
+      ],
       "target": {
         "type": "ROOM",
         "amount": [
@@ -25,6 +28,13 @@
         ],
         "positionType": "EVERYWHERE",
         "positionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
+            "target": "OTHERS"
+          },
           {
             "type": "VISIBLE",
             "target": "SELF"
@@ -64,6 +74,9 @@
       "effectRequired": true,
       "effectCombo": false,
       "type": "SELECT",
+      "amount": [
+        "1"
+      ],
       "target": {
         "type": "SQUARE",
         "amount": [
@@ -71,6 +84,13 @@
         ],
         "positionType": "EVERYWHERE",
         "positionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
+            "target": "OTHERS"
+          },
           {
             "type": "DISTANCE",
             "distanceValues": [

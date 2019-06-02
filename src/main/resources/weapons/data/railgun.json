@@ -18,12 +18,24 @@
       "effectRequired": true,
       "effectCombo": false,
       "type": "SELECT",
+      "amount": [
+        "1"
+      ],
       "target": {
         "type": "CARDINALDIRECTION",
         "amount": [
           "1"
         ],
-        "positionType": "EVERYWHERE"
+        "positionType": "EVERYWHERE",
+        "positionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
+            "target": "OTHERS"
+          }
+        ]
       }
     },
     {
@@ -60,12 +72,24 @@
       "effectRequired": true,
       "effectCombo": false,
       "type": "SELECT",
+      "amount": [
+        "1"
+      ],
       "target": {
         "type": "CARDINALDIRECTION",
         "amount": [
           "1"
         ],
-        "positionType": "EVERYWHERE"
+        "positionType": "EVERYWHERE",
+        "positionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
+            "target": "OTHERS"
+          }
+        ]
       }
     },
     {

@@ -16,6 +16,9 @@
         "YELLOW": 0
       },
       "type": "SELECT",
+      "amount": [
+        "1"
+      ],
       "target": {
         "type": "SQUARE",
         "amount": [
@@ -23,6 +26,13 @@
         ],
         "positionType": "EVERYWHERE",
         "positionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
+            "target": "OTHERS"
+          },
           {
             "type": "DISTANCE",
             "distanceValues":[
@@ -40,17 +50,17 @@
       ],
       "target": {
         "type": "SELF",
-        "positionType": "EVERYWHERE"
-      },
-      "afterPositionConstraints": [
-        {
-          "type": "DISTANCE",
-          "distanceValues":[
-            "0"
-          ],
-          "target": "SQUARE"
-        }
-      ]
+        "positionType": "EVERYWHERE",
+        "afterPositionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
+            "target": "SQUARE"
+          }
+        ]
+      }
     },
     {
       "type": "DAMAGE",
@@ -101,6 +111,9 @@
         "YELLOW": 0
       },
       "type": "SELECT",
+      "amount": [
+        "1"
+      ],
       "target": {
         "type": "SQUARE",
         "amount": [
@@ -108,6 +121,13 @@
         ],
         "positionType": "EVERYWHERE",
         "positionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
+            "target": "OTHERS"
+          },
           {
             "type": "DISTANCE",
             "distanceValues":[
@@ -161,6 +181,9 @@
     },
     {
       "type": "SELECT",
+      "amount": [
+        "1"
+      ],
       "target": {
         "type": "SQUARE",
         "amount": [
@@ -168,6 +191,13 @@
         ],
         "positionType": "EVERYWHERE",
         "positionConstraints": [
+          {
+            "type": "DISTANCE",
+            "distanceValues":[
+              "0"
+            ],
+            "target": "OTHERS"
+          },
           {
             "type": "VISIBLE",
             "target": "SQUARE"

@@ -93,21 +93,21 @@ public enum Weapon {
         return new ArrayList<>(this.primaryEffect);
     }
 
-    public List<WeaponEffect> getAlternativeMode() {
+    public List<WeaponEffect> getAlternativeMode() throws  IllegalStateException {
         if (this.alternativeMode == null) {
             throw new IllegalStateException("No alternative mode for this weapon");
         }
         return new ArrayList<>(this.alternativeMode);
     }
 
-    public List<WeaponEffect> getSecondaryEffectOne() {
+    public List<WeaponEffect> getSecondaryEffectOne() throws  IllegalStateException {
         if (this.secondaryEffectOne == null) {
             throw new IllegalStateException("No secondary effects for this weapon");
         }
         return new ArrayList<>(this.secondaryEffectOne);
     }
 
-    public List<WeaponEffect> getSecondaryEffectTwo() {
+    public List<WeaponEffect> getSecondaryEffectTwo() throws  IllegalStateException {
         if (this.secondaryEffectTwo == null) {
             throw new IllegalStateException("No alternative secondary effect for this weapon");
         }
