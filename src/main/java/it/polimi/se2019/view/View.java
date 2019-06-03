@@ -1,6 +1,8 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.client.AbstractClient;
+import it.polimi.se2019.client.RMIProtocolClient;
+import it.polimi.se2019.client.SocketClient;
 import it.polimi.se2019.controller.ActionType;
 import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.messages.*;
@@ -23,6 +25,7 @@ import it.polimi.se2019.model.messages.timer.TimerMessageType;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 import it.polimi.se2019.model.messages.weapon.WeaponMessage;
 import it.polimi.se2019.model.messages.weapon.WeaponSwitchMessage;
+import org.ietf.jgss.GSSManager;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -62,14 +65,27 @@ public abstract class View {
 
     private PowerupType activePowerup;
 
-    View(AbstractClient client) {
-        this.client = client;
+    View(int connectionType) {
+
+        if (connectionType == 0) {
+            Runnable r = new SocketClient(this);
+            (new Thread(r)).start();
+            this.client = (SocketClient)r;
+        } else {
+            try {
+                this.client = new RMIProtocolClient(this);
+            } catch (IllegalStateException e) {
+                System.exit(0);
+            }
+        }
+
         this.enemyBoards = new ArrayList<>();
         this.paidAmmos = new EnumMap<>(AmmoType.class);
         for (AmmoType type : AmmoType.values()) {
             this.paidAmmos.put(type, 0);
         }
         this.paidPowerups = new ArrayList<>();
+        this.charactersSelection = new ArrayList<>();
     }
 
     public AbstractClient getClient() {
@@ -146,6 +162,10 @@ public abstract class View {
 
     void setActivePowerup(PowerupType powerup) {
         this.activePowerup = powerup;
+    }
+
+    void setCharactersSelection(List<GameCharacter> characters) {
+        this.charactersSelection = new ArrayList<>(characters);
     }
 
     void putPaidAmmos(AmmoType type, int amount) {
@@ -385,7 +405,6 @@ public abstract class View {
 
     void handleCharacterSelectionRequest(List<GameCharacter> availables) {
         this.state = CHOOSINGCHARACTER;
-        this.charactersSelection = new ArrayList<>(availables);
     }
 
     void handleClientDisconnected(GameCharacter character) {

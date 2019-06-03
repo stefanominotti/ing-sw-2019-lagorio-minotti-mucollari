@@ -300,7 +300,7 @@ public class Board extends Observable {
         String path = System.getProperty("user.home");
         FileReader reader;
         try {
-            reader = new FileReader(path + "/" + "settings.json");
+            reader = new FileReader(path + "/" + "server_settings.json");
         } catch (IOException E) {
             this.startTimer = 10L*1000L;
             this.turnTimer = 100L*1000L;

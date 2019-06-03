@@ -1,27 +1,50 @@
 package it.polimi.se2019.client;
 
-import java.util.Scanner;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import it.polimi.se2019.model.Board;
+import it.polimi.se2019.view.CLIView;
+import it.polimi.se2019.view.GUIView;
+import it.polimi.se2019.view.RegistrationFormApp;
+import javafx.application.Application;
+
+import java.io.FileReader;
+import java.io.IOException;
 
 public class Client {
 
+    private static final String CONFIG_PATH = System.getProperty("user.home");
+
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
+        int connection;
+        int UI;
 
-        System.out.println("[1] - Socket");
-        System.out.println("[2] - RMI");
-        String connectionSelection = scanner.nextLine();
-
-        if (connectionSelection.equals("1")) {
-            Runnable r = new SocketClient();
-            (new Thread(r)).start();
-        } else {
-            try {
-                new RMIProtocolClient();
-            } catch (IllegalStateException e) {
-                System.exit(0);
-            }
+        try {
+            FileReader configReader = new FileReader(CONFIG_PATH + "/" + "client_settings.json");
+            JsonParser parser = new JsonParser();
+            connection = ((JsonObject)parser.parse(configReader)).get("connection").getAsInt();
+            configReader = new FileReader(CONFIG_PATH + "/" + "client_settings.json");
+            UI = ((JsonObject)parser.parse(configReader)).get("UI").getAsInt();
+        } catch (IOException e) {
+            connection = 0;
+            UI = 0;
         }
 
+        if (connection != 0 && connection != 1) {
+            connection = 0;
+        }
+
+        if (UI != 0 && UI != 1) {
+            UI = 0;
+        }
+
+        if (UI == 0) {
+            new CLIView(connection);
+        } else {
+            String[] arguments = { String.valueOf(connection) };
+            Application.launch(RegistrationFormApp.class, arguments);
+        }
     }
 }

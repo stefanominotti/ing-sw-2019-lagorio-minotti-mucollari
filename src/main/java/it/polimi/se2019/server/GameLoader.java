@@ -14,20 +14,20 @@ public class GameLoader {
 
     private static final Logger LOGGER = Logger.getLogger(GameLoader.class.getName());
 
-    private final String configPath = System.getProperty("user.home");
+    private static final String CONFIG_PATH = System.getProperty("user.home");
     private Board board;
     private String filePath;
     private JsonParser parser;
     private Gson gson;
 
     public GameLoader() {
-        try(FileReader configReader = new FileReader(this.configPath + "/" + "config.json")) {
+        try(FileReader configReader = new FileReader(CONFIG_PATH + "/" + "server_settings.json")) {
             this.parser = new JsonParser();
             this.gson = new Gson();
             this.board = new Board();
-            this.filePath = ((JsonObject)this.parser.parse(configReader)).get("path").getAsString();
+            this.filePath = ((JsonObject)this.parser.parse(configReader)).get("savePath").getAsString();
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "no config file found", e);
+            LOGGER.log(Level.SEVERE, "No config file found", e);
         }
     }
 

@@ -1,6 +1,8 @@
 package it.polimi.se2019.view;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
 import java.rmi.RemoteException;
@@ -12,6 +14,9 @@ public class RegistrationFormController {
 
     @FXML
     private TextField nickname;
+
+    @FXML
+    private Button submitNicknameButton;
 
     public RegistrationFormController () {
     }
@@ -29,11 +34,14 @@ public class RegistrationFormController {
         }
     }*/
 
+    void setView(GUIView view) {
+        this.view = view;
+    }
+
     public void forwardNickname() {
         try {
-            view.handleNicknameInput(nickname.getText());
+            this.view.handleNicknameInput(this.nickname.getText());
         } catch (RemoteException e) { }
-
     }
 
 }

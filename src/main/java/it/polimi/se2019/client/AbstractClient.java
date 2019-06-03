@@ -12,19 +12,8 @@ public abstract class AbstractClient {
 
     private View view;
 
-    public AbstractClient() {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("[1] - CLI");
-        System.out.println("[2] - GUI");
-        String viewSelection = scanner.nextLine();
-
-        if (viewSelection.equals("1")) {
-            this.view = new CLIView(this);
-        } else {
-            System.exit(0);
-            this.view = new GUIView(this);
-        }
+    public AbstractClient(View view) {
+        this.view = view;
     }
 
     public abstract void send(Message message) throws RemoteException;

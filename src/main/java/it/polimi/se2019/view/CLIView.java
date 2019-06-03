@@ -1,6 +1,5 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.client.AbstractClient;
 import it.polimi.se2019.controller.ActionType;
 import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.messages.board.ArenaMessage;
@@ -26,12 +25,10 @@ public class CLIView extends View {
 
     private static final Logger LOGGER = Logger.getLogger(CLIView.class.getName());
 
-    private Thread inputThread;
+    public CLIView(int connection) {
+        super(connection);
 
-    public CLIView(AbstractClient client) {
-        super(client);
-
-        this.inputThread = new Thread() {
+        Thread inputThread = new Thread() {
             Scanner scanner = new Scanner(System.in);
             boolean read = true;
 
@@ -48,10 +45,10 @@ public class CLIView extends View {
             }
         };
 
-        this.inputThread.start();
+        inputThread.start();
     }
 
-    void handleInput(String input) throws RemoteException {
+    private void handleInput(String input) throws RemoteException {
         if (input == null) {
             return;
         }
@@ -59,55 +56,26 @@ public class CLIView extends View {
             showMessage("Invalid username, retry: ");
             return;
         }
-        switch (getState()) {
-            case TYPINGNICKNAME:
-                handleNicknameInput(input);
-                break;
-            case CHOOSINGCHARACTER:
-                handleCharacterInput(input);
-                break;
-            case SETTINGSKULLS:
-                handleSkullsInput(input);
-                break;
-            case SETTINGARENA:
-                handleArenaInput(input);
-                break;
-            case DISCARDSPAWN:
-                handlePowerupInput(input);
-                break;
-            case SELECTACTION:
-                handleActionInput(input);
-                break;
-            case SELECTBOARDTOSHOW:
-                handleCharacterInput(input);
-                break;
-            case SELECTMOVEMENT:
-                handlePositionInput(input);
-                break;
-            case SELECTPICKUP:
-                handlePositionInput(input);
-                break;
-            case SELECTWEAPON:
-                handleWeaponInput(input);
-                break;
-            case SWITCHWEAPON:
-                handleWeaponInput(input);
-                break;
-            case RECHARGEWEAPON:
-                handleWeaponInput(input);
-                break;
-            case PAYMENT:
-                handlePaymentInput(input);
-                break;
-            case USEPOWERUP:
-                handlePowerupInput(input);
-                break;
-            case SELECTPOWERUPPOSITION:
-                handlePositionInput(input);
-                break;
-            case SELECTPOWERUPTARGET:
-                handleCharacterInput(input);
-                break;
+
+        if (getState() == TYPINGNICKNAME) {
+            handleNicknameInput(input);
+        } else if (getState() == CHOOSINGCHARACTER || getState() == SELECTBOARDTOSHOW
+                || getState() == SELECTPOWERUPTARGET) {
+            handleCharacterInput(input);
+        } else if (getState() == SETTINGSKULLS) {
+            handleSkullsInput(input);
+        } else if (getState() == SETTINGARENA) {
+            handleArenaInput(input);
+        } else if (getState() == DISCARDSPAWN || getState() == USEPOWERUP) {
+            handlePowerupInput(input);
+        } else if (getState() == SELECTACTION) {
+            handleActionInput(input);
+        } else if (getState() == SELECTMOVEMENT || getState() == SELECTPICKUP || getState() == SELECTPOWERUPPOSITION) {
+            handlePositionInput(input);
+        } else if (getState() == SELECTWEAPON || getState() == SWITCHWEAPON || getState() == RECHARGEWEAPON) {
+            handleWeaponInput(input);
+        } else if (getState() == PAYMENT) {
+            handlePaymentInput(input);
         }
     }
 
@@ -498,9 +466,10 @@ public class CLIView extends View {
     @Override
     void handleCharacterSelectionRequest(List<GameCharacter> availables) {
         super.handleCharacterSelectionRequest(availables);
-        if(getCharactersSelection() != null) {
+        if(!getCharactersSelection().isEmpty()) {
             showMessage("Character already choosen");
         }
+        setCharactersSelection(availables);
         StringBuilder text = new StringBuilder("Choose one of these characters:\n");
         for(GameCharacter character : availables) {
             String toAppend = "[" + (availables.indexOf(character) + 1) + "] - " + character + "\n";

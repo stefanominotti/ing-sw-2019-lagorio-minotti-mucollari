@@ -2,6 +2,7 @@ package it.polimi.se2019.client;
 
 import it.polimi.se2019.model.messages.Message;
 import it.polimi.se2019.server.ClientHandler;
+import it.polimi.se2019.view.View;
 
 import java.io.*;
 import java.net.Socket;
@@ -17,8 +18,8 @@ public class SocketClient extends AbstractClient implements Runnable {
 
     private Socket socket;
 
-    SocketClient() {
-        super();
+    public SocketClient(View view) {
+        super(view);
         try {
             this.socket = new Socket(HOST, PORT);
         } catch (IOException e) {

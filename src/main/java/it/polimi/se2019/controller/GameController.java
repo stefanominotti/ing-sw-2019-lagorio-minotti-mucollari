@@ -28,6 +28,7 @@ public class GameController implements Observer {
     private TurnController turnController;
     private PowerupsController powerupsController;
     private VirtualView view;
+    private boolean gameStarted;
 
     public GameController(Board board, VirtualView view) {
         this.model = board;
@@ -98,7 +99,7 @@ public class GameController implements Observer {
 
     private void handleClientDisconnected(GameCharacter character) {
         this.model.handleDisconnection(character);
-        if (this.model.getPlayerByCharacter(character) == this.turnController.getActivePlayer()) {
+        if (this.model.getPlayerByCharacter(character) == this.turnController.getActivePlayer() && this.gameStarted) {
             this.turnController.endTurn();
         }
     }
@@ -124,6 +125,7 @@ public class GameController implements Observer {
 
     private void update(TurnMessage message) {
         this.turnController.startTurn(message.getTurnType(), message.getCharacter());
+        this.gameStarted = true;
     }
 
     private void update(SelectionReceivedMessage message) {

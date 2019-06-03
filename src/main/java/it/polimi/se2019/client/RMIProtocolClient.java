@@ -2,6 +2,7 @@ package it.polimi.se2019.client;
 
 import it.polimi.se2019.model.messages.Message;
 import it.polimi.se2019.server.RMIServerInterface;
+import it.polimi.se2019.view.View;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -17,8 +18,8 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
 
     private RMIServerInterface server;
 
-    RMIProtocolClient() {
-        super();
+    public RMIProtocolClient(View view) {
+        super(view);
         try {
             this.server = (RMIServerInterface) Naming.lookup("//localhost/MyServer");
             RMIClientInterface remoteRef = (RMIClientInterface) UnicastRemoteObject.exportObject(this, 0);

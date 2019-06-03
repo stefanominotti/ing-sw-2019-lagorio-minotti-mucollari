@@ -1,7 +1,6 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
-import javafx.scene.effect.Effect;
 
 import java.util.List;
 import java.util.Map;
