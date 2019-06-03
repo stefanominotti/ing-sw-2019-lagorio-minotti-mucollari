@@ -180,27 +180,29 @@ public class EffectsController {
 
     private List<Square> distancebySquareCase(PositionConstraint constraint) {
         List<Square> squares;
-        if (constraint.getTarget() == TargetType.SQUARE) {
-            squares = this.board.getSquaresByDistance(
-                    this.chosenSquare, constraint.getDistanceValues());
-        } else if (constraint.getTarget() == TargetType.OTHERS) {
-            Set<Square> targetSquares = new HashSet<>();
-            for (Player target : this.board.getPlayers()) {
-                if (!target.equals(this.activePlayer)) {
-                    targetSquares.addAll(this.board.getSquaresByDistance(target, constraint.getDistanceValues()));
+        switch (constraint.getTarget()) {
+            case OTHERS:
+                Set<Square> targetSquares = new HashSet<>();
+                for (Player target : this.board.getPlayers()) {
+                    if (!target.equals(this.activePlayer)) {
+                        targetSquares.addAll(this.board.getSquaresByDistance(target, constraint.getDistanceValues()));
+                    }
                 }
-            }
-            squares = new ArrayList<>(targetSquares);
-        } else {
-            squares = this.board.getSquaresByDistance(getTargetPlayer(
-                    constraint.getTarget()).getPosition(), constraint.getDistanceValues());
+                squares = new ArrayList<>(targetSquares);
+                break;
+            case SQUARE:
+                squares = this.board.getSquaresByDistance(this.chosenSquare, constraint.getDistanceValues());
+                break;
+            default:
+                squares = this.board.getSquaresByDistance(getTargetPlayer(constraint.getTarget()).getPosition(),
+                        constraint.getDistanceValues());
         }
         return squares;
     }
 
     private List<Player> filterByPositionConstraintPlayers(List<PositionConstraint> constraints) {
         List<Player> availablePlayers = this.board.getPlayers();
-        List<Player> targetPlayers = null;
+        List<Player> targetPlayers = new ArrayList<>();
         for (PositionConstraint constraint : constraints) {
             switch (constraint.getType()) {
                 case VISIBLE:
@@ -224,7 +226,7 @@ public class EffectsController {
 
     private List<Square> filterByPositionConstraintSquares(List<PositionConstraint> constraints) {
         List<Square> availableSquares = this.board.getArena().getAllSquares();
-        List<Square> targetSquares = null;
+        List<Square> targetSquares = new ArrayList<>();
         for (PositionConstraint constraint : constraints) {
             switch (constraint.getType()) {
                 case VISIBLE:

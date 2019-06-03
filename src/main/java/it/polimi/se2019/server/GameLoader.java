@@ -21,16 +21,14 @@ public class GameLoader {
     private Gson gson;
 
     public GameLoader() {
-        FileReader configReader = null;
-        try {
-            configReader = new FileReader(this.configPath + "/" + "config.json");
+        try(FileReader configReader = new FileReader(this.configPath + "/" + "config.json")) {
+            this.parser = new JsonParser();
+            this.gson = new Gson();
+            this.board = new Board();
+            this.filePath = ((JsonObject)this.parser.parse(configReader)).get("path").getAsString();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "no config file found", e);
         }
-        this.parser = new JsonParser();
-        this.gson = new Gson();
-        this.board = new Board();
-        this.filePath = ((JsonObject)this.parser.parse(configReader)).get("path").getAsString();
     }
 
     public Board loadBoard() {
@@ -98,8 +96,6 @@ public class GameLoader {
     }
 
     public void saveBoard() {
-        FileWriter writer;
-        
         StringBuilder jObject = new StringBuilder("{");
         jObject.append("\"board\":" + this.board.toJson() + ",");
         jObject.append(("\"players\":["));
@@ -135,8 +131,7 @@ public class GameLoader {
         }
         jObject.deleteCharAt(jObject.length() - 1);
         jObject.append("}}}");
-        try {
-            writer = new FileWriter(this.filePath);
+        try(FileWriter writer = new FileWriter(this.filePath)) {
             writer.write(jObject.toString());
             writer.flush();
         } catch (IOException e) {

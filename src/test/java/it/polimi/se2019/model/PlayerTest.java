@@ -53,9 +53,11 @@ public class PlayerTest {
         this.board.addPlayer(enemyChar2, "testNickname2", "token");
         this.player.addRevengeMarks(enemyChar1, 3);
         this.player.addRevengeMarks(enemyChar2, 1);
-        Map<GameCharacter, Integer> marks = new HashMap<>();
-        marks.put(enemyChar1, 3);
-        marks.put(enemyChar2, 1);
+        List<GameCharacter> marks = new ArrayList<>();
+        marks.add(enemyChar1);
+        marks.add(enemyChar1);
+        marks.add(enemyChar1);
+        marks.add(enemyChar2);
         assertEquals(marks, this.player.getRevengeMarks());
         this.player.marksToDamages(enemyChar2);
         marks.remove(enemyChar2);
@@ -63,6 +65,8 @@ public class PlayerTest {
         List<GameCharacter> damage = Arrays.asList(enemyChar2);
         assertEquals(damage, this.player.getDamages());
         this.player.marksToDamages(enemyChar1);
+        marks.remove(enemyChar1);
+        marks.remove(enemyChar1);
         marks.remove(enemyChar1);
         assertEquals(marks, this.player.getRevengeMarks());
         damage = Arrays.asList(enemyChar2, enemyChar1, enemyChar1, enemyChar1);

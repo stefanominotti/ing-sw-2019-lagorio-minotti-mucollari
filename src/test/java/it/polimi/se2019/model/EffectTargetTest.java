@@ -7,6 +7,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class EffectTargetTest {
 
@@ -40,7 +41,6 @@ public class EffectTargetTest {
 
     @Test
     public void getAfterPositionConstraints() {
-        List<PositionConstraint> positionConstraints = new ArrayList<>();
-        assertEquals(positionConstraints, Weapon.LOCK_RIFLE.getPrimaryEffect().get(0).getTarget().getAfterPositionConstraints());
+        assertNull(Weapon.LOCK_RIFLE.getPrimaryEffect().get(0).getTarget().getAfterPositionConstraints());
     }
 }

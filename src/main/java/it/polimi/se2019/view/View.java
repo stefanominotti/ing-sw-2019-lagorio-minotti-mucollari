@@ -221,8 +221,8 @@ public abstract class View {
     }
 
     private PlayerBoard getBoardByCharacter(GameCharacter character) {
-        for(PlayerBoard board : this.enemyBoards) {
-            if(board.getCharacter() == character) {
+        for (PlayerBoard board : this.enemyBoards) {
+            if (board.getCharacter() == character) {
                 return board;
             }
         }
@@ -249,7 +249,7 @@ public abstract class View {
     }
 
     private void update(TimerMessage message) {
-        switch(message.getTimerType()) {
+        switch (message.getTimerType()) {
             case SETUP:
                 handleGameSetupTimer(message.getType(), message.getTime());
         }
@@ -405,14 +405,14 @@ public abstract class View {
     }
 
     void loadView(GameCharacter character, int skulls, List<SquareView> squares,
-                        Map<Integer, List<GameCharacter>> killshotTrack, List<PlayerBoard> playerBoards,
-                        List<Weapon> weapons, List<Powerup> powerups, int score, Map<GameCharacter, String> others) {
+                  Map<Integer, List<GameCharacter>> killshotTrack, List<PlayerBoard> playerBoards,
+                  List<Weapon> weapons, List<Powerup> powerups, int score, Map<GameCharacter, String> others) {
         this.character = character;
         this.state = WAITINGSETUP;
         this.enemyBoards = new ArrayList<>();
         this.board = new BoardView(skulls, squares, killshotTrack);
-        for(PlayerBoard playerBoard : playerBoards) {
-            if(playerBoard.getCharacter() == character) {
+        for (PlayerBoard playerBoard : playerBoards) {
+            if (playerBoard.getCharacter() == character) {
                 this.selfPlayerBoard = new SelfPlayerBoard(playerBoard, weapons, powerups, score);
             } else {
                 this.enemyBoards.add(playerBoard);
@@ -421,7 +421,7 @@ public abstract class View {
     }
 
     private void update(PowerupMessage message) {
-        switch(message.getType()) {
+        switch (message.getType()) {
             case ADD:
                 handlePowerupAdded(message.getCharacter(), message.getPowerup());
                 break;
@@ -431,9 +431,9 @@ public abstract class View {
     }
 
     void handlePowerupAdded(GameCharacter character, Powerup powerup) {
-        if(character != this.character) {
+        if (character != this.character) {
             PlayerBoard playerBoard = getBoardByCharacter(character);
-            if(playerBoard != null) {
+            if (playerBoard != null) {
                 playerBoard.addPowerup();
             }
         } else {
@@ -442,7 +442,7 @@ public abstract class View {
     }
 
     void handlePowerupRemoved(GameCharacter character, Powerup powerup, PowerupMessageType type) {
-        if(this.character == character) {
+        if (this.character == character) {
             this.selfPlayerBoard.removePowerup(powerup.getType(), powerup.getColor());
         } else {
             PlayerBoard enemyBoard = getBoardByCharacter(character);
@@ -486,7 +486,7 @@ public abstract class View {
     }
 
     private void update(WeaponMessage message) {
-        switch(message.getType()) {
+        switch (message.getType()) {
             case PICKUP:
                 handleWeaponPickup(message.getCharacter(), message.getWeapon());
                 break;
@@ -550,7 +550,7 @@ public abstract class View {
     }
 
     private void update(TurnMessage message) throws RemoteException {
-        switch(message.getType()) {
+        switch (message.getType()) {
             case START:
                 handleStartTurn(message, message.getCharacter());
                 break;
@@ -561,7 +561,7 @@ public abstract class View {
     }
 
     void handleStartTurn(TurnMessage message, GameCharacter character) throws RemoteException {
-        if(character != this.character) {
+        if (character != this.character) {
             this.state = OTHERTURN;
         } else {
             this.state = YOURTURN;
@@ -595,9 +595,9 @@ public abstract class View {
     }
 
     void handleGameSet(Map<Coordinates, RoomColor> colors, Map<Coordinates, Boolean> spawns,
-                        Map<Coordinates, Map<CardinalPoint, Boolean>> nearbyAccessibility, int skulls, int arena) {
+                       Map<Coordinates, Map<CardinalPoint, Boolean>> nearbyAccessibility, int skulls, int arena) {
         List<SquareView> squares = new ArrayList<>();
-        for(Map.Entry<Coordinates, RoomColor> square : colors.entrySet()) {
+        for (Map.Entry<Coordinates, RoomColor> square : colors.entrySet()) {
             RoomColor color = square.getValue();
             Boolean spawn = spawns.get(square.getKey());
             Map<CardinalPoint, Boolean> accessibilityMap = nearbyAccessibility.get(square.getKey());
@@ -711,51 +711,46 @@ public abstract class View {
     abstract void requirePayment();
 
     String generateToken() {
+        String path = System.getProperty("user.home");
         String message = UUID.randomUUID().toString();
-        MessageDigest md = null;
-        try {
-            md = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.log(Level.SEVERE,"Error SHA-256 algorithm", e);
-        }
-        md.update(message.getBytes());
-        byte[] digest = md.digest();
         StringBuffer hexString = new StringBuffer();
-        for (int i = 0; i<digest.length; i++) {
-            hexString.append(Integer.toHexString(0xFF & digest[i]));
-        }
-        try {
-            String path = System.getProperty("user.home");
-            FileWriter writer = new FileWriter(path + "/" + "AdrenalinaClient.token");
+        MessageDigest md;
+        try(FileWriter writer = new FileWriter(path + "/" + "AdrenalinaClient.token")) {
+            md = MessageDigest.getInstance("SHA-256");
+            md.update(message.getBytes());
+            byte[] digest = md.digest();
+            for (int i = 0; i < digest.length; i++) {
+                hexString.append(Integer.toHexString(0xFF & digest[i]));
+            }
             writer.write(message);
             writer.flush();
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE,"Error writing data", e);
+        } catch (NoSuchAlgorithmException e) {
+            LOGGER.log(Level.SEVERE, "Error SHA-256 algorithm", e);
+        }
+        catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error writing data", e);
         }
         return hexString.toString();
     }
 
     private String getToken() {
         String path = System.getProperty("user.home");
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(path + "/" + "AdrenalinaClient.token"));
+        try (BufferedReader reader = new BufferedReader(new FileReader(path + "/" + "AdrenalinaClient.token"))) {
             String message = reader.readLine();
-            MessageDigest md = null;
-            try {
-                md = MessageDigest.getInstance("SHA-256");
-            } catch (NoSuchAlgorithmException e) {
-                LOGGER.log(Level.SEVERE,"Error SHA-256 algorithm", e);
-            }
+            MessageDigest md;
+            md = MessageDigest.getInstance("SHA-256");
             //Passing data to the created MessageDigest Object
             md.update(message.getBytes());
             //Compute the message digest
             byte[] digest = md.digest();
             //Converting the byte array in to HexString format
             StringBuffer hexString = new StringBuffer();
-            for (int i = 0;i<digest.length;i++) {
+            for (int i = 0; i < digest.length; i++) {
                 hexString.append(Integer.toHexString(0xFF & digest[i]));
             }
             return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            LOGGER.log(Level.SEVERE, "Error SHA-256 algorithm", e);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Error corrupt data", e);
         }
