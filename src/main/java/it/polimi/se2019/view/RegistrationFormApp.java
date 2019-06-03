@@ -1,14 +1,10 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.controller.*;
 import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.RadioButton;
 import javafx.stage.Stage;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +19,8 @@ public class RegistrationFormApp extends Application {
 
     @Override
     public void start(Stage window) throws Exception {
+        RegistrationFormController controller = new RegistrationFormController();
+
         Parent selectNickname = FXMLLoader.load(getClass().getClassLoader().getResource(PATH + "SelectNickname.fxml"));
         Parent selectCharacter = FXMLLoader.load(getClass().getClassLoader().getResource(PATH + "SelectCharacter.fxml"));
         window.setTitle("Adrenaline - Sign up");
@@ -30,3 +28,5 @@ public class RegistrationFormApp extends Application {
         window.show();
     }
 }
+
+

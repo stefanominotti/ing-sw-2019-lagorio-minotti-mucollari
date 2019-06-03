@@ -102,7 +102,7 @@
                   </VBox>
                </children>
             </HBox>
-            <Button fx:id="button" layoutX="246.0" layoutY="228.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="100.0" styleClass="topPane" stylesheets="@../css/style.css" text="Next" />
+            <Button fx:id="button" layoutX="246.0" layoutY="228.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="100.0" styleClass="button-active" stylesheets="@../css/style.css" text="Next" />
          </children>
       </AnchorPane>
    </center>

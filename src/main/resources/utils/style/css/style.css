@@ -18,3 +18,7 @@
 .topPane {
 	-fx-background-color: #ffc107;
 }
+
+.button-active {
+	-fx-background-color: #ffc107;
+}
