@@ -3,14 +3,13 @@ package it.polimi.se2019.view;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class RegistrationFormApp extends Application {
+public class GuiApp extends Application {
 
     private static final String PATH = "utils/style/fxml/";
 
@@ -49,7 +48,7 @@ public class RegistrationFormApp extends Application {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            loader.<RegistrationFormController>getController().setView(this.view);
+            loader.<GuiAppController>getController().setView(this.view);
             this.stage.show();
         });
     }

@@ -1,12 +1,9 @@
 package it.polimi.se2019.client;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import it.polimi.se2019.model.Board;
 import it.polimi.se2019.view.CLIView;
-import it.polimi.se2019.view.GUIView;
-import it.polimi.se2019.view.RegistrationFormApp;
+import it.polimi.se2019.view.GuiApp;
 import javafx.application.Application;
 
 import java.io.FileReader;
@@ -44,7 +41,7 @@ public class Client {
             new CLIView(connection);
         } else {
             String[] arguments = { String.valueOf(connection) };
-            Application.launch(RegistrationFormApp.class, arguments);
+            Application.launch(GuiApp.class, arguments);
         }
     }
 }

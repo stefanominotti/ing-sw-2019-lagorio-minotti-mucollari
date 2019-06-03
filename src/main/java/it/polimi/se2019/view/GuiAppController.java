@@ -8,7 +8,7 @@ import javafx.scene.control.TextField;
 import java.rmi.RemoteException;
 
 
-public class RegistrationFormController {
+public class GuiAppController {
 
     private GUIView view;
 
@@ -18,21 +18,8 @@ public class RegistrationFormController {
     @FXML
     private Button submitNicknameButton;
 
-    public RegistrationFormController () {
+    public GuiAppController() {
     }
-
-/*
-    public void displayNicknameError() {
-        if(nickname.getText().isEmpty()) {
-            //Alert
-        }
-        else if() {
-
-        }
-        else{
-
-        }
-    }*/
 
     void setView(GUIView view) {
         this.view = view;

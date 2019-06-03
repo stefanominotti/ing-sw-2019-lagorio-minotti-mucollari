@@ -23,6 +23,20 @@ public class SquareView implements Serializable {
     private Map<CardinalPoint, Boolean> nearbyAccessibility;
     private BoardView board;
 
+    private static final String lightVertical = "\u2502";
+    private static final String overLine = "\u203E";
+    private static final String lowLine = "\u005F";
+    private static final String middleDot = "\u00B7";
+    private static final String space = "\u0020";
+    private static final String markedSquare = "\u002A" + "\u002A" + "\u002A";
+
+    private static final String squareSeparator = space + middleDot + space + space + middleDot + space + space + middleDot + space + space + middleDot + space + space + middleDot + space + space + middleDot + space + space + middleDot + space;
+    private static final String upperDoor = overLine + overLine + overLine + overLine + overLine + overLine + space + space + space + space + space + space + space + space + space + overLine + overLine + overLine + overLine + overLine + overLine;
+    private static final String lowerDoor = lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + space + space + space + space + space + space + space + space + space + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine;
+    private static final String upperWall = overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine;
+    private static final String lowerWall = lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine;
+    private static final String freeWall = space + space + space + space + space + space + space + space + space + space + space + space + space + space + space + space + space + space + space + space + space;
+
     SquareView(int x, int y, RoomColor color, boolean spawn, Map<CardinalPoint, Boolean> map) {
         this.x = x;
         this.y = y;
@@ -131,41 +145,41 @@ public class SquareView implements Serializable {
         int verticalIndex = 0;
         SquareView leftSquare = getSquareAtDirection(WEST);
         if (this.nearbyAccessibility.get(WEST) && leftSquare.color == this.color) {
-            leftVertical.add("‾");
+            leftVertical.add(overLine);
            for (int i=0; i<8; i++) {
-               leftVertical.add("·");
+               leftVertical.add(middleDot);
            }
-           leftVertical.add("_");
+           leftVertical.add(lowLine);
         } else if (this.nearbyAccessibility.get(WEST) && leftSquare.color != this.color) {
-            leftVertical.add("│");
-            leftVertical.add("│");
-            leftVertical.add("│");
+            leftVertical.add(lightVertical);
+            leftVertical.add(lightVertical);
+            leftVertical.add(lightVertical);
             for (int i=0; i<4; i++) {
                 leftVertical.add(" ");
             }
-            leftVertical.add("│");
-            leftVertical.add("│");
-            leftVertical.add("│");
+            leftVertical.add(lightVertical);
+            leftVertical.add(lightVertical);
+            leftVertical.add(lightVertical);
         } else {
             for (int i=0; i<10; i++) {
-                leftVertical.add("│");
+                leftVertical.add(lightVertical);
             }
         }
 
         SquareView rightSquare = getSquareAtDirection(CardinalPoint.EAST);
         if (rightSquare != null) {
-            rightVertical.add("‾");
+            rightVertical.add(overLine);
             for (int i=0; i<8; i++) {
                 rightVertical.add(" ");
             }
             if (getSquareAtDirection(SOUTH) != null) {
                 rightVertical.add(" ");
             } else {
-                rightVertical.add("_");
+                rightVertical.add(lowLine);
             }
         } else {
             for (int i=0; i<10; i++) {
-                rightVertical.add("│");
+                rightVertical.add(lightVertical);
             }
         }
 
@@ -176,17 +190,17 @@ public class SquareView implements Serializable {
             if (getSquareAtDirection(EAST) != null) {
                 right = " ";
             }
-            builder.append(left + " ·  ·  ·  ·  ·  ·  · " + right + "\n");
+            builder.append(left + squareSeparator + right + "\n");
         } else if (this.nearbyAccessibility.get(NORTH) && getSquareAtDirection(NORTH).color != this.color) {
             if (getSquareAtDirection(EAST) != null) {
-                right = "‾";
+                right = overLine;
             }
-            builder.append(left + "‾‾‾‾‾‾         ‾‾‾‾‾‾" + right + "\n");
+            builder.append(left + upperDoor + right + "\n");
         } else {
             if (getSquareAtDirection(EAST) != null) {
-                right = "‾";
+                right = overLine;
             }
-            builder.append(left + "‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾" + right + "\n");
+            builder.append(left + upperWall + right + "\n");
         }
 
         left = leftVertical.get(verticalIndex);
@@ -206,9 +220,9 @@ public class SquareView implements Serializable {
         right = rightVertical.get(verticalIndex);
         verticalIndex++;
         if (marked) {
-            builder.append(left + center("***", 21) + right + "\n");
+            builder.append(left + center(markedSquare, 21) + right + "\n");
         } else {
-            builder.append(left + "                     " + right + "\n");
+            builder.append(left + freeWall + right + "\n");
         }
 
         left = leftVertical.get(verticalIndex);
@@ -218,7 +232,7 @@ public class SquareView implements Serializable {
         if (this.spawn) {
             spawnRow = left + center("SPAWN",21) + right + "\n";
         } else {
-            spawnRow = left + "                     " + right + "\n";
+            spawnRow = left + freeWall + right + "\n";
         }
         builder.append(String.format(spawnRow));
 
@@ -231,7 +245,7 @@ public class SquareView implements Serializable {
         left = leftVertical.get(verticalIndex);
         right = rightVertical.get(verticalIndex);
         verticalIndex++;
-        builder.append(left + "                     " + right + "\n");
+        builder.append(left + freeWall + right + "\n");
 
         if (this.spawn) {
             String weaponsRow;
@@ -243,7 +257,7 @@ public class SquareView implements Serializable {
                     Weapon w = this.store.get(i);
                     weaponsRow = left + center(w.toString(), 21) + right + "\n";
                 } catch (IndexOutOfBoundsException e) {
-                    weaponsRow = left + "                     " + right + "\n";
+                    weaponsRow = left + freeWall + right + "\n";
                 }
                 builder.append(weaponsRow);
             }
@@ -252,7 +266,7 @@ public class SquareView implements Serializable {
                 left = leftVertical.get(verticalIndex);
                 right = rightVertical.get(verticalIndex);
                 verticalIndex++;
-                builder.append(left + "                     " + right + "\n");
+                builder.append(left + freeWall + right + "\n");
             }
         } else {
             String ammosRow;
@@ -286,13 +300,13 @@ public class SquareView implements Serializable {
             if(this.nearbyAccessibility.get(WEST) && getSquareAtDirection(WEST).color == this.color) {
                 left = " ";
             }
-            builder.append(left + "                     " + right + "\n");
+            builder.append(left + freeWall + right + "\n");
         } else if (this.nearbyAccessibility.get(SOUTH) && getSquareAtDirection(SOUTH).color == this.color) {
-            builder.append(left + " ·  ·  ·  ·  ·  ·  · " + right + "\n");
+            builder.append(left + squareSeparator + right + "\n");
         } else if (this.nearbyAccessibility.get(SOUTH) && getSquareAtDirection(SOUTH).color != this.color) {
-            builder.append(left + "______         ______" + right + "\n");
+            builder.append(left + lowerDoor + right + "\n");
         } else {
-            builder.append(left + "_____________________" + right + "\n");
+            builder.append(left + lowerWall + right + "\n");
         }
 
         return builder.toString();

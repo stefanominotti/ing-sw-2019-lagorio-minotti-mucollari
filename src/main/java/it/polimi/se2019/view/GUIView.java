@@ -1,24 +1,18 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.client.AbstractClient;
 import it.polimi.se2019.model.GameCharacter;
 import it.polimi.se2019.model.messages.nickname.NicknameMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessageType;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.List;
 
 public class GUIView extends View {
 
-    private RegistrationFormApp GUIApp;
+    private GuiApp GUIApp;
 
-    public GUIView(int connection, RegistrationFormApp GUIApp) {
+    public GUIView(int connection, GuiApp GUIApp) {
         super(connection);
         this.GUIApp = GUIApp;
     }
