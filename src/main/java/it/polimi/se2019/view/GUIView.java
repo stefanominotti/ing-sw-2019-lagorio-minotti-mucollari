@@ -8,9 +8,6 @@ import it.polimi.se2019.model.messages.nickname.NicknameMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessageType;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +92,7 @@ public class GUIView extends View {
     @Override
     void handleClientDisconnected(GameCharacter character) {
         super.handleClientDisconnected(character);
-        if (getState() == WAITINGSTART) {
+        if (getState() == WAITINGSTART || getState() == WAITINGSETUP) {
             ((LobbyController) this.controller).removePlayer(character);
         }
     }
@@ -107,7 +104,7 @@ public class GUIView extends View {
         Map<GameCharacter, String> players = new LinkedHashMap<>(otherPlayers);
         players.put(character, nickname);
         setScene(SceneType.LOBBY);
-        ((LobbyController) this.controller).setMessage("loading.gif", "Waiting players...");
+        ((LobbyController) this.controller).setMessage("loading.gif", "Waiting for players...");
         ((LobbyController) this.controller).setPlayers(players);
     }
 
@@ -116,6 +113,29 @@ public class GUIView extends View {
         super.handleReadyPlayer(character, nickname);
         if (getState() == WAITINGSTART) {
             ((LobbyController) this.controller).addPlayer(character, nickname);
+        }
+    }
+
+    @Override
+    void handleSetupInterrupted() {
+        if(getState() == SETTINGSKULLS || getState() == SETTINGARENA) {
+            setScene(SceneType.LOBBY);
+        }
+        super.handleSetupInterrupted();
+        ((LobbyController) this.controller).setMessage("loading.gif", "Waiting for players...");
+    }
+
+    @Override
+    void handleGameSetupTimer(TimerMessageType action, long duration) {
+        if (getState() == WAITINGSTART) {
+            switch (action) {
+                case START:
+                    ((LobbyController) this.controller).setMessage("loading.gif", "Setup will start soon...");
+                    break;
+                case STOP:
+                    ((LobbyController) this.controller).setMessage("loading.gif", "Waiting for players...");
+                    break;
+            }
         }
     }
 
@@ -142,12 +162,6 @@ public class GUIView extends View {
             setScene(SceneType.SELECT_SKULLS);
         } else {
         }
-    }
-
-
-    @Override
-    void handleGameSetupTimer(TimerMessageType action, long duration) {
-
     }
 
     @Override

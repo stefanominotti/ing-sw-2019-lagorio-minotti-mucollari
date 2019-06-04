@@ -503,7 +503,6 @@ public class CLIView extends View {
 
     @Override
     void handleClientDisconnected(GameCharacter character) {
-        super.handleClientDisconnected(character);
         String nickname = "";
         for (PlayerBoard board : getEnemyBoards()) {
             if (board.getCharacter() == character) {
@@ -511,6 +510,7 @@ public class CLIView extends View {
                 break;
             }
         }
+        super.handleClientDisconnected(character);
         if (getState() == TYPINGNICKNAME || getState() == WAITINGSTART || getState() == WAITINGSETUP ||
                 getState() == SETTINGSKULLS || getState() == SETTINGARENA) {
             if (getState() == WAITINGSTART || getState() == WAITINGSETUP || getState() == SETTINGSKULLS ||

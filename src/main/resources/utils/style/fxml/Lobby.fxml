@@ -78,9 +78,9 @@
                   <HBox fx:id="message" alignment="CENTER" prefHeight="82.0" prefWidth="438.0" translateY="20.0">
                      <children>
                         <ImageView fx:id="message_img" fitHeight="66.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true" translateX="-10.0" />
-                        <Label fx:id="message_name" alignment="CENTER" contentDisplay="CENTER" prefHeight="95.0" prefWidth="124.0" translateX="-10.0">
+                        <Label fx:id="message_name" alignment="CENTER" contentDisplay="CENTER" prefHeight="66.0" prefWidth="175.0" translateX="-10.0">
                            <font>
-                              <Font name="System Bold" size="18.0" />
+                              <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
                      </children>
