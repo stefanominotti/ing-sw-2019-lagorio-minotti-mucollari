@@ -2,10 +2,12 @@ package it.polimi.se2019.view;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 
@@ -21,6 +23,7 @@ public class GUIApp extends Application {
         this.stage = window;
         this.stage.setTitle("Adrenaline - Sign up");
         this.view = new GUIView(Integer.parseInt(getParameters().getRaw().get(0)), this);
+        stage.setOnCloseRequest(e -> System.exit(0));
     }
 
     void showAlert(String text) {
@@ -41,6 +44,12 @@ public class GUIApp extends Application {
                     break;
                 case SELECT_CHARACTER:
                     loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "SelectCharacter.fxml"));
+                    break;
+                case SELECT_SKULLS:
+                    loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "SelectSkulls.fxml"));
+                    break;
+                case SELECT_ARENA:
+                    loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "SelectArena.fxml"));
                     break;
             }
             try {

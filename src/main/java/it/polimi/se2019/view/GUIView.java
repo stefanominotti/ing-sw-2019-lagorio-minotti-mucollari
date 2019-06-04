@@ -1,15 +1,18 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.model.GameCharacter;
+import it.polimi.se2019.model.messages.board.ArenaMessage;
+import it.polimi.se2019.model.messages.board.SkullsMessage;
 import it.polimi.se2019.model.messages.client.CharacterMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessageType;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
 
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import static it.polimi.se2019.view.ClientState.CHOOSINGCHARACTER;
+import static it.polimi.se2019.view.ClientState.*;
 
 public class GUIView extends View {
 
@@ -53,6 +56,15 @@ public class GUIView extends View {
         }
     }
 
+    void handleSkullsInput(int skullsNumber) throws RemoteException {
+        getClient().send(new SkullsMessage(skullsNumber));
+    }
+
+    void handleArenaInput(String arenaNumber) throws RemoteException {
+        getClient().send(new ArenaMessage(arenaNumber));
+        System.out.println("Arena Scelta");
+    }
+
     @Override
     void handleNicknameRequest() {
         super.handleNicknameRequest();
@@ -77,6 +89,31 @@ public class GUIView extends View {
         setScene(SceneType.SELECT_CHARACTER);
         ((SelectCharacterController) this.controller).enableCharacters(availables);
     }
+
+    @Override
+    void handleStartSetup(GameCharacter character) {
+        super.handleStartSetup(character);
+        if (character == getCharacter()) {
+            setScene(SceneType.SELECT_SKULLS);
+        } else {
+        }
+    }
+
+    @Override
+    void handleSkullsSet() {
+        super.handleSkullsSet();
+        setScene(SceneType.SELECT_ARENA);
+    }
+
+    @Override
+    void handleMasterChanged(GameCharacter character) {
+        super.handleMasterChanged(character);
+        if (character == getCharacter()) {
+            setScene(SceneType.SELECT_SKULLS);
+        } else {
+        }
+    }
+
 
     @Override
     void handleGameSetupTimer(TimerMessageType action, long duration) {
