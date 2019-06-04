@@ -21,11 +21,11 @@
       </VBox>
    </top>
    <center>
-      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="436.0" prefWidth="438.0" styleClass="cardPane" stylesheets="@../css/style.css" translateY="-40.0" BorderPane.alignment="CENTER">
+      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="436.0" prefWidth="438.0" styleClass="cardPane" stylesheets="@../css/style.css" translateY="-35.0" BorderPane.alignment="CENTER">
          <children>
             <VBox fx:id="playersList" prefHeight="389.0" prefWidth="438.0">
                <children>
-                  <HBox fx:id="player1" alignment="CENTER" prefHeight="82.0" prefWidth="438.0">
+                  <HBox fx:id="player1" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="438.0" translateY="4.0">
                      <children>
                         <ImageView fx:id="player1_img" fitHeight="66.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true" translateX="-10.0" />
                         <Label fx:id="player1_name" alignment="CENTER" contentDisplay="CENTER" prefHeight="95.0" prefWidth="124.0" translateX="-10.0">
@@ -35,7 +35,7 @@
                         </Label>
                      </children>
                   </HBox>
-                  <HBox fx:id="player2" alignment="CENTER" prefHeight="82.0" prefWidth="438.0">
+                  <HBox fx:id="player2" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="438.0" translateY="4.0">
                      <children>
                         <ImageView fx:id="player2_img" fitHeight="66.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true" translateX="-10.0" />
                         <Label fx:id="player2_name" alignment="CENTER" contentDisplay="CENTER" prefHeight="95.0" prefWidth="124.0" translateX="-10.0">
@@ -45,7 +45,7 @@
                         </Label>
                      </children>
                   </HBox>
-                  <HBox fx:id="player3" alignment="CENTER" prefHeight="82.0" prefWidth="438.0">
+                  <HBox fx:id="player3" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="438.0" translateY="4.0">
                      <children>
                         <ImageView fx:id="player3_img" fitHeight="66.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true" translateX="-10.0" />
                         <Label fx:id="player3_name" alignment="CENTER" contentDisplay="CENTER" prefHeight="95.0" prefWidth="124.0" translateX="-10.0">
@@ -55,7 +55,7 @@
                         </Label>
                      </children>
                   </HBox>
-                  <HBox fx:id="player4" alignment="CENTER" prefHeight="82.0" prefWidth="438.0">
+                  <HBox fx:id="player4" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="438.0" translateY="4.0">
                      <children>
                         <ImageView fx:id="player4_img" fitHeight="66.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true" translateX="-10.0" />
                         <Label fx:id="player4_name" alignment="CENTER" contentDisplay="CENTER" prefHeight="95.0" prefWidth="124.0" translateX="-10.0">
@@ -65,7 +65,7 @@
                         </Label>
                      </children>
                   </HBox>
-                  <HBox fx:id="player5" alignment="CENTER" prefHeight="82.0" prefWidth="438.0">
+                  <HBox fx:id="player5" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="438.0" translateY="4.0">
                      <children>
                         <ImageView fx:id="player5_img" fitHeight="66.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true" translateX="-10.0" />
                         <Label fx:id="player5_name" alignment="CENTER" contentDisplay="CENTER" prefHeight="95.0" prefWidth="124.0" translateX="-10.0">
@@ -75,10 +75,10 @@
                         </Label>
                      </children>
                   </HBox>
-                  <HBox fx:id="message" alignment="CENTER" prefHeight="82.0" prefWidth="438.0" translateY="20.0">
+                  <HBox fx:id="message" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="438.0">
                      <children>
-                        <ImageView fx:id="message_img" fitHeight="66.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true" translateX="-10.0" />
-                        <Label fx:id="message_name" alignment="CENTER" contentDisplay="CENTER" prefHeight="66.0" prefWidth="175.0" translateX="-10.0">
+                        <ImageView fx:id="message_img" fitHeight="59.0" fitWidth="63.0" pickOnBounds="true" preserveRatio="true" translateX="-10.0" />
+                        <Label fx:id="message_name" alignment="CENTER" contentDisplay="CENTER" translateX="3.0">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>

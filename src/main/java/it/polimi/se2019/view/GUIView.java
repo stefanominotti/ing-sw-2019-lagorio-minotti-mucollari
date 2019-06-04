@@ -145,7 +145,7 @@ public class GUIView extends View {
         if (character == getCharacter()) {
             setScene(SceneType.SELECT_SKULLS);
         } else {
-            ((LobbyController) this.controller).setMessage("setting.gif", "Master player is setting up the game");
+            ((LobbyController) this.controller).setMessage("setting.gif", "Master player is setting up the game...");
         }
     }
 

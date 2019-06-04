@@ -29,9 +29,9 @@
                <children>
                   <VBox alignment="CENTER" prefHeight="168.0" prefWidth="123.0">
                      <children>
-                        <ImageView fitHeight="89.0" fitWidth="87.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="89.0" fitWidth="87.0" pickOnBounds="true" preserveRatio="true" styleClass="img-shadow">
                            <image>
-                              <Image url="@../../icons/characters_icon/blue.png" />
+                              <Image url="@../../icons/characters_icon/banshee.png" />
                            </image>
                         </ImageView>
                         <RadioButton fx:id="banshee" mnemonicParsing="false" text="BANSHEE" translateY="10.0">
@@ -46,9 +46,9 @@
                   </VBox>
                   <VBox alignment="CENTER" prefHeight="168.0" prefWidth="123.0">
                      <children>
-                        <ImageView fitHeight="89.0" fitWidth="87.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="89.0" fitWidth="87.0" pickOnBounds="true" preserveRatio="true" styleClass="img-shadow">
                            <image>
-                              <Image url="@../../icons/characters_icon/yellow-01.png" />
+                              <Image url="@../../icons/characters_icon/d_struct_or.png" />
                            </image>
                         </ImageView>
                         <RadioButton fx:id="d_struct_or" mnemonicParsing="false" text="D-STRUCT-OR" toggleGroup="$characterChoiceGroup" translateY="10.0">
@@ -60,9 +60,9 @@
                   </VBox>
                   <VBox alignment="CENTER" prefHeight="168.0" prefWidth="123.0">
                      <children>
-                        <ImageView fitHeight="89.0" fitWidth="87.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="89.0" fitWidth="87.0" pickOnBounds="true" preserveRatio="true" styleClass="img-shadow">
                            <image>
-                              <Image url="@../../icons/characters_icon/grey.png" />
+                              <Image url="@../../icons/characters_icon/dozer.png" />
                            </image>
                         </ImageView>
                         <RadioButton fx:id="dozer" mnemonicParsing="false" text="DOZER" toggleGroup="$characterChoiceGroup" translateY="10.0">
@@ -74,9 +74,9 @@
                   </VBox>
                   <VBox alignment="CENTER" prefHeight="168.0" prefWidth="123.0">
                      <children>
-                        <ImageView fitHeight="89.0" fitWidth="87.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="89.0" fitWidth="87.0" pickOnBounds="true" preserveRatio="true" styleClass="img-shadow">
                            <image>
-                              <Image url="@../../icons/characters_icon/green.png" />
+                              <Image url="@../../icons/characters_icon/sprog.png" />
                            </image>
                         </ImageView>
                         <RadioButton fx:id="sprog" mnemonicParsing="false" text="SPROG" toggleGroup="$characterChoiceGroup" translateY="10.0">
@@ -88,9 +88,9 @@
                   </VBox>
                   <VBox alignment="CENTER" prefHeight="168.0" prefWidth="123.0">
                      <children>
-                        <ImageView fitHeight="89.0" fitWidth="87.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="89.0" fitWidth="87.0" pickOnBounds="true" preserveRatio="true" styleClass="img-shadow">
                            <image>
-                              <Image url="@../../icons/characters_icon/purple-01.png" />
+                              <Image url="@../../icons/characters_icon/violetta.png" />
                            </image>
                         </ImageView>
                         <RadioButton fx:id="violetta" mnemonicParsing="false" text="VIOLETTA" toggleGroup="$characterChoiceGroup" translateY="10.0">
