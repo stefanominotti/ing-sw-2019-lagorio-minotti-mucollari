@@ -202,7 +202,7 @@ public abstract class View {
         }
     }
 
-    void manageUpdate(Message message) throws RemoteException {
+    public void manageUpdate(Message message) throws RemoteException {
         switch (message.getMessageType()) {
             case NICKNAME_MESSAGE:
                 update((NicknameMessage) message);

@@ -52,7 +52,7 @@ public class CLIView extends View {
     }
 
     @Override
-    void manageUpdate(Message message) throws RemoteException {
+    public void manageUpdate(Message message) throws RemoteException {
         super.manageUpdate(message);
         this.inputEnabled = true;
     }
