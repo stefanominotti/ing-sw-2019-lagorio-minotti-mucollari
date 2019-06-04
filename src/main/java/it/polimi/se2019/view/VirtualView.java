@@ -40,46 +40,42 @@ public class VirtualView extends Observable implements Observer {
 
     @Override
     public void update(Observable model, Object message) {
-        try {
-            switch (((Message) message).getMessageType()) {
-                case PLAYER_MESSAGE:
-                    update((PlayerMessage) message);
-                    break;
-                case CLIENT_MESSAGE:
-                    update((ClientMessage) message);
-                    break;
-                case BOARD_MESSAGE:
-                    update((BoardMessage) message);
-                    break;
-                case POWERUP_MESSAGE:
-                    update((PowerupMessage) message);
-                    break;
-                case SELECTION_SENT_MESSAGE:
-                    send((SingleReceiverMessage) message);
-                    break;
-                case TURN_MESSAGE:
-                    update((TurnMessage) message);
-                    break;
-                case PAYMENT_MESSAGE:
-                    update((PaymentMessage) message);
-                    break;
-                default:
-                    sendAll((Message) message);
-                    break;
-            }
-        } catch (RemoteException e) {
-            LOGGER.log(Level.SEVERE, "Error on sending message:", e);
+        switch (((Message) message).getMessageType()) {
+            case PLAYER_MESSAGE:
+                update((PlayerMessage) message);
+                break;
+            case CLIENT_MESSAGE:
+                update((ClientMessage) message);
+                break;
+            case BOARD_MESSAGE:
+                update((BoardMessage) message);
+                break;
+            case POWERUP_MESSAGE:
+                update((PowerupMessage) message);
+                break;
+            case SELECTION_SENT_MESSAGE:
+                send((SingleReceiverMessage) message);
+                break;
+            case TURN_MESSAGE:
+                update((TurnMessage) message);
+                break;
+            case PAYMENT_MESSAGE:
+                update((PaymentMessage) message);
+                break;
+            default:
+                sendAll((Message) message);
+                break;
         }
     }
 
-    private void update(BoardMessage message) throws RemoteException {
+    private void update(BoardMessage message) {
         if (message.getType() == BoardMessageType.SETUP_INTERRUPTED) {
             this.server.setConnectionAllowed(true);
         }
         sendAll(message);
     }
 
-    private void update(PaymentMessage message) throws RemoteException {
+    private void update(PaymentMessage message) {
         if (message.getType() == PaymentMessageType.REQUEST) {
             send(message);
         } else {
@@ -87,7 +83,7 @@ public class VirtualView extends Observable implements Observer {
         }
     }
 
-    private void update(PlayerMessage message) throws RemoteException {
+    private void update(PlayerMessage message) {
         if (message.getType() == PlayerMessageType.CREATED) {
             send(message);
             sendOthers(message.getCharacter(),
@@ -102,7 +98,7 @@ public class VirtualView extends Observable implements Observer {
         }
     }
 
-    private void update(ClientMessage message) throws RemoteException {
+    private void update(ClientMessage message) {
         switch (message.getType()) {
             case DISCONNECTED:
                 this.server.removeClient(message.getCharacter());
@@ -118,7 +114,7 @@ public class VirtualView extends Observable implements Observer {
         }
     }
 
-    private void update(PowerupMessage message) throws RemoteException {
+    private void update(PowerupMessage message) {
         if(message.getPowerup() == null) {
             sendOthers(message.getCharacter(), message);
         } else {
@@ -126,22 +122,22 @@ public class VirtualView extends Observable implements Observer {
         }
     }
 
-    private void update(TurnMessage message) throws RemoteException {
+    private void update(TurnMessage message) {
         if (message.getType() == TurnMessageType.END) {
             this.server.saveGame();
         }
         this.server.sendAll(message);
     }
 
-    public void send(SingleReceiverMessage message) throws RemoteException {
+    public void send(SingleReceiverMessage message) {
         this.server.send(message.getCharacter(), (Message) message);
     }
 
-    public void sendAll(Message message) throws RemoteException {
+    public void sendAll(Message message) {
         this.server.sendAll(message);
     }
 
-    public void sendOthers(GameCharacter character, Message message) throws RemoteException {
+    public void sendOthers(GameCharacter character, Message message) {
         this.server.sendOthers(character, message);
     }
 }

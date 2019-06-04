@@ -62,11 +62,7 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
     }
 
     @Override
-    public void notify(Message message, RMIClientInterface client) {
-        try {
-            this.server.receiveMessage(message, this.clientCorrespondency.get(client));
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+    public void notify(Message message, RMIClientInterface client) throws RemoteException {
+        this.server.receiveMessage(message, this.clientCorrespondency.get(client));
     }
 }

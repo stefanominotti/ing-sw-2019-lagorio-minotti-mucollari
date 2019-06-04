@@ -39,11 +39,7 @@ public class CLIView extends View {
             public void run() {
                 while (this.read) {
                     String input = this.scanner.nextLine();
-                    try {
-                        handleInput(input);
-                    } catch (RemoteException e) {
-                        LOGGER.log(Level.SEVERE, "Error on managing input", e);
-                    }
+                    handleInput(input);
                 }
             }
         };
@@ -52,12 +48,12 @@ public class CLIView extends View {
     }
 
     @Override
-    public void manageUpdate(Message message) throws RemoteException {
+    public void manageUpdate(Message message) {
         super.manageUpdate(message);
         this.inputEnabled = true;
     }
 
-    private void handleInput(String input) throws RemoteException {
+    private void handleInput(String input) {
         if (!this.inputEnabled || input == null) {
             return;
         }
@@ -89,12 +85,12 @@ public class CLIView extends View {
         }
     }
 
-    private void handleNicknameInput(String input) throws RemoteException {
+    private void handleNicknameInput(String input) {
         getClient().send(new NicknameMessage(NicknameMessageType.CONNECTED, input));
         this.inputEnabled = false;
     }
 
-    private void handleSkullsInput(String input) throws RemoteException {
+    private void handleSkullsInput(String input) {
         int selection;
         try {
             selection = Integer.parseInt(input);
@@ -110,7 +106,7 @@ public class CLIView extends View {
         this.inputEnabled = false;
     }
 
-    private void handleArenaInput(String input) throws RemoteException {
+    private void handleArenaInput(String input) {
         if(input.equals("1") || input.equals("2") || input.equals("3") || input.equals("4")) {
             getClient().send(new ArenaMessage(input));
             this.inputEnabled = false;
@@ -119,7 +115,7 @@ public class CLIView extends View {
         showMessage("Arena must be [1, 2, 3, 4]:, retry:");
     }
 
-    private void handleCharacterInput(String input) throws RemoteException {
+    private void handleCharacterInput(String input) {
         int selection;
         try {
             selection = Integer.parseInt(input);
@@ -151,7 +147,7 @@ public class CLIView extends View {
         }
     }
 
-    private void handlePositionInput(String input) throws RemoteException {
+    private void handlePositionInput(String input) {
         if (input.equalsIgnoreCase("c") && getState() != SELECTPOWERUPPOSITION) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.ACTION, getCharacter(),
                     ActionType.CANCEL));
@@ -199,7 +195,7 @@ public class CLIView extends View {
 
     }
 
-    private void handlePowerupInput(String input) throws RemoteException {
+    private void handlePowerupInput(String input) {
         int selection;
         try {
             selection = Integer.parseInt(input);
@@ -237,7 +233,7 @@ public class CLIView extends View {
         }
     }
 
-    private void handleWeaponInput(String input) throws RemoteException {
+    private void handleWeaponInput(String input) {
         int selection;
 
         try {
@@ -275,7 +271,7 @@ public class CLIView extends View {
         }
     }
 
-    private void handleActionInput(String input) throws RemoteException {
+    private void handleActionInput(String input) {
         int selection;
         try {
             selection = Integer.parseInt(input);
@@ -318,7 +314,7 @@ public class CLIView extends View {
         }
     }
 
-    private void handlePaymentInput(String input) throws RemoteException {
+    private void handlePaymentInput(String input) {
         int selection;
         try {
             selection = Integer.parseInt(input);
@@ -484,7 +480,7 @@ public class CLIView extends View {
     }
 
     @Override
-    void handleReconnectionRequest() throws RemoteException {
+    void handleReconnectionRequest() {
         showMessage("A game already exists, trying to reconnect.");
         super.handleReconnectionRequest();
     }
@@ -632,7 +628,7 @@ public class CLIView extends View {
     }
 
     @Override
-    void handleStartTurn(TurnMessage message, GameCharacter character) throws RemoteException {
+    void handleStartTurn(TurnMessage message, GameCharacter character) {
         if(character != getCharacter()) {
             showMessage(character + " is playing");
         } else {

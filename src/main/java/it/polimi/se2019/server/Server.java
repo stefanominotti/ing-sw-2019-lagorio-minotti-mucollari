@@ -35,12 +35,17 @@ public class Server {
         this.clientNicknames = new HashMap<>();
     }
 
-    public static void main(String[] args) throws RemoteException {
+    public static void main(String[] args) {
         Server server = new Server();
         server.gameLoader = new GameLoader();
         server.startMVC(server.gameLoader.loadBoard());
         new SocketServer(server);
-        new RMIProtocolServer(server);
+        try {
+            new RMIProtocolServer(server);
+        } catch (RemoteException e) {
+            System.out.println("Unable to start RMI server");
+            System.exit(0);
+        }
         System.out.println("Waiting for clients.\n");
     }
 
@@ -74,21 +79,13 @@ public class Server {
         ((Thread) client).start();
         this.temporaryClients.add(client);
         if(this.model.getArena() != null) {
-            try {
-                client.send(new ReconnectionMessage());
-            } catch (RemoteException e) {
-                LOGGER.log(Level.SEVERE, ("Error on sending message: "), e);
-            }
+            client.send(new ReconnectionMessage());
         } else {
-            try {
-                client.send(new NicknameMessage(NicknameMessageType.REQUIRE));
-            } catch (RemoteException e) {
-                LOGGER.log(Level.SEVERE, ("Error on sending message: "), e);
-            }
+            client.send(new NicknameMessage(NicknameMessageType.REQUIRE));
         }
     }
 
-    public void removeClient(GameCharacter character, Message message) throws RemoteException {
+    public void removeClient(GameCharacter character, Message message) {
         this.clients.get(character).sendClose(message);
         this.clients.remove(character);
         System.out.println("Client disconnected.");
@@ -113,7 +110,7 @@ public class Server {
         System.out.println("Client disconnected.");
     }
 
-    public void removeTemporaryClients(Message message) throws RemoteException {
+    public void removeTemporaryClients(Message message) {
         for (VirtualClientInterface client : this.temporaryClients) {
             client.send(message);
             client.exit();
@@ -122,17 +119,17 @@ public class Server {
         this.temporaryClients = new ArrayList<>();
     }
 
-    public void send(GameCharacter character, Message message) throws RemoteException {
+    public void send(GameCharacter character, Message message) {
         this.clients.get(character).send(message);
     }
 
-    public void sendAll(Message message) throws RemoteException {
+    public void sendAll(Message message) {
         for (VirtualClientInterface client : this.clients.values()) {
             client.send(message);
         }
     }
 
-    public void sendOthers(GameCharacter character, Message message) throws RemoteException {
+    public void sendOthers(GameCharacter character, Message message) {
         for (Map.Entry<GameCharacter, VirtualClientInterface> client : this.clients.entrySet()) {
             if (client.getKey() == character) {
                 continue;
@@ -141,7 +138,7 @@ public class Server {
         }
     }
 
-    public void sendOthers(List<GameCharacter> character, Message message) throws RemoteException {
+    public void sendOthers(List<GameCharacter> character, Message message) {
         for (Map.Entry<GameCharacter, VirtualClientInterface> client : this.clients.entrySet()) {
             if (character.contains(client.getKey())) {
                 continue;
@@ -150,7 +147,7 @@ public class Server {
         }
     }
 
-    void receiveMessage(Message message, VirtualClientInterface client) throws RemoteException {
+    void receiveMessage(Message message, VirtualClientInterface client) {
         if (this.clients.size() == 5) {
             client.send(new ClientMessage(ClientMessageType.GAME_ALREADY_STARTED, null));
         }

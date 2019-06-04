@@ -45,7 +45,7 @@ public class GUIView extends View {
         }
     }
 
-    void handleNicknameInput(String input) throws RemoteException {
+    void handleNicknameInput(String input) {
         if (input.equalsIgnoreCase("")) {
             this.GUIApp.showAlert("Invalid input!");
             return;
@@ -53,19 +53,18 @@ public class GUIView extends View {
         getClient().send(new NicknameMessage(NicknameMessageType.CONNECTED, input));
     }
 
-    void handleCharacterInput(GameCharacter character) throws RemoteException {
+    void handleCharacterInput(GameCharacter character) {
         if (getState() == CHOOSINGCHARACTER) {
             getClient().send(new CharacterMessage(character, generateToken()));
         }
     }
 
-    void handleSkullsInput(int skullsNumber) throws RemoteException {
+    void handleSkullsInput(int skullsNumber) {
         getClient().send(new SkullsMessage(skullsNumber));
     }
 
-    void handleArenaInput(String arenaNumber) throws RemoteException {
+    void handleArenaInput(String arenaNumber) {
         getClient().send(new ArenaMessage(arenaNumber));
-        System.out.println("Arena Scelta");
     }
 
     @Override
@@ -108,6 +107,7 @@ public class GUIView extends View {
         Map<GameCharacter, String> players = new LinkedHashMap<>(otherPlayers);
         players.put(character, nickname);
         setScene(SceneType.LOBBY);
+        ((LobbyController) this.controller).setMessage("loading.gif", "Waiting players...");
         ((LobbyController) this.controller).setPlayers(players);
     }
 
@@ -125,6 +125,7 @@ public class GUIView extends View {
         if (character == getCharacter()) {
             setScene(SceneType.SELECT_SKULLS);
         } else {
+            ((LobbyController) this.controller).setMessage("setting.gif", "Master player is setting up the game");
         }
     }
 

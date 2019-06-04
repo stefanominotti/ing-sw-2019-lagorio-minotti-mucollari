@@ -95,7 +95,7 @@ public class GameLoader {
         return this.board;
     }
 
-    public void saveBoard() {
+    void saveBoard() {
         StringBuilder jObject = new StringBuilder("{");
         jObject.append("\"board\":" + this.board.toJson() + ",");
         jObject.append(("\"players\":["));

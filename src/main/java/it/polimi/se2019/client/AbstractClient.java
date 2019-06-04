@@ -16,7 +16,7 @@ public abstract class AbstractClient {
         this.view = view;
     }
 
-    public abstract void send(Message message) throws RemoteException;
+    public abstract void send(Message message);
 
     public void notify(Message message) throws RemoteException {
         this.view.manageUpdate(message);

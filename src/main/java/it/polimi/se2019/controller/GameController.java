@@ -219,26 +219,14 @@ public class GameController implements Observer {
     }
 
     void send(SingleReceiverMessage message) {
-        try {
-            this.view.send(message);
-        } catch (RemoteException e) {
-            LOGGER.log(Level.SEVERE, "Error on sending message", e);
-        }
+        this.view.send(message);
     }
 
     void sendAll(Message message) {
-        try {
-            this.view.sendAll(message);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+        this.view.sendAll(message);
     }
 
     void sendOthers(GameCharacter character, Message message) {
-        try {
-            this.view.sendOthers(character, message);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+        this.view.sendOthers(character, message);
     }
 }

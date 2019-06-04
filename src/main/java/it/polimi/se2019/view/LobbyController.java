@@ -96,4 +96,11 @@ public class LobbyController extends AbstractSceneController {
         });
     }
 
+    void setMessage(String img, String text) {
+        Platform.runLater(() -> {
+            this.message_name.setText(text);
+            this.message_img.setImage(new Image("utils/icons/" + img));
+        });
+    }
+
 }

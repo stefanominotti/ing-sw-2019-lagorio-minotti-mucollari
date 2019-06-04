@@ -4,7 +4,6 @@ import it.polimi.se2019.model.messages.Message;
 import it.polimi.se2019.model.messages.client.ClientMessage;
 import it.polimi.se2019.model.messages.client.ClientMessageType;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
 
 class SocketServer {
@@ -17,7 +16,7 @@ class SocketServer {
         (new ClientHandler(this, PORT)).start();
     }
 
-    void addClient(SocketVirtualClient client) throws IOException {
+    void addClient(SocketVirtualClient client) {
         if (!this.server.isConnectionAllowed()) {
             client.send(new ClientMessage(ClientMessageType.GAME_ALREADY_STARTED, null));
             return;
@@ -38,11 +37,7 @@ class SocketServer {
     }
 
     void notify(Message message, VirtualClientInterface client) {
-        try {
-            this.server.receiveMessage(message, client);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+        this.server.receiveMessage(message, client);
     }
 
 }

@@ -25,7 +25,7 @@ public class SelectCharacterController extends AbstractSceneController {
     @FXML
     private RadioButton violetta;
 
-    public void forwardCharacter() throws RemoteException {
+    public void forwardCharacter() {
         String value;
         try {
             value = ((RadioButton) this.characterChoiceGroup.getSelectedToggle()).getId();

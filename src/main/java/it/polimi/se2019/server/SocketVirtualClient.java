@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,7 +37,7 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
     }
 
     @Override
-    public void sendClose(Message message) throws RemoteException {
+    public void sendClose(Message message) {
         send(message);
         exit();
     }

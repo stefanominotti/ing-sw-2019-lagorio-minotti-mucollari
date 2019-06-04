@@ -34,8 +34,13 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
     }
 
     @Override
-    public void send(Message message) throws RemoteException {
-        this.server.notify(message, this);
+    public void send(Message message) {
+        try {
+            this.server.notify(message, this);
+        } catch (RemoteException e) {
+            LOGGER.log(Level.SEVERE, "Unable to reach server");
+            System.exit(0);
+        }
     }
 
     @Override

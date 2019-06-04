@@ -202,7 +202,7 @@ public abstract class View {
         }
     }
 
-    public void manageUpdate(Message message) throws RemoteException {
+    public void manageUpdate(Message message) {
         switch (message.getMessageType()) {
             case NICKNAME_MESSAGE:
                 update((NicknameMessage) message);
@@ -360,7 +360,7 @@ public abstract class View {
         this.board.setPlayerPosition(character, this.board.getSquareByCoordinates(x, y));
     }
 
-    private void update(ClientMessage message) throws RemoteException {
+    private void update(ClientMessage message) {
         switch (message.getType()) {
             case INVALID_TOKEN:
                 handleInvalidToken();
@@ -398,7 +398,7 @@ public abstract class View {
         System.exit(0);
     }
 
-    void handleReconnectionRequest() throws RemoteException {
+    void handleReconnectionRequest() {
         this.state = RECONNECTING;
         this.client.send(new ReconnectionMessage(getToken()));
     }
@@ -568,7 +568,7 @@ public abstract class View {
         requirePayment();
     }
 
-    private void update(TurnMessage message) throws RemoteException {
+    private void update(TurnMessage message) {
         switch (message.getType()) {
             case START:
                 handleStartTurn(message, message.getCharacter());
@@ -579,7 +579,7 @@ public abstract class View {
         }
     }
 
-    void handleStartTurn(TurnMessage message, GameCharacter character) throws RemoteException {
+    void handleStartTurn(TurnMessage message, GameCharacter character) {
         if (character != this.character) {
             this.state = OTHERTURN;
         } else {

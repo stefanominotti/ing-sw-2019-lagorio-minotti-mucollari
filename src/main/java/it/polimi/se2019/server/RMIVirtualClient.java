@@ -18,12 +18,16 @@ public class RMIVirtualClient extends Thread implements VirtualClientInterface {
     }
 
     @Override
-    public void send(Message message) throws RemoteException {
-        this.client.notify(message);
+    public void send(Message message) {
+        try {
+            this.client.notify(message);
+        } catch (RemoteException e) {
+            // Ignore, ping method recognize client disconnection
+        }
     }
 
     @Override
-    public void sendClose(Message message) throws RemoteException {
+    public void sendClose(Message message) {
         send(message);
         exit();
     }
