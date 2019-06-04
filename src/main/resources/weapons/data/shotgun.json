@@ -8,7 +8,7 @@
   },
   "primaryEffect": [
     {
-      "effectName": "modalità base",
+      "effectName": "modalita base",
       "description": "Dai 3 danni a 1 bersaglio nel quadrato in cui ti trovi. Se vuoi puoi muovere quel bersaglio di 1 quadrato.",
       "cost" : {
         "BLUE": 0,
@@ -59,7 +59,7 @@
   ],
   "alternativeMode": [
     {
-      "effectName": "modalità canna lunga",
+      "effectName": "modalita canna lunga",
       "description": "Dai 2 danni a 1 bersaglio in un quadrato distante esattamente 1 movimento.",
       "cost": {
         "BLUE": 0,

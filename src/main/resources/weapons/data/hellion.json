@@ -8,7 +8,7 @@
   },
   "primaryEffect": [
     {
-      "effectName": "modalità base",
+      "effectName": "modalita base",
       "description": "Dai 1 danno a 1 bersaglio che puoi vedere e distante almeno 1 movimento. Poi dai un marchio a quel bersaglio e a chiunque altro in quel quadrato",
       "cost" : {
         "BLUE": 0,
@@ -69,7 +69,7 @@
   ],
   "alternativeMode": [
     {
-      "effectName": "modalità nano-traccianti",
+      "effectName": "modalita nano-traccianti",
       "description": "Dai 1 danno a 1 bersaglio che puoi vedere e distante almeno 1 movimento. Poi dai 2 marchi a quel bersaglio e a chiunque in quel quadrato",
       "cost" : {
         "BLUE": 0,

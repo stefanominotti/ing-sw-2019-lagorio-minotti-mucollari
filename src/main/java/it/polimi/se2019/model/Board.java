@@ -692,7 +692,7 @@ public class Board extends Observable {
         return availableSquares;
     }
 
-    //Usare se il target è uno Square
+    //Usare se il target e' uno Square
     public List<Player> getPlayersByDistance (Square square, List<String> amount){
         List<Player> players = new ArrayList<>();
         for(Square s : getSquaresByDistance(square, amount)) {
@@ -701,7 +701,7 @@ public class Board extends Observable {
         return players;
     }
 
-    //Usare se il target è un Player
+    //Usare se il target e' un Player
     public List<Player> getPlayersByDistance (Player player, List<String> amount){
         List<Player> players = new ArrayList<>();
         if (amount.size() == 1 && amount.get(0) == "0") {

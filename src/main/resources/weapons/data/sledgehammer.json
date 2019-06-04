@@ -8,7 +8,7 @@
   },
   "primaryEffect": [
     {
-      "effectName": "modalità base",
+      "effectName": "modalita base",
       "description": "Dai 2 danni a 1 bersaglio nel quadrato in cui ti trovi",
       "cost" : {
         "BLUE": 0,
@@ -41,7 +41,7 @@
   ],
   "alternativeMode": [
     {
-      "effectName": "modalità polverizzatore",
+      "effectName": "modalita polverizzatore",
       "description": "Dai 3 danni 1 bersaglio nel quadrato in cui ti trovi, poi muovi quel bersaglio di 0, 1, 2 quadrati in una direzione",
       "cost": {
         "BLUE": 0,

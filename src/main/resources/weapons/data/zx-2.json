@@ -8,7 +8,7 @@
   },
   "primaryEffect": [
     {
-      "effectName":"modalità base",
+      "effectName":"modalita base",
       "description": "Dai 1 danno e 2 marchi a 1 bersaglio che puoi vedere.",
       "cost" : {
         "BLUE": 0,
@@ -56,7 +56,7 @@
   ],
   "alternativeMode": [
     {
-      "effectName": "modalità scanner",
+      "effectName": "modalita scanner",
       "description": "Scegli fino a 3 bersagli che puoi vedere e dai 1 marchio a ciascuno",
       "cost": {
         "BLUE": 0,

@@ -8,7 +8,7 @@
   },
   "primaryEffect": [
     {
-      "effectName": "modalità base",
+      "effectName": "modalita base",
       "description": "Dai 1 danno a ogni altro giocatore presente nel quadrato in cui ti trovi",
       "cost" : {
         "BLUE": 0,
@@ -41,7 +41,7 @@
   ],
   "alternativeMode": [
     {
-      "effectName": "modalità mietitore",
+      "effectName": "modalita mietitore",
       "description": "Dai 2 danni a ogni altro giocatore presente nel quadrato in cui ti trovi",
       "cost": {
         "BLUE": 1,

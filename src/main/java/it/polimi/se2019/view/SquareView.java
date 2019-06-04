@@ -23,19 +23,37 @@ public class SquareView implements Serializable {
     private Map<CardinalPoint, Boolean> nearbyAccessibility;
     private BoardView board;
 
-    private static final String lightVertical = "\u2502";
-    private static final String overLine = "\u203E";
-    private static final String lowLine = "\u005F";
-    private static final String middleDot = "\u00B7";
-    private static final String space = "\u0020";
-    private static final String markedSquare = "\u002A" + "\u002A" + "\u002A";
+    private static final String LIGHT_VERTICAL = "\u2502";
+    private static final String OVER_LINE = "\u203E";
+    private static final String LOW_LINE = "\u005F";
+    private static final String MIDDLE_DOT = "\u00B7";
+    private static final String SPACE = "\u0020";
+    private static final String MARKED_SQUARE = "\u002A" + "\u002A" + "\u002A";
 
-    private static final String squareSeparator = space + middleDot + space + space + middleDot + space + space + middleDot + space + space + middleDot + space + space + middleDot + space + space + middleDot + space + space + middleDot + space;
-    private static final String upperDoor = overLine + overLine + overLine + overLine + overLine + overLine + space + space + space + space + space + space + space + space + space + overLine + overLine + overLine + overLine + overLine + overLine;
-    private static final String lowerDoor = lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + space + space + space + space + space + space + space + space + space + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine;
-    private static final String upperWall = overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine + overLine;
-    private static final String lowerWall = lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine + lowLine;
-    private static final String freeWall = space + space + space + space + space + space + space + space + space + space + space + space + space + space + space + space + space + space + space + space + space;
+    private static final String SQUARE_SEPARATOR = SPACE + MIDDLE_DOT + SPACE + SPACE + MIDDLE_DOT + SPACE + SPACE +
+                                                    MIDDLE_DOT + SPACE + SPACE + MIDDLE_DOT + SPACE + SPACE + MIDDLE_DOT
+                                                    + SPACE + SPACE + MIDDLE_DOT + SPACE + SPACE + MIDDLE_DOT + SPACE;
+
+    private static final String UPPER_DOOR = OVER_LINE + OVER_LINE + OVER_LINE + OVER_LINE + OVER_LINE + OVER_LINE +
+                                                SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE +
+                                                OVER_LINE + OVER_LINE + OVER_LINE + OVER_LINE + OVER_LINE + OVER_LINE;
+
+    private static final String LOWER_DOOR = LOW_LINE + LOW_LINE + LOW_LINE + LOW_LINE + LOW_LINE + LOW_LINE + SPACE +
+                                                SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + LOW_LINE
+                                                + LOW_LINE + LOW_LINE + LOW_LINE + LOW_LINE + LOW_LINE;
+
+    private static final String UPPER_WALL = OVER_LINE + OVER_LINE + OVER_LINE + OVER_LINE + OVER_LINE + OVER_LINE +
+                                                OVER_LINE + OVER_LINE + OVER_LINE + OVER_LINE + OVER_LINE + OVER_LINE +
+                                                OVER_LINE + OVER_LINE + OVER_LINE + OVER_LINE + OVER_LINE + OVER_LINE +
+                                                OVER_LINE + OVER_LINE + OVER_LINE;
+
+    private static final String LOWER_WALL = LOW_LINE + LOW_LINE + LOW_LINE + LOW_LINE + LOW_LINE + LOW_LINE + LOW_LINE +
+                                                LOW_LINE + LOW_LINE + LOW_LINE + LOW_LINE + LOW_LINE + LOW_LINE + LOW_LINE
+                                                + LOW_LINE + LOW_LINE + LOW_LINE + LOW_LINE + LOW_LINE + LOW_LINE + LOW_LINE;
+
+    private static final String FREE_WALL = SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE
+                                                + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE
+                                                + SPACE + SPACE;
 
     SquareView(int x, int y, RoomColor color, boolean spawn, Map<CardinalPoint, Boolean> map) {
         this.x = x;
@@ -145,41 +163,41 @@ public class SquareView implements Serializable {
         int verticalIndex = 0;
         SquareView leftSquare = getSquareAtDirection(WEST);
         if (this.nearbyAccessibility.get(WEST) && leftSquare.color == this.color) {
-            leftVertical.add(overLine);
+            leftVertical.add(OVER_LINE);
            for (int i=0; i<8; i++) {
-               leftVertical.add(middleDot);
+               leftVertical.add(MIDDLE_DOT);
            }
-           leftVertical.add(lowLine);
+           leftVertical.add(LOW_LINE);
         } else if (this.nearbyAccessibility.get(WEST) && leftSquare.color != this.color) {
-            leftVertical.add(lightVertical);
-            leftVertical.add(lightVertical);
-            leftVertical.add(lightVertical);
+            leftVertical.add(LIGHT_VERTICAL);
+            leftVertical.add(LIGHT_VERTICAL);
+            leftVertical.add(LIGHT_VERTICAL);
             for (int i=0; i<4; i++) {
                 leftVertical.add(" ");
             }
-            leftVertical.add(lightVertical);
-            leftVertical.add(lightVertical);
-            leftVertical.add(lightVertical);
+            leftVertical.add(LIGHT_VERTICAL);
+            leftVertical.add(LIGHT_VERTICAL);
+            leftVertical.add(LIGHT_VERTICAL);
         } else {
             for (int i=0; i<10; i++) {
-                leftVertical.add(lightVertical);
+                leftVertical.add(LIGHT_VERTICAL);
             }
         }
 
         SquareView rightSquare = getSquareAtDirection(CardinalPoint.EAST);
         if (rightSquare != null) {
-            rightVertical.add(overLine);
+            rightVertical.add(OVER_LINE);
             for (int i=0; i<8; i++) {
                 rightVertical.add(" ");
             }
             if (getSquareAtDirection(SOUTH) != null) {
                 rightVertical.add(" ");
             } else {
-                rightVertical.add(lowLine);
+                rightVertical.add(LOW_LINE);
             }
         } else {
             for (int i=0; i<10; i++) {
-                rightVertical.add(lightVertical);
+                rightVertical.add(LIGHT_VERTICAL);
             }
         }
 
@@ -190,17 +208,17 @@ public class SquareView implements Serializable {
             if (getSquareAtDirection(EAST) != null) {
                 right = " ";
             }
-            builder.append(left + squareSeparator + right + "\n");
+            builder.append(left + SQUARE_SEPARATOR + right + "\n");
         } else if (this.nearbyAccessibility.get(NORTH) && getSquareAtDirection(NORTH).color != this.color) {
             if (getSquareAtDirection(EAST) != null) {
-                right = overLine;
+                right = OVER_LINE;
             }
-            builder.append(left + upperDoor + right + "\n");
+            builder.append(left + UPPER_DOOR + right + "\n");
         } else {
             if (getSquareAtDirection(EAST) != null) {
-                right = overLine;
+                right = OVER_LINE;
             }
-            builder.append(left + upperWall + right + "\n");
+            builder.append(left + UPPER_WALL + right + "\n");
         }
 
         left = leftVertical.get(verticalIndex);
@@ -220,9 +238,9 @@ public class SquareView implements Serializable {
         right = rightVertical.get(verticalIndex);
         verticalIndex++;
         if (marked) {
-            builder.append(left + center(markedSquare, 21) + right + "\n");
+            builder.append(left + center(MARKED_SQUARE, 21) + right + "\n");
         } else {
-            builder.append(left + freeWall + right + "\n");
+            builder.append(left + FREE_WALL + right + "\n");
         }
 
         left = leftVertical.get(verticalIndex);
@@ -232,7 +250,7 @@ public class SquareView implements Serializable {
         if (this.spawn) {
             spawnRow = left + center("SPAWN",21) + right + "\n";
         } else {
-            spawnRow = left + freeWall + right + "\n";
+            spawnRow = left + FREE_WALL + right + "\n";
         }
         builder.append(String.format(spawnRow));
 
@@ -245,7 +263,7 @@ public class SquareView implements Serializable {
         left = leftVertical.get(verticalIndex);
         right = rightVertical.get(verticalIndex);
         verticalIndex++;
-        builder.append(left + freeWall + right + "\n");
+        builder.append(left + FREE_WALL + right + "\n");
 
         if (this.spawn) {
             String weaponsRow;
@@ -257,7 +275,7 @@ public class SquareView implements Serializable {
                     Weapon w = this.store.get(i);
                     weaponsRow = left + center(w.toString(), 21) + right + "\n";
                 } catch (IndexOutOfBoundsException e) {
-                    weaponsRow = left + freeWall + right + "\n";
+                    weaponsRow = left + FREE_WALL + right + "\n";
                 }
                 builder.append(weaponsRow);
             }
@@ -266,7 +284,7 @@ public class SquareView implements Serializable {
                 left = leftVertical.get(verticalIndex);
                 right = rightVertical.get(verticalIndex);
                 verticalIndex++;
-                builder.append(left + freeWall + right + "\n");
+                builder.append(left + FREE_WALL + right + "\n");
             }
         } else {
             String ammosRow;
@@ -300,13 +318,13 @@ public class SquareView implements Serializable {
             if(this.nearbyAccessibility.get(WEST) && getSquareAtDirection(WEST).color == this.color) {
                 left = " ";
             }
-            builder.append(left + freeWall + right + "\n");
+            builder.append(left + FREE_WALL + right + "\n");
         } else if (this.nearbyAccessibility.get(SOUTH) && getSquareAtDirection(SOUTH).color == this.color) {
-            builder.append(left + squareSeparator + right + "\n");
+            builder.append(left + SQUARE_SEPARATOR + right + "\n");
         } else if (this.nearbyAccessibility.get(SOUTH) && getSquareAtDirection(SOUTH).color != this.color) {
-            builder.append(left + lowerDoor + right + "\n");
+            builder.append(left + LOWER_DOOR + right + "\n");
         } else {
-            builder.append(left + lowerWall + right + "\n");
+            builder.append(left + LOWER_WALL + right + "\n");
         }
 
         return builder.toString();

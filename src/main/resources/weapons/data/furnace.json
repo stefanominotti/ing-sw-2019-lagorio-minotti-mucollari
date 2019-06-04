@@ -8,7 +8,7 @@
   },
   "primaryEffect": [
     {
-      "effectName": "modalità base",
+      "effectName": "modalita base",
       "description": "Scegli una stanza che puoi vedere, ma non la stanza in cui ti trovi. Dai 1 danno a ognuno in quella stanza.",
       "cost" : {
         "BLUE": 0,
@@ -64,7 +64,7 @@
   ],
   "alternativeMode": [
     {
-      "effectName": "modalità fuoco confortevole",
+      "effectName": "modalita fuoco confortevole",
       "description": "Scegli un quadrato distante esattamente 1 movimento da te. Dai 1 danno e 1 marchio a ognuno in quel quadrato.",
       "cost" : {
         "BLUE": 0,

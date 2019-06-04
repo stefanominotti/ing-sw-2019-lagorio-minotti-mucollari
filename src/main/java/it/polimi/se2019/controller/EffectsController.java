@@ -534,7 +534,7 @@ public class EffectsController {
             return;
         }
         EffectPossibilityPack pack = seeEffectpossibility(currentEffect);
-        //manda al giocatore le possibilità
+        //manda al giocatore le possibilita
     }
 
     private void setHitByCases(GameCharacter character) {

@@ -8,7 +8,7 @@
   },
   "primaryEffect": [
     {
-      "effectName":"modalità base",
+      "effectName":"modalita base",
       "description": "Scegli un quadrato distante 1 movimento e possibilmente un secondo quadrato distante ancora 1 movimento nella stessa direzione. In ogni quadrato puoi scegliere 1 bersaglio e dargli 1 danno",
       "cost" : {
         "BLUE": 0,

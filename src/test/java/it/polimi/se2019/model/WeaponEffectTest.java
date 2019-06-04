@@ -13,7 +13,7 @@ public class WeaponEffectTest {
     @Test
     public void getEffectNameTest() {
         WeaponEffect effect = Weapon.ZX_2.getAlternativeMode().get(0);
-        assertEquals("modalità scanner", effect.getEffectName());
+        assertEquals("modalita scanner", effect.getEffectName());
     }
 
     @Test
