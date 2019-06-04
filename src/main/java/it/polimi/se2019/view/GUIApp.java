@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class GuiApp extends Application {
+public class GUIApp extends Application {
 
     private static final String PATH = "utils/style/fxml/";
 
@@ -32,7 +32,7 @@ public class GuiApp extends Application {
         });
     }
 
-    void setScene(SceneType scene) {
+     void setScene(SceneType scene) {
         Platform.runLater(() -> {
             FXMLLoader loader = null;
             switch (scene) {
@@ -48,8 +48,13 @@ public class GuiApp extends Application {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            loader.<GuiAppController>getController().setView(this.view);
+            AbstractSceneController controller = loader.getController();
+            controller.setView(this.view);
             this.stage.show();
+            synchronized (this.view) {
+                this.view.setActiveController(controller);
+                this.view.notifyAll();
+            }
         });
     }
 }

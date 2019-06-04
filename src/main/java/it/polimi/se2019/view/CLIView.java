@@ -2,6 +2,7 @@ package it.polimi.se2019.view;
 
 import it.polimi.se2019.controller.ActionType;
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.messages.Message;
 import it.polimi.se2019.model.messages.board.ArenaMessage;
 import it.polimi.se2019.model.messages.board.SkullsMessage;
 import it.polimi.se2019.model.messages.client.CharacterMessage;
@@ -22,6 +23,8 @@ import java.util.logging.Logger;
 import static it.polimi.se2019.view.ClientState.*;
 
 public class CLIView extends View {
+
+    private boolean inputEnabled;
 
     private static final Logger LOGGER = Logger.getLogger(CLIView.class.getName());
 
@@ -48,10 +51,17 @@ public class CLIView extends View {
         inputThread.start();
     }
 
+    @Override
+    void manageUpdate(Message message) throws RemoteException {
+        super.manageUpdate(message);
+        this.inputEnabled = true;
+    }
+
     private void handleInput(String input) throws RemoteException {
-        if (input == null) {
+        if (!this.inputEnabled || input == null) {
             return;
         }
+
         if (input.equals("")) {
             showMessage("Invalid username, retry: ");
             return;
@@ -81,6 +91,7 @@ public class CLIView extends View {
 
     private void handleNicknameInput(String input) throws RemoteException {
         getClient().send(new NicknameMessage(NicknameMessageType.CONNECTED, input));
+        this.inputEnabled = false;
     }
 
     private void handleSkullsInput(String input) throws RemoteException {
@@ -96,11 +107,13 @@ public class CLIView extends View {
             return;
         }
         getClient().send(new SkullsMessage(selection));
+        this.inputEnabled = false;
     }
 
     private void handleArenaInput(String input) throws RemoteException {
         if(input.equals("1") || input.equals("2") || input.equals("3") || input.equals("4")) {
             getClient().send(new ArenaMessage(input));
+            this.inputEnabled = false;
             return;
         }
         showMessage("Arena must be [1, 2, 3, 4]:, retry:");
@@ -126,9 +139,11 @@ public class CLIView extends View {
         selection--;
         if (getState() == CHOOSINGCHARACTER) {
             getClient().send(new CharacterMessage(getCharactersSelection().get(selection), generateToken()));
+            this.inputEnabled = false;
         } else if (getState() == SELECTPOWERUPTARGET) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.POWERUP_TARGET, getCharacter(),
                     getCharactersSelection().get(selection)));
+            this.inputEnabled = false;
         } else if (getState() == SELECTBOARDTOSHOW) {
             showMessage(getEnemyBoards().get(selection).toString());
             showActions();
@@ -140,6 +155,7 @@ public class CLIView extends View {
         if (input.equalsIgnoreCase("c") && getState() != SELECTPOWERUPPOSITION) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.ACTION, getCharacter(),
                     ActionType.CANCEL));
+            this.inputEnabled = false;
             return;
         }
         if (input.split(",").length != 2) {
@@ -170,12 +186,15 @@ public class CLIView extends View {
         } else if (getState() == SELECTMOVEMENT) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.MOVE, getCharacter(),
                     new Coordinates(x, y)));
+            this.inputEnabled = false;
         } else if (getState() == SELECTPICKUP) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.PICKUP, getCharacter(),
                     new Coordinates(x, y)));
+            this.inputEnabled = false;
         } else if (getState() == SELECTPOWERUPPOSITION) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.POWERUP_POSITION, getCharacter(),
                     new Coordinates(x, y)));
+            this.inputEnabled = false;
         }
 
     }
@@ -210,9 +229,11 @@ public class CLIView extends View {
 
         if (getState() == USEPOWERUP) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.USE_POWERUP, getCharacter(), toSend));
+            this.inputEnabled = false;
         } else if (getState() == DISCARDSPAWN) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.DISCARD_POWERUP, getCharacter(),
                     toSend));
+            this.inputEnabled = false;
         }
     }
 
@@ -244,10 +265,13 @@ public class CLIView extends View {
 
         if (getState() == SELECTWEAPON) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.PICKUP_WEAPON, getCharacter(), toSend));
+            this.inputEnabled = false;
         } else if (getState() == SWITCHWEAPON) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.SWITCH, getCharacter(), toSend));
+            this.inputEnabled = false;
         } else if (getState() == RECHARGEWEAPON) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.RELOAD, getCharacter(), toSend));
+            this.inputEnabled = false;
         }
     }
 
@@ -289,6 +313,7 @@ public class CLIView extends View {
             default:
                 getClient().send(new SelectionReceivedMessage(SelectionMessageType.ACTION, getCharacter(),
                         getActionsSelection().get(selection - 4)));
+                this.inputEnabled = false;
                 resetSelections();
         }
     }
@@ -348,6 +373,7 @@ public class CLIView extends View {
 
         getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getPaidAmmos(),
                 getPaidPowerups()));
+        this.inputEnabled = false;
         resetSelections();
     }
 

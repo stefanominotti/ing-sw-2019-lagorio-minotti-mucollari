@@ -3,7 +3,7 @@ package it.polimi.se2019.client;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import it.polimi.se2019.view.CLIView;
-import it.polimi.se2019.view.GuiApp;
+import it.polimi.se2019.view.GUIApp;
 import javafx.application.Application;
 
 import java.io.FileReader;
@@ -41,7 +41,7 @@ public class Client {
             new CLIView(connection);
         } else {
             String[] arguments = { String.valueOf(connection) };
-            Application.launch(GuiApp.class, arguments);
+            Application.launch(GUIApp.class, arguments);
         }
     }
 }
