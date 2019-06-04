@@ -11,12 +11,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Class for handling the Arenas
+ */
 public class Arena {
 
     private static final String ROOT = "arenas/data/arena_";
     private int number;
     private List<Room> rooms;
 
+    /**
+     * Class constructor, it builds an Arena
+     * @param filename of the Arena you want to get (eg. arena_1)
+     */
     public Arena(String filename){
         this.rooms = null;
         String path = ROOT + filename + ".json";
@@ -44,10 +51,20 @@ public class Arena {
         return String.valueOf(this.number);
     }
 
+    /**
+     * Gets the Rooms of the Arena
+     * @return list of Rooms of the Arena
+     */
     public List<Room> getRoomList() {
         return this.rooms;
     }
 
+    /**
+     * Gets a Square of the Arena from its coordinates
+     * @param x coordinate X of the Square you want to get
+     * @param y coordinate Y of the Square you want to get
+     * @return the Square with coordinates X and Y
+     */
     public Square getSquareByCoordinate(int x, int y) {
         for(Room room : this.rooms) {
             for(Square square : room.getSquares()) {
@@ -58,7 +75,10 @@ public class Arena {
         }
         return null;
     }
-
+    /**
+     * Gets the Squares of the Arena
+     * @return List of Squares of the Arena
+     */
     public List<Square> getAllSquares() {
         List<Square> squares  = new ArrayList<>();
 
@@ -69,7 +89,13 @@ public class Arena {
         return squares;
     }
 
-    public Room getRoombyColor(RoomColor color) {
+
+    /**
+     * Gets a Room of the Arena by its color
+     * @param color of the Room you want to get
+     * @return Room of that color, null if it doesn't exist
+     */
+    public Room getRoomByColor(RoomColor color) {
         for(Room room : this.rooms) {
             if(room.getColor() == color) {
                 return room;

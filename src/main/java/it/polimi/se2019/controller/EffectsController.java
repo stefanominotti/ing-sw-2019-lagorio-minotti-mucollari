@@ -1,7 +1,6 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
-import org.omg.PortableServer.THREAD_POLICY_ID;
 
 import java.util.*;
 
@@ -472,7 +471,7 @@ public class EffectsController {
                 case SELECT:
                     this.chosenSquare = square;
                     try {
-                        this.chosenRoom = this.board.getArena().getRoombyColor(pack.getRooms().get(0));
+                        this.chosenRoom = this.board.getArena().getRoomByColor(pack.getRooms().get(0));
                     } catch (IndexOutOfBoundsException ignore) {
                     }
                     try {
