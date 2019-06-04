@@ -1,87 +1,99 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.model.GameCharacter;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
+import java.util.EnumMap;
 import java.util.Map;
 
 
 public class LobbyController extends AbstractSceneController {
 
     private int lastIndex;
-
-
-
-    @FXML
-    private Label player1_name;
-    @FXML
-    private Label player2_name;
-    @FXML
-    private Label player3_name;
-    @FXML
-    private Label player4_name;
-    @FXML
-    private Label player5_name;
+    private Map<GameCharacter, HBox> playerBoxes;
 
     @FXML
-    private ImageView player1_img;
-    @FXML
-    private ImageView player2_img;
-    @FXML
-    private ImageView player3_img;
-    @FXML
-    private ImageView player4_img;
-    @FXML
-    private ImageView player5_img;
+    private VBox playersList;
 
     @FXML
     private Label message_name;
     @FXML
     private ImageView message_img;
 
-    public LobbyController(int lastIndex) {
-        this.lastIndex = 1;
+    public LobbyController() {
+        this.lastIndex = 0;
+        this.playerBoxes = new EnumMap<>(GameCharacter.class);
     }
 
-
-    public void setPlayers(Map<GameCharacter, String> players) {
-       int index = 1;
+    void setPlayers(Map<GameCharacter, String> players) {
+       int index = 0;
        for(Map.Entry<GameCharacter, String> player : players.entrySet()) {
-           Label label;
-           ImageView img;
 
-           switch(index) {
-               case 1:
-                   label = this.player1_name;
-                   img = this.player1_img;
-                   break;
-               case 2:
-                   label = this.player2_name;
-                   img = this.player2_img;
-                   break;
-               case 3:
-                   label = this.player3_name;
-                   img = this.player3_img;
-                   break;
-               case 4:
-                   label = this.player4_name;
-                   img = this.player4_img;
-                   break;
+           HBox playerBox = (HBox) this.playersList.getChildren().get(index);
+           Label label = (Label) playerBox.getChildren().get(1);
+           ImageView img = (ImageView) playerBox.getChildren().get(0);
 
-               default:
-                   label = this.player5_name;
-                   img = this.player5_img;
-                   break;
-           }
-           label.setText(player.getValue());
-           img.setImage(new Image("utils/icons/characters_icons" + player.getKey().toString().toLowerCase() + ".png"));
+           this.playerBoxes.put(player.getKey(), playerBox);
+           Platform.runLater(() -> {
+               label.setText(player.getValue());
+               img.setImage(new Image("utils/icons/characters_icon/" + player.getKey().toString().toLowerCase() + ".png"));
+           });
            index++;
        }
-   }
+       this.lastIndex = index;
+    }
 
-   
+    void addPlayer(GameCharacter character, String nickname) {
+
+        HBox playerBox = (HBox) this.playersList.getChildren().get(this.lastIndex);
+        Label label = (Label) playerBox.getChildren().get(1);
+        ImageView img = (ImageView) playerBox.getChildren().get(0);
+
+        this.playerBoxes.put(character, playerBox);
+        Platform.runLater(() -> {
+            label.setText(nickname);
+            img.setImage(new Image("utils/icons/characters_icon/" + character.toString().toLowerCase() + ".png"));
+        });
+        this.lastIndex++;
+    }
+
+    void removePlayer(GameCharacter character) {
+        HBox playerBox = this.playerBoxes.get(character);
+        Label label = (Label) playerBox.getChildren().get(1);
+        ImageView img = (ImageView) playerBox.getChildren().get(0);
+        this.playerBoxes.remove(character);
+        this.lastIndex--;
+        Platform.runLater(() -> {
+            label.setText("");
+            img.setImage(null);
+            int i = 0;
+            while(((Label) ((HBox) this.playersList.getChildren().get(i)).getChildren().get(1)).getText().equals("")) {
+                if (i == 4) {
+                    break;
+                }
+                ImageView currentImage =
+                        (ImageView) ((HBox) this.playersList.getChildren().get(i)).getChildren().get(0);
+                Label currentLabel = (Label) ((HBox) this.playersList.getChildren().get(i)).getChildren().get(1);
+
+                ImageView newImage = (ImageView) ((HBox) this.playersList.getChildren().get(i+1)).getChildren().get(0);
+                Label newLabel = (Label) ((HBox) this.playersList.getChildren().get(i+1)).getChildren().get(1);
+
+                currentImage.setImage(newImage.getImage());
+                currentLabel.setText(newLabel.getText());
+
+                newImage.setImage(null);
+                newLabel.setText("");
+
+                i++;
+            }
+
+        });
+    }
 
 }

@@ -17,10 +17,12 @@ public class SelectSkullsController extends AbstractSceneController {
         }
     }
 
-    public void forwardSkullsNumber() {
+    public void forwardSkullsNumber() throws RemoteException {
         try {
             getView().handleSkullsInput((Integer) this.skullsNumber.getValue());
-        } catch (RemoteException e) { }
+        } catch (NullPointerException e) {
+            // Ignore
+        }
     }
 
 

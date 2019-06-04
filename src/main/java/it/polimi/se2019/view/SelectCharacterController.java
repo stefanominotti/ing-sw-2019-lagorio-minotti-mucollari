@@ -26,7 +26,12 @@ public class SelectCharacterController extends AbstractSceneController {
     private RadioButton violetta;
 
     public void forwardCharacter() throws RemoteException {
-        String value = ((RadioButton) characterChoiceGroup.getSelectedToggle()).getId();
+        String value;
+        try {
+            value = ((RadioButton) this.characterChoiceGroup.getSelectedToggle()).getId();
+        } catch (NullPointerException e) {
+            return;
+        }
         getView().handleCharacterInput(GameCharacter.valueOf(value.toUpperCase()));
     }
 

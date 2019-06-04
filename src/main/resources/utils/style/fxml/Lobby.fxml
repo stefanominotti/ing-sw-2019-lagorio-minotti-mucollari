@@ -23,7 +23,7 @@
    <center>
       <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="436.0" prefWidth="438.0" styleClass="cardPane" stylesheets="@../css/style.css" translateY="-40.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox prefHeight="389.0" prefWidth="438.0">
+            <VBox fx:id="playersList" prefHeight="389.0" prefWidth="438.0">
                <children>
                   <HBox fx:id="player1" alignment="CENTER" prefHeight="82.0" prefWidth="438.0">
                      <children>

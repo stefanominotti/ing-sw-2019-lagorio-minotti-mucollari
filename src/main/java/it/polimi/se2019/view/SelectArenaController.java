@@ -23,7 +23,12 @@ public class SelectArenaController extends AbstractSceneController {
     private RadioButton arena_4;
 
     public void forwardArenaNumber() throws RemoteException {
-        String value = ((RadioButton) this.arenaChoiceGroup.getSelectedToggle()).getId().split("_")[1];
+        String value;
+        try {
+            value = ((RadioButton) this.arenaChoiceGroup.getSelectedToggle()).getId().split("_")[1];
+        } catch (NullPointerException e) {
+            return;
+        }
         getView().handleArenaInput(value);
     }
 

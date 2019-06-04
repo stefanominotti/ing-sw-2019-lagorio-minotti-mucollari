@@ -184,7 +184,7 @@ public class Board extends Observable {
             return;
         }
         this.players.add(new Player(character, nickname, token));
-        Map<GameCharacter, String> others = new EnumMap<>(GameCharacter.class);
+        Map<GameCharacter, String> others = new LinkedHashMap<>();
         for (Player p : this.players) {
             if (p.getNickname() != null && p.getCharacter() != character) {
                 others.put(p.getCharacter(), p.getNickname());

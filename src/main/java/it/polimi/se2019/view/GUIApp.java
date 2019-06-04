@@ -7,7 +7,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 
@@ -50,6 +49,9 @@ public class GUIApp extends Application {
                     break;
                 case SELECT_ARENA:
                     loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "SelectArena.fxml"));
+                    break;
+                case LOBBY:
+                    loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "Lobby.fxml"));
                     break;
             }
             try {

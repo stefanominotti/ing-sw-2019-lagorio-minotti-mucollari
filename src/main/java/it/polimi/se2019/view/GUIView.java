@@ -10,7 +10,10 @@ import it.polimi.se2019.model.messages.timer.TimerMessageType;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.EnumMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static it.polimi.se2019.view.ClientState.*;
 
@@ -88,6 +91,32 @@ public class GUIView extends View {
         setCharactersSelection(availables);
         setScene(SceneType.SELECT_CHARACTER);
         ((SelectCharacterController) this.controller).enableCharacters(availables);
+    }
+
+    @Override
+    void handleClientDisconnected(GameCharacter character) {
+        super.handleClientDisconnected(character);
+        if (getState() == WAITINGSTART) {
+            ((LobbyController) this.controller).removePlayer(character);
+        }
+    }
+
+    @Override
+    void handlePlayerCreated(GameCharacter character, String nickname, Map<GameCharacter,
+            String> otherPlayers) {
+        super.handlePlayerCreated(character, nickname, otherPlayers);
+        Map<GameCharacter, String> players = new LinkedHashMap<>(otherPlayers);
+        players.put(character, nickname);
+        setScene(SceneType.LOBBY);
+        ((LobbyController) this.controller).setPlayers(players);
+    }
+
+    @Override
+    void handleReadyPlayer(GameCharacter character, String nickname) {
+        super.handleReadyPlayer(character, nickname);
+        if (getState() == WAITINGSTART) {
+            ((LobbyController) this.controller).addPlayer(character, nickname);
+        }
     }
 
     @Override

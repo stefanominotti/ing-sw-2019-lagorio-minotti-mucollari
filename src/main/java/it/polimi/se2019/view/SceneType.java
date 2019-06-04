@@ -4,5 +4,5 @@ public enum SceneType {
     SELECT_NICKNAME,
     SELECT_CHARACTER,
     SELECT_SKULLS,
-    SELECT_ARENA;
+    SELECT_ARENA, LOBBY;
 }
