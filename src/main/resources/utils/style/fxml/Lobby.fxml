@@ -27,8 +27,13 @@
                <children>
                   <HBox fx:id="player1" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="438.0" translateY="4.0">
                      <children>
-                        <ImageView fx:id="player1_img" fitHeight="66.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true" translateX="-10.0" />
-                        <Label fx:id="player1_name" alignment="CENTER" contentDisplay="CENTER" prefHeight="95.0" prefWidth="124.0" translateX="-10.0">
+                        <ImageView fx:id="master" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" translateX="-30.0">
+                           <image>
+                              <Image url="@../../icons/master.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="player1_img" fitHeight="66.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true" translateX="-25.0" />
+                        <Label fx:id="player1_name" alignment="CENTER" contentDisplay="CENTER" prefHeight="95.0" prefWidth="124.0" translateX="-25.0">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>
@@ -77,8 +82,8 @@
                   </HBox>
                   <HBox fx:id="message" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="438.0">
                      <children>
-                        <ImageView fx:id="message_img" fitHeight="59.0" fitWidth="63.0" pickOnBounds="true" preserveRatio="true" translateX="-10.0" />
-                        <Label fx:id="message_name" alignment="CENTER" contentDisplay="CENTER" translateX="3.0">
+                        <ImageView fx:id="messageImg" fitHeight="59.0" fitWidth="63.0" pickOnBounds="true" preserveRatio="true" translateX="-10.0" />
+                        <Label fx:id="messageName" alignment="CENTER" contentDisplay="CENTER" translateX="3.0">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
