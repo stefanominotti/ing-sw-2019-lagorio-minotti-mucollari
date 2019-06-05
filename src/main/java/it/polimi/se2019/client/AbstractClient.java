@@ -18,8 +18,12 @@ public abstract class AbstractClient {
 
     public abstract void send(Message message);
 
-    public void notify(Message message) throws RemoteException {
+    public void notify(Message message) {
         this.view.manageUpdate(message);
+    }
+
+    View getView() {
+        return this.view;
     }
 
 }

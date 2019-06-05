@@ -25,7 +25,8 @@ public class GameLoader {
             this.parser = new JsonParser();
             this.gson = new Gson();
             this.board = new Board();
-            this.filePath = ((JsonObject)this.parser.parse(configReader)).get("savePath").getAsString();
+            this.filePath = CONFIG_PATH + "/" +
+                    ((JsonObject)this.parser.parse(configReader)).get("savePath").getAsString();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "No config file found", e);
         }

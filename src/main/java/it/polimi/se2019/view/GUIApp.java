@@ -2,7 +2,6 @@ package it.polimi.se2019.view;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -22,7 +21,7 @@ public class GUIApp extends Application {
         this.stage = window;
         this.stage.setTitle("Adrenaline - Sign up");
         this.view = new GUIView(Integer.parseInt(getParameters().getRaw().get(0)), this);
-        stage.setOnCloseRequest(e -> System.exit(0));
+        this.stage.setOnCloseRequest(e -> System.exit(0));
     }
 
     void showAlert(String text) {
@@ -52,6 +51,9 @@ public class GUIApp extends Application {
                     break;
                 case LOBBY:
                     loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "Lobby.fxml"));
+                    break;
+                case CONNECTION_ERROR:
+                    loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "ConnectionError.fxml"));
                     break;
             }
             try {

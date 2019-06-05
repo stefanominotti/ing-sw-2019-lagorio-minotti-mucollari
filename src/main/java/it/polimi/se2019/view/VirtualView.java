@@ -90,7 +90,8 @@ public class VirtualView extends Observable implements Observer {
                     new PlayerReadyMessage(message.getCharacter(), ((PlayerCreatedMessage) message).getNickname()));
         } else if (message.getType() == PlayerMessageType.SKULLS_SET) {
             send(message);
-        } else if (message.getType() == PlayerMessageType.START_SETUP) {
+        } else if (message.getType() == PlayerMessageType.START_SETUP ||
+                message.getType() == PlayerMessageType.MASTER_CHANGED) {
             this.server.setConnectionAllowed(false);
             sendAll(message);
         } else {

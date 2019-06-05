@@ -43,10 +43,10 @@ public class Server {
         try {
             new RMIProtocolServer(server);
         } catch (RemoteException e) {
-            System.out.println("Unable to start RMI server");
+            LOGGER.log(Level.SEVERE, "Unable to start RMI server");
             System.exit(0);
         }
-        System.out.println("Waiting for clients.\n");
+        LOGGER.log(Level.INFO, "Waiting for clients");
     }
 
 
@@ -88,7 +88,7 @@ public class Server {
     public void removeClient(GameCharacter character, Message message) {
         this.clients.get(character).sendClose(message);
         this.clients.remove(character);
-        System.out.println("Client disconnected.");
+        LOGGER.log(Level.INFO, "Client disconnected");
     }
 
     public void removeClient(VirtualClientInterface client) {
@@ -100,14 +100,14 @@ public class Server {
             }
         }
         this.clientNicknames.remove(client);
-        System.out.println("Client disconnected.");
+        LOGGER.log(Level.INFO, "Client disconnected");
     }
 
     public void removeClient(GameCharacter character) {
 
         this.clients.get(character).exit();
         this.clients.remove(character);
-        System.out.println("Client disconnected.");
+        LOGGER.log(Level.INFO, "Client disconnected");
     }
 
     public void removeTemporaryClients(Message message) {
@@ -188,7 +188,7 @@ public class Server {
                     }
                     this.clients.put(playerCharacter, client);
                     this.temporaryClients.remove(client);
-                    System.out.println("A new client connected.");
+                    LOGGER.log(Level.INFO, "A new client connected");
                     this.view.forwardMessage(
                             new ClientReadyMessage(((CharacterMessage) message).getCharacter(),
                                     this.clientNicknames.get(client), ((CharacterMessage) message).getToken()));
@@ -200,7 +200,7 @@ public class Server {
                             this.clients.put(player.getCharacter(), client);
                             this.temporaryClients.remove(client);
                             this.clientNicknames.remove(client);
-                            System.out.println("A new client connected.");
+                            LOGGER.log(Level.INFO, "A new client connected");
                             this.view.forwardMessage(new ClientMessage(ClientMessageType.RECONNECTED,
                                     player.getCharacter()));
                             return;

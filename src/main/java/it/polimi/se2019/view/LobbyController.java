@@ -20,11 +20,10 @@ public class LobbyController extends AbstractSceneController {
 
     @FXML
     private VBox playersList;
-
     @FXML
-    private Label message_name;
+    private Label messageName;
     @FXML
-    private ImageView message_img;
+    private ImageView messageImg;
 
     public LobbyController() {
         this.lastIndex = 0;
@@ -72,25 +71,27 @@ public class LobbyController extends AbstractSceneController {
         Platform.runLater(() -> {
             label.setText("");
             img.setImage(null);
-            int i = 0;
-            while(((Label) ((HBox) this.playersList.getChildren().get(i)).getChildren().get(1)).getText().equals("")) {
-                if (i == 4) {
-                    break;
+            for (int j=0; j<5; j++) {
+                int i = j;
+                while (((Label) ((HBox) this.playersList.getChildren().get(i)).getChildren().get(1)).getText().equals("")) {
+                    if (i == 4) {
+                        break;
+                    }
+                    ImageView currentImage =
+                            (ImageView) ((HBox) this.playersList.getChildren().get(i)).getChildren().get(0);
+                    Label currentLabel = (Label) ((HBox) this.playersList.getChildren().get(i)).getChildren().get(1);
+
+                    ImageView newImage = (ImageView) ((HBox) this.playersList.getChildren().get(i + 1)).getChildren().get(0);
+                    Label newLabel = (Label) ((HBox) this.playersList.getChildren().get(i + 1)).getChildren().get(1);
+
+                    currentImage.setImage(newImage.getImage());
+                    currentLabel.setText(newLabel.getText());
+
+                    newImage.setImage(null);
+                    newLabel.setText("");
+
+                    i++;
                 }
-                ImageView currentImage =
-                        (ImageView) ((HBox) this.playersList.getChildren().get(i)).getChildren().get(0);
-                Label currentLabel = (Label) ((HBox) this.playersList.getChildren().get(i)).getChildren().get(1);
-
-                ImageView newImage = (ImageView) ((HBox) this.playersList.getChildren().get(i+1)).getChildren().get(0);
-                Label newLabel = (Label) ((HBox) this.playersList.getChildren().get(i+1)).getChildren().get(1);
-
-                currentImage.setImage(newImage.getImage());
-                currentLabel.setText(newLabel.getText());
-
-                newImage.setImage(null);
-                newLabel.setText("");
-
-                i++;
             }
 
         });
@@ -98,8 +99,8 @@ public class LobbyController extends AbstractSceneController {
 
     void setMessage(String img, String text) {
         Platform.runLater(() -> {
-            this.message_name.setText(text);
-            this.message_img.setImage(new Image("utils/icons/" + img));
+            this.messageName.setText(text);
+            this.messageImg.setImage(new Image("utils/icons/" + img));
         });
     }
 

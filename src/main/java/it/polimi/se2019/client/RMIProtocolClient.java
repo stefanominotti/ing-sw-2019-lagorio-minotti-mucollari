@@ -9,12 +9,8 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class RMIProtocolClient extends AbstractClient implements RMIClientInterface {
-
-    private static final Logger LOGGER = Logger.getLogger(SocketClient.class.getName());
 
     private RMIServerInterface server;
 
@@ -24,12 +20,8 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
             this.server = (RMIServerInterface) Naming.lookup("//localhost/MyServer");
             RMIClientInterface remoteRef = (RMIClientInterface) UnicastRemoteObject.exportObject(this, 0);
             this.server.addClient(remoteRef);
-        } catch (MalformedURLException e) {
-            LOGGER.log(Level.SEVERE, "URL not found");
-        } catch (RemoteException e) {
-            LOGGER.log(Level.SEVERE, "Connection error");
-        } catch (NotBoundException e) {
-            LOGGER.log(Level.SEVERE, "Server error");
+        } catch (MalformedURLException | RemoteException | NotBoundException e) {
+            getView().handleConnectionError();
         }
     }
 
@@ -38,8 +30,7 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
         try {
             this.server.notify(message, this);
         } catch (RemoteException e) {
-            LOGGER.log(Level.SEVERE, "Unable to reach server");
-            System.exit(0);
+            getView().handleConnectionError();
         }
     }
 

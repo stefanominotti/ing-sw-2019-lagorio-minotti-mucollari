@@ -8,9 +8,7 @@ import it.polimi.se2019.model.messages.nickname.NicknameMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessageType;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static it.polimi.se2019.view.ClientState.*;
 
@@ -19,9 +17,10 @@ public class GUIView extends View {
     private GUIApp GUIApp;
     private AbstractSceneController controller;
 
-    public GUIView(int connection, it.polimi.se2019.view.GUIApp GUIApp) {
-        super(connection);
+    public GUIView(int connection, GUIApp GUIApp) {
+        super();
         this.GUIApp = GUIApp;
+        super.connect(connection);
     }
 
     void setActiveController(AbstractSceneController controller) {
@@ -65,6 +64,17 @@ public class GUIView extends View {
     }
 
     @Override
+    public void handleConnectionError() {
+        this.GUIApp.setScene(SceneType.CONNECTION_ERROR);
+        (new Timer()).schedule(new TimerTask() {
+            @Override
+            public void run() {
+               GUIView.super.handleConnectionError();
+            }
+        }, 5*1000L);
+    }
+
+    @Override
     void handleNicknameRequest() {
         super.handleNicknameRequest();
         setScene(SceneType.SELECT_NICKNAME);
@@ -72,6 +82,10 @@ public class GUIView extends View {
 
     @Override
     void handleNicknameDuplicated() {
+        if (getState() == CHOOSINGCHARACTER) {
+            setScene(SceneType.SELECT_NICKNAME);
+            super.resetSelections();
+        }
         super.handleNicknameDuplicated();
         this.GUIApp.showAlert("Nickname duplicated!");
     }
@@ -120,6 +134,12 @@ public class GUIView extends View {
     void handleSetupInterrupted() {
         if(getState() == SETTINGSKULLS || getState() == SETTINGARENA) {
             setScene(SceneType.LOBBY);
+            Map<GameCharacter, String> players = new LinkedHashMap<>();
+            players.put(getCharacter(), getSelfPlayerBoard().getNickname());
+            for (PlayerBoard player : getEnemyBoards()) {
+                players.put(player.getCharacter(), player.getNickname());
+            }
+            ((LobbyController) this.controller).setPlayers(players);
         }
         super.handleSetupInterrupted();
         ((LobbyController) this.controller).setMessage("loading.gif", "Waiting for players...");

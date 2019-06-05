@@ -65,8 +65,17 @@ public abstract class View {
 
     private PowerupType activePowerup;
 
-    View(int connectionType) {
+    View() {
+        this.enemyBoards = new ArrayList<>();
+        this.paidAmmos = new EnumMap<>(AmmoType.class);
+        for (AmmoType type : AmmoType.values()) {
+            this.paidAmmos.put(type, 0);
+        }
+        this.paidPowerups = new ArrayList<>();
+        this.charactersSelection = new ArrayList<>();
+    }
 
+    void connect(int connectionType) {
         if (connectionType == 0) {
             Runnable r = new SocketClient(this);
             (new Thread(r)).start();
@@ -75,17 +84,9 @@ public abstract class View {
             try {
                 this.client = new RMIProtocolClient(this);
             } catch (IllegalStateException e) {
-                System.exit(0);
+                handleConnectionError();
             }
         }
-
-        this.enemyBoards = new ArrayList<>();
-        this.paidAmmos = new EnumMap<>(AmmoType.class);
-        for (AmmoType type : AmmoType.values()) {
-            this.paidAmmos.put(type, 0);
-        }
-        this.paidPowerups = new ArrayList<>();
-        this.charactersSelection = new ArrayList<>();
     }
 
     public AbstractClient getClient() {
@@ -238,6 +239,10 @@ public abstract class View {
                 update((SelectionSentMessage) message);
                 break;
         }
+    }
+
+    public void handleConnectionError() {
+        System.exit(0);
     }
 
     private PlayerBoard getBoardByCharacter(GameCharacter character) {

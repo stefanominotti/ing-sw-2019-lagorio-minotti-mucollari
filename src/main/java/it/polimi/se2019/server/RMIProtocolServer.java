@@ -12,8 +12,12 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerInterface {
+
+    private static final Logger LOGGER = Logger.getLogger(RMIProtocolServer.class.getName());
 
     private final static int PORT = 1099;
     private transient Server server;
@@ -26,15 +30,15 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
         try {
             LocateRegistry.createRegistry(PORT);
         } catch (RemoteException e) {
-            System.out.println("Registry already present");
+            LOGGER.log(Level.SEVERE, "Registry already present");
         }
 
         try {
             Naming.rebind("//localhost/MyServer", this);
         } catch (MalformedURLException e) {
-            System.err.println("Can't register given object");
+            LOGGER.log(Level.SEVERE, "Can't register given object");
         } catch (RemoteException e) {
-            System.err.println("Client error");
+            LOGGER.log(Level.SEVERE, "Client error");
         }
     }
 

@@ -15,10 +15,7 @@ import it.polimi.se2019.model.messages.selections.SelectionReceivedMessage;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 
-import java.rmi.RemoteException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static it.polimi.se2019.view.ClientState.*;
 
@@ -26,10 +23,10 @@ public class CLIView extends View {
 
     private boolean inputEnabled;
 
-    private static final Logger LOGGER = Logger.getLogger(CLIView.class.getName());
-
     public CLIView(int connection) {
-        super(connection);
+        super();
+
+        super.connect(connection);
 
         Thread inputThread = new Thread() {
             Scanner scanner = new Scanner(System.in);
@@ -43,7 +40,6 @@ public class CLIView extends View {
                 }
             }
         };
-
         inputThread.start();
     }
 
@@ -371,6 +367,12 @@ public class CLIView extends View {
                 getPaidPowerups()));
         this.inputEnabled = false;
         resetSelections();
+    }
+
+    @Override
+    public void handleConnectionError() {
+        showMessage("Connection error, server unreachable or network unavailable\nTry to restart");
+        super.handleConnectionError();
     }
 
     @Override
