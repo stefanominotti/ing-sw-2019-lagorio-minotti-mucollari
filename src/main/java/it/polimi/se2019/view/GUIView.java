@@ -71,7 +71,7 @@ public class GUIView extends View {
             public void run() {
                GUIView.super.handleConnectionError();
             }
-        }, 5*1000L);
+        }, 7*1000L);
     }
 
     @Override
