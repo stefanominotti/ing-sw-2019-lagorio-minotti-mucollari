@@ -18,9 +18,7 @@ public abstract class AbstractClient {
 
     public abstract void send(Message message);
 
-    public void notify(Message message) {
-        this.view.manageUpdate(message);
-    }
+    public abstract void notify(Message message);
 
     View getView() {
         return this.view;

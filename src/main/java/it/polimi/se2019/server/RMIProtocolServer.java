@@ -1,6 +1,7 @@
 package it.polimi.se2019.server;
 
 import it.polimi.se2019.client.RMIClientInterface;
+import it.polimi.se2019.client.RMIProtocolClient;
 import it.polimi.se2019.model.messages.Message;
 import it.polimi.se2019.model.messages.client.ClientMessage;
 import it.polimi.se2019.model.messages.client.ClientMessageType;
@@ -12,6 +13,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,10 +24,22 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
     private final static int PORT = 1099;
     private transient Server server;
     private Map<RMIClientInterface, RMIVirtualClient> clientCorrespondency;
+    private final ConcurrentLinkedQueue<ClientMessagePair> queue;
 
     RMIProtocolServer(Server server) throws RemoteException {
         this.server = server;
         this.clientCorrespondency = new HashMap<>();
+
+        this.queue = new ConcurrentLinkedQueue<>();
+
+        new Thread(() -> {
+            while(true) {
+                if (!RMIProtocolServer.this.queue.isEmpty()) {
+                    ClientMessagePair toReceive = RMIProtocolServer.this.queue.poll();
+                    RMIProtocolServer.this.server.receiveMessage(toReceive.getMessage(), toReceive.getClient());
+                }
+            }
+        }).start();
 
         try {
             LocateRegistry.createRegistry(PORT);
@@ -66,7 +80,7 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
     }
 
     @Override
-    public void notify(Message message, RMIClientInterface client) throws RemoteException {
-        this.server.receiveMessage(message, this.clientCorrespondency.get(client));
+    public void notify(Message message, RMIClientInterface client) {
+        this.queue.add(new ClientMessagePair(this.clientCorrespondency.get(client), message));
     }
 }

@@ -35,23 +35,32 @@ public class SocketClient extends AbstractClient implements Runnable {
 
     @Override
     public void run() {
-        while (!this.socket.isClosed()) {
-            ObjectInputStream inputStream = null;
-            try {
-                inputStream = new ObjectInputStream((this.socket.getInputStream()));
-            } catch (IOException e) {
-                getView().handleConnectionError();
-            }
-            try {
-                Message message = (Message) inputStream.readObject();
-                if (message != null) {
-                    notify(message);
-                } else {
+        try {
+            while (!this.socket.isClosed()) {
+                ObjectInputStream inputStream = null;
+                try {
+                    inputStream = new ObjectInputStream((this.socket.getInputStream()));
+                } catch (IOException e) {
                     getView().handleConnectionError();
                 }
-            } catch (IOException | ClassNotFoundException e) {
-                getView().handleConnectionError();
+                try {
+                    Message message = (Message) inputStream.readObject();
+                    if (message != null) {
+                        notify(message);
+                    } else {
+                        getView().handleConnectionError();
+                    }
+                } catch (IOException | ClassNotFoundException e) {
+                    getView().handleConnectionError();
+                }
             }
+        } catch (NullPointerException e) {
+            // Ignore
         }
+    }
+
+    @Override
+    public void notify(Message message) {
+       getView().manageUpdate(message);
     }
 }

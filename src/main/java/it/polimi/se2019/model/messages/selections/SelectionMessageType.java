@@ -10,5 +10,6 @@ public enum SelectionMessageType {
     POWERUP_POSITION,
     USE_POWERUP,
     DISCARD_POWERUP,
-    ACTION
+    ACTION,
+    USE_WEAPON, EFFECT;
 }

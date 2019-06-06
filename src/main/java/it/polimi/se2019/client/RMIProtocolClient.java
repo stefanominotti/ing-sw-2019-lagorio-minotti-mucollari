@@ -9,13 +9,26 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class RMIProtocolClient extends AbstractClient implements RMIClientInterface {
 
     private RMIServerInterface server;
+    private final ConcurrentLinkedQueue<Message> queue;
 
     public RMIProtocolClient(View view) {
         super(view);
+
+        this.queue = new ConcurrentLinkedQueue<>();
+
+        new Thread(() -> {
+            while(true) {
+                if (!RMIProtocolClient.this.queue.isEmpty()) {
+                    getView().manageUpdate(RMIProtocolClient.this.queue.poll());
+                }
+            }
+        }).start();
+
         try {
             this.server = (RMIServerInterface) Naming.lookup("//localhost/MyServer");
             RMIClientInterface remoteRef = (RMIClientInterface) UnicastRemoteObject.exportObject(this, 0);
@@ -37,5 +50,10 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
     @Override
     public void ping() {
         // Used to check if client is still connected
+    }
+
+    @Override
+    public void notify(Message message) {
+        this.queue.add(message);
     }
 }

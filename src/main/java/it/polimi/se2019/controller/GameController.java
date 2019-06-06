@@ -29,6 +29,7 @@ public class GameController implements Observer {
     private PowerupsController powerupsController;
     private VirtualView view;
     private boolean gameStarted;
+    private EffectsController effectsController;
 
     public GameController(Board board, VirtualView view) {
         this.model = board;
@@ -160,6 +161,12 @@ public class GameController implements Observer {
             case ACTION:
                 handleActionSelection((ActionType) message.getSelection());
                 break;
+            case USE_WEAPON:
+                handleWeaponUseSelection((Weapon) message.getSelection());
+                break;
+            case EFFECT:
+                handleEffectSelection((WeaponEffectOrderType) message.getSelection());
+                break;
         }
     }
 
@@ -207,6 +214,14 @@ public class GameController implements Observer {
 
     private void handlePowerupTargetSelection(GameCharacter character) {
         this.powerupsController.receiveTarget(character);
+    }
+
+    private void handleWeaponUseSelection(Weapon weapon) {
+        this.turnController.useWeapon(weapon);
+    }
+
+    private void handleEffectSelection(WeaponEffectOrderType effectSelection) {
+        this.turnController.handleEffect(effectSelection);
     }
 
     private void update(PaymentMessage message) {

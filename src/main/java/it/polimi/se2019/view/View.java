@@ -57,7 +57,9 @@ public abstract class View {
     private List<GameCharacter> charactersSelection;
     private List<Powerup> powerupsSelection;
     private Map<AmmoType, Integer> ammosSelection;
+    private List<WeaponEffectOrderType> effectsSelection;
 
+    private Weapon currentWeapon;
     private PaymentType currentPayment;
     private Map<AmmoType, Integer> requiredPayment;
     private Map<AmmoType, Integer> paidAmmos;
@@ -129,6 +131,10 @@ public abstract class View {
         return new ArrayList<>(this.powerupsSelection);
     }
 
+    List<WeaponEffectOrderType> getEffectsSelection() {
+        return new ArrayList<>(this.effectsSelection);
+    }
+
     List<Coordinates> getCoordinatesSelection() {
         return this.coordinatesSelection;
     }
@@ -145,7 +151,15 @@ public abstract class View {
         return this.activePowerup;
     }
 
-    public PaymentType getCurrentPayment() {
+    Weapon getCurrentWeapon() {
+        return this.currentWeapon;
+    }
+
+    public void setCurrentWeapon(Weapon currentWeapon) {
+        this.currentWeapon = currentWeapon;
+    }
+
+    PaymentType getCurrentPayment() {
         return this.currentPayment;
     }
 
@@ -678,6 +692,12 @@ public abstract class View {
             case ACTION:
                 handleActionSelectionRequest((List<ActionType>) message.getList());
                 break;
+            case USE_WEAPON:
+                handleWeaponUseRequest((List<Weapon>) message.getList());
+                break;
+            case EFFECT:
+                handleEffectRequest((List<WeaponEffectOrderType>) message.getList());
+                break;
         }
     }
 
@@ -730,6 +750,16 @@ public abstract class View {
         this.actionsSelection = new ArrayList<>(actions);
         this.actionsSelection.add(ActionType.ENDTURN);
         this.state = SELECTACTION;
+    }
+
+    void handleWeaponUseRequest(List<Weapon> weapons) {
+        this.weaponsSelection = new ArrayList<>(weapons);
+        this.state = USEWEAPON;
+    }
+
+    void handleEffectRequest(List<WeaponEffectOrderType> effects) {
+        this.effectsSelection = new ArrayList<>(effects);
+        this.state = USEEFFECT;
     }
 
     abstract void requirePayment();

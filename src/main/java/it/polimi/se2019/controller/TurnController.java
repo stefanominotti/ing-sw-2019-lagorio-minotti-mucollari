@@ -29,8 +29,8 @@ public class TurnController {
     private WeaponCard switchWeapon;
     private EffectsController effectsController;
 
-
     public TurnController(Board board, GameController controller) {
+        this.effectsController = new EffectsController(this.board, this);
         this.state = TurnState.SELECTACTION;
         this.board = board;
         this.controller = controller;
@@ -238,6 +238,9 @@ public class TurnController {
             case RELOAD:
                 handleReload();
                 break;
+            case SHOT:
+                calculateShootAction();
+                break;
         }
     }
 
@@ -273,7 +276,7 @@ public class TurnController {
                 this.activePlayer.getCharacter(), availablePowerups));
     }
 
-    public void sendActions() {
+    private void sendActions() {
         List<ActionType> availableActions = new ArrayList<>();
         if (this.movesLeft == 0) {
             if (canReload()) {
@@ -488,17 +491,21 @@ public class TurnController {
         }
     }
 
-    void availableWeapons() {
-        Map<Weapon, List<List<WeaponEffect>>> availableWeapons = new HashMap<>();
-        for(WeaponCard weapon : activePlayer.getWeapons()) {
-            if(weapon.isReady()) {
-                availableWeapons.put(weapon.getWeaponType(),
-                        this.effectsController.getWeaponEffects((weapon.getWeaponType())));
-            }
-        }
-        this.controller.send(new AvailableWeaponsMessage(this.activePlayer.getCharacter(), availableWeapons));
+    void useWeapon(Weapon weapon) {
+        this.effectsController.setWeapon(weapon);
+        this.controller.send(new SelectionSentMessage<>(SelectionMessageType.EFFECT,
+                this.activePlayer.getCharacter(),
+                new ArrayList<>(this.effectsController.getAvailableEffects().keySet())));
     }
 
+    void handleEffect(WeaponEffectOrderType effectSelection) {
+        this.effectsController.effectSelected(effectSelection);
+    }
+
+    private void calculateShootAction() {
+        this.controller.send(new SelectionSentMessage<>(SelectionMessageType.USE_WEAPON,
+                this.activePlayer.getCharacter(), this.effectsController.getAvailableWeapons()));
+    }
 
     void endTurn() {
         this.board.endTurn(this.activePlayer);

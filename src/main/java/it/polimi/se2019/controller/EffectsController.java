@@ -17,6 +17,7 @@ public class EffectsController {
     private boolean secondaryEffectOneApplied;
     private boolean secondaryEffectTwoApplied;
     private List<WeaponEffect> effectsQueue;
+
     //da impostare ogni volta che viene eseguito parte di un effetto
     private List<Player> hitByMain;
     private List<Player> hitBySecondary;
@@ -24,6 +25,7 @@ public class EffectsController {
     private Square chosenSquare;
     private CardinalPoint chosenDirection;
     private Player activePlayer;
+    private TurnController turnController;
 
     public EffectsController(Board board, TurnController turnController) {
         this.board = board;
@@ -33,7 +35,7 @@ public class EffectsController {
         this.secondaryEffectOneApplied = false;
         this.secondaryEffectTwoApplied = false;
         this.weaponEffects = new ArrayList<>();
-        this.activePlayer = turnController.getActivePlayer();
+        this.turnController = turnController;
     }
 
     //for test only
@@ -92,6 +94,11 @@ public class EffectsController {
         return weaponEffects;
     }
 
+    void setWeapon(Weapon weapon) {
+        this.weapon = weapon;
+        this.activePlayer = this.turnController.getActivePlayer();
+    }
+
     public List<Weapon> getAvailableWeapons() {
         List<Weapon> availableWeapons = new ArrayList<>();
         for(WeaponCard weaponCard : this.activePlayer.getWeapons()) {
@@ -104,7 +111,7 @@ public class EffectsController {
         return availableWeapons;
     }
 
-    private boolean checkSecondaryFirst(){
+    private boolean checkSecondaryFirst() {
         try {
             EffectPossibilityPack pack = seeEffectpossibility(weapon.getSecondaryEffectOne().get(0));
             Square originalPosition = this.activePlayer.getPosition();
@@ -124,19 +131,19 @@ public class EffectsController {
         }
     }
 
-    public List<List<WeaponEffect>> getAvailableEffects() {
-        List<List<WeaponEffect>> availableWeapons = new ArrayList<>();
+    public Map<WeaponEffectOrderType, List<WeaponEffect>> getAvailableEffects() {
+        Map<WeaponEffectOrderType, List<WeaponEffect>> availableWeapons = new HashMap<>();
         if (!mainEffectApplied) {
-            availableWeapons.add(weapon.getPrimaryEffect());
+            availableWeapons.put(WeaponEffectOrderType.PRIMARY, weapon.getPrimaryEffect());
             if (weapon.getAlternativeMode() != null && checkCost(weapon.getAlternativeMode())) {
-                availableWeapons.add(weapon.getAlternativeMode());
+                availableWeapons.put(WeaponEffectOrderType.ALTERNATIVE, weapon.getAlternativeMode());
             }
         }
         if (!secondaryEffectOneApplied && checkCost(weapon.getSecondaryEffectOne())
                 && !weapon.getSecondaryEffectOne().get(0).isCombo() && (!mainEffectApplied &&
                 weapon.getPrimaryEffect().get(0).getEffectDependency().contains("secondaryEffectOne") &&
                 checkSecondaryFirst()) || mainEffectApplied) {
-            availableWeapons.add(weapon.getSecondaryEffectOne());
+            availableWeapons.put(WeaponEffectOrderType.SECONDARYONE, weapon.getSecondaryEffectOne());
         }
         if (!secondaryEffectTwoApplied && checkCost(weapon.getSecondaryEffectTwo())
                 && !weapon.getSecondaryEffectTwo().get(0).isCombo() && (
@@ -144,15 +151,23 @@ public class EffectsController {
                         !secondaryEffectOneApplied) &&
                         (weapon.getPrimaryEffect().get(0).getEffectDependency().contains("secondaryEffectTwo") ||
                                 mainEffectApplied))) {
-            availableWeapons.add(weapon.getSecondaryEffectTwo());
+            availableWeapons.put(WeaponEffectOrderType.SECONDARYTWO, weapon.getSecondaryEffectTwo());
         }
-        for(List<WeaponEffect> effect : availableWeapons) {
+
+        List<WeaponEffectOrderType> toRemove = new ArrayList<>();
+
+        for(Map.Entry<WeaponEffectOrderType, List<WeaponEffect>> effect : availableWeapons.entrySet()) {
             try {
-                seeEffectpossibility(effect.get(0));
+                seeEffectpossibility(effect.getValue().get(0));
             } catch (UnsupportedOperationException e) {
-                availableWeapons.remove(effect);
+                toRemove.add(effect.getKey());
             }
         }
+
+        for (WeaponEffectOrderType w : toRemove) {
+            availableWeapons.remove(w);
+        }
+
         return availableWeapons;
     }
 
@@ -171,24 +186,24 @@ public class EffectsController {
         return true;
     }
 
-    public void effectSelected(String effectType) {
+    public void effectSelected(WeaponEffectOrderType effectType) {
         switch (effectType) {
-            case "primary":
+            case PRIMARY:
                 this.effectsQueue.addAll(0, weapon.getPrimaryEffect());
                 this.effectOrder = WeaponEffectOrderType.PRIMARY;
                 break;
-            case "alternative":
+            case ALTERNATIVE:
                 this.effectsQueue.addAll(0, weapon.getAlternativeMode());
                 this.effectOrder = WeaponEffectOrderType.PRIMARY;
                 break;
-            case "secondaryOne":
+            case SECONDARYONE:
                 this.effectsQueue.addAll(0, weapon.getSecondaryEffectOne());
                 this.effectOrder = WeaponEffectOrderType.SECONDARYONE;
                 if (!this.mainEffectApplied) {
                     this.effectsQueue.addAll(weapon.getPrimaryEffect());
                 }
                 break;
-            case "secondaryTwo":
+            case SECONDARYTWO:
                 this.effectsQueue.addAll(0, weapon.getSecondaryEffectTwo());
                 this.effectOrder = WeaponEffectOrderType.SECONDARYTWO;
                 break;
@@ -502,7 +517,7 @@ public class EffectsController {
                 case SELECT:
                     this.chosenSquare = square;
                     try {
-                        this.chosenRoom = this.board.getArena().getRoombyColor(pack.getRooms().get(0));
+                        this.chosenRoom = this.board.getArena().getRoomByColor(pack.getRooms().get(0));
                     } catch (IndexOutOfBoundsException ignore) {
                     }
                     try {
@@ -568,7 +583,8 @@ public class EffectsController {
     }
 
     private void setHitByCases(GameCharacter character) {
-        if (this.effectOrder == WeaponEffectOrderType.PRIMARY) {
+        if (this.effectOrder == WeaponEffectOrderType.PRIMARY ||
+                this.effectOrder == WeaponEffectOrderType.ALTERNATIVE) {
             this.hitByMain.add(this.board.getPlayerByCharacter(character));
         } else if (this.effectOrder == WeaponEffectOrderType.SECONDARYONE) {
             this.hitBySecondary.add(this.board.getPlayerByCharacter(character));

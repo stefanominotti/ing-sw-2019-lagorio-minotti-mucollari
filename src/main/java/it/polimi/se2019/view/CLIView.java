@@ -12,6 +12,7 @@ import it.polimi.se2019.model.messages.payment.PaymentSentMessage;
 import it.polimi.se2019.model.messages.powerups.PowerupMessageType;
 import it.polimi.se2019.model.messages.selections.SelectionMessageType;
 import it.polimi.se2019.model.messages.selections.SelectionReceivedMessage;
+import it.polimi.se2019.model.messages.selections.SelectionSentMessage;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 
@@ -45,8 +46,8 @@ public class CLIView extends View {
 
     @Override
     public void manageUpdate(Message message) {
-        super.manageUpdate(message);
         this.inputEnabled = true;
+        super.manageUpdate(message);
     }
 
     private void handleInput(String input) {
@@ -74,16 +75,18 @@ public class CLIView extends View {
             handleActionInput(input);
         } else if (getState() == SELECTMOVEMENT || getState() == SELECTPICKUP || getState() == SELECTPOWERUPPOSITION) {
             handlePositionInput(input);
-        } else if (getState() == SELECTWEAPON || getState() == SWITCHWEAPON || getState() == RECHARGEWEAPON) {
+        } else if (getState() == SELECTWEAPON || getState() == SWITCHWEAPON || getState() == RECHARGEWEAPON || getState() == USEWEAPON) {
             handleWeaponInput(input);
         } else if (getState() == PAYMENT) {
             handlePaymentInput(input);
+        } else if (getState() == USEEFFECT) {
+            handleEffectInput(input);
         }
     }
 
     private void handleNicknameInput(String input) {
-        getClient().send(new NicknameMessage(NicknameMessageType.CONNECTED, input));
         this.inputEnabled = false;
+        getClient().send(new NicknameMessage(NicknameMessageType.CONNECTED, input));
     }
 
     private void handleSkullsInput(String input) {
@@ -98,14 +101,14 @@ public class CLIView extends View {
             showMessage("Skulls number must be between 3 and 8, retry: ");
             return;
         }
-        getClient().send(new SkullsMessage(selection));
         this.inputEnabled = false;
+        getClient().send(new SkullsMessage(selection));
     }
 
     private void handleArenaInput(String input) {
         if(input.equals("1") || input.equals("2") || input.equals("3") || input.equals("4")) {
-            getClient().send(new ArenaMessage(input));
             this.inputEnabled = false;
+            getClient().send(new ArenaMessage(input));
             return;
         }
         showMessage("Arena must be [1, 2, 3, 4]:, retry:");
@@ -129,13 +132,12 @@ public class CLIView extends View {
             return;
         }
         selection--;
+        this.inputEnabled = false;
         if (getState() == CHOOSINGCHARACTER) {
             getClient().send(new CharacterMessage(getCharactersSelection().get(selection), generateToken()));
-            this.inputEnabled = false;
         } else if (getState() == SELECTPOWERUPTARGET) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.POWERUP_TARGET, getCharacter(),
                     getCharactersSelection().get(selection)));
-            this.inputEnabled = false;
         } else if (getState() == SELECTBOARDTOSHOW) {
             showMessage(getEnemyBoards().get(selection).toString());
             showActions();
@@ -145,9 +147,9 @@ public class CLIView extends View {
 
     private void handlePositionInput(String input) {
         if (input.equalsIgnoreCase("c") && getState() != SELECTPOWERUPPOSITION) {
+            this.inputEnabled = false;
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.ACTION, getCharacter(),
                     ActionType.CANCEL));
-            this.inputEnabled = false;
             return;
         }
         if (input.split(",").length != 2) {
@@ -175,18 +177,19 @@ public class CLIView extends View {
 
         if(toSend == null) {
             showMessage("Invalid input, retry:");
-        } else if (getState() == SELECTMOVEMENT) {
+            return;
+        }
+
+        this.inputEnabled = false;
+        if (getState() == SELECTMOVEMENT) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.MOVE, getCharacter(),
                     new Coordinates(x, y)));
-            this.inputEnabled = false;
         } else if (getState() == SELECTPICKUP) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.PICKUP, getCharacter(),
                     new Coordinates(x, y)));
-            this.inputEnabled = false;
         } else if (getState() == SELECTPOWERUPPOSITION) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.POWERUP_POSITION, getCharacter(),
                     new Coordinates(x, y)));
-            this.inputEnabled = false;
         }
 
     }
@@ -219,13 +222,12 @@ public class CLIView extends View {
             resetSelections();
         }
 
+        this.inputEnabled = false;
         if (getState() == USEPOWERUP) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.USE_POWERUP, getCharacter(), toSend));
-            this.inputEnabled = false;
         } else if (getState() == DISCARDSPAWN) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.DISCARD_POWERUP, getCharacter(),
                     toSend));
-            this.inputEnabled = false;
         }
     }
 
@@ -240,7 +242,7 @@ public class CLIView extends View {
         }
 
         int maxNumber = getWeaponsSelection().size();
-        if (getState() == RECHARGEWEAPON) {
+        if (getState() == RECHARGEWEAPON || getState() == USEWEAPON) {
             maxNumber++;
         }
 
@@ -249,21 +251,29 @@ public class CLIView extends View {
             return;
         }
 
-        Weapon toSend = null;
-        if (getState() != RECHARGEWEAPON) {
+        Weapon toSend;
+        if (getState() == USEWEAPON && selection == maxNumber) {
+            this.inputEnabled = false;
+            getClient().send(new SelectionReceivedMessage(SelectionMessageType.ACTION, getCharacter(),
+                    ActionType.CANCEL));
+            return;
+        } else if (getState() == RECHARGEWEAPON && selection == maxNumber) {
+            toSend = null;
+        } else {
             toSend = getWeaponsSelection().get(selection - 1);
             resetSelections();
         }
 
+        this.inputEnabled = false;
         if (getState() == SELECTWEAPON) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.PICKUP_WEAPON, getCharacter(), toSend));
-            this.inputEnabled = false;
         } else if (getState() == SWITCHWEAPON) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.SWITCH, getCharacter(), toSend));
-            this.inputEnabled = false;
         } else if (getState() == RECHARGEWEAPON) {
             getClient().send(new SelectionReceivedMessage(SelectionMessageType.RELOAD, getCharacter(), toSend));
-            this.inputEnabled = false;
+        } else if (getState() == USEWEAPON) {
+            getClient().send(new SelectionReceivedMessage(SelectionMessageType.USE_WEAPON, getCharacter(), toSend));
+            setCurrentWeapon(toSend);
         }
     }
 
@@ -280,6 +290,7 @@ public class CLIView extends View {
             return;
         }
 
+        this.inputEnabled = false;
         switch (selection) {
             case 1:
                 showMessage(getBoard().killshotTrackToString());
@@ -305,8 +316,6 @@ public class CLIView extends View {
             default:
                 getClient().send(new SelectionReceivedMessage(SelectionMessageType.ACTION, getCharacter(),
                         getActionsSelection().get(selection - 4)));
-                this.inputEnabled = false;
-                resetSelections();
         }
     }
 
@@ -363,10 +372,30 @@ public class CLIView extends View {
             }
         }
 
+        this.inputEnabled = false;
         getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getPaidAmmos(),
                 getPaidPowerups()));
-        this.inputEnabled = false;
         resetSelections();
+    }
+
+    private void handleEffectInput(String input) {
+        input = input.toUpperCase();
+        boolean valid = false;
+        for (WeaponEffectOrderType validInput : getEffectsSelection()) {
+            if (validInput.toString().equals(input)) {
+                valid = true;
+                break;
+            }
+        }
+
+        if (!valid) {
+            showMessage("Invalid number, retry:");
+            return;
+        }
+
+        this.inputEnabled = false;
+        getClient().send(new SelectionReceivedMessage(SelectionMessageType.EFFECT, getCharacter(),
+                SelectionMessageType.valueOf(input)));
     }
 
     @Override
@@ -747,6 +776,9 @@ public class CLIView extends View {
             text.append(toAppend);
             index++;
         }
+        String toAppend = "[" + index + "] - Skip\n";
+        text.append(toAppend);
+        text.setLength(text.length() - 1);
         showMessage(text.toString());
     }
 
@@ -796,6 +828,48 @@ public class CLIView extends View {
     void handleActionSelectionRequest(List<ActionType> actions) {
         super.handleActionSelectionRequest(actions);
         showActions();
+    }
+
+    @Override
+    void handleWeaponUseRequest(List<Weapon> weapons) {
+        super.handleWeaponUseRequest(weapons);
+        StringBuilder text = new StringBuilder("Select a weapon to use or cancel:\n");
+        int index = 1;
+        for (Weapon weapon : weapons) {
+            String toAppend = "[" + index + "] - " + weapon + "\n";
+            text.append(toAppend);
+            index++;
+        }
+        String toAppend = "[" + index + "] - Cancel\n";
+        text.append(toAppend);
+        text.setLength(text.length() - 1);
+        showMessage(text.toString());
+    }
+
+    @Override
+    void handleEffectRequest(List<WeaponEffectOrderType> effects) {
+        super.handleEffectRequest(effects);
+        StringBuilder text = new StringBuilder("Select an effect to use:\n");
+        for (WeaponEffectOrderType effect : effects) {
+            String toAppend = "";
+            switch (effect) {
+                case PRIMARY:
+                    toAppend = effect + " - " + getCurrentWeapon().getPrimaryEffect().get(0).getDescription() + "\n";
+                    break;
+                case ALTERNATIVE:
+                    toAppend = effect + " - " + getCurrentWeapon().getAlternativeMode().get(0).getDescription() + "\n";
+                    break;
+                case SECONDARYONE:
+                    toAppend = effect + " - " + getCurrentWeapon().getSecondaryEffectOne().get(0).getDescription() + "\n";
+                    break;
+                case SECONDARYTWO:
+                    toAppend = effect + " - " + getCurrentWeapon().getSecondaryEffectTwo().get(0).getDescription() + "\n";
+                    break;
+            }
+            text.append(toAppend);
+        }
+        text.setLength(text.length() - 1);
+        showMessage(text.toString());
     }
 
     private void showMessage(String message) {
