@@ -55,6 +55,12 @@ public class GUIApp extends Application {
                 case CONNECTION_ERROR:
                     loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "ConnectionError.fxml"));
                     break;
+                case RELOAD_GAME:
+                    loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "ReloadGame.fxml"));
+                    break;
+                case INVALID_TOKEN:
+                    loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "InvalidToken.fxml"));
+                    break;
             }
             try {
                 this.stage.setScene(new Scene(loader.load()));

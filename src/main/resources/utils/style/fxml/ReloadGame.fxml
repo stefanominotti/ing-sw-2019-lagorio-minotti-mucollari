@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="700.0" styleClass="background-pane" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.ReloadGameController">
+   <top>
+      <VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="89.0" prefWidth="600.0" styleClass="topPane" stylesheets="@../css/style.css" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="41.0" fitWidth="303.0" pickOnBounds="true" preserveRatio="true" translateX="3.0" translateY="-10.0">
+               <image>
+                  <Image url="@../../icons/logo.png" />
+               </image></ImageView>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" styleClass="cardPane" stylesheets="@../css/style.css" translateY="-100.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="71.0" fitWidth="71.0" layoutX="114.0" layoutY="68.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../icons/game_reload.png" />
+               </image>
+            </ImageView>
+            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="34.0" layoutY="188.0" prefHeight="27.0" prefWidth="228.0" text="Trying to reconnect" textAlignment="CENTER">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label alignment="CENTER" contentDisplay="CENTER" layoutY="153.0" prefHeight="27.0" prefWidth="300.0" text="A game alredy exist" textAlignment="CENTER">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="52.0" fitWidth="56.0" layoutX="125.0" layoutY="220.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../icons/loading.gif" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>
