@@ -1,6 +1,7 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
+import org.omg.PortableServer.THREAD_POLICY_ID;
 
 import java.util.*;
 
@@ -8,17 +9,14 @@ public class EffectsController {
     private Board board;
     private WeaponEffect currentEffect;
     private WeaponEffectOrderType effectOrder;
-    private TurnController turnController;
     //da impostare ogni volta che viene scelto un'arma
     private Weapon weapon;
     private List<List<WeaponEffect>> weaponEffects;
     //da impostare ogni volta che viene eseguito un effetto
-    private int effectApplied;
     private boolean mainEffectApplied;
     private boolean secondaryEffectOneApplied;
     private boolean secondaryEffectTwoApplied;
     private List<WeaponEffect> effectsQueue;
-    private List<WeaponEffect> secondEffectQueue;
     //da impostare ogni volta che viene eseguito parte di un effetto
     private List<Player> hitByMain;
     private List<Player> hitBySecondary;
@@ -28,7 +26,6 @@ public class EffectsController {
     private Player activePlayer;
 
     public EffectsController(Board board, TurnController turnController) {
-        this.turnController = turnController;
         this.board = board;
         this.hitByMain = new ArrayList<>();
         this.hitBySecondary = new ArrayList<>();
@@ -62,10 +59,6 @@ public class EffectsController {
         this.hitBySecondary.add(player);
     }
 
-    public void setChosenRoom(Room room) {
-        this.chosenRoom = room;
-    }
-
     public void setEnviroment(Square initialSquare, Square finalSquare) {
         if (!finalSquare.equals(initialSquare)) {
             this.chosenDirection = this.board.getCardinalFromSquares(initialSquare, finalSquare);
@@ -74,14 +67,10 @@ public class EffectsController {
         this.chosenSquare = finalSquare;
     }
 
-    public void setChosenDirection(CardinalPoint chosenDirection) {
-        this.chosenDirection = chosenDirection;
-    }
-
+    @Deprecated
     private void buildWeaponEffects(Weapon weapon) {
         this.weapon = weapon;
         this.effectsQueue = new ArrayList<>();
-        this.secondEffectQueue = new ArrayList<>();
         if (weapon.getPrimaryEffect() != null) {
             weaponEffects.add(weapon.getPrimaryEffect());
         }
@@ -97,9 +86,42 @@ public class EffectsController {
         }
     }
 
+    @Deprecated
     public List<List<WeaponEffect>> getWeaponEffects(Weapon weapon) {
         buildWeaponEffects(weapon);
         return weaponEffects;
+    }
+
+    public List<Weapon> getAvailableWeapons() {
+        List<Weapon> availableWeapons = new ArrayList<>();
+        for(WeaponCard weaponCard : this.activePlayer.getWeapons()) {
+            this.weapon = weaponCard.getWeaponType();
+            if(weaponCard.isReady() && !getAvailableEffects().isEmpty()) {
+                availableWeapons.add(weaponCard.getWeaponType());
+            }
+        }
+        this.weapon = null;
+        return availableWeapons;
+    }
+
+    private boolean checkSecondaryFirst(){
+        try {
+            EffectPossibilityPack pack = seeEffectpossibility(weapon.getSecondaryEffectOne().get(0));
+            Square originalPosition = this.activePlayer.getPosition();
+            for (Coordinates coordinates : pack.getSquares()) {
+                Square square = this.board.getArena().getSquareByCoordinate(coordinates.getX(), coordinates.getY());
+                this.activePlayer.setPosition(square);
+                try {
+                    seeEffectpossibility(weapon.getPrimaryEffect().get(0));
+                    this.activePlayer.setPosition(originalPosition);
+                    return true;
+                } catch (UnsupportedOperationException ignore) {}
+            }
+            this.activePlayer.setPosition(originalPosition);
+            return false;
+        }catch (UnsupportedOperationException e) {
+            return false;
+        }
     }
 
     public List<List<WeaponEffect>> getAvailableEffects() {
@@ -111,16 +133,25 @@ public class EffectsController {
             }
         }
         if (!secondaryEffectOneApplied && checkCost(weapon.getSecondaryEffectOne())
-                && !weapon.getSecondaryEffectTwo().get(0).isCombo() && (
-                weapon.getPrimaryEffect().get(0).getEffectDependency().contains("secondaryEffectOne") || mainEffectApplied)) {
+                && !weapon.getSecondaryEffectOne().get(0).isCombo() && (!mainEffectApplied &&
+                weapon.getPrimaryEffect().get(0).getEffectDependency().contains("secondaryEffectOne") &&
+                checkSecondaryFirst()) || mainEffectApplied) {
             availableWeapons.add(weapon.getSecondaryEffectOne());
         }
         if (!secondaryEffectTwoApplied && checkCost(weapon.getSecondaryEffectTwo())
                 && !weapon.getSecondaryEffectTwo().get(0).isCombo() && (
                 !(weapon.getSecondaryEffectTwo().get(0).getEffectDependency().contains("secondaryEffectOne") &&
                         !secondaryEffectOneApplied) &&
-                        (weapon.getPrimaryEffect().get(0).getEffectDependency().contains("secondaryEffectTwo") || mainEffectApplied))) {
+                        (weapon.getPrimaryEffect().get(0).getEffectDependency().contains("secondaryEffectTwo") ||
+                                mainEffectApplied))) {
             availableWeapons.add(weapon.getSecondaryEffectTwo());
+        }
+        for(List<WeaponEffect> effect : availableWeapons) {
+            try {
+                seeEffectpossibility(effect.get(0));
+            } catch (UnsupportedOperationException e) {
+                availableWeapons.remove(effect);
+            }
         }
         return availableWeapons;
     }
@@ -471,7 +502,7 @@ public class EffectsController {
                 case SELECT:
                     this.chosenSquare = square;
                     try {
-                        this.chosenRoom = this.board.getArena().getRoomByColor(pack.getRooms().get(0));
+                        this.chosenRoom = this.board.getArena().getRoombyColor(pack.getRooms().get(0));
                     } catch (IndexOutOfBoundsException ignore) {
                     }
                     try {
@@ -533,7 +564,7 @@ public class EffectsController {
             return;
         }
         EffectPossibilityPack pack = seeEffectpossibility(currentEffect);
-        //manda al giocatore le possibilita
+        //manda al giocatore le possibilità
     }
 
     private void setHitByCases(GameCharacter character) {
