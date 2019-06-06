@@ -29,13 +29,13 @@ public class WeaponEffect {
         this.target = target;
     }
 
-    public String getEffectName(){ return this.effectName; }
+    public String getEffectName() { return this.effectName; }
 
-    public String getDescription(){ return this.description; }
+    public String getDescription() { return this.description; }
 
     public List<String> getEffectDependency() {
-        if(effectDependency == null){
-            return null;
+        if(this.effectDependency == null){
+            return new ArrayList<>();
         }
         return new ArrayList<>(this.effectDependency);
     }
@@ -45,6 +45,9 @@ public class WeaponEffect {
     }
 
     public List<String> getAmount() {
+        if(this.amount == null){
+            return new ArrayList<>();
+        }
         return new ArrayList<>(this.amount);
     }
 

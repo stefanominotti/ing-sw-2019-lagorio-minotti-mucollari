@@ -1,9 +1,6 @@
 package it.polimi.se2019.model;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class EffectTarget {
 
@@ -36,28 +33,28 @@ public class EffectTarget {
 
     public List<String> getAmount() {
         if(this.amount == null) {
-            return null;
+            return new ArrayList<>();
         }
         return new ArrayList<>(this.amount);
     }
 
     public List<PositionConstraint> getPositionConstraints() {
-        if (positionConstraints == null){
-            return null;
+        if (this.positionConstraints == null){
+            return new ArrayList<>();
         }
             return new ArrayList<>(this.positionConstraints);
         }
 
     public List<PositionConstraint> getAfterPositionConstraints() {
-        if (afterPositionConstraints == null){
-            return null;
+        if (this.afterPositionConstraints == null){
+            return new ArrayList<>();
         }
         return new ArrayList<>(this.afterPositionConstraints);
     }
 
     public Set<TargetConstraint> getTargetConstraints() {
         if(this.targetConstraints == null) {
-            return null;
+            return new HashSet<>();
         }
         return EnumSet.copyOf(this.targetConstraints);
     }

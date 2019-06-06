@@ -30,11 +30,11 @@ public class TurnController {
     private EffectsController effectsController;
 
     public TurnController(Board board, GameController controller) {
-        this.effectsController = new EffectsController(this.board, this);
         this.state = TurnState.SELECTACTION;
         this.board = board;
         this.controller = controller;
         this.movesLeft = 2;
+        this.effectsController = new EffectsController(this.board, this);
     }
 
     Player getActivePlayer() {
@@ -503,6 +503,7 @@ public class TurnController {
     }
 
     private void calculateShootAction() {
+        this.effectsController.setActivePlayer(this.activePlayer);
         this.controller.send(new SelectionSentMessage<>(SelectionMessageType.USE_WEAPON,
                 this.activePlayer.getCharacter(), this.effectsController.getAvailableWeapons()));
     }

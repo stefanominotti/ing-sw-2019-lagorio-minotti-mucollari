@@ -1,7 +1,6 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
-import org.omg.PortableServer.THREAD_POLICY_ID;
 
 import java.util.*;
 
@@ -38,7 +37,6 @@ public class EffectsController {
         this.turnController = turnController;
     }
 
-    //for test only
     public void setActivePlayer(Player player) {
         this.activePlayer = player;
     }
@@ -73,16 +71,16 @@ public class EffectsController {
     private void buildWeaponEffects(Weapon weapon) {
         this.weapon = weapon;
         this.effectsQueue = new ArrayList<>();
-        if (weapon.getPrimaryEffect() != null) {
+        if (!weapon.getPrimaryEffect().isEmpty()) {
             weaponEffects.add(weapon.getPrimaryEffect());
         }
-        if (weapon.getAlternativeMode() != null) {
-            weaponEffects.add(weapon.getAlternativeMode());
+        if (!weapon.getAlternativeMode().isEmpty()) {
+            this.weaponEffects.add(weapon.getAlternativeMode());
         } else {
-            if (weapon.getSecondaryEffectOne() != null) {
-                weaponEffects.add(weapon.getSecondaryEffectOne());
-                if (weapon.getSecondaryEffectTwo() != null) {
-                    weaponEffects.add(weapon.getSecondaryEffectTwo());
+            if (!weapon.getSecondaryEffectOne().isEmpty()) {
+                this.weaponEffects.add(weapon.getSecondaryEffectOne());
+                if (!weapon.getSecondaryEffectTwo().isEmpty()) {
+                    this.weaponEffects.add(weapon.getSecondaryEffectTwo());
                 }
             }
         }
@@ -91,15 +89,14 @@ public class EffectsController {
     @Deprecated
     public List<List<WeaponEffect>> getWeaponEffects(Weapon weapon) {
         buildWeaponEffects(weapon);
-        return weaponEffects;
+        return this.weaponEffects;
     }
 
     void setWeapon(Weapon weapon) {
         this.weapon = weapon;
-        this.activePlayer = this.turnController.getActivePlayer();
     }
 
-    public List<Weapon> getAvailableWeapons() {
+    List<Weapon> getAvailableWeapons() {
         List<Weapon> availableWeapons = new ArrayList<>();
         for(WeaponCard weaponCard : this.activePlayer.getWeapons()) {
             this.weapon = weaponCard.getWeaponType();
@@ -113,52 +110,56 @@ public class EffectsController {
 
     private boolean checkSecondaryFirst() {
         try {
-            EffectPossibilityPack pack = seeEffectpossibility(weapon.getSecondaryEffectOne().get(0));
+            EffectPossibilityPack pack = seeEffectPossibility(this.weapon.getSecondaryEffectOne().get(0));
             Square originalPosition = this.activePlayer.getPosition();
             for (Coordinates coordinates : pack.getSquares()) {
                 Square square = this.board.getArena().getSquareByCoordinate(coordinates.getX(), coordinates.getY());
                 this.activePlayer.setPosition(square);
                 try {
-                    seeEffectpossibility(weapon.getPrimaryEffect().get(0));
+                    seeEffectPossibility(this.weapon.getPrimaryEffect().get(0));
                     this.activePlayer.setPosition(originalPosition);
                     return true;
-                } catch (UnsupportedOperationException ignore) {}
+                } catch (UnsupportedOperationException e) {
+                    // Ignore
+                }
             }
             this.activePlayer.setPosition(originalPosition);
             return false;
-        }catch (UnsupportedOperationException e) {
+        } catch (UnsupportedOperationException e) {
             return false;
         }
     }
 
     public Map<WeaponEffectOrderType, List<WeaponEffect>> getAvailableEffects() {
-        Map<WeaponEffectOrderType, List<WeaponEffect>> availableWeapons = new HashMap<>();
-        if (!mainEffectApplied) {
+        Map<WeaponEffectOrderType, List<WeaponEffect>> availableWeapons = new LinkedHashMap<>();
+        if (!this.mainEffectApplied) {
             availableWeapons.put(WeaponEffectOrderType.PRIMARY, weapon.getPrimaryEffect());
-            if (weapon.getAlternativeMode() != null && checkCost(weapon.getAlternativeMode())) {
+            if (!this.weapon.getAlternativeMode().isEmpty() && checkCost(weapon.getAlternativeMode())) {
                 availableWeapons.put(WeaponEffectOrderType.ALTERNATIVE, weapon.getAlternativeMode());
             }
         }
-        if (!secondaryEffectOneApplied && checkCost(weapon.getSecondaryEffectOne())
-                && !weapon.getSecondaryEffectOne().get(0).isCombo() && (!mainEffectApplied &&
-                weapon.getPrimaryEffect().get(0).getEffectDependency().contains("secondaryEffectOne") &&
-                checkSecondaryFirst()) || mainEffectApplied) {
-            availableWeapons.put(WeaponEffectOrderType.SECONDARYONE, weapon.getSecondaryEffectOne());
+        if (!this.secondaryEffectOneApplied && !this.weapon.getSecondaryEffectOne().isEmpty()
+                && checkCost(weapon.getSecondaryEffectOne()) && !this.weapon.getSecondaryEffectOne().get(0).isCombo()
+                && (!this.mainEffectApplied &&
+                this.weapon.getPrimaryEffect().get(0).getEffectDependency().contains("secondaryEffectOne") &&
+                checkSecondaryFirst()) || this.mainEffectApplied) {
+            availableWeapons.put(WeaponEffectOrderType.SECONDARYONE, this.weapon.getSecondaryEffectOne());
         }
-        if (!secondaryEffectTwoApplied && checkCost(weapon.getSecondaryEffectTwo())
-                && !weapon.getSecondaryEffectTwo().get(0).isCombo() && (
-                !(weapon.getSecondaryEffectTwo().get(0).getEffectDependency().contains("secondaryEffectOne") &&
-                        !secondaryEffectOneApplied) &&
-                        (weapon.getPrimaryEffect().get(0).getEffectDependency().contains("secondaryEffectTwo") ||
-                                mainEffectApplied))) {
-            availableWeapons.put(WeaponEffectOrderType.SECONDARYTWO, weapon.getSecondaryEffectTwo());
+        if (!this.secondaryEffectTwoApplied && !this.weapon.getSecondaryEffectTwo().isEmpty()
+                && checkCost(this.weapon.getSecondaryEffectTwo())
+                && !this.weapon.getSecondaryEffectTwo().get(0).isCombo() && (
+                !(this.weapon.getSecondaryEffectTwo().get(0).getEffectDependency().contains("secondaryEffectOne") &&
+                        !this.secondaryEffectOneApplied) &&
+                        (this.weapon.getPrimaryEffect().get(0).getEffectDependency().contains("secondaryEffectTwo") ||
+                                this.mainEffectApplied))) {
+            availableWeapons.put(WeaponEffectOrderType.SECONDARYTWO, this.weapon.getSecondaryEffectTwo());
         }
 
         List<WeaponEffectOrderType> toRemove = new ArrayList<>();
 
         for(Map.Entry<WeaponEffectOrderType, List<WeaponEffect>> effect : availableWeapons.entrySet()) {
             try {
-                seeEffectpossibility(effect.getValue().get(0));
+                seeEffectPossibility(effect.getValue().get(0));
             } catch (UnsupportedOperationException e) {
                 toRemove.add(effect.getKey());
             }
@@ -211,8 +212,8 @@ public class EffectsController {
         handleEffectsQueue();
     }
 
-    private List<Player> distancebyPlayerCase(PositionConstraint constraint) {
-        List<Player> players = null;
+    private List<Player> distanceByPlayerCase(PositionConstraint constraint) {
+        List<Player> players;
         if (constraint.getTarget() == TargetType.SQUARE) {
             players = this.board.getPlayersByDistance(
                     this.chosenSquare, constraint.getDistanceValues());
@@ -223,7 +224,7 @@ public class EffectsController {
         return players;
     }
 
-    private List<Square> distancebySquareCase(PositionConstraint constraint) {
+    private List<Square> distanceBySquareCase(PositionConstraint constraint) {
         List<Square> squares;
         switch (constraint.getTarget()) {
             case OTHERS:
@@ -254,7 +255,7 @@ public class EffectsController {
                     targetPlayers = this.board.getVisiblePlayers(getTargetPlayer(constraint.getTarget()));
                     break;
                 case DISTANCE:
-                    targetPlayers = distancebyPlayerCase(constraint);
+                    targetPlayers = distanceByPlayerCase(constraint);
                     break;
                 case NOTVISIBLE:
                     targetPlayers = this.board.getNoVisiblePlayers(getTargetPlayer(
@@ -278,7 +279,7 @@ public class EffectsController {
                     targetSquares = this.board.getVisibleSquares(getTargetPlayer(constraint.getTarget()));
                     break;
                 case DISTANCE:
-                    targetSquares = distancebySquareCase(constraint);
+                    targetSquares = distanceBySquareCase(constraint);
                     break;
                 case SAMEDIRECTION:
                     targetSquares = this.board.getSquaresOnCardinalDirection(
@@ -356,7 +357,7 @@ public class EffectsController {
         EffectTarget target = effect.getTarget();
         List<PositionConstraint> constraints = target.getPositionConstraints();
         List<Player> availablePlayers = this.board.getPlayers();
-        if (constraints != null) {
+        if (!constraints.isEmpty()) {
             availablePlayers = filterByPositionConstraintPlayers(constraints);
             availablePlayers.remove(this.activePlayer);
             return availablePlayers;
@@ -367,7 +368,7 @@ public class EffectsController {
     private List<Square> moveSquaresCase(WeaponEffect effect, Player player) {
         EffectTarget target = effect.getTarget();
         List<Square> availableSquares;
-        if (target.getAfterPositionConstraints() == null) {
+        if (target.getAfterPositionConstraints().isEmpty()) {
             availableSquares = this.board.getSquaresByDistance(player, effect.getAmount());
         } else {
             availableSquares = filterByPositionConstraintSquares(target.getAfterPositionConstraints());
@@ -375,7 +376,7 @@ public class EffectsController {
         return availableSquares;
     }
 
-    public EffectPossibilityPack seeEffectpossibility(WeaponEffect effect) throws UnsupportedOperationException {
+    public EffectPossibilityPack seeEffectPossibility(WeaponEffect effect) throws UnsupportedOperationException {
         this.currentEffect = effect;
         EffectTarget target = effect.getTarget();
         TargetPositionType positionType = target.getPositionType();
@@ -388,7 +389,7 @@ public class EffectsController {
         List<CardinalPoint> availableCardinal = new ArrayList<>();
         Map<Square, List<Player>> availableMultipleSquares = new HashMap<>();
         List<String> amountTargets = target.getAmount();
-        if (target.getTargetConstraints() != null) {
+        if (!target.getTargetConstraints().isEmpty()) {
             Set<TargetConstraint> targetConstraints = target.getTargetConstraints();
             if (targetConstraints.contains(TargetConstraint.NOHITBYMAIN)) {
                 noHitbyMain = true;
@@ -506,11 +507,11 @@ public class EffectsController {
 
     public void effectApplication(EffectPossibilityPack pack) {
         Square square = this.activePlayer.getPosition();
-        ;
         try {
             Coordinates coordinates = pack.getSquares().get(0);
             square = this.board.getArena().getSquareByCoordinate(coordinates.getX(), coordinates.getY());
-        } catch (IndexOutOfBoundsException ignore) {
+        } catch (IndexOutOfBoundsException e) {
+            // Ignore
         }
         if (pack.isRequire()) {
             switch (this.currentEffect.getType()) {
@@ -518,11 +519,13 @@ public class EffectsController {
                     this.chosenSquare = square;
                     try {
                         this.chosenRoom = this.board.getArena().getRoomByColor(pack.getRooms().get(0));
-                    } catch (IndexOutOfBoundsException ignore) {
+                    } catch (IndexOutOfBoundsException e) {
+                        // Ignore
                     }
                     try {
                         this.chosenDirection = pack.getCardinalPoints().get(0);
-                    } catch (IndexOutOfBoundsException ignore) {
+                    } catch (IndexOutOfBoundsException e) {
+                        // Ignore
                     }
                     break;
                 case MOVE:
@@ -556,9 +559,9 @@ public class EffectsController {
         handleEffectsQueue();
     }
 
-    private void handleEffectsQueue() throws UnsupportedOperationException {
+    private void handleEffectsQueue() {
         try {
-            currentEffect = this.effectsQueue.get(0);
+            this.currentEffect = this.effectsQueue.get(0);
         } catch (IndexOutOfBoundsException e) {
             switch (this.effectOrder) {
                 case PRIMARY:
@@ -570,15 +573,16 @@ public class EffectsController {
                 case SECONDARYTWO:
                     this.secondaryEffectTwoApplied = true;
                     break;
+                default:
+                    //avvisa fine efetto
+                    return;
             }
-            //avvisa fine efetto
+        }
+        if (!this.currentEffect.getEffectDependency().isEmpty()) {
+            //chiedi al giocatore se vuole attivare "combo"
             return;
         }
-        if (currentEffect.getEffectDependency() != null) {
-            //chidei al giocatore se vuole attivare "combo"
-            return;
-        }
-        EffectPossibilityPack pack = seeEffectpossibility(currentEffect);
+        EffectPossibilityPack pack = seeEffectPossibility(this.currentEffect);
         //manda al giocatore le possibilità
     }
 

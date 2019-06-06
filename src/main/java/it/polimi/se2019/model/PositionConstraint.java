@@ -1,6 +1,5 @@
 package it.polimi.se2019.model;
 
-import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
 

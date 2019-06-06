@@ -12,7 +12,6 @@ import it.polimi.se2019.model.messages.payment.PaymentSentMessage;
 import it.polimi.se2019.model.messages.powerups.PowerupMessageType;
 import it.polimi.se2019.model.messages.selections.SelectionMessageType;
 import it.polimi.se2019.model.messages.selections.SelectionReceivedMessage;
-import it.polimi.se2019.model.messages.selections.SelectionSentMessage;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 
@@ -56,7 +55,7 @@ public class CLIView extends View {
         }
 
         if (input.equals("")) {
-            showMessage("Invalid username, retry: ");
+            showMessage("Invalid input, retry: ");
             return;
         }
 
@@ -290,7 +289,6 @@ public class CLIView extends View {
             return;
         }
 
-        this.inputEnabled = false;
         switch (selection) {
             case 1:
                 showMessage(getBoard().killshotTrackToString());
@@ -314,6 +312,7 @@ public class CLIView extends View {
                 setState(SELECTBOARDTOSHOW);
                 break;
             default:
+                this.inputEnabled = false;
                 getClient().send(new SelectionReceivedMessage(SelectionMessageType.ACTION, getCharacter(),
                         getActionsSelection().get(selection - 4)));
         }

@@ -1,11 +1,7 @@
 package it.polimi.se2019.controller;
 
-import it.polimi.se2019.controller.EffectPossibilityPack;
-import it.polimi.se2019.controller.EffectsController;
-import it.polimi.se2019.controller.TurnController;
 import it.polimi.se2019.model.*;
 import it.polimi.se2019.server.GameLoader;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.FileWriter;
@@ -14,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 
 public class EffectControllerTest {
@@ -139,7 +134,7 @@ public class EffectControllerTest {
             controller.setEffectsQueue(effects);
             EffectPossibilityPack pack;
             try {
-                pack = controller.seeEffectpossibility(effect);
+                pack = controller.seeEffectPossibility(effect);
                 printPack(pack);
                 apply(pack);
             } catch (UnsupportedOperationException e) {
