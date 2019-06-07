@@ -255,7 +255,7 @@ public class Board extends Observable {
                 }
                 this.players.remove(getPlayerByCharacter(player));
                 notifyChanges(new ClientDisconnectedMessage(player, true));
-                if (getValidPlayers().size() == 2) {
+                if (this.players.size() == 2) {
                     this.gameState = ACCEPTINGPLAYERS;
                     this.gameTimerStartDate = null;
                     this.timer = new Timer();

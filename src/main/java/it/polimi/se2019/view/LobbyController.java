@@ -77,18 +77,28 @@ public class LobbyController extends AbstractSceneController {
                     if (i == 4) {
                         break;
                     }
-                    ImageView currentImage =
-                            (ImageView) ((HBox) this.playersList.getChildren().get(i)).getChildren().get(0);
-                    Label currentLabel = (Label) ((HBox) this.playersList.getChildren().get(i)).getChildren().get(1);
 
-                    ImageView newImage = (ImageView) ((HBox) this.playersList.getChildren().get(i + 1)).getChildren().get(0);
-                    Label newLabel = (Label) ((HBox) this.playersList.getChildren().get(i + 1)).getChildren().get(1);
+                    HBox currentBox = (HBox) this.playersList.getChildren().get(i);
+                    ImageView currentImage =
+                            (ImageView) currentBox.getChildren().get(0);
+                    Label currentLabel = (Label) currentBox.getChildren().get(1);
+
+                    HBox newBox = (HBox) this.playersList.getChildren().get(i + 1);
+                    ImageView newImage = (ImageView) newBox.getChildren().get(0);
+                    Label newLabel = (Label) newBox.getChildren().get(1);
 
                     currentImage.setImage(newImage.getImage());
                     currentLabel.setText(newLabel.getText());
 
                     newImage.setImage(null);
                     newLabel.setText("");
+
+                    for (Map.Entry<GameCharacter, HBox> box : this.playerBoxes.entrySet()) {
+                        if (box.getValue() == newBox) {
+                            this.playerBoxes.put(box.getKey(), currentBox);
+                            break;
+                        }
+                    }
 
                     i++;
                 }
