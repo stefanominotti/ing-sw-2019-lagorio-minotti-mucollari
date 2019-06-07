@@ -4,34 +4,30 @@ import it.polimi.se2019.client.AbstractClient;
 import it.polimi.se2019.client.RMIProtocolClient;
 import it.polimi.se2019.client.SocketClient;
 import it.polimi.se2019.controller.ActionType;
+import it.polimi.se2019.controller.EffectPossibilityPack;
 import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.messages.*;
 import it.polimi.se2019.model.messages.ammos.AmmosMessage;
 import it.polimi.se2019.model.messages.board.*;
 import it.polimi.se2019.model.messages.client.*;
 import it.polimi.se2019.model.messages.nickname.NicknameMessage;
-import it.polimi.se2019.model.messages.nickname.NicknameMessageType;
 import it.polimi.se2019.model.messages.payment.PaymentMessage;
-import it.polimi.se2019.model.messages.payment.PaymentSentMessage;
 import it.polimi.se2019.model.messages.payment.PaymentType;
 import it.polimi.se2019.model.messages.player.*;
 import it.polimi.se2019.model.messages.powerups.PowerupMessage;
 import it.polimi.se2019.model.messages.powerups.PowerupMessageType;
-import it.polimi.se2019.model.messages.selections.SelectionMessageType;
-import it.polimi.se2019.model.messages.selections.SelectionReceivedMessage;
-import it.polimi.se2019.model.messages.selections.SelectionSentMessage;
+import it.polimi.se2019.model.messages.selections.SelectionListMessage;
+import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
 import it.polimi.se2019.model.messages.timer.TimerMessage;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 import it.polimi.se2019.model.messages.weapon.WeaponMessage;
 import it.polimi.se2019.model.messages.weapon.WeaponSwitchMessage;
-import org.ietf.jgss.GSSManager;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -64,6 +60,8 @@ public abstract class View {
     private Map<AmmoType, Integer> requiredPayment;
     private Map<AmmoType, Integer> paidAmmos;
     private List<Powerup> paidPowerups;
+
+    private EffectPossibilityPack effectPossibility;
 
     private PowerupType activePowerup;
 
@@ -171,6 +169,10 @@ public abstract class View {
         return new ArrayList<>(this.paidPowerups);
     }
 
+    public EffectPossibilityPack getEffectPossibility() {
+        return this.effectPossibility;
+    }
+
     void setState(ClientState state) {
         this.state = state;
     }
@@ -249,8 +251,11 @@ public abstract class View {
             case PAYMENT_MESSAGE:
                 update((PaymentMessage) message);
                 break;
-            case SELECTION_SENT_MESSAGE:
-                update((SelectionSentMessage) message);
+            case SELECTION_LIST_MESSAGE:
+                update((SelectionListMessage) message);
+                break;
+            case SINGLE_SELECTION_MESSAGE:
+                update((SingleSelectionMessage) message);
                 break;
         }
     }
@@ -660,7 +665,7 @@ public abstract class View {
         }
     }
 
-    private void update(SelectionSentMessage message) {
+    private void update(SelectionListMessage message) {
         switch (message.getType()) {
             case SWITCH:
                 handleWeaponSwitchRequest((List<Weapon>) message.getList());
@@ -697,6 +702,24 @@ public abstract class View {
                 break;
             case EFFECT:
                 handleEffectRequest((List<WeaponEffectOrderType>) message.getList());
+                break;
+        }
+    }
+
+    private void update(SingleSelectionMessage message) {
+        switch (message.getType()) {
+            case EFFECT_COMBO:
+                handleEffectComboRequest((WeaponEffectOrderType) message.getSelection());
+                break;
+            case EFFECT_POSSIBILITY:
+                this.effectPossibility = (EffectPossibilityPack) message.getSelection();
+                if (this.effectPossibility.getType() == EffectType.MOVE) {
+                    handleEffectMoveRequest();
+                } else if (this.effectPossibility.getType() == EffectType.SELECT) {
+                    handleEffectSelectRequest();
+                } else {
+                    handleEffectTargetRequest();
+                }
                 break;
         }
     }
@@ -760,6 +783,21 @@ public abstract class View {
     void handleEffectRequest(List<WeaponEffectOrderType> effects) {
         this.effectsSelection = new ArrayList<>(effects);
         this.state = USEEFFECT;
+    }
+
+    void handleEffectComboRequest(WeaponEffectOrderType effect) {
+        this.state = EFFECTCOMBO;
+    }
+
+    void handleEffectSelectRequest() {
+        this.state = EFFECTSELECT;
+    }
+    void handleEffectMoveRequest() {
+        this.state = EFFECTMOVE;
+    }
+
+    void handleEffectTargetRequest() {
+        this.state = EFFECTTARGET;
     }
 
     abstract void requirePayment();

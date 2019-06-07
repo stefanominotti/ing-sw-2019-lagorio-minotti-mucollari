@@ -1,6 +1,7 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.controller.ActionType;
+import it.polimi.se2019.controller.EffectPossibilityPack;
 import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.messages.Message;
 import it.polimi.se2019.model.messages.board.ArenaMessage;
@@ -11,7 +12,7 @@ import it.polimi.se2019.model.messages.nickname.NicknameMessageType;
 import it.polimi.se2019.model.messages.payment.PaymentSentMessage;
 import it.polimi.se2019.model.messages.powerups.PowerupMessageType;
 import it.polimi.se2019.model.messages.selections.SelectionMessageType;
-import it.polimi.se2019.model.messages.selections.SelectionReceivedMessage;
+import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 
@@ -80,6 +81,10 @@ public class CLIView extends View {
             handlePaymentInput(input);
         } else if (getState() == USEEFFECT) {
             handleEffectInput(input);
+        } else if (getState() == EFFECTCOMBO) {
+            handleDecisionInput(input);
+        } else if (getState() == EFFECTPOSSIBILITY) {
+            handleEffectPossibilityInput(input);
         }
     }
 
@@ -135,7 +140,7 @@ public class CLIView extends View {
         if (getState() == CHOOSINGCHARACTER) {
             getClient().send(new CharacterMessage(getCharactersSelection().get(selection), generateToken()));
         } else if (getState() == SELECTPOWERUPTARGET) {
-            getClient().send(new SelectionReceivedMessage(SelectionMessageType.POWERUP_TARGET, getCharacter(),
+            getClient().send(new SingleSelectionMessage(SelectionMessageType.POWERUP_TARGET, getCharacter(),
                     getCharactersSelection().get(selection)));
         } else if (getState() == SELECTBOARDTOSHOW) {
             showMessage(getEnemyBoards().get(selection).toString());
@@ -147,7 +152,7 @@ public class CLIView extends View {
     private void handlePositionInput(String input) {
         if (input.equalsIgnoreCase("c") && getState() != SELECTPOWERUPPOSITION) {
             this.inputEnabled = false;
-            getClient().send(new SelectionReceivedMessage(SelectionMessageType.ACTION, getCharacter(),
+            getClient().send(new SingleSelectionMessage(SelectionMessageType.ACTION, getCharacter(),
                     ActionType.CANCEL));
             return;
         }
@@ -181,13 +186,13 @@ public class CLIView extends View {
 
         this.inputEnabled = false;
         if (getState() == SELECTMOVEMENT) {
-            getClient().send(new SelectionReceivedMessage(SelectionMessageType.MOVE, getCharacter(),
+            getClient().send(new SingleSelectionMessage(SelectionMessageType.MOVE, getCharacter(),
                     new Coordinates(x, y)));
         } else if (getState() == SELECTPICKUP) {
-            getClient().send(new SelectionReceivedMessage(SelectionMessageType.PICKUP, getCharacter(),
+            getClient().send(new SingleSelectionMessage(SelectionMessageType.PICKUP, getCharacter(),
                     new Coordinates(x, y)));
         } else if (getState() == SELECTPOWERUPPOSITION) {
-            getClient().send(new SelectionReceivedMessage(SelectionMessageType.POWERUP_POSITION, getCharacter(),
+            getClient().send(new SingleSelectionMessage(SelectionMessageType.POWERUP_POSITION, getCharacter(),
                     new Coordinates(x, y)));
         }
 
@@ -223,9 +228,9 @@ public class CLIView extends View {
 
         this.inputEnabled = false;
         if (getState() == USEPOWERUP) {
-            getClient().send(new SelectionReceivedMessage(SelectionMessageType.USE_POWERUP, getCharacter(), toSend));
+            getClient().send(new SingleSelectionMessage(SelectionMessageType.USE_POWERUP, getCharacter(), toSend));
         } else if (getState() == DISCARDSPAWN) {
-            getClient().send(new SelectionReceivedMessage(SelectionMessageType.DISCARD_POWERUP, getCharacter(),
+            getClient().send(new SingleSelectionMessage(SelectionMessageType.DISCARD_POWERUP, getCharacter(),
                     toSend));
         }
     }
@@ -253,7 +258,7 @@ public class CLIView extends View {
         Weapon toSend;
         if (getState() == USEWEAPON && selection == maxNumber) {
             this.inputEnabled = false;
-            getClient().send(new SelectionReceivedMessage(SelectionMessageType.ACTION, getCharacter(),
+            getClient().send(new SingleSelectionMessage(SelectionMessageType.ACTION, getCharacter(),
                     ActionType.CANCEL));
             return;
         } else if (getState() == RECHARGEWEAPON && selection == maxNumber) {
@@ -265,13 +270,13 @@ public class CLIView extends View {
 
         this.inputEnabled = false;
         if (getState() == SELECTWEAPON) {
-            getClient().send(new SelectionReceivedMessage(SelectionMessageType.PICKUP_WEAPON, getCharacter(), toSend));
+            getClient().send(new SingleSelectionMessage(SelectionMessageType.PICKUP_WEAPON, getCharacter(), toSend));
         } else if (getState() == SWITCHWEAPON) {
-            getClient().send(new SelectionReceivedMessage(SelectionMessageType.SWITCH, getCharacter(), toSend));
+            getClient().send(new SingleSelectionMessage(SelectionMessageType.SWITCH, getCharacter(), toSend));
         } else if (getState() == RECHARGEWEAPON) {
-            getClient().send(new SelectionReceivedMessage(SelectionMessageType.RELOAD, getCharacter(), toSend));
+            getClient().send(new SingleSelectionMessage(SelectionMessageType.RELOAD, getCharacter(), toSend));
         } else if (getState() == USEWEAPON) {
-            getClient().send(new SelectionReceivedMessage(SelectionMessageType.USE_WEAPON, getCharacter(), toSend));
+            getClient().send(new SingleSelectionMessage(SelectionMessageType.USE_WEAPON, getCharacter(), toSend));
             setCurrentWeapon(toSend);
         }
     }
@@ -313,7 +318,7 @@ public class CLIView extends View {
                 break;
             default:
                 this.inputEnabled = false;
-                getClient().send(new SelectionReceivedMessage(SelectionMessageType.ACTION, getCharacter(),
+                getClient().send(new SingleSelectionMessage(SelectionMessageType.ACTION, getCharacter(),
                         getActionsSelection().get(selection - 4)));
         }
     }
@@ -393,8 +398,58 @@ public class CLIView extends View {
         }
 
         this.inputEnabled = false;
-        getClient().send(new SelectionReceivedMessage(SelectionMessageType.EFFECT, getCharacter(),
+        getClient().send(new SingleSelectionMessage(SelectionMessageType.EFFECT, getCharacter(),
                 SelectionMessageType.valueOf(input)));
+    }
+
+    private void handleDecisionInput(String input) {
+        input = input.toUpperCase();
+        if (!input.equals("Y") && !input.equals("N")) {
+            showMessage("Invalid input, retry:");
+            return;
+        }
+
+        SelectionMessageType type = SelectionMessageType.EFFECT_COMBO;
+
+        if (getState() == EFFECTCOMBO) {
+            type = SelectionMessageType.EFFECT_COMBO;
+        }
+
+        this.inputEnabled = false;
+        getClient().send(new SingleSelectionMessage(type, getCharacter(), input));
+    }
+
+    private void handleEffectPossibilityInput(String input) {
+        String[] targets = input.split(",");
+        List<Integer> targetIndices = new ArrayList<>();
+        boolean valid = true;
+        for (String target : targets) {
+            try {
+                targetIndices.add(Integer.parseInt(target));
+            } catch (NumberFormatException e) {
+                valid = false;
+                break;
+            }
+        }
+        List<String> targetsAmount = getEffectPossibility().getTargetsAmount();
+        if (targetsAmount.size() == 1) {
+            int amount = Integer.parseInt(targetsAmount.get(0));
+            String toAppend = "Select " + amount + " target";
+            text.append(toAppend);
+            if (amount != 1) {
+                text.append("s");
+            }
+            text.append(":\n");
+        } else if (targetsAmount.get(1).equals("MAX")) {
+            int min = Integer.parseInt(targetsAmount.get(0));
+            String toAppend = "Select at least " + min + " target:\n";
+            text.append(toAppend);
+        } else {
+            int min = Integer.parseInt(targetsAmount.get(0));
+            int max = Integer.parseInt(targetsAmount.get(1));
+            String toAppend = "Select from " + min + " to " + max + " targets:\n";
+            text.append(toAppend);
+        }
     }
 
     @Override
@@ -869,6 +924,88 @@ public class CLIView extends View {
         }
         text.setLength(text.length() - 1);
         showMessage(text.toString());
+    }
+
+    @Override
+    void handleEffectComboRequest(WeaponEffectOrderType effect) {
+        super.handleEffectComboRequest(effect);
+        String description;
+        if (effect == WeaponEffectOrderType.SECONDARYONE) {
+            description = getCurrentWeapon().getSecondaryEffectOne().get(0).getDescription();
+        } else {
+            description = getCurrentWeapon().getSecondaryEffectTwo().get(0).getDescription();
+        }
+        showMessage("Do you want to apply \"" + description + "\"? [Y / N]");
+    }
+
+    @Override
+    void handleEffectTargetRequest() {
+        super.handleEffectTargetRequest();
+        StringBuilder text = new StringBuilder();
+        List<String> targetsAmount = getEffectPossibility().getTargetsAmount();
+        if (targetsAmount.size() == 1) {
+            int amount = Integer.parseInt(targetsAmount.get(0));
+            String toAppend = "Select " + amount + " target";
+            text.append(toAppend);
+            if (amount != 1) {
+                text.append("s");
+            }
+            text.append(":\n");
+        } else if (targetsAmount.get(1).equals("MAX")) {
+            int min = Integer.parseInt(targetsAmount.get(0));
+            String toAppend = "Select at least " + min + " target:\n";
+            text.append(toAppend);
+        } else {
+            int min = Integer.parseInt(targetsAmount.get(0));
+            int max = Integer.parseInt(targetsAmount.get(1));
+            String toAppend = "Select from " + min + " to " + max + " targets:\n";
+            text.append(toAppend);
+        }
+        int index = 1;
+        for (GameCharacter character : getEffectPossibility().getCharacters()) {
+            String toAppend = "[" + index + "] - " + character + "\n";
+            text.append(toAppend);
+            index++;
+        }
+        text.setLength(text.length() - 1);
+        showMessage(text.toString());
+    }
+
+    @Override
+    void handleEffectSelectRequest() {
+        super.handleEffectSelectRequest();
+        showMessage(getBoard().arenaToString());
+        StringBuilder text = new StringBuilder("Select a ");
+        int index = 1;
+        if (!getEffectPossibility().getSquares().isEmpty()) {
+            text.append("square:\n");
+            for (Coordinates s : getEffectPossibility().getSquares()) {
+                String toAppend = "[" + index + "] - " + s.getX() + ", " + s.getY() + "\n";
+                text.append(toAppend);
+                index++;
+            }
+        } else if (!getEffectPossibility().getCardinalPoints().isEmpty()) {
+            text.append("cardinal direction:\n");
+            for (CardinalPoint p : getEffectPossibility().getCardinalPoints()) {
+                String toAppend = "[" + index + "] - " + p + "\n";
+                text.append(toAppend);
+                index++;
+            }
+        } else {
+            text.append("room:\n");
+            for (RoomColor room : getEffectPossibility().getRooms()) {
+                String toAppend = "[" + index + "] - " + room + "\n";
+                text.append(toAppend);
+                index++;
+            }
+        }
+        text.setLength(text.length() - 1);
+        showMessage(text.toString());
+    }
+
+    @Override
+    void handleEffectMoveRequest() {
+        super.handleEffectMoveRequest();
     }
 
     private void showMessage(String message) {

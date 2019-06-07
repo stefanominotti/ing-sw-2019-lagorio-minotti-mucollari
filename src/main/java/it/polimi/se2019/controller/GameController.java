@@ -10,14 +10,12 @@ import it.polimi.se2019.model.messages.client.ClientReadyMessage;
 import it.polimi.se2019.model.messages.payment.PaymentMessage;
 import it.polimi.se2019.model.messages.payment.PaymentSentMessage;
 import it.polimi.se2019.model.messages.player.PlayerReadyMessage;
-import it.polimi.se2019.model.messages.selections.SelectionReceivedMessage;
+import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 import it.polimi.se2019.view.VirtualView;
 
-import java.rmi.RemoteException;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class GameController implements Observer {
@@ -33,7 +31,8 @@ public class GameController implements Observer {
 
     public GameController(Board board, VirtualView view) {
         this.model = board;
-        this.turnController = new TurnController(this.model, this);
+        this.effectsController = new EffectsController(this.model, this);
+        this.turnController = new TurnController(this.model, this, this.effectsController);
         this.powerupsController = new PowerupsController(this.model, this, this.turnController);
         this.view = view;
     }
@@ -53,8 +52,8 @@ public class GameController implements Observer {
             case PAYMENT_MESSAGE:
                 update((PaymentMessage) message);
                 break;
-            case SELECTION_RECEIVED_MESSAGE:
-                update((SelectionReceivedMessage) message);
+            case SINGLE_SELECTION_MESSAGE:
+                update((SingleSelectionMessage) message);
                 break;
         }
     }
@@ -129,7 +128,7 @@ public class GameController implements Observer {
         this.gameStarted = true;
     }
 
-    private void update(SelectionReceivedMessage message) {
+    private void update(SingleSelectionMessage message) {
         switch (message.getType()) {
             case SWITCH:
                 handleWeaponSwitchSelection((Weapon) message.getSelection());
@@ -166,6 +165,9 @@ public class GameController implements Observer {
                 break;
             case EFFECT:
                 handleEffectSelection((WeaponEffectOrderType) message.getSelection());
+                break;
+            case EFFECT_COMBO:
+                handleEffectComboSelection((String) message.getSelection());
                 break;
         }
     }
@@ -221,7 +223,13 @@ public class GameController implements Observer {
     }
 
     private void handleEffectSelection(WeaponEffectOrderType effectSelection) {
-        this.turnController.handleEffect(effectSelection);
+        this.effectsController.effectSelected(effectSelection);
+    }
+
+    private void handleEffectComboSelection(String selection) {
+        if (selection.equals("Y")) {
+            this.effectsController.activateCombo();
+        }
     }
 
     private void update(PaymentMessage message) {

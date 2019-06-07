@@ -1,14 +1,12 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.model.messages.*;
 import it.polimi.se2019.model.messages.payment.PaymentMessage;
 import it.polimi.se2019.model.messages.payment.PaymentMessageType;
 import it.polimi.se2019.model.messages.payment.PaymentType;
 import it.polimi.se2019.model.messages.selections.SelectionMessageType;
-import it.polimi.se2019.model.messages.selections.SelectionSentMessage;
+import it.polimi.se2019.model.messages.selections.SelectionListMessage;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
@@ -29,12 +27,12 @@ public class TurnController {
     private WeaponCard switchWeapon;
     private EffectsController effectsController;
 
-    public TurnController(Board board, GameController controller) {
+    public TurnController(Board board, GameController controller, EffectsController effectsController) {
         this.state = TurnState.SELECTACTION;
         this.board = board;
         this.controller = controller;
         this.movesLeft = 2;
-        this.effectsController = new EffectsController(this.board, this);
+        this.effectsController = effectsController;
     }
 
     Player getActivePlayer() {
@@ -51,7 +49,7 @@ public class TurnController {
                     this.board.drawPowerup(this.activePlayer);
                     this.board.drawPowerup(this.activePlayer);
                 }
-                this.controller.send(new SelectionSentMessage<>(SelectionMessageType.DISCARD_POWERUP, player,
+                this.controller.send(new SelectionListMessage<>(SelectionMessageType.DISCARD_POWERUP, player,
                         new ArrayList<>(this.activePlayer.getPowerups())));
                 break;
             case AFTER_DEATH:
@@ -59,7 +57,7 @@ public class TurnController {
                 this.state = DEATH_RESPAWNING;
                 countScore();
                 this.board.drawPowerup(this.activePlayer);
-                this.controller.send(new SelectionSentMessage<>(SelectionMessageType.DISCARD_POWERUP, player,
+                this.controller.send(new SelectionListMessage<>(SelectionMessageType.DISCARD_POWERUP, player,
                         new ArrayList<>(this.activePlayer.getPowerups())));
                 break;
             case NORMAL:
@@ -153,7 +151,7 @@ public class TurnController {
             }
         }
 
-        this.controller.send(new SelectionSentMessage<>(SelectionMessageType.MOVE, this.activePlayer.getCharacter(),
+        this.controller.send(new SelectionListMessage<>(SelectionMessageType.MOVE, this.activePlayer.getCharacter(),
                 movements));
     }
 
@@ -210,7 +208,7 @@ public class TurnController {
             }
         }
 
-        this.controller.send(new SelectionSentMessage<>(SelectionMessageType.PICKUP,
+        this.controller.send(new SelectionListMessage<>(SelectionMessageType.PICKUP,
                 this.activePlayer.getCharacter(), movements));
     }
 
@@ -272,7 +270,7 @@ public class TurnController {
                 }
             }
         }
-        this.controller.send(new SelectionSentMessage<>(SelectionMessageType.USE_POWERUP,
+        this.controller.send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP,
                 this.activePlayer.getCharacter(), availablePowerups));
     }
 
@@ -301,7 +299,7 @@ public class TurnController {
             endTurn();
             return;
         }
-        this.controller.send(new SelectionSentMessage<>(SelectionMessageType.ACTION, this.activePlayer.getCharacter(),
+        this.controller.send(new SelectionListMessage<>(SelectionMessageType.ACTION, this.activePlayer.getCharacter(),
                 availableActions));
         this.state = SELECTACTION;
     }
@@ -351,7 +349,7 @@ public class TurnController {
                     availableWeapons.add(weapon.getWeaponType());
                 }
             }
-            this.controller.send(new SelectionSentMessage<>(SelectionMessageType.PICKUP_WEAPON,
+            this.controller.send(new SelectionListMessage<>(SelectionMessageType.PICKUP_WEAPON,
                     this.activePlayer.getCharacter(), availableWeapons));
             return;
         }
@@ -371,7 +369,7 @@ public class TurnController {
             for (WeaponCard w : this.activePlayer.getWeapons()) {
                 toSend.add(w.getWeaponType());
             }
-            this.controller.send(new SelectionSentMessage<>(SelectionMessageType.SWITCH,
+            this.controller.send(new SelectionListMessage<>(SelectionMessageType.SWITCH,
                     this.activePlayer.getCharacter(), toSend));
             return;
         }
@@ -464,7 +462,7 @@ public class TurnController {
             // gestione ricarica durante azione frenesia finale
             return;
         }
-        this.controller.send(new SelectionSentMessage<>(SelectionMessageType.RELOAD,
+        this.controller.send(new SelectionListMessage<>(SelectionMessageType.RELOAD,
                 this.activePlayer.getCharacter(), getRechargeableWeapons()));
     }
 
@@ -493,18 +491,14 @@ public class TurnController {
 
     void useWeapon(Weapon weapon) {
         this.effectsController.setWeapon(weapon);
-        this.controller.send(new SelectionSentMessage<>(SelectionMessageType.EFFECT,
+        this.controller.send(new SelectionListMessage<>(SelectionMessageType.EFFECT,
                 this.activePlayer.getCharacter(),
                 new ArrayList<>(this.effectsController.getAvailableEffects().keySet())));
     }
 
-    void handleEffect(WeaponEffectOrderType effectSelection) {
-        this.effectsController.effectSelected(effectSelection);
-    }
-
     private void calculateShootAction() {
         this.effectsController.setActivePlayer(this.activePlayer);
-        this.controller.send(new SelectionSentMessage<>(SelectionMessageType.USE_WEAPON,
+        this.controller.send(new SelectionListMessage<>(SelectionMessageType.USE_WEAPON,
                 this.activePlayer.getCharacter(), this.effectsController.getAvailableWeapons()));
     }
 

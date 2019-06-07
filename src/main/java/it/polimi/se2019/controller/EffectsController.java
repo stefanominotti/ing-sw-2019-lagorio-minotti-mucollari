@@ -1,6 +1,9 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.messages.selections.SelectionMessageType;
+import it.polimi.se2019.model.messages.selections.SelectionListMessage;
+import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
 
 import java.util.*;
 
@@ -9,6 +12,7 @@ import static it.polimi.se2019.model.WeaponEffectOrderType.SECONDARYTWO;
 
 public class EffectsController {
     private Board board;
+    private GameController controller;
     private WeaponEffect currentEffect;
     private WeaponEffectOrderType effectOrder;
     //da impostare ogni volta che viene scelto un'arma
@@ -27,17 +31,17 @@ public class EffectsController {
     private Square chosenSquare;
     private CardinalPoint chosenDirection;
     private Player activePlayer;
-    private TurnController turnController;
+    private WeaponEffectOrderType activeCombo;
 
-    public EffectsController(Board board, TurnController turnController) {
+    public EffectsController(Board board, GameController controller) {
         this.board = board;
+        this.controller = controller;
         this.hitByMain = new ArrayList<>();
         this.hitBySecondary = new ArrayList<>();
         this.mainEffectApplied = false;
         this.secondaryEffectOneApplied = false;
         this.secondaryEffectTwoApplied = false;
         this.weaponEffects = new ArrayList<>();
-        this.turnController = turnController;
     }
 
     public void setActivePlayer(Player player) {
@@ -133,7 +137,7 @@ public class EffectsController {
         }
     }
 
-    public Map<WeaponEffectOrderType, List<WeaponEffect>> getAvailableEffects() {
+    Map<WeaponEffectOrderType, List<WeaponEffect>> getAvailableEffects() {
         Map<WeaponEffectOrderType, List<WeaponEffect>> availableWeapons = new LinkedHashMap<>();
         if (!this.mainEffectApplied) {
             availableWeapons.put(WeaponEffectOrderType.PRIMARY, weapon.getPrimaryEffect());
@@ -171,7 +175,7 @@ public class EffectsController {
         return availableWeapons;
     }
 
-    public boolean checkCost(List<WeaponEffect> effect) {
+    boolean checkCost(List<WeaponEffect> effect) {
         for (Map.Entry<AmmoType, Integer> cost : effect.get(0).getCost().entrySet()) {
             Integer powerupAmmo = 0;
             for (Powerup powerup : this.activePlayer.getPowerups()) {
@@ -375,7 +379,7 @@ public class EffectsController {
         return availableSquares;
     }
 
-    public EffectPossibilityPack seeEffectPossibility(WeaponEffect effect) throws UnsupportedOperationException {
+    EffectPossibilityPack seeEffectPossibility(WeaponEffect effect) throws UnsupportedOperationException {
         this.currentEffect = effect;
         EffectTarget target = effect.getTarget();
         TargetPositionType positionType = target.getPositionType();
@@ -504,7 +508,7 @@ public class EffectsController {
                 availableCardinal, multipleSquares, effect.isRequired(), effect.getType()));
     }
 
-    public void effectApplication(EffectPossibilityPack pack) {
+    void effectApplication(EffectPossibilityPack pack) {
         Square square = this.activePlayer.getPosition();
         try {
             Coordinates coordinates = pack.getSquares().get(0);
@@ -558,6 +562,10 @@ public class EffectsController {
         handleEffectsQueue();
     }
 
+    void activateCombo() {
+        effectSelected(this.activeCombo);
+    }
+
     private void handleEffectsQueue() {
         try {
             this.currentEffect = this.effectsQueue.get(0);
@@ -583,20 +591,26 @@ public class EffectsController {
         if (!this.currentEffect.getEffectDependency().isEmpty()) {
             switch (this.currentEffect.getEffectDependency().get(0)) {
                 case SECONDARYTWO:
-                    if(weapon.getSecondaryEffectTwo().get(0).isCombo()) {
-                        //invia
-                    }
+                    this.activeCombo = SECONDARYTWO;
                     break;
                 case SECONDARYONE:
-                    if(weapon.getSecondaryEffectOne().get(0).isCombo()) {
-                        //invia
-                    }
+                    this.activeCombo = SECONDARYONE;
                     break;
+                default:
+                    this.activeCombo = null;
+            }
+            if (this.activeCombo != null) {
+                this.controller.send(new SingleSelectionMessage(SelectionMessageType.EFFECT_COMBO,
+                        this.activePlayer.getCharacter(), this.activeCombo));
             }
             return;
         }
         EffectPossibilityPack pack = seeEffectPossibility(this.currentEffect);
-        //manda al giocatore le possibilità
+        if (pack.getTargetsAmount().size() == 1 && pack.getTargetsAmount().get(0).equals("MAX")) {
+            effectApplication(pack);
+        }
+        this.controller.send(new SingleSelectionMessage(SelectionMessageType.EFFECT_POSSIBILITY,
+                this.activePlayer.getCharacter(), pack));
     }
 
     private void setHitByCases(GameCharacter character) {

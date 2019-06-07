@@ -17,10 +17,8 @@ import it.polimi.se2019.model.messages.turn.TurnMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessageType;
 import it.polimi.se2019.server.Server;
 
-import java.rmi.RemoteException;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class VirtualView extends Observable implements Observer {
@@ -53,7 +51,7 @@ public class VirtualView extends Observable implements Observer {
             case POWERUP_MESSAGE:
                 update((PowerupMessage) message);
                 break;
-            case SELECTION_SENT_MESSAGE:
+            case SELECTION_LIST_MESSAGE:
                 send((SingleReceiverMessage) message);
                 break;
             case TURN_MESSAGE:

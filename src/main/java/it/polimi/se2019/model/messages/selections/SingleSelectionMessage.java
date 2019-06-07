@@ -5,19 +5,17 @@ import it.polimi.se2019.model.messages.Message;
 import it.polimi.se2019.model.messages.MessageType;
 import it.polimi.se2019.model.messages.SingleReceiverMessage;
 
-import java.util.List;
-
-public class SelectionSentMessage<T> extends Message implements SingleReceiverMessage {
+public class SingleSelectionMessage extends Message implements SingleReceiverMessage {
 
     private SelectionMessageType type;
     private GameCharacter character;
-    private List<T> list;
+    private Object selection;
 
-    public SelectionSentMessage(SelectionMessageType type, GameCharacter character, List<T> list) {
-        setMessageType(MessageType.SELECTION_SENT_MESSAGE);
+    public SingleSelectionMessage(SelectionMessageType type, GameCharacter character, Object selection) {
+        setMessageType(MessageType.SINGLE_SELECTION_MESSAGE);
         this.type = type;
         this.character = character;
-        this.list = list;
+        this.selection = selection;
     }
 
     public SelectionMessageType getType() {
@@ -28,7 +26,7 @@ public class SelectionSentMessage<T> extends Message implements SingleReceiverMe
         return this.character;
     }
 
-    public List<T> getList() {
-        return this.list;
+    public Object getSelection() {
+        return this.selection;
     }
 }
