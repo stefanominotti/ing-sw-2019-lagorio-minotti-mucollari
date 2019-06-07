@@ -23,6 +23,14 @@
 	-fx-background-color: #ffc107;
 }
 
+.button-danger {
+	-fx-background-color: #007bff;
+}
+
+.button-danger-focus {
+	-fx-background-color: #0360c4;
+}
+
 .img-shadow {
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);
 }

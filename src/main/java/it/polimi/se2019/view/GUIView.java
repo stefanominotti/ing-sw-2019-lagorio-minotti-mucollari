@@ -75,6 +75,11 @@ public class GUIView extends View {
     }
 
     @Override
+    void handleInvalidToken() {
+        this.GUIApp.setScene(SceneType.INVALID_TOKEN);
+    }
+
+    @Override
     void handleNicknameRequest() {
         super.handleNicknameRequest();
         setScene(SceneType.SELECT_NICKNAME);
