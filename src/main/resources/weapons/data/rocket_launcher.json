@@ -18,7 +18,7 @@
       "effectRequired": true,
       "effectCombo": false,
       "effectDependency": [
-        "secondaryEffectOne"
+        "SECONDARYONE"
       ],
       "type": "DAMAGE",
       "amount": [
@@ -50,7 +50,7 @@
       "effectCombo": false,
       "type": "MOVE",
       "effectDependency": [
-        "secondaryEffectTwo"
+        "SECONDARYTWO"
       ],
       "amount": [
         "1"

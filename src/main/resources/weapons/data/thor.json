@@ -43,7 +43,7 @@
       "effectRequired": true,
       "effectCombo": false,
       "effectDependency": [
-        "primaryEffect"
+        "PRIMARY"
       ],
       "cost": {
         "BLUE": 1,
@@ -84,7 +84,7 @@
       "effectRequired": true,
       "effectCombo": false,
       "effectDependency": [
-        "secondaryEffectOne"
+        "SECONDARYONE"
       ],
       "type": "DAMAGE",
       "amount": [

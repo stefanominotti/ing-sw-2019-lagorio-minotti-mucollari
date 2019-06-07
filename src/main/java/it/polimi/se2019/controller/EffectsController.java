@@ -4,6 +4,9 @@ import it.polimi.se2019.model.*;
 
 import java.util.*;
 
+import static it.polimi.se2019.model.WeaponEffectOrderType.SECONDARYONE;
+import static it.polimi.se2019.model.WeaponEffectOrderType.SECONDARYTWO;
+
 public class EffectsController {
     private Board board;
     private WeaponEffect currentEffect;
@@ -141,22 +144,20 @@ public class EffectsController {
         if (!this.secondaryEffectOneApplied && !this.weapon.getSecondaryEffectOne().isEmpty()
                 && checkCost(weapon.getSecondaryEffectOne()) && !this.weapon.getSecondaryEffectOne().get(0).isCombo()
                 && (!this.mainEffectApplied &&
-                this.weapon.getPrimaryEffect().get(0).getEffectDependency().contains("secondaryEffectOne") &&
+                this.weapon.getPrimaryEffect().get(0).getEffectDependency().contains(SECONDARYONE) &&
                 checkSecondaryFirst()) || this.mainEffectApplied) {
-            availableWeapons.put(WeaponEffectOrderType.SECONDARYONE, this.weapon.getSecondaryEffectOne());
+            availableWeapons.put(SECONDARYONE, this.weapon.getSecondaryEffectOne());
         }
         if (!this.secondaryEffectTwoApplied && !this.weapon.getSecondaryEffectTwo().isEmpty()
                 && checkCost(this.weapon.getSecondaryEffectTwo())
                 && !this.weapon.getSecondaryEffectTwo().get(0).isCombo() && (
-                !(this.weapon.getSecondaryEffectTwo().get(0).getEffectDependency().contains("secondaryEffectOne") &&
+                !(this.weapon.getSecondaryEffectTwo().get(0).getEffectDependency().contains(SECONDARYONE) &&
                         !this.secondaryEffectOneApplied) &&
-                        (this.weapon.getPrimaryEffect().get(0).getEffectDependency().contains("secondaryEffectTwo") ||
+                        (this.weapon.getPrimaryEffect().get(0).getEffectDependency().contains(SECONDARYTWO) ||
                                 this.mainEffectApplied))) {
-            availableWeapons.put(WeaponEffectOrderType.SECONDARYTWO, this.weapon.getSecondaryEffectTwo());
+            availableWeapons.put(SECONDARYTWO, this.weapon.getSecondaryEffectTwo());
         }
-
         List<WeaponEffectOrderType> toRemove = new ArrayList<>();
-
         for(Map.Entry<WeaponEffectOrderType, List<WeaponEffect>> effect : availableWeapons.entrySet()) {
             try {
                 seeEffectPossibility(effect.getValue().get(0));
@@ -164,11 +165,9 @@ public class EffectsController {
                 toRemove.add(effect.getKey());
             }
         }
-
         for (WeaponEffectOrderType w : toRemove) {
             availableWeapons.remove(w);
         }
-
         return availableWeapons;
     }
 
@@ -199,14 +198,14 @@ public class EffectsController {
                 break;
             case SECONDARYONE:
                 this.effectsQueue.addAll(0, weapon.getSecondaryEffectOne());
-                this.effectOrder = WeaponEffectOrderType.SECONDARYONE;
+                this.effectOrder = SECONDARYONE;
                 if (!this.mainEffectApplied) {
                     this.effectsQueue.addAll(weapon.getPrimaryEffect());
                 }
                 break;
             case SECONDARYTWO:
                 this.effectsQueue.addAll(0, weapon.getSecondaryEffectTwo());
-                this.effectOrder = WeaponEffectOrderType.SECONDARYTWO;
+                this.effectOrder = SECONDARYTWO;
                 break;
         }
         handleEffectsQueue();
@@ -552,7 +551,7 @@ public class EffectsController {
             }
         }
         if (this.currentEffect.getEffectName() != null && !mainEffectApplied &&
-                this.effectOrder == WeaponEffectOrderType.SECONDARYONE) {
+                this.effectOrder == SECONDARYONE) {
             this.effectOrder = WeaponEffectOrderType.PRIMARY;
         }
         this.effectsQueue.remove(0);
@@ -567,6 +566,9 @@ public class EffectsController {
                 case PRIMARY:
                     this.mainEffectApplied = true;
                     break;
+                case ALTERNATIVE:
+                    this.mainEffectApplied = true;
+                    break;
                 case SECONDARYONE:
                     this.secondaryEffectOneApplied = true;
                     break;
@@ -579,7 +581,18 @@ public class EffectsController {
             }
         }
         if (!this.currentEffect.getEffectDependency().isEmpty()) {
-            //chiedi al giocatore se vuole attivare "combo"
+            switch (this.currentEffect.getEffectDependency().get(0)) {
+                case SECONDARYTWO:
+                    if(weapon.getSecondaryEffectTwo().get(0).isCombo()) {
+                        //invia
+                    }
+                    break;
+                case SECONDARYONE:
+                    if(weapon.getSecondaryEffectOne().get(0).isCombo()) {
+                        //invia
+                    }
+                    break;
+            }
             return;
         }
         EffectPossibilityPack pack = seeEffectPossibility(this.currentEffect);
@@ -590,7 +603,7 @@ public class EffectsController {
         if (this.effectOrder == WeaponEffectOrderType.PRIMARY ||
                 this.effectOrder == WeaponEffectOrderType.ALTERNATIVE) {
             this.hitByMain.add(this.board.getPlayerByCharacter(character));
-        } else if (this.effectOrder == WeaponEffectOrderType.SECONDARYONE) {
+        } else if (this.effectOrder == SECONDARYONE) {
             this.hitBySecondary.add(this.board.getPlayerByCharacter(character));
         }
     }

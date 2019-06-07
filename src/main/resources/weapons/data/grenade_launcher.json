@@ -39,7 +39,7 @@
       "effectRequired": false,
       "effectCombo": false,
       "effectDependency" : [
-        "secondaryEffectOne"
+        "SECONDARYONE"
       ],
       "type": "MOVE",
       "amount": [
