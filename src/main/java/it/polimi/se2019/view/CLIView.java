@@ -598,6 +598,34 @@ public class CLIView extends View {
     }
 
     @Override
+    void handleAttack(GameCharacter character, GameCharacter attacker, int amount, EffectType attackType) {
+        super.handleAttack(character, attacker, amount, attackType);
+        StringBuilder text = new StringBuilder();
+        if (character == getCharacter()) {
+            String toAppend = "You dealt " + amount + " ";
+            text.append(toAppend);
+        } else {
+            String toAppend = attacker + " dealt " + amount + " ";
+            text.append(toAppend);
+        }
+
+        if (attackType == EffectType.DAMAGE) {
+            text.append("damage");
+        } else {
+            text.append("mark");
+        }
+
+        if (amount != 1) {
+            text.append("s");
+        }
+
+        String toAppend = " to " + character;
+        text.append(toAppend);
+
+        showMessage(text.toString());
+    }
+
+    @Override
     void handleInvalidToken() {
         showMessage("Invalid token");
         super.handleInvalidToken();

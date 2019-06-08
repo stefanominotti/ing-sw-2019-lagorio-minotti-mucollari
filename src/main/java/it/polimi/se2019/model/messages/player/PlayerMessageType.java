@@ -8,5 +8,5 @@ public enum PlayerMessageType {
     START_SETUP,
     SCORE,
     SKULLS_SET,
-    MOVE
+    ATTACK, MOVE
 }

@@ -750,11 +750,11 @@ public class Board extends Observable {
     public void attackPlayer(GameCharacter player, GameCharacter target, int damage, EffectType type) {
         switch (type) {
             case DAMAGE:
-                getPlayerByCharacter(target).addDamages(player ,damage);
+                getPlayerByCharacter(target).addDamages(player, damage);
                 //notify
                 break;
             case MARK:
-                getPlayerByCharacter(target).addRevengeMarks(player ,damage);
+                getPlayerByCharacter(target).addRevengeMarks(player, damage);
                 //notify
         }
 

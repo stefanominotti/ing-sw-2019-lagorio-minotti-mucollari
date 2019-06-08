@@ -7,7 +7,6 @@ import it.polimi.se2019.model.messages.Message;
 
 public class MovementMessage extends PlayerMessage {
 
-    private ActionType actionType;
     private Coordinates coordinates;
 
     public MovementMessage(GameCharacter character, Coordinates coordinates) {

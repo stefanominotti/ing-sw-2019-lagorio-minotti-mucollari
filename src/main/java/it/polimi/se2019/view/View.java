@@ -327,6 +327,29 @@ public abstract class View {
             case MOVE:
                 handleMovement(message.getCharacter(), ((MovementMessage) message).getCoordinates());
                 break;
+            case ATTACK:
+                handleAttack(message.getCharacter(), ((AttackMessage) message).getAttacker(),
+                        ((AttackMessage) message).getAmount(), ((AttackMessage) message).getAttackType());
+                break;
+        }
+    }
+
+    void handleAttack(GameCharacter character, GameCharacter attacker, int amount, EffectType attackType) {
+        PlayerBoard playerBoard;
+        if (character == this.character) {
+            playerBoard = this.selfPlayerBoard;
+        } else {
+            playerBoard = getBoardByCharacter(character);
+        }
+
+        if (playerBoard == null) {
+            return;
+        }
+
+        if (attackType == EffectType.DAMAGE) {
+            playerBoard.addDamage(attacker, amount);
+        } else {
+            playerBoard.addMarks(attacker, amount);
         }
     }
 
