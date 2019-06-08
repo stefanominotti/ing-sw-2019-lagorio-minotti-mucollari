@@ -44,12 +44,6 @@ public class CLIView extends View {
         inputThread.start();
     }
 
-    @Override
-    public void manageUpdate(Message message) {
-        this.inputEnabled = true;
-        super.manageUpdate(message);
-    }
-
     private void handleInput(String input) {
         if (!this.inputEnabled || input == null) {
             return;
@@ -507,12 +501,14 @@ public class CLIView extends View {
     void handleNicknameRequest() {
         super.handleNicknameRequest();
         showMessage("Insert nickname: ");
+        this.inputEnabled = true;
     }
 
     @Override
     void handleNicknameDuplicated() {
         super.handleNicknameDuplicated();
         showMessage("Nickname is already in use. Insert another nickname: ");
+        this.inputEnabled = true;
     }
 
     @Override
@@ -563,6 +559,7 @@ public class CLIView extends View {
     void handleSkullsSet() {
         super.handleSkullsSet();
         showMessage("OK, now select the Arena [1, 2, 3, 4]:");
+        this.inputEnabled = true;
     }
 
     @Override
@@ -570,6 +567,7 @@ public class CLIView extends View {
         super.handleMasterChanged(character);
         if (character == getCharacter()) {
             showMessage("Master disconnected, you are the new master. Set skull number for the game:");
+            this.inputEnabled = true;
         } else {
             showMessage("Master disconnected, the new master is setting up the game");
         }
@@ -580,6 +578,7 @@ public class CLIView extends View {
         super.handleStartSetup(character);
         if (character == getCharacter()) {
             showMessage("You are the master, set Skulls number for the game:");
+            this.inputEnabled = true;
         } else {
             showMessage("Master player is setting up the game, wait");
         }
@@ -659,7 +658,7 @@ public class CLIView extends View {
 
     @Override
     void handleReconnectionRequest() {
-        showMessage("A game already exists, trying to reconnect.");
+        showMessage("A game already exists, trying to reconnect");
         super.handleReconnectionRequest();
     }
 
@@ -677,6 +676,7 @@ public class CLIView extends View {
         }
         text.setLength(text.length() - 1);
         showMessage(text.toString());
+        this.inputEnabled = true;
     }
 
     @Override
@@ -868,6 +868,7 @@ public class CLIView extends View {
         }
         text.setLength(text.length() - 1);
         showMessage(text.toString());
+        this.inputEnabled = true;
     }
 
     @Override
@@ -875,6 +876,7 @@ public class CLIView extends View {
         super.handlePickupActionRequest(coordinates);
         showMessage(getBoard().arenaToString(coordinates));
         showMessage("You can move and pickup in the squares marked with '***'\nInsert [x,y] or type 'C' to cancel:");
+        this.inputEnabled = true;
     }
 
     @Override
@@ -882,6 +884,7 @@ public class CLIView extends View {
         super.handleMovementActionRequest(coordinates);
         showMessage(getBoard().arenaToString(coordinates));
         showMessage("You can move in the squares marked with '***'\nInsert [x,y] or type 'C' to cancel:");
+        this.inputEnabled = true;
     }
 
     @Override
@@ -897,6 +900,7 @@ public class CLIView extends View {
         }
         text.setLength(text.length() - 1);
         showMessage(text.toString());
+        this.inputEnabled = true;
     }
 
     @Override
@@ -911,6 +915,7 @@ public class CLIView extends View {
                 showMessage("You can move your target in the squares marked with '***'\nInsert [x,y]:");
                 break;
         }
+        this.inputEnabled = true;
     }
 
     @Override
@@ -927,6 +932,7 @@ public class CLIView extends View {
         text.append(toAppend);
         text.setLength(text.length() - 1);
         showMessage(text.toString());
+        this.inputEnabled = true;
     }
 
     @Override
@@ -942,6 +948,7 @@ public class CLIView extends View {
         }
         text.setLength(text.length() - 1);
         showMessage(text.toString());
+        this.inputEnabled = true;
     }
 
     @Override
@@ -954,8 +961,11 @@ public class CLIView extends View {
             text.append(toAppend);
             index++;
         }
-        text.append("[" + index + "] - Cancel");
+
+        String toAppend = "[" + index + "] - Cancel";
+        text.append(toAppend);
         showMessage(text.toString());
+        this.inputEnabled = true;
     }
 
     @Override
@@ -970,6 +980,7 @@ public class CLIView extends View {
         }
         text.setLength(text.length() - 1);
         showMessage(text.toString());
+        this.inputEnabled = true;
     }
 
     @Override
@@ -977,6 +988,7 @@ public class CLIView extends View {
         super.handleActionSelectionRequest(actions);
         showMessage(getBoard().arenaToString());
         showActions();
+        this.inputEnabled = true;
     }
 
     @Override
@@ -993,6 +1005,7 @@ public class CLIView extends View {
         text.append(toAppend);
         text.setLength(text.length() - 1);
         showMessage(text.toString());
+        this.inputEnabled = true;
     }
 
     @Override
@@ -1019,6 +1032,7 @@ public class CLIView extends View {
         }
         text.setLength(text.length() - 1);
         showMessage(text.toString());
+        this.inputEnabled = true;
     }
 
     @Override
@@ -1031,6 +1045,7 @@ public class CLIView extends View {
             description = getCurrentWeapon().getSecondaryEffectTwo().get(0).getDescription();
         }
         showMessage("Do you want to apply \"" + description + "\"? [Y / N]");
+        this.inputEnabled = true;
     }
 
     @Override
@@ -1077,6 +1092,7 @@ public class CLIView extends View {
         }
         text.setLength(text.length() - 1);
         showMessage(text.toString());
+        this.inputEnabled = true;
     }
 
     @Override
@@ -1109,6 +1125,7 @@ public class CLIView extends View {
         }
         text.setLength(text.length() - 1);
         showMessage(text.toString());
+        this.inputEnabled = true;
     }
 
     @Override
@@ -1123,6 +1140,7 @@ public class CLIView extends View {
         }
         text.setLength(text.length() - 1);
         showMessage(text.toString());
+        this.inputEnabled = true;
     }
 
     @Override
@@ -1134,7 +1152,7 @@ public class CLIView extends View {
         }
         text.setLength(text.length() - 1);
         showMessage(text.toString());
-
+        this.inputEnabled = true;
     }
 
     private void showMessage(String message) {
@@ -1221,5 +1239,6 @@ public class CLIView extends View {
         }
         text.setLength(text.length() - 1);
         showMessage(text.toString());
+        this.inputEnabled = true;
     }
 }

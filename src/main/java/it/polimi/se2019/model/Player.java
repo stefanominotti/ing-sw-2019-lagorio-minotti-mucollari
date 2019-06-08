@@ -201,6 +201,10 @@ public class Player {
         }
     }
 
+    void flipBoard() {
+        this.killshotPoints = new ArrayList<>(Arrays.asList(2, 1, 1, 1));
+    }
+
     int getPowerupsNumber() {
         return this.powerups.size();
     }

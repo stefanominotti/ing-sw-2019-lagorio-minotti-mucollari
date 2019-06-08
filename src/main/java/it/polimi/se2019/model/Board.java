@@ -472,14 +472,14 @@ public class Board extends Observable {
         this.finalFrenzyOrder.add(player);
     }
 
-    protected void fillWeaponsDeck() {
+    private void fillWeaponsDeck() {
         for(Weapon weapon : Weapon.values()) {
             this.weaponsDeck.add(new WeaponCard(weapon));
         }
         Collections.shuffle(this.weaponsDeck);
     }
 
-    protected void fillPowerupsDeck() {
+    private void fillPowerupsDeck() {
         if(this.powerupsDiscardPile.isEmpty()) {
             for(PowerupType type : PowerupType.values()) {
                 for (AmmoType color : AmmoType.values()) {
@@ -496,7 +496,7 @@ public class Board extends Observable {
         Collections.shuffle(powerupsDeck);
     }
 
-    protected void fillAmmosDeck() {
+    private void fillAmmosDeck() {
         if(this.ammosDiscardPile.isEmpty()) {
             String path = "ammotiles/data/ammotile_";
             int ammosNumber;
@@ -520,7 +520,7 @@ public class Board extends Observable {
 
     }
 
-    public void fillWeaponStores() {
+    private void fillWeaponStores() {
         Map<Coordinates, Weapon> added = new HashMap<>();
         for(Room room : this.arena.getRoomList()) {
             for(Square square : room.getSquares()) {
@@ -547,7 +547,7 @@ public class Board extends Observable {
         }
     }
 
-    public void fillAmmoTiles() {
+    private void fillAmmoTiles() {
         Map<Coordinates, AmmoTile> added = new HashMap<>();
         for(Room room : this.arena.getRoomList()) {
             for(Square square : room.getSquares()) {
@@ -645,6 +645,26 @@ public class Board extends Observable {
 
     public boolean verifyGameFinished() {
         return this.skulls == 0;
+    }
+
+    void startFinalFrenzy(Player player) {
+        int index = this.players.indexOf(player);
+        for (int i=index+1; i<this.players.size(); i++) {
+            this.finalFrenzyOrder.add(this.players.get(i));
+        }
+        for (int i=0; i<=index; i++) {
+            this.finalFrenzyOrder.add(this.players.get(i));
+        }
+
+        for (Player p : this.players) {
+            if (p.getDamages().isEmpty()) {
+                p.flipBoard();
+
+                // notify TODO
+            }
+        }
+
+        // notify TODO
     }
 
     public void raisePlayerScore(Player p, int score) {

@@ -826,6 +826,8 @@ public abstract class View {
                         this.effectPossibility.getType());
                 if (this.effectPossibility.getType() == EffectType.SELECT) {
                     handleEffectSelectRequest();
+                } else if (this.effectPossibility.getType() == EffectType.MOVE) {
+                    handleEffectMoveRequest();
                 } else if (!this.effectPossibility.getMultipleSquares().isEmpty()) {
                     handleMultipleSquareRequest();
                 } else {

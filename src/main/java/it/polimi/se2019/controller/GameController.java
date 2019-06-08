@@ -239,6 +239,10 @@ public class GameController implements Observer {
         this.effectsController.effectApplication(selection);
     }
 
+    void endEffects() {
+        this.turnController.handleEndAction();
+    }
+
     private void update(PaymentMessage message) {
         switch (message.getPaymentType()) {
             case WEAPON:

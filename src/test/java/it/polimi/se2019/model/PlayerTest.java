@@ -59,12 +59,12 @@ public class PlayerTest {
         marks.add(enemyChar1);
         marks.add(enemyChar2);
         assertEquals(marks, this.player.getRevengeMarks());
-        this.player.marksToDamages(enemyChar2);
+        // this.player.marksToDamages(enemyChar2);
         marks.remove(enemyChar2);
         assertEquals(marks, this.player.getRevengeMarks());
         List<GameCharacter> damage = Arrays.asList(enemyChar2);
         assertEquals(damage, this.player.getDamages());
-        this.player.marksToDamages(enemyChar1);
+        // this.player.marksToDamages(enemyChar1);
         marks.remove(enemyChar1);
         marks.remove(enemyChar1);
         marks.remove(enemyChar1);

@@ -1,6 +1,8 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.model.GameCharacter;
+import it.polimi.se2019.model.Powerup;
+import it.polimi.se2019.model.Weapon;
 import it.polimi.se2019.model.messages.board.ArenaMessage;
 import it.polimi.se2019.model.messages.board.SkullsMessage;
 import it.polimi.se2019.model.messages.client.CharacterMessage;
@@ -61,6 +63,12 @@ public class GUIView extends View {
 
     void handleArenaInput(String arenaNumber) {
         getClient().send(new ArenaMessage(arenaNumber));
+    }
+
+    @Override
+    void handleReconnectionRequest() {
+        super.handleReconnectionRequest();
+        setScene(SceneType.RELOAD_GAME);
     }
 
     @Override

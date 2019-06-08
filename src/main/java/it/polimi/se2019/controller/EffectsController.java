@@ -593,7 +593,16 @@ public class EffectsController {
                     break;
             }
 
-            //avvisa fine efetto
+
+            if(!getAvailableEffects().isEmpty()) {
+                this.controller.send(new SelectionListMessage<>(SelectionMessageType.EFFECT,
+                        this.activePlayer.getCharacter(),
+                        new ArrayList<>(getAvailableEffects().keySet())));
+            } else {
+                this.controller.endEffects();
+                // fine TODO
+            }
+
             return;
         }
         if (!this.currentEffect.getEffectDependency().isEmpty()) {
@@ -620,9 +629,10 @@ public class EffectsController {
         EffectPossibilityPack pack = seeEffectPossibility(this.currentEffect);
         if (pack.getTargetsAmount().size() == 1 && pack.getTargetsAmount().get(0).equals("MAX")) {
             effectApplication(pack);
+        } else {
+            this.controller.send(new SingleSelectionMessage(SelectionMessageType.EFFECT_POSSIBILITY,
+                    this.activePlayer.getCharacter(), pack));
         }
-        this.controller.send(new SingleSelectionMessage(SelectionMessageType.EFFECT_POSSIBILITY,
-                this.activePlayer.getCharacter(), pack));
     }
 
     private void setHitByCases(GameCharacter character) {
