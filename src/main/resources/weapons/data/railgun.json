@@ -43,7 +43,7 @@
       "effectCombo": false,
       "type": "DAMAGE",
       "amount": [
-        "1"
+        "3"
       ],
       "target": {
         "type": "OTHERS",
@@ -97,7 +97,7 @@
       "effectCombo": false,
       "type": "DAMAGE",
       "amount": [
-        "1"
+        "2"
       ],
       "target": {
         "type": "OTHERS",

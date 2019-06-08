@@ -15,6 +15,8 @@
         "RED": 0,
         "YELLOW": 0
       },
+      "effectRequired": true,
+      "effectCombo": false,
       "type": "SELECT",
       "amount": [
         "1"
@@ -45,6 +47,8 @@
     },
     {
       "type": "MOVE",
+      "effectRequired": true,
+      "effectCombo": false,
       "amount": [
         "1"
       ],
@@ -64,6 +68,8 @@
     },
     {
       "type": "DAMAGE",
+      "effectRequired": true,
+      "effectCombo": false,
       "amount": [
         "1"
       ],
@@ -86,6 +92,8 @@
     },
     {
       "type": "MARK",
+      "effectRequired": true,
+      "effectCombo": false,
       "amount": [
         "2"
       ],
@@ -111,6 +119,8 @@
         "YELLOW": 0
       },
       "type": "SELECT",
+      "effectRequired": true,
+      "effectCombo": false,
       "amount": [
         "1"
       ],
@@ -140,6 +150,8 @@
     },
     {
       "type": "MOVE",
+      "effectRequired": true,
+      "effectCombo": false,
       "amount": [
         "1"
       ],
@@ -159,6 +171,8 @@
     },
     {
       "type": "DAMAGE",
+      "effectRequired": true,
+      "effectCombo": false,
       "amount": [
         "2"
       ],

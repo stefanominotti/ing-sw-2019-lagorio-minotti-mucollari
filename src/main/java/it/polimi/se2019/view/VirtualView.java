@@ -55,6 +55,9 @@ public class
             case SELECTION_LIST_MESSAGE:
                 send((SingleReceiverMessage) message);
                 break;
+            case SINGLE_SELECTION_MESSAGE:
+                send((SingleReceiverMessage) message);
+                break;
             case TURN_MESSAGE:
                 update((TurnMessage) message);
                 break;

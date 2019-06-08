@@ -2,12 +2,13 @@ package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EffectPossibilityPack {
+public class EffectPossibilityPack implements Serializable {
     private List<String> targetsAmount;
     private List<GameCharacter> characters;
     private List<Coordinates> squares;

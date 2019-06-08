@@ -169,6 +169,9 @@ public class GameController implements Observer {
             case EFFECT_COMBO:
                 handleEffectComboSelection((String) message.getSelection());
                 break;
+            case EFFECT_POSSIBILITY:
+                handleEffectPossibilitySelection((EffectPossibilityPack) message.getSelection());
+                break;
         }
     }
 
@@ -230,6 +233,10 @@ public class GameController implements Observer {
         if (selection.equals("Y")) {
             this.effectsController.activateCombo();
         }
+    }
+
+    private void handleEffectPossibilitySelection(EffectPossibilityPack selection) {
+        this.effectsController.effectApplication(selection);
     }
 
     private void update(PaymentMessage message) {

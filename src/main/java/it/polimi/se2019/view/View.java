@@ -17,6 +17,7 @@ import it.polimi.se2019.model.messages.player.*;
 import it.polimi.se2019.model.messages.powerups.PowerupMessage;
 import it.polimi.se2019.model.messages.powerups.PowerupMessageType;
 import it.polimi.se2019.model.messages.selections.SelectionListMessage;
+import it.polimi.se2019.model.messages.selections.SelectionMessageType;
 import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
 import it.polimi.se2019.model.messages.timer.TimerMessage;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
@@ -837,7 +838,8 @@ public abstract class View {
     }
 
     void selectionEffectFinish() {
-        //invia il PossibilitySelecetions al server
+        this.client.send(new SingleSelectionMessage(SelectionMessageType.EFFECT_POSSIBILITY, this.character,
+                this.possibilitySelections));
     }
 
     String generateToken() {

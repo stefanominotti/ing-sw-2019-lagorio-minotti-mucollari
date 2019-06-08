@@ -42,6 +42,7 @@ public class EffectsController {
         this.secondaryEffectOneApplied = false;
         this.secondaryEffectTwoApplied = false;
         this.weaponEffects = new ArrayList<>();
+        this.effectsQueue = new ArrayList<>();
     }
 
     public void setActivePlayer(Player player) {
@@ -101,6 +102,13 @@ public class EffectsController {
 
     void setWeapon(Weapon weapon) {
         this.weapon = weapon;
+        this.hitByMain = new ArrayList<>();
+        this.hitBySecondary = new ArrayList<>();
+        this.mainEffectApplied = false;
+        this.secondaryEffectOneApplied = false;
+        this.secondaryEffectTwoApplied = false;
+        this.weaponEffects = new ArrayList<>();
+        this.effectsQueue = new ArrayList<>();
     }
 
     List<Weapon> getAvailableWeapons() {
@@ -193,18 +201,18 @@ public class EffectsController {
     public void effectSelected(WeaponEffectOrderType effectType) {
         switch (effectType) {
             case PRIMARY:
-                this.effectsQueue.addAll(0, weapon.getPrimaryEffect());
+                this.effectsQueue.addAll(0, this.weapon.getPrimaryEffect());
                 this.effectOrder = WeaponEffectOrderType.PRIMARY;
                 break;
             case ALTERNATIVE:
-                this.effectsQueue.addAll(0, weapon.getAlternativeMode());
+                this.effectsQueue.addAll(0, this.weapon.getAlternativeMode());
                 this.effectOrder = WeaponEffectOrderType.PRIMARY;
                 break;
             case SECONDARYONE:
-                this.effectsQueue.addAll(0, weapon.getSecondaryEffectOne());
+                this.effectsQueue.addAll(0, this.weapon.getSecondaryEffectOne());
                 this.effectOrder = SECONDARYONE;
                 if (!this.mainEffectApplied) {
-                    this.effectsQueue.addAll(weapon.getPrimaryEffect());
+                    this.effectsQueue.addAll(this.weapon.getPrimaryEffect());
                 }
                 break;
             case SECONDARYTWO:
@@ -379,7 +387,7 @@ public class EffectsController {
         return availableSquares;
     }
 
-    EffectPossibilityPack seeEffectPossibility(WeaponEffect effect) throws UnsupportedOperationException {
+    EffectPossibilityPack seeEffectPossibility(WeaponEffect effect) {
         this.currentEffect = effect;
         EffectTarget target = effect.getTarget();
         TargetPositionType positionType = target.getPositionType();
@@ -583,10 +591,10 @@ public class EffectsController {
                 case SECONDARYTWO:
                     this.secondaryEffectTwoApplied = true;
                     break;
-                default:
-                    //avvisa fine efetto
-                    return;
             }
+
+            //avvisa fine efetto
+            return;
         }
         if (!this.currentEffect.getEffectDependency().isEmpty()) {
             switch (this.currentEffect.getEffectDependency().get(0)) {
