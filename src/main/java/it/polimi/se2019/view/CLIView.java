@@ -988,6 +988,13 @@ public class CLIView extends View {
     @Override
     void handleEffectTargetRequest() {
         super.handleEffectTargetRequest();
+        if(getEffectPossibility().getCharacters().size() == 1 &&
+                getEffectPossibility().getCharacters().get(0) == super.getCharacter()) {
+            List<GameCharacter> characters = new ArrayList<>();
+            characters.add(super.getCharacter());
+            super.setPossibilityCharacters(characters);
+            return;
+        }
         StringBuilder text = new StringBuilder();
         List<String> targetsAmount = getEffectPossibility().getTargetsAmount();
         if (targetsAmount.size() == 1) {

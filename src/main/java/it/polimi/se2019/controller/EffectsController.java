@@ -599,10 +599,14 @@ public class EffectsController {
         if (!this.currentEffect.getEffectDependency().isEmpty()) {
             switch (this.currentEffect.getEffectDependency().get(0)) {
                 case SECONDARYTWO:
-                    this.activeCombo = SECONDARYTWO;
+                    if(weapon.getSecondaryEffectTwo().get(0).isCombo()) {
+                        this.activeCombo = SECONDARYTWO;
+                    }
                     break;
                 case SECONDARYONE:
-                    this.activeCombo = SECONDARYONE;
+                    if(weapon.getSecondaryEffectOne().get(0).isCombo()) {
+                        this.activeCombo = SECONDARYONE;
+                    }
                     break;
                 default:
                     this.activeCombo = null;
