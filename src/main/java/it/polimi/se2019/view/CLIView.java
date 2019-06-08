@@ -601,8 +601,11 @@ public class CLIView extends View {
     void handleAttack(GameCharacter character, GameCharacter attacker, int amount, EffectType attackType) {
         super.handleAttack(character, attacker, amount, attackType);
         StringBuilder text = new StringBuilder();
-        if (character == getCharacter()) {
+        if (attacker == getCharacter()) {
             String toAppend = "You dealt " + amount + " ";
+            text.append(toAppend);
+        } else if (character == getCharacter()) {
+            String toAppend = "You received " + amount + " ";
             text.append(toAppend);
         } else {
             String toAppend = attacker + " dealt " + amount + " ";
@@ -619,10 +622,27 @@ public class CLIView extends View {
             text.append("s");
         }
 
-        String toAppend = " to " + character;
-        text.append(toAppend);
+        if (character == getCharacter()) {
+            String toAppend = " from " + character;
+            text.append(toAppend);
+        } else {
+            String toAppend = " to " + character;
+            text.append(toAppend);
+        }
 
         showMessage(text.toString());
+    }
+
+    @Override
+    void handleMarksToDamages(GameCharacter player, GameCharacter attacker) {
+        super.handleMarksToDamages(player, attacker);
+        if (player == getCharacter()) {
+            showMessage(attacker + "'s marks on you have been converted into damages");
+        } else if (attacker == getCharacter()) {
+            showMessage("Your marks on " + player + " have been converted into damages");
+        } else {
+            showMessage(attacker + "'s marks on " + player + " have been converted into damages");
+        }
     }
 
     @Override

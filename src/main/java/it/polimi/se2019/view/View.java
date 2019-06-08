@@ -331,7 +331,30 @@ public abstract class View {
                 handleAttack(message.getCharacter(), ((AttackMessage) message).getAttacker(),
                         ((AttackMessage) message).getAmount(), ((AttackMessage) message).getAttackType());
                 break;
+            case MARKS_TO_DAMAGES:
+                handleMarksToDamages(message.getCharacter(), ((MarksToDamagesMessage) message).getAttacker());
+                break;
         }
+    }
+
+    void handleMarksToDamages(GameCharacter player, GameCharacter attacker) {
+        PlayerBoard playerBoard;
+        if (player == this.character) {
+            playerBoard = this.selfPlayerBoard;
+        } else {
+            playerBoard = getBoardByCharacter(player);
+        }
+
+        if (playerBoard == null) {
+            return;
+        }
+
+        for(GameCharacter c : playerBoard.getRevengeMarks()) {
+            if(playerBoard.getDamages().size() < Player.MAX_DAMAGES && c == attacker) {
+                playerBoard.addDamages(player, 1);
+            }
+        }
+        playerBoard.resetMarks(attacker);
     }
 
     void handleAttack(GameCharacter character, GameCharacter attacker, int amount, EffectType attackType) {
@@ -347,7 +370,7 @@ public abstract class View {
         }
 
         if (attackType == EffectType.DAMAGE) {
-            playerBoard.addDamage(attacker, amount);
+            playerBoard.addDamages(attacker, amount);
         } else {
             playerBoard.addMarks(attacker, amount);
         }

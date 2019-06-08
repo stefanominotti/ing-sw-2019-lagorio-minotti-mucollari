@@ -86,7 +86,7 @@ public class PlayerBoard implements Serializable {
         return new ArrayList<>(this.damages);
     }
 
-    void addDamage(GameCharacter target, int amount) {
+    void addDamages(GameCharacter target, int amount) {
         for (int i=0; i<amount; i++) {
             this.damages.add(target);
         }
@@ -144,6 +144,12 @@ public class PlayerBoard implements Serializable {
 
     void unloadWeapon(Weapon weapon) {
         this.unloadedWeapons.add(weapon);
+    }
+
+    void resetMarks(GameCharacter player) {
+        while (this.revengeMarks.contains(player)) {
+            this.revengeMarks.remove(player);
+        }
     }
 
     public String toString() {
