@@ -504,7 +504,7 @@ public class EffectsController {
             multipleSquares.put(new Coordinates(square.getX(), square.getY()), characterList);
         }
         return (new EffectPossibilityPack(
-                amountTargets, effect.getAmount(), characters, coordinates, roomColors,
+                amountTargets, characters, coordinates, roomColors,
                 availableCardinal, multipleSquares, effect.isRequired(), effect.getType()));
     }
 

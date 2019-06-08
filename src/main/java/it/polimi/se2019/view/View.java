@@ -62,6 +62,7 @@ public abstract class View {
     private List<Powerup> paidPowerups;
 
     private EffectPossibilityPack effectPossibility;
+    private EffectPossibilityPack possibilitySelections;
 
     private PowerupType activePowerup;
 
@@ -706,24 +707,6 @@ public abstract class View {
         }
     }
 
-    private void update(SingleSelectionMessage message) {
-        switch (message.getType()) {
-            case EFFECT_COMBO:
-                handleEffectComboRequest((WeaponEffectOrderType) message.getSelection());
-                break;
-            case EFFECT_POSSIBILITY:
-                this.effectPossibility = (EffectPossibilityPack) message.getSelection();
-                if (this.effectPossibility.getType() == EffectType.MOVE) {
-                    handleEffectMoveRequest();
-                } else if (this.effectPossibility.getType() == EffectType.SELECT) {
-                    handleEffectSelectRequest();
-                } else {
-                    handleEffectTargetRequest();
-                }
-                break;
-        }
-    }
-
     void handleWeaponSwitchRequest(List<Weapon> weapons) {
         this.weaponsSelection = weapons;
         this.state = SWITCHWEAPON;
@@ -785,13 +768,40 @@ public abstract class View {
         this.state = USEEFFECT;
     }
 
+    private void update(SingleSelectionMessage message) {
+        switch (message.getType()) {
+            case EFFECT_COMBO:
+                handleEffectComboRequest((WeaponEffectOrderType) message.getSelection());
+                break;
+            case EFFECT_POSSIBILITY:
+                this.effectPossibility = (EffectPossibilityPack) message.getSelection();
+                this.possibilitySelections = new EffectPossibilityPack(this.effectPossibility.isRequire(),
+                        this.effectPossibility.getType());
+                if (this.effectPossibility.getType() == EffectType.SELECT) {
+                    handleEffectSelectRequest();
+                } else if (!this.effectPossibility.getMultipleSquares().isEmpty()) {
+                    handleMultipleSquareRequest();
+                } else {
+                    handleEffectTargetRequest();
+                }
+                break;
+        }
+    }
+
     void handleEffectComboRequest(WeaponEffectOrderType effect) {
         this.state = EFFECTCOMBO;
     }
 
     void handleEffectSelectRequest() {
-        this.state = EFFECTSELECT;
+        if(!this.effectPossibility.getSquares().isEmpty()) {
+            this.state = EFFECTSELECT_SQUARE;
+        } else if(!this.effectPossibility.getRooms().isEmpty()) {
+            this.state = EFFECTSELECT_ROOM;
+        } else if(!this.effectPossibility.getCardinalPoints().isEmpty()) {
+            this.state = EFFECTSELECT_CARDINAL;
+        }
     }
+
     void handleEffectMoveRequest() {
         this.state = EFFECTMOVE;
     }
@@ -800,7 +810,35 @@ public abstract class View {
         this.state = EFFECTTARGET;
     }
 
+    void handleMultipleSquareRequest() {
+        this.state = MULTIPLESQUARE;
+    }
+
     abstract void requirePayment();
+
+    void setPossibilityCharacters(List<GameCharacter> characters) {
+        this.possibilitySelections.setCharacters(characters);
+    }
+
+    void setPossibilitySquares(List<Coordinates> squares) {
+        this.possibilitySelections.setSquares(squares);
+    }
+
+    void setPossibilityRooms(List<RoomColor> rooms) {
+        this.possibilitySelections.setRooms(rooms);
+    }
+
+    void setPossibilityCardinal(List<CardinalPoint> cardinal) {
+        this.possibilitySelections.setCardinalPoints(cardinal);
+    }
+
+    void setPossibilityMutipleSquares(Map<Coordinates, List<GameCharacter>> mutipleSquares) {
+        this.possibilitySelections.setMultipleSquares(mutipleSquares);
+    }
+
+    void selectionEffectFinish() {
+        //invia il PossibilitySelecetions al server
+    }
 
     String generateToken() {
         String path = System.getProperty("user.home");

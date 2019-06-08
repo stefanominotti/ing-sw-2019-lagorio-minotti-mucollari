@@ -21,7 +21,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Logger;
 
-public class VirtualView extends Observable implements Observer {
+public class
+        VirtualView extends Observable implements Observer {
 
     private static final Logger LOGGER = Logger.getLogger(VirtualView.class.getName());
 

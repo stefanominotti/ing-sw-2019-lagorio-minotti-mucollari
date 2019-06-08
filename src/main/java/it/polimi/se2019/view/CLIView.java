@@ -83,8 +83,16 @@ public class CLIView extends View {
             handleEffectInput(input);
         } else if (getState() == EFFECTCOMBO) {
             handleDecisionInput(input);
-        } else if (getState() == EFFECTPOSSIBILITY) {
-            handleEffectPossibilityInput(input);
+        } else if (getState() == EFFECTSELECT_SQUARE) {
+            handleSelectSquareInput(input);
+        } else if (getState() == EFFECTSELECT_ROOM) {
+            handleSelectRoomInput(input);
+        } else if (getState() == EFFECTSELECT_CARDINAL) {
+            handleSelectCardinalInput(input);
+        } else if (getState() == EFFECTTARGET) {
+            handleEffectTargetInput(input);
+        } else if (getState() == EFFECTMOVE) {
+            handleSelectSquareInput(input);
         }
     }
 
@@ -110,7 +118,7 @@ public class CLIView extends View {
     }
 
     private void handleArenaInput(String input) {
-        if(input.equals("1") || input.equals("2") || input.equals("3") || input.equals("4")) {
+        if (input.equals("1") || input.equals("2") || input.equals("3") || input.equals("4")) {
             this.inputEnabled = false;
             getClient().send(new ArenaMessage(input));
             return;
@@ -131,7 +139,7 @@ public class CLIView extends View {
         if (getState() == SELECTBOARDTOSHOW) {
             maxSize = getEnemyBoards().size();
         }
-        if (selection > maxSize|| selection <= 0) {
+        if (selection > maxSize || selection <= 0) {
             showMessage("Invalid input, retry: ");
             return;
         }
@@ -165,7 +173,7 @@ public class CLIView extends View {
         try {
             x = Integer.parseInt(input.split(",")[0]);
             y = Integer.parseInt(input.split(",")[1]);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             showMessage("Invalid input, retry:");
             return;
         }
@@ -179,7 +187,7 @@ public class CLIView extends View {
             }
         }
 
-        if(toSend == null) {
+        if (toSend == null) {
             showMessage("Invalid input, retry:");
             return;
         }
@@ -202,7 +210,7 @@ public class CLIView extends View {
         int selection;
         try {
             selection = Integer.parseInt(input);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             showMessage("Invalid number, retry:");
             return;
         }
@@ -240,7 +248,7 @@ public class CLIView extends View {
 
         try {
             selection = Integer.parseInt(input);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             showMessage("Invalid number, retry:");
             return;
         }
@@ -285,7 +293,7 @@ public class CLIView extends View {
         int selection;
         try {
             selection = Integer.parseInt(input);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             showMessage("Invalid input, retry:");
             return;
         }
@@ -327,7 +335,7 @@ public class CLIView extends View {
         int selection;
         try {
             selection = Integer.parseInt(input);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             showMessage("Invalid input, retry:");
             return;
         }
@@ -399,7 +407,7 @@ public class CLIView extends View {
 
         this.inputEnabled = false;
         getClient().send(new SingleSelectionMessage(SelectionMessageType.EFFECT, getCharacter(),
-                SelectionMessageType.valueOf(input)));
+                WeaponEffectOrderType.valueOf(input)));
     }
 
     private void handleDecisionInput(String input) {
@@ -419,36 +427,80 @@ public class CLIView extends View {
         getClient().send(new SingleSelectionMessage(type, getCharacter(), input));
     }
 
-    private void handleEffectPossibilityInput(String input) {
-        String[] targets = input.split(",");
-        List<Integer> targetIndices = new ArrayList<>();
-        boolean valid = true;
-        for (String target : targets) {
-            try {
-                targetIndices.add(Integer.parseInt(target));
-            } catch (NumberFormatException e) {
-                valid = false;
-                break;
-            }
+    private void handleSelectSquareInput(String input) {
+        List<Coordinates> square = new ArrayList<>();
+        try {
+            int index = Integer.parseInt(input);
+            square.add(getEffectPossibility().getSquares().get(index - 1));
+        } catch (NumberFormatException e) {
+            showMessage("Invalid input, retry: ");
+        } catch (IndexOutOfBoundsException e) {
+            showMessage("Invalid input, retry: ");
         }
-        List<String> targetsAmount = getEffectPossibility().getTargetsAmount();
-        if (targetsAmount.size() == 1) {
-            int amount = Integer.parseInt(targetsAmount.get(0));
-            String toAppend = "Select " + amount + " target";
-            text.append(toAppend);
-            if (amount != 1) {
-                text.append("s");
+        super.setPossibilitySquares(square);
+        super.selectionEffectFinish();
+    }
+
+    private void handleSelectRoomInput(String input) {
+        List<RoomColor> room = new ArrayList<>();
+        try {
+            int index = Integer.parseInt(input);
+            room.add(getEffectPossibility().getRooms().get(index - 1));
+        } catch (NumberFormatException e) {
+            showMessage("Invalid input, retry: ");
+        } catch (IndexOutOfBoundsException e) {
+            showMessage("Invalid input, retry: ");
+        }
+        super.setPossibilityRooms(room);
+        super.selectionEffectFinish();
+    }
+
+    private void handleSelectCardinalInput(String input) {
+        List<CardinalPoint> cardinal = new ArrayList<>();
+        try {
+            int index = Integer.parseInt(input);
+            cardinal.add(getEffectPossibility().getCardinalPoints().get(index - 1));
+        } catch (NumberFormatException e) {
+            showMessage("Invalid input, retry: ");
+        } catch (IndexOutOfBoundsException e) {
+            showMessage("Invalid input, retry: ");
+        }
+        super.setPossibilityCardinal(cardinal);
+        super.selectionEffectFinish();
+    }
+
+    private void handleEffectTargetInput(String input) {
+        String[] inputList = input.split(",");
+        List<GameCharacter> characters = new ArrayList<>();
+        try {
+            for (String i : inputList) {
+                int index = Integer.parseInt(i);
+                if (!characters.contains(getEffectPossibility().getCharacters().get(index - 1))) {
+                    characters.add(getEffectPossibility().getCharacters().get(index - 1));
+                } else {
+                    showMessage("Invalid input, retry: ");
+                    return;
+                }
             }
-            text.append(":\n");
-        } else if (targetsAmount.get(1).equals("MAX")) {
-            int min = Integer.parseInt(targetsAmount.get(0));
-            String toAppend = "Select at least " + min + " target:\n";
-            text.append(toAppend);
+            int amount = Integer.parseInt(getEffectPossibility().getTargetsAmount().get(0));
+            if(getEffectPossibility().getTargetsAmount().size() == 1 && characters.size() != amount ||
+                    getEffectPossibility().getTargetsAmount().size() == 2 && characters.size() < amount) {
+                showMessage("Invalid input, retry: ");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            showMessage("Invalid input, retry: ");
+        } catch (IndexOutOfBoundsException e) {
+            showMessage("Invalid input, retry: ");
+        }
+        if(getEffectPossibility().getTargetsAmount().size() == 1) {
+
+        }
+        super.setPossibilityCharacters(characters);
+        if (!getEffectPossibility().getSquares().isEmpty()) {
+            handleEffectMoveRequest();
         } else {
-            int min = Integer.parseInt(targetsAmount.get(0));
-            int max = Integer.parseInt(targetsAmount.get(1));
-            String toAppend = "Select from " + min + " to " + max + " targets:\n";
-            text.append(toAppend);
+            super.selectionEffectFinish();
         }
     }
 
@@ -497,7 +549,7 @@ public class CLIView extends View {
     @Override
     void handleReadyPlayer(GameCharacter character, String nickname) {
         super.handleReadyPlayer(character, nickname);
-        if(character != getCharacter()) {
+        if (character != getCharacter()) {
             showMessage(nickname + " - " + character + " connected!");
         }
     }
@@ -507,7 +559,7 @@ public class CLIView extends View {
         super.handleSpawnedPlayer(character, coordinates);
         int x = coordinates.getX();
         int y = coordinates.getY();
-        if(getCharacter() == character) {
+        if (getCharacter() == character) {
             showMessage("You spawned in [" + x + ", " + y + "]");
         } else {
             showMessage(character + " spawned in [" + x + ", " + y + "]");
@@ -545,7 +597,7 @@ public class CLIView extends View {
         super.handleMovement(character, coordinates);
         int x = coordinates.getX();
         int y = coordinates.getY();
-        if(getCharacter() == character) {
+        if (getCharacter() == character) {
             showMessage("You moved in [" + x + ", " + y + "]");
         } else {
             showMessage(character + " moved in [" + x + ", " + y + "]");
@@ -573,12 +625,12 @@ public class CLIView extends View {
     @Override
     void handleCharacterSelectionRequest(List<GameCharacter> availables) {
         super.handleCharacterSelectionRequest(availables);
-        if(!getCharactersSelection().isEmpty()) {
+        if (!getCharactersSelection().isEmpty()) {
             showMessage("Character already choosen");
         }
         setCharactersSelection(availables);
         StringBuilder text = new StringBuilder("Choose one of these characters:\n");
-        for(GameCharacter character : availables) {
+        for (GameCharacter character : availables) {
             String toAppend = "[" + (availables.indexOf(character) + 1) + "] - " + character + "\n";
             text.append(toAppend);
         }
@@ -626,7 +678,7 @@ public class CLIView extends View {
         super.loadView(character, skulls, squares, killshotTrack, playerBoards, weapons, powerups, score, others);
         showMessage("You are " + getCharacter());
         for (Map.Entry<GameCharacter, String> player : others.entrySet()) {
-            if(player.getKey() != getCharacter()) {
+            if (player.getKey() != getCharacter()) {
                 showMessage(player.getKey() + " - " + player.getValue() + " is in!");
             }
         }
@@ -635,7 +687,7 @@ public class CLIView extends View {
     @Override
     void handlePowerupAdded(GameCharacter character, Powerup powerup) {
         super.handlePowerupAdded(character, powerup);
-        if(character != getCharacter()) {
+        if (character != getCharacter()) {
             showMessage(character + " has drawn a Powerup");
         } else {
             showMessage("You have drawn " + powerup.getType() + " " + powerup.getColor());
@@ -645,7 +697,7 @@ public class CLIView extends View {
     @Override
     void handlePowerupRemoved(GameCharacter character, Powerup powerup, PowerupMessageType type) {
         super.handlePowerupRemoved(character, powerup, type);
-        if(getCharacter() == character) {
+        if (getCharacter() == character) {
             showMessage("You have discarded " + powerup.getType() + " " + powerup.getColor());
         } else {
             showMessage(character + " has discarded " + powerup.getType() + " " + powerup.getColor());
@@ -714,7 +766,7 @@ public class CLIView extends View {
 
     @Override
     void handleStartTurn(TurnMessage message, GameCharacter character) {
-        if(character != getCharacter()) {
+        if (character != getCharacter()) {
             showMessage(character + " is playing");
         } else {
             showMessage("It's your turn!");
@@ -841,7 +893,7 @@ public class CLIView extends View {
         super.handleDiscardPowerupRequest(powerups);
         StringBuilder text = new StringBuilder("Discard a powerup to spawn:\n");
         int index = 1;
-        for(Powerup p : powerups) {
+        for (Powerup p : powerups) {
             String toAppend = "[" + index + "] - " + p.getType() + " " + p.getColor() + "\n";
             text.append(toAppend);
             index++;
@@ -977,14 +1029,14 @@ public class CLIView extends View {
         showMessage(getBoard().arenaToString());
         StringBuilder text = new StringBuilder("Select a ");
         int index = 1;
-        if (!getEffectPossibility().getSquares().isEmpty()) {
+        if (getState() == EFFECTSELECT_SQUARE) {
             text.append("square:\n");
             for (Coordinates s : getEffectPossibility().getSquares()) {
                 String toAppend = "[" + index + "] - " + s.getX() + ", " + s.getY() + "\n";
                 text.append(toAppend);
                 index++;
             }
-        } else if (!getEffectPossibility().getCardinalPoints().isEmpty()) {
+        } else if (getState() == EFFECTSELECT_CARDINAL) {
             text.append("cardinal direction:\n");
             for (CardinalPoint p : getEffectPossibility().getCardinalPoints()) {
                 String toAppend = "[" + index + "] - " + p + "\n";
@@ -1006,6 +1058,27 @@ public class CLIView extends View {
     @Override
     void handleEffectMoveRequest() {
         super.handleEffectMoveRequest();
+        StringBuilder text = new StringBuilder("Select a square:\n");
+        int index = 1;
+        for (Coordinates s : getEffectPossibility().getSquares()) {
+            String toAppend = "[" + index + "] - " + s.getX() + ", " + s.getY() + "\n";
+            text.append(toAppend);
+            index++;
+        }
+        text.setLength(text.length() - 1);
+        showMessage(text.toString());
+    }
+
+    @Override
+    void handleMultipleSquareRequest() {
+        super.handleMultipleSquareRequest();
+        StringBuilder text = new StringBuilder("Select a square:\n");
+        for (Map.Entry<Coordinates, List<GameCharacter>> square : getEffectPossibility().getMultipleSquares().entrySet()) {
+
+        }
+        text.setLength(text.length() - 1);
+        showMessage(text.toString());
+
     }
 
     private void showMessage(String message) {

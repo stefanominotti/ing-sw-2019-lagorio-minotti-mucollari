@@ -123,7 +123,7 @@ public class EffectControllerTest {
                     multipleSquares = chooseMultipleSquares(pack);
                 }
         }
-        controller.effectApplication(new EffectPossibilityPack(pack.getTargetsAmount(), pack.getEffectAmount(),
+        controller.effectApplication(new EffectPossibilityPack(pack.getTargetsAmount(),
                 targets, coordinates, rooms, cardinalPoints, multipleSquares, true, pack.getType()));
     }
 
@@ -175,8 +175,8 @@ public class EffectControllerTest {
         this.board = (new GameLoader()).loadBoard();
         this.player = this.board.getPlayers().get(this.board.getCurrentPlayer());
         this.weapon = player.getWeapons().get(0).getWeaponType();
-        this.turnController = new TurnController(this.board, null);
-        this.controller = new EffectsController(this.board, turnController);
+        this.turnController = new TurnController(this.board, null, null);
+        this.controller = new EffectsController(this.board,null);
         this.controller.setActivePlayer(this.board.getPlayers().get(this.board.getCurrentPlayer()));
         try {
             this.controller.setEffectOrder(WeaponEffectOrderType.PRIMARY);
@@ -211,8 +211,8 @@ public class EffectControllerTest {
         this.board = (new GameLoader()).loadBoard();
         this.player = this.board.getPlayers().get(this.board.getCurrentPlayer());
         this.weapon = player.getWeapons().get(0).getWeaponType();
-        this.turnController = new TurnController(this.board, null);
-        this.controller = new EffectsController(this.board, turnController);
+        this.turnController = new TurnController(this.board, null, null);
+        this.controller = new EffectsController(this.board, null);
         this.controller.setActivePlayer(this.board.getPlayers().get(this.board.getCurrentPlayer()));
         try {
             this.controller.setEffectOrder(WeaponEffectOrderType.PRIMARY);
