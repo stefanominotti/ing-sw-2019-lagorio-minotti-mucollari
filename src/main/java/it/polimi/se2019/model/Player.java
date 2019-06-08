@@ -195,12 +195,7 @@ public class Player {
         }
     }
 
-    void marksToDamages(GameCharacter player) {
-        for(GameCharacter c : this.revengeMarks) {
-            if(this.damages.size() <= MAX_DAMAGES && c == player) {
-                this.damages.add(player);
-            }
-        }
+    void resetMarks(GameCharacter player) {
         while (this.revengeMarks.contains(player)) {
             this.revengeMarks.remove(player);
         }

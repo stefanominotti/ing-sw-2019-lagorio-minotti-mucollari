@@ -3,6 +3,7 @@ package it.polimi.se2019.model;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import it.polimi.se2019.model.messages.player.MarksToDamagesMessage;
 import it.polimi.se2019.model.messages.ammos.AmmosMessage;
 import it.polimi.se2019.model.messages.ammos.AmmosMessageType;
 import it.polimi.se2019.model.messages.board.*;
@@ -751,13 +752,23 @@ public class Board extends Observable {
         switch (type) {
             case DAMAGE:
                 getPlayerByCharacter(target).addDamages(player, damage);
-                //notify
                 break;
             case MARK:
                 getPlayerByCharacter(target).addRevengeMarks(player, damage);
-                //notify
+                break;
         }
+        notifyChanges(new AttackMessage(target, player, damage, type));
+    }
 
+    void marksToDamages(GameCharacter player, GameCharacter attacker) {
+        Player p = getPlayerByCharacter(player);
+        for(GameCharacter c : p.getRevengeMarks()) {
+            if(p.getDamages().size() < Player.MAX_DAMAGES && c == attacker) {
+                p.addDamages(player, 1);
+            }
+        }
+        p.resetMarks(attacker);
+        notifyChanges(new MarksToDamagesMessage(player, attacker));
     }
 
     public List<Square> getSquaresByDistance (Player player, List<String> amount) {
