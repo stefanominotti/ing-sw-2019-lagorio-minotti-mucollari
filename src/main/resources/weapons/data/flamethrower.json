@@ -230,7 +230,7 @@
       "effectCombo": false,
       "type": "DAMAGE",
       "amount": [
-        "2"
+        "1"
       ],
       "target": {
         "type": "OTHERS",
