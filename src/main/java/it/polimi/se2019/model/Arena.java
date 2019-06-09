@@ -56,7 +56,7 @@ public class Arena {
      * @return list of Rooms of the Arena
      */
     public List<Room> getRoomList() {
-        return this.rooms;
+        return new ArrayList<>(this.rooms);
     }
 
     /**

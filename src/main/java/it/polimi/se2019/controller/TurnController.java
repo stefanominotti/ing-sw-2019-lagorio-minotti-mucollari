@@ -460,7 +460,7 @@ public class TurnController {
             return;
         }
         if (canReload() && this.finalFrenzy) {
-            // gestione ricarica durante azione frenesia finale
+            // gestione ricarica durante azione frenesia finale TODO
             return;
         }
         this.controller.send(new SelectionListMessage<>(SelectionMessageType.RELOAD,
@@ -484,7 +484,7 @@ public class TurnController {
             }
         }
         if (this.movesLeft != 0) {
-            // muoviti e spara (frenesia finale)
+            // muoviti e spara (frenesia finale) TODO
         } else {
             handleReload();
         }

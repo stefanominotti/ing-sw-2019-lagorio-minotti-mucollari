@@ -420,6 +420,7 @@ public class EffectsController {
                 if (!mainEffectApplied) {
                     Square origilaPosition = this.activePlayer.getPosition();
                     List<Square> toRemoove = new ArrayList<>();
+
                     for (Square square : availableSquares) {
                         this.activePlayer.setPosition(square);
                         try {
@@ -576,7 +577,7 @@ public class EffectsController {
     private void handleEffectsQueue() {
         try {
             this.currentEffect = this.effectsQueue.get(0);
-        } catch (IndexOutOfBoundsException e) {
+
             switch (this.effectOrder) {
                 case PRIMARY:
                     this.mainEffectApplied = true;
@@ -591,6 +592,8 @@ public class EffectsController {
                     this.secondaryEffectTwoApplied = true;
                     break;
             }
+
+        } catch (IndexOutOfBoundsException e) {
 
             if(!getAvailableEffects().isEmpty()) {
                 this.controller.send(new SelectionListMessage<>(SelectionMessageType.EFFECT,
@@ -624,6 +627,7 @@ public class EffectsController {
             }
         }
         EffectPossibilityPack pack = seeEffectPossibility(this.currentEffect);
+        this.currentEffect = this.effectsQueue.get(0);
         if (pack.getTargetsAmount().size() == 1 && pack.getTargetsAmount().get(0).equals("MAX")) {
             effectApplication(pack);
         } else {

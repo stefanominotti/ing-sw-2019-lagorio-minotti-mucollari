@@ -47,7 +47,7 @@ public class SquaresGraph {
 
         if (square1 == square2) {
             this.currentPaths.add(new ArrayList<>(path));
-            visited[this.vertices.indexOf(square1)]= false;
+            visited[this.vertices.indexOf(square1)] = false;
             return;
         }
 

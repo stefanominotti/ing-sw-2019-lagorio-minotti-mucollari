@@ -77,9 +77,9 @@ public class Square {
         }
     }
 
-    public void setRoom(Room room){ this.room = room; }
+    public void setRoom(Room room) { this.room = room; }
 
-    public void setArena(Arena arena){ this.arena = arena; }
+    public void setArena(Arena arena) { this.arena = arena; }
 
     public int getX() {
         return this.x;

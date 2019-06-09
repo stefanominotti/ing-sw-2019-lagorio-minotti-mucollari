@@ -898,7 +898,7 @@ public class Board extends Observable {
         switch (cardinalPoint) {
             case EAST:
                 for(int i = x + 1; i <= 3; i++) {
-                    Square square = arena.getSquareByCoordinate(i, y);
+                    Square square = this.arena.getSquareByCoordinate(i, y);
                     if(square != null && player.getPosition().canSee(square)) {
                         squares.add(square);
                     }
@@ -906,7 +906,7 @@ public class Board extends Observable {
                 break;
             case WEST:
                 for(int i = x - 1; i >= 0; i--) {
-                    Square square = arena.getSquareByCoordinate(i, y);
+                    Square square = this.arena.getSquareByCoordinate(i, y);
                     if(square != null && player.getPosition().canSee(square)) {
                         squares.add(square);
                     }
@@ -914,7 +914,7 @@ public class Board extends Observable {
                 break;
             case NORTH:
                 for(int i = y - 1; i >= 0; i--) {
-                    Square square = arena.getSquareByCoordinate(x, i);
+                    Square square = this.arena.getSquareByCoordinate(x, i);
                     if(square != null && player.getPosition().canSee(square)) {
                         squares.add(square);
                     }
@@ -922,7 +922,7 @@ public class Board extends Observable {
                 break;
             case SOUTH:
                 for(int i = y + 1; i <= 3; i++) {
-                    Square square = arena.getSquareByCoordinate(x, i);
+                    Square square = this.arena.getSquareByCoordinate(x, i);
                     if(square != null && player.getPosition().canSee(square)) {
                         squares.add(square);
                     }
