@@ -123,25 +123,25 @@ public class EffectsController {
         return availableWeapons;
     }
 
-    private boolean checkSecondaryFirst() {
+    private List<Square> checkSecondaryFirst() {
         try {
             EffectPossibilityPack pack = seeEffectPossibility(this.weapon.getSecondaryEffectOne().get(0));
+            List<Square> availableSquares = new ArrayList<>();
             Square originalPosition = this.activePlayer.getPosition();
             for (Coordinates coordinates : pack.getSquares()) {
                 Square square = this.board.getArena().getSquareByCoordinate(coordinates.getX(), coordinates.getY());
                 this.activePlayer.setPosition(square);
                 try {
                     seeEffectPossibility(this.weapon.getPrimaryEffect().get(0));
-                    this.activePlayer.setPosition(originalPosition);
-                    return true;
+                    availableSquares.add(square);
                 } catch (UnsupportedOperationException e) {
-                    // Ignore
+                    //Ignore
                 }
             }
             this.activePlayer.setPosition(originalPosition);
-            return false;
+            return availableSquares;
         } catch (UnsupportedOperationException e) {
-            return false;
+            return (new ArrayList<>());
         }
     }
 
@@ -157,7 +157,7 @@ public class EffectsController {
                 && checkCost(weapon.getSecondaryEffectOne()) && !this.weapon.getSecondaryEffectOne().get(0).isCombo()
                 && (!this.mainEffectApplied &&
                 this.weapon.getPrimaryEffect().get(0).getEffectDependency().contains(SECONDARYONE) &&
-                checkSecondaryFirst()) || this.mainEffectApplied) {
+                !checkSecondaryFirst().isEmpty()) || this.mainEffectApplied) {
             availableWeapons.put(SECONDARYONE, this.weapon.getSecondaryEffectOne());
         }
         if (!this.secondaryEffectTwoApplied && !this.weapon.getSecondaryEffectTwo().isEmpty()
@@ -436,7 +436,11 @@ public class EffectsController {
                 if (availablePlayers.isEmpty()) {
                     throw new UnsupportedOperationException();
                 }
-                availableSquares = moveSquaresCase(effect, availablePlayers.get(0));
+                if(!mainEffectApplied) {
+                    availableSquares = checkSecondaryFirst();
+                } else {
+                    availableSquares = moveSquaresCase(effect, availablePlayers.get(0));
+                }
                 if (availableSquares.isEmpty()) {
                     throw new UnsupportedOperationException();
                 }
