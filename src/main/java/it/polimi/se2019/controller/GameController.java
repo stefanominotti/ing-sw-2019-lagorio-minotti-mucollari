@@ -230,9 +230,12 @@ public class GameController implements Observer {
     }
 
     private void handleEffectComboSelection(String selection) {
+        boolean active = false;
         if (selection.equals("Y")) {
-            this.effectsController.activateCombo();
+            active = true;
         }
+        this.effectsController.activateCombo(active);
+
     }
 
     private void handleEffectPossibilitySelection(EffectPossibilityPack selection) {

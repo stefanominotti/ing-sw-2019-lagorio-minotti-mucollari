@@ -102,13 +102,6 @@ public class EffectsController {
 
     void setWeapon(Weapon weapon) {
         this.weapon = weapon;
-        this.hitByMain = new ArrayList<>();
-        this.hitBySecondary = new ArrayList<>();
-        this.mainEffectApplied = false;
-        this.secondaryEffectOneApplied = false;
-        this.secondaryEffectTwoApplied = false;
-        this.weaponEffects = new ArrayList<>();
-        this.effectsQueue = new ArrayList<>();
     }
 
     List<Weapon> getAvailableWeapons() {
@@ -125,22 +118,8 @@ public class EffectsController {
 
     private boolean checkSecondaryFirst() {
         try {
-            seeEffectPossibility(this.weapon.getSecondaryEffectOne().get(0));
+            EffectPossibilityPack pack = seeEffectPossibility(this.weapon.getSecondaryEffectOne().get(0));
             return true;
-            /*List<Square> availableSquares = new ArrayList<>();
-            Square originalPosition = this.activePlayer.getPosition();
-            for (Coordinates coordinates : pack.getSquares()) {
-                Square square = this.board.getArena().getSquareByCoordinate(coordinates.getX(), coordinates.getY());
-                this.activePlayer.setPosition(square);
-                try {
-                    seeEffectPossibility(this.weapon.getPrimaryEffect().get(0));
-                    availableSquares.add(square);
-                } catch (UnsupportedOperationException e) {
-                    //Ignore
-                }
-            }
-            this.activePlayer.setPosition(originalPosition);
-            return availableSquares;*/
         } catch (UnsupportedOperationException e) {
             return false;
         }
@@ -579,14 +558,19 @@ public class EffectsController {
         }
         if (this.currentEffect.getEffectName() != null && !mainEffectApplied &&
                 this.effectOrder == SECONDARYONE) {
+            this.secondaryEffectOneApplied = true;
             this.effectOrder = WeaponEffectOrderType.PRIMARY;
         }
         this.effectsQueue.remove(0);
         handleEffectsQueue();
     }
 
-    void activateCombo() {
-        effectSelected(this.activeCombo);
+    void activateCombo(boolean active) {
+        if(active) {
+            effectSelected(this.activeCombo);
+        } else {
+            handleEffectsQueue();
+        }
     }
 
     private void handleEffectsQueue() {
@@ -608,19 +592,17 @@ public class EffectsController {
                     break;
             }
 
-
             if(!getAvailableEffects().isEmpty()) {
                 this.controller.send(new SelectionListMessage<>(SelectionMessageType.EFFECT,
                         this.activePlayer.getCharacter(),
                         new ArrayList<>(getAvailableEffects().keySet())));
             } else {
-                this.controller.endEffects();
-                // fine TODO
+                finishWeapon();
             }
 
             return;
         }
-        if (!this.currentEffect.getEffectDependency().isEmpty()) {
+        if (!this.currentEffect.getEffectDependency().isEmpty() && this.activeCombo == null) {
             switch (this.currentEffect.getEffectDependency().get(0)) {
                 case SECONDARYTWO:
                     if(weapon.getSecondaryEffectTwo().get(0).isCombo()) {
@@ -648,6 +630,17 @@ public class EffectsController {
             this.controller.send(new SingleSelectionMessage(SelectionMessageType.EFFECT_POSSIBILITY,
                     this.activePlayer.getCharacter(), pack));
         }
+    }
+
+    private void finishWeapon() {
+        this.hitByMain = new ArrayList<>();
+        this.hitBySecondary = new ArrayList<>();
+        this.mainEffectApplied = false;
+        this.secondaryEffectOneApplied = false;
+        this.secondaryEffectTwoApplied = false;
+        this.weaponEffects = new ArrayList<>();
+        this.effectsQueue = new ArrayList<>();
+        this.controller.endEffects();
     }
 
     private void setHitByCases(GameCharacter character) {
