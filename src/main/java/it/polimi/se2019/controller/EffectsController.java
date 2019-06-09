@@ -123,10 +123,11 @@ public class EffectsController {
         return availableWeapons;
     }
 
-    private List<Square> checkSecondaryFirst() {
+    private boolean checkSecondaryFirst() {
         try {
-            EffectPossibilityPack pack = seeEffectPossibility(this.weapon.getSecondaryEffectOne().get(0));
-            List<Square> availableSquares = new ArrayList<>();
+            seeEffectPossibility(this.weapon.getSecondaryEffectOne().get(0));
+            return true;
+            /*List<Square> availableSquares = new ArrayList<>();
             Square originalPosition = this.activePlayer.getPosition();
             for (Coordinates coordinates : pack.getSquares()) {
                 Square square = this.board.getArena().getSquareByCoordinate(coordinates.getX(), coordinates.getY());
@@ -139,9 +140,9 @@ public class EffectsController {
                 }
             }
             this.activePlayer.setPosition(originalPosition);
-            return availableSquares;
+            return availableSquares;*/
         } catch (UnsupportedOperationException e) {
-            return (new ArrayList<>());
+            return false;
         }
     }
 
@@ -157,7 +158,7 @@ public class EffectsController {
                 && checkCost(weapon.getSecondaryEffectOne()) && !this.weapon.getSecondaryEffectOne().get(0).isCombo()
                 && (!this.mainEffectApplied &&
                 this.weapon.getPrimaryEffect().get(0).getEffectDependency().contains(SECONDARYONE) &&
-                !checkSecondaryFirst().isEmpty()) || this.mainEffectApplied) {
+                checkSecondaryFirst() || this.mainEffectApplied)) {
             availableWeapons.put(SECONDARYONE, this.weapon.getSecondaryEffectOne());
         }
         if (!this.secondaryEffectTwoApplied && !this.weapon.getSecondaryEffectTwo().isEmpty()
@@ -436,10 +437,20 @@ public class EffectsController {
                 if (availablePlayers.isEmpty()) {
                     throw new UnsupportedOperationException();
                 }
-                if(!mainEffectApplied) {
-                    availableSquares = checkSecondaryFirst();
-                } else {
-                    availableSquares = moveSquaresCase(effect, availablePlayers.get(0));
+                availableSquares = moveSquaresCase(effect, availablePlayers.get(0));
+                if (!mainEffectApplied) {
+                    Square origilaPosition = this.activePlayer.getPosition();
+                    List<Square> toRemoove = new ArrayList<>();
+                    for (Square square : availableSquares) {
+                        this.activePlayer.setPosition(square);
+                        try {
+                            seeEffectPossibility(this.weapon.getPrimaryEffect().get(0));
+                        } catch (UnsupportedOperationException e) {
+                            toRemoove.add(square);
+                        }
+                    }
+                    this.activePlayer.setPosition(origilaPosition);
+                    availableSquares.removeAll(toRemoove);
                 }
                 if (availableSquares.isEmpty()) {
                     throw new UnsupportedOperationException();
@@ -627,8 +638,8 @@ public class EffectsController {
             if (this.activeCombo != null) {
                 this.controller.send(new SingleSelectionMessage(SelectionMessageType.EFFECT_COMBO,
                         this.activePlayer.getCharacter(), this.activeCombo));
+                return;
             }
-            return;
         }
         EffectPossibilityPack pack = seeEffectPossibility(this.currentEffect);
         if (pack.getTargetsAmount().size() == 1 && pack.getTargetsAmount().get(0).equals("MAX")) {
