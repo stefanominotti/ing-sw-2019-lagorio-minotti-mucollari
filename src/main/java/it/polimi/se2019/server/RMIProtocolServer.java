@@ -83,4 +83,9 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
     public void notify(Message message, RMIClientInterface client) {
         this.queue.add(new ClientMessagePair(this.clientCorrespondency.get(client), message));
     }
+
+    @Override
+    public void ping() {
+        // Used to check if server is still connected
+    }
 }

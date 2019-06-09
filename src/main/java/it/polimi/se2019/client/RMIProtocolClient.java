@@ -11,6 +11,8 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import static java.lang.Thread.sleep;
+
 public class RMIProtocolClient extends AbstractClient implements RMIClientInterface {
 
     private RMIServerInterface server;
@@ -36,6 +38,22 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
         } catch (MalformedURLException | RemoteException | NotBoundException e) {
             getView().handleConnectionError();
         }
+
+        new Thread(() -> {
+            while(true) {
+                try {
+                    this.server.ping();
+                } catch (RemoteException e) {
+                    getView().handleConnectionError();;
+                }
+
+                try {
+                    sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }).start();
     }
 
     @Override

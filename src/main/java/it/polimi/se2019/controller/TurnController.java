@@ -237,6 +237,7 @@ public class TurnController {
                 handleReload();
                 break;
             case SHOT:
+                this.movesLeft--;
                 calculateShootAction();
                 break;
         }
