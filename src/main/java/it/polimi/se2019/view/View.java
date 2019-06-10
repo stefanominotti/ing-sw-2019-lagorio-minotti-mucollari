@@ -822,18 +822,27 @@ public abstract class View {
                 break;
             case EFFECT_POSSIBILITY:
                 this.effectPossibility = (EffectPossibilityPack) message.getSelection();
-                this.possibilitySelections = new EffectPossibilityPack(this.effectPossibility.isRequire(),
-                        this.effectPossibility.getType());
-                if (this.effectPossibility.getType() == EffectType.SELECT) {
-                    handleEffectSelectRequest();
-                } else if (this.effectPossibility.getType() == EffectType.MOVE) {
-                    handleEffectMoveRequest();
-                } else if (!this.effectPossibility.getMultipleSquares().isEmpty()) {
-                    handleMultipleSquareRequest();
+                this.possibilitySelections = new EffectPossibilityPack(true, this.effectPossibility.getType());
+                if(this.effectPossibility.isRequire()) {
+                    handleEffectSelections();
                 } else {
-                    handleEffectTargetRequest();
+                    handleEffectRequireRequesat();
                 }
                 break;
+        }
+    }
+
+    void handleEffectRequireRequesat() {
+        this.state = EFFECTREQUIRE;
+    }
+
+    void handleEffectSelections() {
+        if (this.effectPossibility.getType() == EffectType.SELECT) {
+            handleEffectSelectRequest();
+        } else if (!this.effectPossibility.getMultipleSquares().isEmpty()) {
+            handleMultipleSquareRequest();
+        } else {
+            handleEffectTargetRequest();
         }
     }
 
@@ -879,6 +888,15 @@ public abstract class View {
 
     void setPossibilityCardinal(List<CardinalPoint> cardinal) {
         this.possibilitySelections.setCardinalPoints(cardinal);
+    }
+
+    void setPossibilityRequire(boolean isRequire) {
+        this.possibilitySelections.setRequire(isRequire);
+        if(!isRequire) {
+            selectionEffectFinish();
+            return;
+        }
+        handleEffectSelections();
     }
 
     void setPossibilityMutipleSquares(Map<Coordinates, List<GameCharacter>> mutipleSquares) {

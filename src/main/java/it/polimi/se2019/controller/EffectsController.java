@@ -23,7 +23,6 @@ public class EffectsController {
     private boolean secondaryEffectOneApplied;
     private boolean secondaryEffectTwoApplied;
     private List<WeaponEffect> effectsQueue;
-
     //da impostare ogni volta che viene eseguito parte di un effetto
     private List<Player> hitByMain;
     private List<Player> hitBySecondary;
@@ -106,9 +105,9 @@ public class EffectsController {
 
     List<Weapon> getAvailableWeapons() {
         List<Weapon> availableWeapons = new ArrayList<>();
-        for(WeaponCard weaponCard : this.activePlayer.getWeapons()) {
+        for (WeaponCard weaponCard : this.activePlayer.getWeapons()) {
             this.weapon = weaponCard.getWeaponType();
-            if(weaponCard.isReady() && !getAvailableEffects().isEmpty()) {
+            if (weaponCard.isReady() && !getAvailableEffects().isEmpty()) {
                 availableWeapons.add(weaponCard.getWeaponType());
             }
         }
@@ -118,7 +117,10 @@ public class EffectsController {
 
     private boolean checkSecondaryFirst() {
         try {
-            EffectPossibilityPack pack = seeEffectPossibility(this.weapon.getSecondaryEffectOne().get(0));
+            WeaponEffectOrderType orderiginalOrder = this.effectOrder;
+            this.effectOrder = SECONDARYONE;
+            seeEffectPossibility(this.weapon.getSecondaryEffectOne().get(0));
+            this.effectOrder = orderiginalOrder;
             return true;
         } catch (UnsupportedOperationException e) {
             return false;
@@ -150,7 +152,7 @@ public class EffectsController {
             availableWeapons.put(SECONDARYTWO, this.weapon.getSecondaryEffectTwo());
         }
         List<WeaponEffectOrderType> toRemove = new ArrayList<>();
-        for(Map.Entry<WeaponEffectOrderType, List<WeaponEffect>> effect : availableWeapons.entrySet()) {
+        for (Map.Entry<WeaponEffectOrderType, List<WeaponEffect>> effect : availableWeapons.entrySet()) {
             try {
                 seeEffectPossibility(effect.getValue().get(0));
             } catch (UnsupportedOperationException e) {
@@ -368,7 +370,6 @@ public class EffectsController {
     }
 
     EffectPossibilityPack seeEffectPossibility(WeaponEffect effect) {
-        this.currentEffect = effect;
         EffectTarget target = effect.getTarget();
         TargetPositionType positionType = target.getPositionType();
         List<PositionConstraint> constraints = target.getPositionConstraints();
@@ -417,7 +418,7 @@ public class EffectsController {
                     throw new UnsupportedOperationException();
                 }
                 availableSquares = moveSquaresCase(effect, availablePlayers.get(0));
-                if (!mainEffectApplied) {
+                if (this.effectOrder == SECONDARYONE && !mainEffectApplied) {
                     Square origilaPosition = this.activePlayer.getPosition();
                     List<Square> toRemoove = new ArrayList<>();
 
@@ -553,21 +554,25 @@ public class EffectsController {
                                 character, damage, this.currentEffect.getType());
                         setEnviroment(square, this.board.getPlayerByCharacter(character).getPosition());
                         setHitByCases(character);
-
                     }
+
+            }
+        } else {
+            for(int i = 0; i<this.currentEffect.getRequiredDependecy(); i++) {
+                this.effectsQueue.remove(1);
             }
         }
-        if (this.currentEffect.getEffectName() != null && !mainEffectApplied &&
-                this.effectOrder == SECONDARYONE) {
+        if (!mainEffectApplied && this.effectOrder == SECONDARYONE) {
             this.secondaryEffectOneApplied = true;
             this.effectOrder = WeaponEffectOrderType.PRIMARY;
         }
         this.effectsQueue.remove(0);
         handleEffectsQueue();
+
     }
 
     void activateCombo(boolean active) {
-        if(active) {
+        if (active) {
             effectSelected(this.activeCombo);
         } else {
             handleEffectsQueue();
@@ -577,7 +582,6 @@ public class EffectsController {
     private void handleEffectsQueue() {
         try {
             this.currentEffect = this.effectsQueue.get(0);
-
             switch (this.effectOrder) {
                 case PRIMARY:
                     this.mainEffectApplied = true;
@@ -594,26 +598,24 @@ public class EffectsController {
             }
 
         } catch (IndexOutOfBoundsException e) {
-
-            if(!getAvailableEffects().isEmpty()) {
+            if (!getAvailableEffects().isEmpty()) {
                 this.controller.send(new SelectionListMessage<>(SelectionMessageType.EFFECT,
                         this.activePlayer.getCharacter(),
                         new ArrayList<>(getAvailableEffects().keySet())));
             } else {
                 finishWeapon();
             }
-
             return;
         }
         if (!this.currentEffect.getEffectDependency().isEmpty() && this.activeCombo == null) {
             switch (this.currentEffect.getEffectDependency().get(0)) {
                 case SECONDARYTWO:
-                    if(weapon.getSecondaryEffectTwo().get(0).isCombo()) {
+                    if (weapon.getSecondaryEffectTwo().get(0).isCombo()) {
                         this.activeCombo = SECONDARYTWO;
                     }
                     break;
                 case SECONDARYONE:
-                    if(weapon.getSecondaryEffectOne().get(0).isCombo()) {
+                    if (weapon.getSecondaryEffectOne().get(0).isCombo()) {
                         this.activeCombo = SECONDARYONE;
                     }
                     break;
@@ -644,6 +646,7 @@ public class EffectsController {
         this.secondaryEffectTwoApplied = false;
         this.weaponEffects = new ArrayList<>();
         this.effectsQueue = new ArrayList<>();
+        this.activeCombo = null;
         this.controller.endEffects();
     }
 

@@ -73,10 +73,8 @@
         "YELLOW": 0
       },
       "effectRequired": false,
+      "requiredDependecy": 0,
       "effectCombo": false,
-      "effectDependency": [
-        "SECONDARYONE"
-      ],
       "type": "DAMAGE",
       "amount": [
         "1"
@@ -94,6 +92,7 @@
     },
     {
       "effectRequired": false,
+      "requiredDependecy": 0,
       "effectCombo": false,
       "type": "DAMAGE",
       "amount": [

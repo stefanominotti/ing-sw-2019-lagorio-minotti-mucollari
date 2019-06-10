@@ -749,8 +749,7 @@ public class Board extends Observable {
         if (amount.size() == 2) {
             if (amount.contains("MAX")) {
                 for(Square s: this.arena.getAllSquares()) {
-                    if(square.minimumDistanceFrom(s) >= Integer.parseInt(amount.get(0))
-                            && s != square) {
+                    if(square.minimumDistanceFrom(s) >= Integer.parseInt(amount.get(0))) {
                         availableSquares.add(s);
                     }
                 }
@@ -758,8 +757,7 @@ public class Board extends Observable {
             else {
                 for(Square s: this.arena.getAllSquares()) {
                     if(square.minimumDistanceFrom(s) >= Integer.parseInt(amount.get(0))
-                            && square.minimumDistanceFrom(s) <= Integer.parseInt(amount.get(1))
-                            && s != square) {
+                            && square.minimumDistanceFrom(s) <= Integer.parseInt(amount.get(1))) {
                         availableSquares.add(s);
                     }
                 }

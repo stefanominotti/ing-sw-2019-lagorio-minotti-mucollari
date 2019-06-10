@@ -87,6 +87,10 @@ public class CLIView extends View {
             handleEffectTargetInput(input);
         } else if (getState() == EFFECTMOVE) {
             handleSelectSquareInput(input);
+        } else if (getState() == EFFECTREQUIRE) {
+            handleDecisionInput(input);
+        } else if (getState() == MULTIPLESQUARE) {
+            handleEffectMultipleSquaresInput(input);
         }
     }
 
@@ -387,6 +391,12 @@ public class CLIView extends View {
     private void handleEffectInput(String input) {
         input = input.toUpperCase();
         boolean valid = false;
+        if(input.equals("C")) {
+            this.inputEnabled = false;
+            getClient().send(new SingleSelectionMessage(SelectionMessageType.ACTION, getCharacter(),
+                    ActionType.CANCEL));
+            return;
+        }
         for (WeaponEffectOrderType validInput : getEffectsSelection()) {
             if (validInput.toString().equals(input)) {
                 valid = true;
@@ -411,14 +421,17 @@ public class CLIView extends View {
             return;
         }
 
-        SelectionMessageType type = SelectionMessageType.EFFECT_COMBO;
-
         if (getState() == EFFECTCOMBO) {
-            type = SelectionMessageType.EFFECT_COMBO;
+            this.inputEnabled = false;
+            getClient().send(new SingleSelectionMessage(SelectionMessageType.EFFECT_COMBO, getCharacter(), input));
+        } else if(getState() == EFFECTREQUIRE) {
+            if (input.equals("Y")) {
+                super.setPossibilityRequire(true);
+                return;
+            }
+            super.setPossibilityRequire(false);
         }
 
-        this.inputEnabled = false;
-        getClient().send(new SingleSelectionMessage(type, getCharacter(), input));
     }
 
     private void handleSelectSquareInput(String input) {
@@ -428,6 +441,7 @@ public class CLIView extends View {
             square.add(getEffectPossibility().getSquares().get(index - 1));
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             showMessage("Invalid input, retry: ");
+            return;
         }
         super.setPossibilitySquares(square);
         this.inputEnabled = false;
@@ -441,6 +455,7 @@ public class CLIView extends View {
             room.add(getEffectPossibility().getRooms().get(index - 1));
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             showMessage("Invalid input, retry: ");
+            return;
         }
         super.setPossibilityRooms(room);
         this.inputEnabled = false;
@@ -454,6 +469,7 @@ public class CLIView extends View {
             cardinal.add(getEffectPossibility().getCardinalPoints().get(index - 1));
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             showMessage("Invalid input, retry: ");
+            return;
         }
         super.setPossibilityCardinal(cardinal);
         this.inputEnabled = false;
@@ -473,14 +489,16 @@ public class CLIView extends View {
                     return;
                 }
             }
-            int amount = Integer.parseInt(getEffectPossibility().getTargetsAmount().get(0));
-            if(getEffectPossibility().getTargetsAmount().size() == 1 && characters.size() != amount ||
-                    getEffectPossibility().getTargetsAmount().size() == 2 && characters.size() < amount) {
+            List<String> targetsAmaunt = getEffectPossibility().getTargetsAmount();
+            if(targetsAmaunt.size() == 1 && characters.size() != Integer.parseInt(targetsAmaunt.get(0)) ||
+                    targetsAmaunt.size() > 1 && (characters.size() < Integer.parseInt(targetsAmaunt.get(0)) ||
+                    (targetsAmaunt.get(1) != "MAX" && characters.size() > Integer.parseInt(targetsAmaunt.get(1))))) {
                 showMessage("Invalid input, retry: ");
                 return;
             }
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             showMessage("Invalid input, retry: ");
+            return;
         }
         super.setPossibilityCharacters(characters);
         if (!getEffectPossibility().getSquares().isEmpty()) {
@@ -489,6 +507,50 @@ public class CLIView extends View {
             this.inputEnabled = false;
             super.selectionEffectFinish();
         }
+    }
+
+    private void handleEffectMultipleSquaresInput(String input) {
+        String[] inputList = input.split(",");
+        Map<Coordinates, List<GameCharacter>> availableCharacters = new HashMap<>(getEffectPossibility().getMultipleSquares());
+        List<GameCharacter> selectedCharacters = new ArrayList<>();
+        List<Coordinates> availableSquares = new ArrayList<>(getEffectPossibility().getMultipleSquares().keySet());
+        try {
+            for (String i : inputList) {
+                int size = selectedCharacters.size();
+                int index = Integer.parseInt(i);
+                if(index <= 0) {
+                    showMessage("Invalid input, retry: ");
+                    return;
+                }
+                index = index - 1;
+                for(Map.Entry<Coordinates, List<GameCharacter>> characters : availableCharacters.entrySet()) {
+                    if (index < characters.getValue().size() && availableSquares.contains(characters.getKey())) {
+                        selectedCharacters.add(characters.getValue().get(index));
+                        availableSquares.remove(characters.getKey());
+                        break;
+                    } else if(index >= characters.getValue().size()) {
+                        index = index - characters.getValue().size();
+                    }
+                }
+                if (size == selectedCharacters.size()) {
+                    showMessage("Invalid input, retry: ");
+                    return;
+                }
+            }
+            List<String> targetsAmaunt = getEffectPossibility().getTargetsAmount();
+            if(targetsAmaunt.size() == 1 && selectedCharacters.size() != Integer.parseInt(targetsAmaunt.get(0)) ||
+                    targetsAmaunt.size() > 1 && (selectedCharacters.size() < Integer.parseInt(targetsAmaunt.get(0)) ||
+                            (targetsAmaunt.get(1) != "MAX" && selectedCharacters.size() > Integer.parseInt(targetsAmaunt.get(1))))) {
+                showMessage("Invalid input, retry: ");
+                return;
+            }
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            showMessage("Invalid input, retry: ");
+            return;
+        }
+        this.inputEnabled = false;
+        super.setPossibilityCharacters(selectedCharacters);
+        super.selectionEffectFinish();
     }
 
     @Override
@@ -1030,8 +1092,26 @@ public class CLIView extends View {
             }
             text.append(toAppend);
         }
+        text.append("Type 'C' to cancel\n");
         text.setLength(text.length() - 1);
         showMessage(text.toString());
+        this.inputEnabled = true;
+    }
+
+    @Override
+    void handleEffectRequireRequesat() {
+        super.handleEffectRequireRequesat();
+        String description = "";
+        if (getEffectPossibility().getType() == EffectType.MOVE) {
+            description = "move";
+        } else if (getEffectPossibility().getType() == EffectType.SELECT) {
+            description = "select";
+        } else if (getEffectPossibility().getType() == EffectType.DAMAGE) {
+            description = "damage";
+        } else if (getEffectPossibility().getType() == EffectType.MARK) {
+            description = "mark";
+        }
+        showMessage("Do you want to perform \"" + description + "\"? [Y / N]");
         this.inputEnabled = true;
     }
 
@@ -1053,9 +1133,7 @@ public class CLIView extends View {
         super.handleEffectTargetRequest();
         if(getEffectPossibility().getCharacters().size() == 1 &&
                 getEffectPossibility().getCharacters().get(0) == super.getCharacter()) {
-            List<GameCharacter> characters = new ArrayList<>();
-            characters.add(super.getCharacter());
-            super.setPossibilityCharacters(characters);
+            handleEffectMoveRequest();
             return;
         }
         StringBuilder text = new StringBuilder();
@@ -1146,9 +1224,26 @@ public class CLIView extends View {
     @Override
     void handleMultipleSquareRequest() {
         super.handleMultipleSquareRequest();
-        StringBuilder text = new StringBuilder("Select a square:\n");
+        List<String> targetsAmaunt = getEffectPossibility().getTargetsAmount();
+        StringBuilder text = new StringBuilder();
+        if(targetsAmaunt.size() == 1) {
+            int amaunt = Integer.parseInt(targetsAmaunt.get(0));
+            text.append("Choose " + amaunt + " players each in different squares:\n");
+        } else if (targetsAmaunt.get(1) == "MAX") {
+            int min = Integer.parseInt(targetsAmaunt.get(0));
+            text.append("Choose at least " + min + " players each in different squares:\n");
+        } else {
+            int min = Integer.parseInt(targetsAmaunt.get(0));
+            int max = Integer.parseInt(targetsAmaunt.get(1));
+            text.append("Choose from " + min + " to " + max + " players each in different squares:\n");
+        }
+        int index = 1;
         for (Map.Entry<Coordinates, List<GameCharacter>> square : getEffectPossibility().getMultipleSquares().entrySet()) {
-
+            text.append("from [" + square.getKey().getX() + "," + square.getKey().getY() + "]:\n");
+            for(GameCharacter character : square.getValue()) {
+                text.append("[" + index + "]- " + character + "\n");
+                index++;
+            }
         }
         text.setLength(text.length() - 1);
         showMessage(text.toString());

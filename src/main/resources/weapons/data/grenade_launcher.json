@@ -37,6 +37,7 @@
     },
     {
       "effectRequired": false,
+      "requiredDependecy": 0,
       "effectCombo": false,
       "effectDependency" : [
         "SECONDARYONE"

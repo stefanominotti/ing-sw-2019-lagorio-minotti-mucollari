@@ -31,11 +31,27 @@ public class EffectControllerTest {
                 writer.flush();
             } catch (IOException e) {
             }
+            this.weapon = weapon;
             System.out.println(weapon.getName());
             weaponPrimaryTest();
             weaponAlternativeTest();
         }
     }
+
+   /* @Test
+    public void weaponChoosenTest() {
+       this.weapon = Weapon.VORTEX_CANNON;
+       String filePath = configPath.replace('\\', '/') + "/WeaponsTest/" + weapon + "Test.json" ;
+        try {
+            FileWriter writer = new FileWriter(configPath + "/" + "config.json");
+            writer.write("{" + "\"path\": \"" + filePath + "\"" + "}");
+            writer.flush();
+        } catch (IOException e) {
+        }
+       weaponPrimaryTest();
+       weaponAlternativeTest();
+
+    }*/
 
     private List<GameCharacter> chooseCharacters(EffectPossibilityPack pack) {
         List<GameCharacter> targets = new ArrayList<>();

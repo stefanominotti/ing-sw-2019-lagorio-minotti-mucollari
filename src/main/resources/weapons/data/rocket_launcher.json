@@ -47,6 +47,7 @@
     },
     {
       "effectRequired": false,
+      "requiredDependecy": 0,
       "effectCombo": false,
       "type": "MOVE",
       "effectDependency": [
