@@ -226,7 +226,11 @@ public class GameController implements Observer {
     }
 
     private void handleEffectSelection(WeaponEffectOrderType effectSelection) {
-        this.effectsController.effectSelected(effectSelection);
+        if (effectSelection == null) {
+            this.turnController.handleEndAction();
+        } else {
+            this.effectsController.effectSelected(effectSelection);
+        }
     }
 
     private void handleEffectComboSelection(String selection) {

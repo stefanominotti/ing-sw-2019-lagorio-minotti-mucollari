@@ -57,6 +57,7 @@ public abstract class View {
     private List<WeaponEffectOrderType> effectsSelection;
 
     private Weapon currentWeapon;
+    private boolean weaponActivated;
     private PaymentType currentPayment;
     private Map<AmmoType, Integer> requiredPayment;
     private Map<AmmoType, Integer> paidAmmos;
@@ -157,6 +158,14 @@ public abstract class View {
 
     public void setCurrentWeapon(Weapon currentWeapon) {
         this.currentWeapon = currentWeapon;
+    }
+
+    public boolean isWeaponActivated() {
+        return this.weaponActivated;
+    }
+
+    public void setWeaponActivated(boolean weaponActivated) {
+        this.weaponActivated = weaponActivated;
     }
 
     PaymentType getCurrentPayment() {
@@ -828,13 +837,13 @@ public abstract class View {
                 if(this.effectPossibility.isRequire()) {
                     handleEffectSelections();
                 } else {
-                    handleEffectRequireRequesat();
+                    handleEffectRequireRequest();
                 }
                 break;
         }
     }
 
-    void handleEffectRequireRequesat() {
+    void handleEffectRequireRequest() {
         this.state = EFFECTREQUIRE;
     }
 

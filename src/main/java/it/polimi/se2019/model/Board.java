@@ -527,7 +527,7 @@ public class Board extends Observable {
                 if(!square.isSpawn()) {
                     continue;
                 }
-                while(square.getWeaponsStore().size() < MAX_WEAPONS_STORE) {
+                /* while(square.getWeaponsStore().size() < MAX_WEAPONS_STORE) {
                     if (this.weaponsDeck.isEmpty()) {
                         if (!added.isEmpty()) {
                             notifyChanges(new WeaponStoresRefilledMessage(added));
@@ -538,7 +538,10 @@ public class Board extends Observable {
                     square.addWeapon(this.weaponsDeck.get(0));
                     added.put(new Coordinates(square.getX(), square.getY()), toAdd);
                     this.weaponsDeck.remove(0);
-                }
+                } */
+                square.addWeapon(new WeaponCard(Weapon.TRACTOR_BEAM));
+                square.addWeapon(new WeaponCard(Weapon.SHOCKWAVE));
+                square.addWeapon(new WeaponCard(Weapon.THOR));
             }
         }
 
@@ -712,7 +715,7 @@ public class Board extends Observable {
         }
         List<Square> availableSquares = new ArrayList<>();
         for (Square s : this.arena.getAllSquares()) {
-            if (player.getPosition().canSee(s)) {
+            if (player.getPosition().canSee(s) && player.getPosition() != null) {
                 availableSquares.add(s);
             }
         }

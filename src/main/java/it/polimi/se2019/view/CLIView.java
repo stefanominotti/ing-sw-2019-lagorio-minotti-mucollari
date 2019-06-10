@@ -1,9 +1,7 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.controller.ActionType;
-import it.polimi.se2019.controller.EffectPossibilityPack;
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.model.messages.Message;
 import it.polimi.se2019.model.messages.board.ArenaMessage;
 import it.polimi.se2019.model.messages.board.SkullsMessage;
 import it.polimi.se2019.model.messages.client.CharacterMessage;
@@ -285,6 +283,7 @@ public class CLIView extends View {
         } else if (getState() == USEWEAPON) {
             getClient().send(new SingleSelectionMessage(SelectionMessageType.USE_WEAPON, getCharacter(), toSend));
             setCurrentWeapon(toSend);
+            setWeaponActivated(false);
         }
     }
 
@@ -390,16 +389,21 @@ public class CLIView extends View {
     }
 
     private void handleEffectInput(String input) {
-        input = input.toUpperCase();
         boolean valid = false;
-        if(input.equals("C")) {
+        if(input.equalsIgnoreCase("C") && !isWeaponActivated()) {
             this.inputEnabled = false;
             getClient().send(new SingleSelectionMessage(SelectionMessageType.ACTION, getCharacter(),
                     ActionType.CANCEL));
             return;
         }
+        if(input.equalsIgnoreCase("S") && isWeaponActivated()) {
+            this.inputEnabled = false;
+            getClient().send(new SingleSelectionMessage(SelectionMessageType.EFFECT, getCharacter(), null));
+            return;
+        }
+
         for (WeaponEffectOrderType validInput : getEffectsSelection()) {
-            if (validInput.toString().equals(input)) {
+            if (validInput.toString().equalsIgnoreCase(input)) {
                 valid = true;
                 break;
             }
@@ -413,6 +417,7 @@ public class CLIView extends View {
         this.inputEnabled = false;
         getClient().send(new SingleSelectionMessage(SelectionMessageType.EFFECT, getCharacter(),
                 WeaponEffectOrderType.valueOf(input)));
+        setWeaponActivated(true);
     }
 
     private void handleDecisionInput(String input) {
@@ -538,10 +543,10 @@ public class CLIView extends View {
                     return;
                 }
             }
-            List<String> targetsAmaunt = getEffectPossibility().getTargetsAmount();
-            if(targetsAmaunt.size() == 1 && selectedCharacters.size() != Integer.parseInt(targetsAmaunt.get(0)) ||
-                    targetsAmaunt.size() > 1 && (selectedCharacters.size() < Integer.parseInt(targetsAmaunt.get(0)) ||
-                            (targetsAmaunt.get(1) != "MAX" && selectedCharacters.size() > Integer.parseInt(targetsAmaunt.get(1))))) {
+            List<String> targetsAmount = getEffectPossibility().getTargetsAmount();
+            if(targetsAmount.size() == 1 && selectedCharacters.size() != Integer.parseInt(targetsAmount.get(0)) ||
+                    targetsAmount.size() > 1 && (selectedCharacters.size() < Integer.parseInt(targetsAmount.get(0)) ||
+                            (!targetsAmount.get(1).equals("MAX") && selectedCharacters.size() > Integer.parseInt(targetsAmount.get(1))))) {
                 showMessage("Invalid input, retry: ");
                 return;
             }
@@ -1093,15 +1098,19 @@ public class CLIView extends View {
             }
             text.append(toAppend);
         }
-        text.append("Type 'C' to cancel\n");
+        if (isWeaponActivated()) {
+            text.append("Type 'S' to skip\n");
+        } else {
+            text.append("Type 'C' to cancel\n");
+        }
         text.setLength(text.length() - 1);
         showMessage(text.toString());
         this.inputEnabled = true;
     }
 
     @Override
-    void handleEffectRequireRequesat() {
-        super.handleEffectRequireRequesat();
+    void handleEffectRequireRequest() {
+        super.handleEffectRequireRequest();
         String description = "";
         if (getEffectPossibility().getType() == EffectType.MOVE) {
             description = "move";
