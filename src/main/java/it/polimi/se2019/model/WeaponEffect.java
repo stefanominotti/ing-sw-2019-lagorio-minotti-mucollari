@@ -13,10 +13,10 @@ public class WeaponEffect {
     private final EffectType type;
     private final List<String> amount;
     private final EffectTarget target;
-    private final int requiredDependecy;
+    private final int requiredDependency;
 
     WeaponEffect(String effectName, String description, Map<AmmoType, Integer> cost, boolean effectRequired, boolean effectCombo,
-                 List<WeaponEffectOrderType> effectDependency, EffectType type, List<String> amount, EffectTarget target, int requiredDependecy) {
+                 List<WeaponEffectOrderType> effectDependency, EffectType type, List<String> amount, EffectTarget target, int requiredDependency) {
 
         this.effectName = effectName;
         this.description = description;
@@ -28,7 +28,7 @@ public class WeaponEffect {
         this.type = type;
         this.amount = amount;
         this.target = target;
-        this.requiredDependecy = requiredDependecy;
+        this.requiredDependency = requiredDependency;
     }
 
     public String getEffectName() { return this.effectName; }
@@ -67,7 +67,7 @@ public class WeaponEffect {
         return returnMap;
     }
 
-    public Integer getRequiredDependecy() {
-        return this.requiredDependecy;
+    public Integer getRequiredDependency() {
+        return this.requiredDependency;
     }
 }

@@ -40,7 +40,7 @@
     },
     {
       "effectRequired": false,
-      "requiredDependecy": 0,
+      "requiredDependency": 0,
       "effectCombo": false,
       "type": "MOVE",
       "amount": [

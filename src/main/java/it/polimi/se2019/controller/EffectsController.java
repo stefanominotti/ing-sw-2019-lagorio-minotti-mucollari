@@ -251,7 +251,7 @@ public class EffectsController {
                     targetPlayers = distanceByPlayerCase(constraint);
                     break;
                 case NOTVISIBLE:
-                    targetPlayers = this.board.getNoVisiblePlayers(getTargetPlayer(
+                    targetPlayers = this.board.getNotVisiblePlayers(getTargetPlayer(
                             constraint.getTarget()));
                     break;
                 case SAMEDIRECTION:
@@ -352,9 +352,8 @@ public class EffectsController {
         List<Player> availablePlayers = this.board.getPlayers();
         if (!constraints.isEmpty()) {
             availablePlayers = filterByPositionConstraintPlayers(constraints);
-            availablePlayers.remove(this.activePlayer);
-            return availablePlayers;
         }
+        availablePlayers.remove(this.activePlayer);
         return availablePlayers;
     }
 
@@ -558,7 +557,7 @@ public class EffectsController {
 
             }
         } else {
-            for(int i = 0; i<this.currentEffect.getRequiredDependecy(); i++) {
+            for(int i = 0; i<this.currentEffect.getRequiredDependency(); i++) {
                 this.effectsQueue.remove(1);
             }
         }
@@ -628,7 +627,14 @@ public class EffectsController {
                 return;
             }
         }
-        EffectPossibilityPack pack = seeEffectPossibility(this.currentEffect);
+        EffectPossibilityPack pack;
+        try {
+            pack = seeEffectPossibility(this.currentEffect);
+        } catch (UnsupportedOperationException e) {
+            this.effectsQueue = new ArrayList<>();
+            handleEffectsQueue();
+            return;
+        }
         this.currentEffect = this.effectsQueue.get(0);
         if (pack.getTargetsAmount().size() == 1 && pack.getTargetsAmount().get(0).equals("MAX")) {
             effectApplication(pack);

@@ -72,7 +72,8 @@
       }
     },
     {
-      "effectRequired": true,
+      "effectRequired": false,
+      "requiredDependency": 1,
       "effectCombo": false,
       "type": "SELECT",
       "amount": [

@@ -152,6 +152,7 @@ public class CLIView extends View {
             showMessage(getEnemyBoards().get(selection).toString());
             showActions();
             setState(SELECTACTION);
+            this.inputEnabled = true;
         }
     }
 

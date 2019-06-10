@@ -172,7 +172,7 @@
     {
       "type": "DAMAGE",
       "effectRequired": false,
-      "requiredDependecy": 0,
+      "requiredDependency": 0,
       "effectCombo": false,
       "amount": [
         "2"
@@ -197,7 +197,7 @@
     {
       "type": "SELECT",
       "effectRequired": false,
-      "requiredDependecy": 2,
+      "requiredDependency": 2,
       "effectCombo": false,
       "amount": [
         "1"
@@ -258,7 +258,7 @@
     {
       "type": "DAMAGE",
       "effectRequired": false,
-      "requiredDependecy": 0,
+      "requiredDependency": 0,
       "effectCombo": false,
       "amount": [
         "2"

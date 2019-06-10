@@ -119,7 +119,7 @@
       "target": {
         "type": "OTHERS",
         "amount": [
-          "0", "2"
+          "1", "2"
         ],
         "positionType": "EVERYWHERE",
         "positionConstraints": [
@@ -155,7 +155,7 @@
       "target": {
         "type": "OTHERS",
         "amount": [
-          "0", "2"
+          "MAX"
         ],
         "positionType": "SAMESQUARE",
         "targetConstraints": [

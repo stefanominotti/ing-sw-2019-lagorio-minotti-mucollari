@@ -148,7 +148,7 @@ public class Server {
     }
 
     void receiveMessage(Message message, VirtualClientInterface client) {
-        if (this.clients.size() == 5) {
+        if (this.clients.size() == 5 && !this.clients.containsValue(client)) {
             client.send(new ClientMessage(ClientMessageType.GAME_ALREADY_STARTED, null));
         }
         List<GameCharacter> availables = new ArrayList<>();

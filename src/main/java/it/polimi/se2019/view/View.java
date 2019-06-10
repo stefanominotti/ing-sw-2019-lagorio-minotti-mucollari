@@ -614,6 +614,8 @@ public abstract class View {
                 playerBoard.addWeapon();
             }
         }
+        this.board.getPlayerPosition(character).removeStoreWeapon(newWeapon);
+        this.board.getPlayerPosition(character).addStoreWeapon(oldWeapon);
     }
 
     void handleWeaponReload(GameCharacter character, Weapon weapon) {

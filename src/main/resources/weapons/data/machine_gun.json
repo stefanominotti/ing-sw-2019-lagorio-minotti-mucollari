@@ -73,7 +73,7 @@
         "YELLOW": 0
       },
       "effectRequired": false,
-      "requiredDependecy": 0,
+      "requiredDependency": 0,
       "effectCombo": false,
       "type": "DAMAGE",
       "amount": [
@@ -92,7 +92,7 @@
     },
     {
       "effectRequired": false,
-      "requiredDependecy": 0,
+      "requiredDependency": 0,
       "effectCombo": false,
       "type": "DAMAGE",
       "amount": [
