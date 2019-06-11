@@ -43,6 +43,9 @@
         "SECONDARYONE"
       ],
       "type": "MOVE",
+      "effectDependency": [
+        "SECONDARYONE"
+      ],
       "amount": [
         "1"
       ],

@@ -416,7 +416,7 @@ public class CLIView extends View {
 
         this.inputEnabled = false;
         getClient().send(new SingleSelectionMessage(SelectionMessageType.EFFECT, getCharacter(),
-                WeaponEffectOrderType.valueOf(input)));
+                WeaponEffectOrderType.valueOf(input.toUpperCase())));
         setWeaponActivated(true);
     }
 
@@ -515,7 +515,7 @@ public class CLIView extends View {
         }
     }
 
-    private void handleEffectMultipleSquaresInput(String input) {
+    /*private void handleEffectMultipleSquaresInput(String input) {
         String[] inputList = input.split(",");
         Map<Coordinates, List<GameCharacter>> availableCharacters = new HashMap<>(getEffectPossibility().getMultipleSquares());
         List<GameCharacter> selectedCharacters = new ArrayList<>();
@@ -530,9 +530,11 @@ public class CLIView extends View {
                 }
                 index = index - 1;
                 for(Map.Entry<Coordinates, List<GameCharacter>> characters : availableCharacters.entrySet()) {
-                    if (index < characters.getValue().size() && availableSquares.contains(characters.getKey())) {
+                    if(index < characters.getValue().size() && availableSquares.contains(characters.getKey())) {
                         selectedCharacters.add(characters.getValue().get(index));
                         availableSquares.remove(characters.getKey());
+                        break;
+                    } else if(index < characters.getValue().size() && !availableSquares.contains(characters.getKey())) {
                         break;
                     } else if(index >= characters.getValue().size()) {
                         index = index - characters.getValue().size();
@@ -541,6 +543,48 @@ public class CLIView extends View {
                 if (size == selectedCharacters.size()) {
                     showMessage("Invalid input, retry: ");
                     return;
+                }
+            }
+            List<String> targetsAmount = getEffectPossibility().getTargetsAmount();
+            if(targetsAmount.size() == 1 && selectedCharacters.size() != Integer.parseInt(targetsAmount.get(0)) ||
+                    targetsAmount.size() > 1 && (selectedCharacters.size() < Integer.parseInt(targetsAmount.get(0)) ||
+                            (!targetsAmount.get(1).equals("MAX") && selectedCharacters.size() > Integer.parseInt(targetsAmount.get(1))))) {
+                showMessage("Invalid input, retry: ");
+                return;
+            }
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            showMessage("Invalid input, retry: ");
+            return;
+        }
+        this.inputEnabled = false;
+        super.setPossibilityCharacters(selectedCharacters);
+        super.selectionEffectFinish();
+    }*/
+
+    private void handleEffectMultipleSquaresInput(String input) {
+        String[] inputList = input.split("/");
+        Map<Coordinates, List<GameCharacter>> availableCharacters = new LinkedHashMap<>(getEffectPossibility().getMultipleSquares());
+        List<GameCharacter> selectedCharacters = new ArrayList<>();
+        List<Coordinates> availableSquares = new ArrayList<>(getEffectPossibility().getMultipleSquares().keySet());
+        try {
+            for (String i : inputList) {
+                String[] strings = i.split(",");
+                int squareIndex = Integer.parseInt(strings[0]) - 1;
+                int characterIndex = Integer.parseInt(strings[1]) - 1;
+                if(squareIndex < 0 || characterIndex < 0 || squareIndex >= availableCharacters.size()) {
+                    showMessage("Invalid input, retry: ");
+                    return;
+                }
+                for(Map.Entry<Coordinates, List<GameCharacter>> characters : availableCharacters.entrySet()) {
+                    if(squareIndex == 0 && availableSquares.contains(characters.getKey()) && characterIndex < characters.getValue().size()) {
+                        selectedCharacters.add(characters.getValue().get(characterIndex));
+                        availableSquares.remove(characters.getKey());
+                        break;
+                    } else if(squareIndex < 0 || squareIndex == 0 && (!availableSquares.contains(characters.getKey()) || characterIndex >= characters.getValue().size())) {
+                        showMessage("Invalid input, retry: ");
+                        return;
+                    }
+                    squareIndex--;
                 }
             }
             List<String> targetsAmount = getEffectPossibility().getTargetsAmount();
@@ -1238,21 +1282,23 @@ public class CLIView extends View {
         StringBuilder text = new StringBuilder();
         if(targetsAmaunt.size() == 1) {
             int amaunt = Integer.parseInt(targetsAmaunt.get(0));
-            text.append("Choose " + amaunt + " players each in different squares:\n");
+            text.append("Choose " + amaunt + " players each in different squares");
         } else if (targetsAmaunt.get(1) == "MAX") {
             int min = Integer.parseInt(targetsAmaunt.get(0));
-            text.append("Choose at least " + min + " players each in different squares:\n");
+            text.append("Choose at least " + min + " players each in different squares");
         } else {
             int min = Integer.parseInt(targetsAmaunt.get(0));
             int max = Integer.parseInt(targetsAmaunt.get(1));
-            text.append("Choose from " + min + " to " + max + " players each in different squares:\n");
+            text.append("Choose from " + min + " to " + max + " players each in different squares");
         }
-        int index = 1;
+        text.append("type square_index,character_index/... :\n");
+        int squareIndex = 1;
         for (Map.Entry<Coordinates, List<GameCharacter>> square : getEffectPossibility().getMultipleSquares().entrySet()) {
-            text.append("from [" + square.getKey().getX() + "," + square.getKey().getY() + "]:\n");
+            text.append("[" + squareIndex + "]-from [" + square.getKey().getX() + "," + square.getKey().getY() + "]:\n");
+            int characterIndex = 1;
             for(GameCharacter character : square.getValue()) {
-                text.append("[" + index + "]- " + character + "\n");
-                index++;
+                text.append("[" + characterIndex + "]- " + character + "\n");
+                characterIndex++;
             }
         }
         text.setLength(text.length() - 1);

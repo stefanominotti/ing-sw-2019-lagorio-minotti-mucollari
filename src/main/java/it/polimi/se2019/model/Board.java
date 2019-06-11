@@ -162,6 +162,16 @@ public class Board extends Observable {
         return validPlayers;
     }
 
+    public List<Player> getAvilablePlayers() {
+        List<Player> players = new ArrayList<>();
+        for (Player p : this.players) {
+            if(p.getPosition() != null) {
+                players.add(p);
+            }
+        }
+        return players;
+    }
+
     public List<GameCharacter> getValidCharacters() {
         List<GameCharacter> validCharacters = new ArrayList<>();
         for (Player p : getValidPlayers()) {
@@ -541,7 +551,7 @@ public class Board extends Observable {
                 } */
                 square.addWeapon(new WeaponCard(Weapon.TRACTOR_BEAM));
                 square.addWeapon(new WeaponCard(Weapon.SHOCKWAVE));
-                square.addWeapon(new WeaponCard(Weapon.THOR));
+                square.addWeapon(new WeaponCard(Weapon.MACHINE_GUN));
             }
         }
 

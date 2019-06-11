@@ -230,7 +230,7 @@ public class EffectsController {
         switch (constraint.getTarget()) {
             case OTHERS:
                 Set<Square> targetSquares = new HashSet<>();
-                for (Player target : this.board.getPlayers()) {
+                for (Player target : this.board.getAvilablePlayers()) {
                     if (!target.equals(this.activePlayer)) {
                         targetSquares.addAll(this.board.getSquaresByDistance(target, constraint.getDistanceValues()));
                     }
@@ -248,7 +248,7 @@ public class EffectsController {
     }
 
     private List<Player> filterByPositionConstraintPlayers(List<PositionConstraint> constraints) {
-        List<Player> availablePlayers = this.board.getPlayers();
+        List<Player> availablePlayers = this.board.getAvilablePlayers();
         List<Player> targetPlayers = new ArrayList<>();
         for (PositionConstraint constraint : constraints) {
             switch (constraint.getType()) {
@@ -306,7 +306,7 @@ public class EffectsController {
                             constraint.getTarget()).getPosition().getRoom());
                     break;
                 case DISTANCE:
-                    for (Player player : this.board.getPlayers()) {
+                    for (Player player : this.board.getAvilablePlayers()) {
                         if (!player.equals(this.activePlayer) && player.getPosition() != null) {
                             targetRooms.add(player.getPosition().getRoom());
                         }
@@ -339,7 +339,7 @@ public class EffectsController {
         EffectTarget target = effect.getTarget();
         TargetPositionType positionType = target.getPositionType();
         List<PositionConstraint> constraints = target.getPositionConstraints();
-        List<Player> availablePlayers = this.board.getPlayers();
+        List<Player> availablePlayers = this.board.getAvilablePlayers();
         switch (positionType) {
             case EVERYWHERE:
                 availablePlayers = filterByPositionConstraintPlayers(constraints);
@@ -357,7 +357,7 @@ public class EffectsController {
     private List<Player> moveOthersPlayersCase(WeaponEffect effect) {
         EffectTarget target = effect.getTarget();
         List<PositionConstraint> constraints = target.getPositionConstraints();
-        List<Player> availablePlayers = this.board.getPlayers();
+        List<Player> availablePlayers = this.board.getAvilablePlayers();
         if (!constraints.isEmpty()) {
             availablePlayers = filterByPositionConstraintPlayers(constraints);
         }
@@ -386,7 +386,7 @@ public class EffectsController {
         List<Square> availableSquares = new ArrayList<>();
         List<Room> availableRooms = new ArrayList<>();
         List<CardinalPoint> availableCardinal = new ArrayList<>();
-        Map<Square, List<Player>> availableMultipleSquares = new HashMap<>();
+        Map<Square, List<Player>> availableMultipleSquares = new LinkedHashMap<>();
         List<String> amountTargets = target.getAmount();
         if (!target.getTargetConstraints().isEmpty()) {
             Set<TargetConstraint> targetConstraints = target.getTargetConstraints();
@@ -467,30 +467,30 @@ public class EffectsController {
                 }
                 break;
             default:
-                if (availablePlayers.isEmpty()) {
-                    if (positionType != TargetPositionType.MULTIPLESQUARES) {
-                        availablePlayers = damageMarkCase(effect);
-                        availablePlayers.remove(this.activePlayer);
-                    } else {
-                        List<Square> targetSquares = filterByPositionConstraintSquares(constraints);
-                        for (Square square : targetSquares) {
-                            if (!square.getActivePlayers().isEmpty()) {
-                                availableMultipleSquares.put(square, square.getActivePlayers());
-                            }
-                        }
-                        if (availableMultipleSquares.isEmpty()) {
-                            throw new UnsupportedOperationException();
+                if (positionType == TargetPositionType.MULTIPLESQUARES) {
+                    List<Square> targetSquares = filterByPositionConstraintSquares(constraints);
+                    for (Square square : targetSquares) {
+                        if (!square.getActivePlayers().isEmpty()) {
+                            availableMultipleSquares.put(square, square.getActivePlayers());
                         }
                     }
-                }
-                if (noHitByMain) {
-                    availablePlayers.removeAll(this.hitByMain);
-                }
-                if (noHitBySecondary) {
-                    availablePlayers.removeAll(this.hitBySecondary);
-                }
-                if (availablePlayers.isEmpty()) {
-                    throw new UnsupportedOperationException();
+                    if (availableMultipleSquares.isEmpty()) {
+                        throw new UnsupportedOperationException();
+                    }
+                } else {
+                    if (availablePlayers.isEmpty()) {
+                        availablePlayers = damageMarkCase(effect);
+                        availablePlayers.remove(this.activePlayer);
+                    }
+                    if (noHitByMain) {
+                        availablePlayers.removeAll(this.hitByMain);
+                    }
+                    if (noHitBySecondary) {
+                        availablePlayers.removeAll(this.hitBySecondary);
+                    }
+                    if (availablePlayers.isEmpty()) {
+                        throw new UnsupportedOperationException();
+                    }
                 }
         }
         List<GameCharacter> characters = new ArrayList<>();
@@ -565,7 +565,7 @@ public class EffectsController {
 
             }
         } else {
-            for(int i = 0; i<this.currentEffect.getRequiredDependency(); i++) {
+            for (int i = 0; i < this.currentEffect.getRequiredDependency(); i++) {
                 this.effectsQueue.remove(1);
             }
         }

@@ -3,10 +3,7 @@ package it.polimi.se2019.controller;
 import it.polimi.se2019.model.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class EffectPossibilityPack implements Serializable {
     private List<String> targetsAmount;
@@ -36,7 +33,7 @@ public class EffectPossibilityPack implements Serializable {
         this.squares = new ArrayList<>();
         this.rooms = new ArrayList<>();
         this.cardinalPoints = new ArrayList<>();
-        this.multipleSquares = new HashMap<>();
+        this.multipleSquares = new LinkedHashMap<>();
         this.require = require;
         this.type = type;
     }
