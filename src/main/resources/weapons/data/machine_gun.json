@@ -58,7 +58,7 @@
         ],
         "positionType": "EVERYWHERE",
         "targetConstraints": [
-          "ONLYHITBYMAIN"
+          "ONLYHITBYMAIN", "NOHITBYSECONDARY"
         ]
       }
     }

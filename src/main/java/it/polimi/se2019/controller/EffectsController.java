@@ -161,10 +161,20 @@ public class EffectsController {
         }
         List<WeaponEffectOrderType> toRemove = new ArrayList<>();
         for (Map.Entry<WeaponEffectOrderType, List<WeaponEffect>> effect : availableWeapons.entrySet()) {
-            try {
-                seeEffectPossibility(effect.getValue().get(0));
-            } catch (UnsupportedOperationException e) {
-                toRemove.add(effect.getKey());
+            boolean valid = false;
+            int index = 0;
+            while (!valid) {
+                try {
+                    seeEffectPossibility(effect.getValue().get(index));
+                    valid = true;
+                } catch (UnsupportedOperationException e) {
+                    if (!effect.getValue().get(0).isRequired()) {
+                        index = effect.getValue().get(0).getRequiredDependency() + 1;
+                    } else {
+                        toRemove.add(effect.getKey());
+                        valid = true;
+                    }
+                }
             }
         }
         for (WeaponEffectOrderType w : toRemove) {
@@ -611,6 +621,7 @@ public class EffectsController {
                         new ArrayList<>(getAvailableEffects().keySet())));
             } else {
                 resetController();
+                this.controller.endEffects();
             }
             return;
         }
@@ -636,7 +647,13 @@ public class EffectsController {
         try {
             pack = seeEffectPossibility(this.currentEffect);
         } catch (UnsupportedOperationException e) {
-            this.effectsQueue = new ArrayList<>();
+            if (this.currentEffect.isRequired()) {
+                this.effectsQueue = new ArrayList<>();
+            } else {
+                for (int i=0; i<=this.currentEffect.getRequiredDependency(); i++) {
+                    this.effectsQueue.remove(0);
+                }
+            }
             handleEffectsQueue();
             return;
         }
@@ -658,7 +675,6 @@ public class EffectsController {
         this.weaponEffects = new ArrayList<>();
         this.effectsQueue = new ArrayList<>();
         this.activeCombo = null;
-        this.controller.endEffects();
     }
 
     private void setHitByCases(GameCharacter character) {

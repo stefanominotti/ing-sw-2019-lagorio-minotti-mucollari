@@ -221,7 +221,6 @@ public class TurnController {
                 break;
             case ENDTURN:
                 handleReload();
-
                 break;
             case MOVE:
                 this.movesLeft--;
@@ -245,7 +244,11 @@ public class TurnController {
     }
 
     void cancelAction() {
-        this.movesLeft++;
+        if ((!this.finalFrenzy && this.movesLeft < 2) ||
+                (this.finalFrenzy && !this.beforeFirstPlayer && this.movesLeft < 1) ||
+                (this.finalFrenzy && this.beforeFirstPlayer && this.movesLeft < 2)) {
+            this.movesLeft++;
+        }
         sendActions();
     }
 
@@ -290,10 +293,10 @@ public class TurnController {
             } else {
                 availableActions = new ArrayList<>(Arrays.asList(ActionType.MOVE, ActionType.PICKUP));
             }
-        }
-        this.effectsController.setActivePlayer(this.activePlayer);
-        if (!this.effectsController.getAvailableWeapons().isEmpty() && !this.finalFrenzy) {
-            availableActions.add(ActionType.SHOT);
+            this.effectsController.setActivePlayer(this.activePlayer);
+            if (!this.effectsController.getAvailableWeapons().isEmpty() && !this.finalFrenzy) {
+                availableActions.add(ActionType.SHOT);
+            }
         }
         for (Powerup p : this.activePlayer.getPowerups()) {
             if (p.getType() == PowerupType.TELEPORTER || (p.getType() == PowerupType.NEWTON && canUseNewton())) {

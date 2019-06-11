@@ -134,13 +134,6 @@
           {
             "type": "DISTANCE",
             "distanceValues":[
-              "0"
-            ],
-            "target": "OTHERS"
-          },
-          {
-            "type": "DISTANCE",
-            "distanceValues":[
               "1"
             ],
             "target": "SELF"
@@ -209,13 +202,6 @@
         ],
         "positionType": "EVERYWHERE",
         "positionConstraints": [
-          {
-            "type": "DISTANCE",
-            "distanceValues":[
-              "0"
-            ],
-            "target": "OTHERS"
-          },
           {
             "type": "VISIBLE",
             "target": "SQUARE"
