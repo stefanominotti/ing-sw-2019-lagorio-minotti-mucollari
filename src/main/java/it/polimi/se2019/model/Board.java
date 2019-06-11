@@ -537,7 +537,7 @@ public class Board extends Observable {
                 if(!square.isSpawn()) {
                     continue;
                 }
-                /* while(square.getWeaponsStore().size() < MAX_WEAPONS_STORE) {
+                while(square.getWeaponsStore().size() < MAX_WEAPONS_STORE) {
                     if (this.weaponsDeck.isEmpty()) {
                         if (!added.isEmpty()) {
                             notifyChanges(new WeaponStoresRefilledMessage(added));
@@ -548,10 +548,7 @@ public class Board extends Observable {
                     square.addWeapon(this.weaponsDeck.get(0));
                     added.put(new Coordinates(square.getX(), square.getY()), toAdd);
                     this.weaponsDeck.remove(0);
-                } */
-                square.addWeapon(new WeaponCard(Weapon.TRACTOR_BEAM));
-                square.addWeapon(new WeaponCard(Weapon.SHOCKWAVE));
-                square.addWeapon(new WeaponCard(Weapon.MACHINE_GUN));
+                }
             }
         }
 

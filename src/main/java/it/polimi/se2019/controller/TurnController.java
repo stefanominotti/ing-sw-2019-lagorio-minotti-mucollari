@@ -213,7 +213,6 @@ public class TurnController {
     }
 
     void handleAction(ActionType action) {
-        this.movesLeft = 1000;
         this.switchWeapon = null;
         this.weaponToGet = null;
         switch (action) {

@@ -562,13 +562,13 @@ public class CLIView extends View {
     }*/
 
     private void handleEffectMultipleSquaresInput(String input) {
-        String[] inputList = input.split("/");
+        String[] inputList = input.split(",");
         Map<Coordinates, List<GameCharacter>> availableCharacters = new LinkedHashMap<>(getEffectPossibility().getMultipleSquares());
         List<GameCharacter> selectedCharacters = new ArrayList<>();
         List<Coordinates> availableSquares = new ArrayList<>(getEffectPossibility().getMultipleSquares().keySet());
         try {
             for (String i : inputList) {
-                String[] strings = i.split(",");
+                String[] strings = i.split(".");
                 int squareIndex = Integer.parseInt(strings[0]) - 1;
                 int characterIndex = Integer.parseInt(strings[1]) - 1;
                 if(squareIndex < 0 || characterIndex < 0 || squareIndex >= availableCharacters.size()) {
@@ -1278,30 +1278,31 @@ public class CLIView extends View {
     @Override
     void handleMultipleSquareRequest() {
         super.handleMultipleSquareRequest();
-        List<String> targetsAmaunt = getEffectPossibility().getTargetsAmount();
+        List<String> targetsAmount = getEffectPossibility().getTargetsAmount();
         StringBuilder text = new StringBuilder();
-        if(targetsAmaunt.size() == 1) {
-            int amaunt = Integer.parseInt(targetsAmaunt.get(0));
-            text.append("Choose " + amaunt + " players each in different squares");
-        } else if (targetsAmaunt.get(1) == "MAX") {
-            int min = Integer.parseInt(targetsAmaunt.get(0));
-            text.append("Choose at least " + min + " players each in different squares");
+        if(targetsAmount.size() == 1) {
+            int amount = Integer.parseInt(targetsAmount.get(0));
+            text.append("Choose " + amount + " players each in different squares\n");
+        } else if (targetsAmount.get(1) == "MAX") {
+            int min = Integer.parseInt(targetsAmount.get(0));
+            text.append("Choose at least " + min + " players each in different squares\n");
         } else {
-            int min = Integer.parseInt(targetsAmaunt.get(0));
-            int max = Integer.parseInt(targetsAmaunt.get(1));
-            text.append("Choose from " + min + " to " + max + " players each in different squares");
+            int min = Integer.parseInt(targetsAmount.get(0));
+            int max = Integer.parseInt(targetsAmount.get(1));
+            text.append("Choose from " + min + " to " + max + " players each in different squares\n");
         }
-        text.append("type square_index,character_index/... :\n");
         int squareIndex = 1;
         for (Map.Entry<Coordinates, List<GameCharacter>> square : getEffectPossibility().getMultipleSquares().entrySet()) {
-            text.append("[" + squareIndex + "]-from [" + square.getKey().getX() + "," + square.getKey().getY() + "]:\n");
+            text.append("\nFrom [" + square.getKey().getX() + ", " + square.getKey().getY() + "]:\n");
             int characterIndex = 1;
             for(GameCharacter character : square.getValue()) {
-                text.append("[" + characterIndex + "]- " + character + "\n");
+                text.append("[" + squareIndex + "." + characterIndex + "] - " + character + "\n");
                 characterIndex++;
             }
+            squareIndex++;
         }
         text.setLength(text.length() - 1);
+        text.append("Type [square.character,...]:\n");
         showMessage(text.toString());
         this.inputEnabled = true;
     }
