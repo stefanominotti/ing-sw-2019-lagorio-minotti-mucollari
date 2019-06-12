@@ -181,6 +181,16 @@ public class Player {
         return null;
     }
 
+    public List<Powerup> getPowerupsByType(PowerupType type) {
+        List<Powerup> validPowerups = new ArrayList<>();
+        for (Powerup powerup : this.powerups) {
+            if (powerup.getType() == type) {
+                validPowerups.add(powerup);
+            }
+        }
+        return validPowerups;
+    }
+
     void removePowerup(Powerup powerup) {
         this.powerups.remove(powerup);
     }

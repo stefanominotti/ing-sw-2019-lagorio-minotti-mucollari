@@ -584,6 +584,11 @@ public class EffectsController {
             this.effectOrder = WeaponEffectOrderType.PRIMARY;
         }
         this.effectsQueue.remove(0);
+        if (this.currentEffect.getType() == EffectType.DAMAGE) {
+            this.controller.askPowerup(PowerupType.TAGBACK_GRENADE, pack.getCharacters());
+            // this.controller.askPowerup(PowerupType.TARGETING_SCOPE, pack.getCharacters());
+            return;
+        }
         handleEffectsQueue();
 
     }
@@ -596,7 +601,7 @@ public class EffectsController {
         }
     }
 
-    private void handleEffectsQueue() {
+    void handleEffectsQueue() {
         try {
             this.currentEffect = this.effectsQueue.get(0);
             switch (this.effectOrder) {

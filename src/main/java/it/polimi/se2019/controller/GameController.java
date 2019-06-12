@@ -9,13 +9,19 @@ import it.polimi.se2019.model.messages.client.ClientMessage;
 import it.polimi.se2019.model.messages.client.ClientReadyMessage;
 import it.polimi.se2019.model.messages.payment.PaymentMessage;
 import it.polimi.se2019.model.messages.payment.PaymentSentMessage;
+import it.polimi.se2019.model.messages.player.PlayerMessage;
 import it.polimi.se2019.model.messages.player.PlayerReadyMessage;
+import it.polimi.se2019.model.messages.selections.SelectionListMessage;
+import it.polimi.se2019.model.messages.selections.SelectionMessageType;
 import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
+import it.polimi.se2019.model.messages.timer.TimerMessage;
+import it.polimi.se2019.model.messages.timer.TimerMessageType;
+import it.polimi.se2019.model.messages.timer.TimerType;
+import it.polimi.se2019.model.messages.turn.TurnContinuationMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 import it.polimi.se2019.view.VirtualView;
 
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class GameController implements Observer {
@@ -24,16 +30,21 @@ public class GameController implements Observer {
 
     private Board model;
     private TurnController turnController;
-    private PowerupsController powerupsController;
+    private Map<GameCharacter, PowerupsController> powerupsControllers;
     private VirtualView view;
     private boolean gameStarted;
     private EffectsController effectsController;
+    private Timer powerupRequestsTimer;
+    private int powerupRequests;
 
     public GameController(Board board, VirtualView view) {
         this.model = board;
         this.effectsController = new EffectsController(this.model, this);
         this.turnController = new TurnController(this.model, this, this.effectsController);
-        this.powerupsController = new PowerupsController(this.model, this, this.turnController);
+        this.powerupsControllers = new EnumMap<>(GameCharacter.class);
+        for (GameCharacter c : GameCharacter.values()) {
+            this.powerupsControllers.put(c, new PowerupsController(this.model, this, this.turnController));
+        }
         this.view = view;
     }
 
@@ -54,6 +65,9 @@ public class GameController implements Observer {
                 break;
             case SINGLE_SELECTION_MESSAGE:
                 update((SingleSelectionMessage) message);
+                break;
+            case SELECTION_LIST_MESSAGE:
+                update((SelectionListMessage) message);
                 break;
         }
     }
@@ -128,6 +142,23 @@ public class GameController implements Observer {
         this.gameStarted = true;
     }
 
+    private void update(SelectionListMessage message) {
+        switch (message.getType()) {
+            case USE_POWERUP:
+                this.powerupRequests--;
+                if (this.powerupRequests == 0) {
+                    this.powerupRequestsTimer.cancel();
+                }
+                if (message.getList() == null) {
+                    handleUsePowerupSelection(message.getCharacter(), null);
+                } else {
+                    for (Powerup p : (List<Powerup>) message.getList()) {
+                        handleUsePowerupSelection(message.getCharacter(), p);
+                    }
+                }
+        }
+    }
+
     private void update(SingleSelectionMessage message) {
         switch (message.getType()) {
             case SWITCH:
@@ -140,10 +171,10 @@ public class GameController implements Observer {
                 handleMovementSelection((Coordinates) message.getSelection());
                 break;
             case POWERUP_TARGET:
-                handlePowerupTargetSelection((GameCharacter) message.getSelection());
+                handlePowerupTargetSelection(message.getCharacter(), (GameCharacter) message.getSelection());
                 break;
             case POWERUP_POSITION:
-                handlePowerupPositionSelection((Coordinates) message.getSelection());
+                handlePowerupPositionSelection(message.getCharacter(), (Coordinates) message.getSelection());
                 break;
             case RELOAD:
                 handleReloadSelection((Weapon) message.getSelection());
@@ -207,18 +238,24 @@ public class GameController implements Observer {
         if (powerup == null && this.turnController.getActivePlayer().getCharacter() == player) {
             this.turnController.cancelPowerup();
         } else if (powerup == null && this.turnController.getActivePlayer().getCharacter() != player) {
-            // powerup usati nel turno avversario
+            send(new TurnContinuationMessage(player, this.turnController.getActivePlayer().getCharacter()));
+            checkEnemyTurnPowerup();
         } else {
-            this.powerupsController.startEffect(player, powerup);
+            if (powerup.getType() == PowerupType.TAGBACK_GRENADE) {
+                this.powerupsControllers.get(player).startEffect(player, powerup,
+                        this.turnController.getActivePlayer());
+            } else {
+                this.powerupsControllers.get(player).startEffect(player, powerup);
+            }
         }
     }
 
-    private void handlePowerupPositionSelection(Coordinates coordinates) {
-        this.powerupsController.receivePosition(coordinates);
+    private void handlePowerupPositionSelection(GameCharacter player, Coordinates coordinates) {
+        this.powerupsControllers.get(player).receivePosition(coordinates);
     }
 
-    private void handlePowerupTargetSelection(GameCharacter character) {
-        this.powerupsController.receiveTarget(character);
+    private void handlePowerupTargetSelection(GameCharacter player, GameCharacter character) {
+        this.powerupsControllers.get(player).receiveTarget(character);
     }
 
     private void handleWeaponUseSelection(Weapon weapon) {
@@ -265,6 +302,44 @@ public class GameController implements Observer {
 
     void sendAll(Message message) {
         this.view.sendAll(message);
+    }
+
+    void askPowerup(PowerupType type, List<GameCharacter> players) {
+        if (type == PowerupType.TAGBACK_GRENADE && !checkTagbackGrenade(players).isEmpty()) {
+            this.powerupRequests = checkTagbackGrenade(players).size();
+            for (GameCharacter player : checkTagbackGrenade(players)) {
+                send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP, player,
+                        this.model.getPlayerByCharacter(player).getPowerupsByType(PowerupType.TAGBACK_GRENADE)));
+            }
+            this.powerupRequestsTimer = new Timer();
+            this.powerupRequestsTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        GameController.this.sendAll(new TimerMessage(TimerMessageType.STOP, TimerType.POWERUP));
+                        GameController.this.effectsController.handleEffectsQueue();
+                    }
+            }, 10L*1000L);
+        } else {
+            this.effectsController.handleEffectsQueue();
+        }
+    }
+
+    void checkEnemyTurnPowerup() {
+        if (this.powerupRequests == 0) {
+            this.effectsController.handleEffectsQueue();
+        }
+    }
+
+    List<GameCharacter> checkTagbackGrenade(List<GameCharacter> players) {
+        List<GameCharacter> validPlayers = new ArrayList<>();
+        for (GameCharacter player : players) {
+            Player toVerify = this.model.getPlayerByCharacter(player);
+            if (!toVerify.getPowerupsByType(PowerupType.TAGBACK_GRENADE).isEmpty() &&
+                    toVerify.getPosition().canSee(this.turnController.getActivePlayer().getPosition())) {
+                validPlayers.add(player);
+            }
+        }
+        return validPlayers;
     }
 
     void sendOthers(GameCharacter character, Message message) {

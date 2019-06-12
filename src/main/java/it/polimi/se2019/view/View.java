@@ -21,6 +21,7 @@ import it.polimi.se2019.model.messages.selections.SelectionMessageType;
 import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
 import it.polimi.se2019.model.messages.timer.TimerMessage;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
+import it.polimi.se2019.model.messages.turn.TurnContinuationMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 import it.polimi.se2019.model.messages.weapon.WeaponMessage;
 import it.polimi.se2019.model.messages.weapon.WeaponSwitchMessage;
@@ -307,10 +308,20 @@ public abstract class View {
         switch (message.getTimerType()) {
             case SETUP:
                 handleGameSetupTimer(message.getType(), message.getTime());
+                break;
+            case POWERUP:
+                handlePowerupTimer(message.getType());
+                break;
         }
     }
 
     abstract void handleGameSetupTimer(TimerMessageType action, long duration);
+
+    void handlePowerupTimer(TimerMessageType action) {
+        if (this.state == SELECTPOWERUPPOSITION) {
+            this.state = OTHERTURN;
+        }
+    }
 
     private void update(PlayerMessage message) {
         switch (message.getType()) {
@@ -659,6 +670,9 @@ public abstract class View {
             case END:
                 handleEndTurn(message.getCharacter());
                 break;
+            case CONTINUATION:
+                handleTurnContinuation(((TurnContinuationMessage) message).getActivePlayer());
+                break;
         }
     }
 
@@ -672,6 +686,10 @@ public abstract class View {
     }
 
     abstract void handleEndTurn(GameCharacter character);
+
+    void handleTurnContinuation(GameCharacter player) {
+        this.state = OTHERTURN;
+    }
 
     private void update(BoardMessage message) {
         switch (message.getType()) {
@@ -802,7 +820,12 @@ public abstract class View {
 
     void handleUsePowerupRequest(List<Powerup> powerups) {
         this.powerupsSelection = powerups;
-        this.state = USEPOWERUP;
+        if (powerups.get(0).getType() == PowerupType.TAGBACK_GRENADE ||
+                powerups.get(0).getType() == PowerupType.TARGETING_SCOPE) {
+            this.state = USEMULTIPLEPOWERUPS;
+        } else {
+            this.state = USEPOWERUP;
+        }
     }
 
     void handleWeaponPickupRequest(List<Weapon> weapons) {

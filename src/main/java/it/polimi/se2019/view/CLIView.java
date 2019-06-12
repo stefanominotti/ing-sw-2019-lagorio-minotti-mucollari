@@ -9,6 +9,7 @@ import it.polimi.se2019.model.messages.nickname.NicknameMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessageType;
 import it.polimi.se2019.model.messages.payment.PaymentSentMessage;
 import it.polimi.se2019.model.messages.powerups.PowerupMessageType;
+import it.polimi.se2019.model.messages.selections.SelectionListMessage;
 import it.polimi.se2019.model.messages.selections.SelectionMessageType;
 import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
@@ -89,6 +90,8 @@ public class CLIView extends View {
             handleDecisionInput(input);
         } else if (getState() == MULTIPLESQUARE) {
             handleEffectMultipleSquaresInput(input);
+        } else if (getState() == USEMULTIPLEPOWERUPS) {
+            handleMultiplePowerupsInput(input);
         }
     }
 
@@ -238,6 +241,34 @@ public class CLIView extends View {
             getClient().send(new SingleSelectionMessage(SelectionMessageType.DISCARD_POWERUP, getCharacter(),
                     toSend));
         }
+    }
+
+    private void handleMultiplePowerupsInput(String input) {
+        String[] inputList = input.split(",");
+        List<Powerup> powerups = new ArrayList<>();
+        try {
+            for (String i : inputList) {
+                int index = Integer.parseInt(i);
+                if (index == getPowerupsSelection().size()+1 && inputList.length == 1) {
+                    this.inputEnabled = false;
+                    setState(OTHERTURN);
+                    getClient().send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP, getCharacter(), null));
+                    return;
+                }
+                if (!powerups.contains(getPowerupsSelection().get(index - 1))) {
+                    powerups.add(getPowerupsSelection().get(index - 1));
+                } else {
+                    showMessage("Invalid input, retry: ");
+                    return;
+                }
+            }
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            showMessage("Invalid input, retry: ");
+            return;
+        }
+        this.inputEnabled = false;
+        setState(OTHERTURN);
+        getClient().send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP, getCharacter(), powerups));
     }
 
     private void handleWeaponInput(String input) {
@@ -515,52 +546,6 @@ public class CLIView extends View {
         }
     }
 
-    /*private void handleEffectMultipleSquaresInput(String input) {
-        String[] inputList = input.split(",");
-        Map<Coordinates, List<GameCharacter>> availableCharacters = new HashMap<>(getEffectPossibility().getMultipleSquares());
-        List<GameCharacter> selectedCharacters = new ArrayList<>();
-        List<Coordinates> availableSquares = new ArrayList<>(getEffectPossibility().getMultipleSquares().keySet());
-        try {
-            for (String i : inputList) {
-                int size = selectedCharacters.size();
-                int index = Integer.parseInt(i);
-                if(index <= 0) {
-                    showMessage("Invalid input, retry: ");
-                    return;
-                }
-                index = index - 1;
-                for(Map.Entry<Coordinates, List<GameCharacter>> characters : availableCharacters.entrySet()) {
-                    if(index < characters.getValue().size() && availableSquares.contains(characters.getKey())) {
-                        selectedCharacters.add(characters.getValue().get(index));
-                        availableSquares.remove(characters.getKey());
-                        break;
-                    } else if(index < characters.getValue().size() && !availableSquares.contains(characters.getKey())) {
-                        break;
-                    } else if(index >= characters.getValue().size()) {
-                        index = index - characters.getValue().size();
-                    }
-                }
-                if (size == selectedCharacters.size()) {
-                    showMessage("Invalid input, retry: ");
-                    return;
-                }
-            }
-            List<String> targetsAmount = getEffectPossibility().getTargetsAmount();
-            if(targetsAmount.size() == 1 && selectedCharacters.size() != Integer.parseInt(targetsAmount.get(0)) ||
-                    targetsAmount.size() > 1 && (selectedCharacters.size() < Integer.parseInt(targetsAmount.get(0)) ||
-                            (!targetsAmount.get(1).equals("MAX") && selectedCharacters.size() > Integer.parseInt(targetsAmount.get(1))))) {
-                showMessage("Invalid input, retry: ");
-                return;
-            }
-        } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            showMessage("Invalid input, retry: ");
-            return;
-        }
-        this.inputEnabled = false;
-        super.setPossibilityCharacters(selectedCharacters);
-        super.selectionEffectFinish();
-    }*/
-
     private void handleEffectMultipleSquaresInput(String input) {
         String[] inputList = input.split(",");
         Map<Coordinates, List<GameCharacter>> availableCharacters = new LinkedHashMap<>(getEffectPossibility().getMultipleSquares());
@@ -634,6 +619,14 @@ public class CLIView extends View {
                     showMessage("Need more players to start the game");
                     break;
             }
+        }
+    }
+
+    @Override
+    void handlePowerupTimer(TimerMessageType action) {
+        super.handlePowerupTimer(action);
+        if (getState() == SELECTPOWERUPPOSITION) {
+            showMessage("Time out, sorry");
         }
     }
 
@@ -742,6 +735,10 @@ public class CLIView extends View {
         }
 
         showMessage(text.toString());
+
+        if (getState() == USEMULTIPLEPOWERUPS && attacker != getCharacter()) {
+            handleUsePowerupRequest(getPowerupsSelection());
+        }
     }
 
     @Override
@@ -937,6 +934,12 @@ public class CLIView extends View {
     }
 
     @Override
+    void handleTurnContinuation(GameCharacter player) {
+        super.handleTurnContinuation(player);
+        showMessage(player + " is playing...");
+    }
+
+    @Override
     void handleSetupInterrupted() {
         super.handleSetupInterrupted();
         showMessage("Too few players, game setup interrupted");
@@ -1066,7 +1069,12 @@ public class CLIView extends View {
     @Override
     void handleUsePowerupRequest(List<Powerup> powerups) {
         super.handleUsePowerupRequest(powerups);
-        StringBuilder text = new StringBuilder("Select a powerup to use or skip:\n");
+        StringBuilder text = new StringBuilder();
+        if (getState() == USEMULTIPLEPOWERUPS) {
+            text.append("Select powerups to use or skip:\n");
+        } else {
+            text.append("Select a powerup to use or skip:\n");
+        }
         int index = 1;
         for (Powerup p : powerups) {
             String toAppend = "[" + index + "] - " + p.getType() + " " + p.getColor() + "\n";

@@ -128,8 +128,10 @@ public class
     private void update(TurnMessage message) {
         if (message.getType() == TurnMessageType.END) {
             this.server.saveGame();
+        } else if (message.getType() == TurnMessageType.CONTINUATION) {
+            send((SingleReceiverMessage) message);
         }
-        this.server.sendAll(message);
+        sendAll(message);
     }
 
     public void send(SingleReceiverMessage message) {

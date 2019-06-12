@@ -24,7 +24,7 @@ public class PowerupsController {
 
     public void startEffect(GameCharacter player, Powerup powerup, Player target) {
         this.activePlayer = this.board.getPlayerByCharacter(player);
-        this.board.removePowerup(this.activePlayer, powerup);
+        this.board.removePowerup(this.board.getPlayerByCharacter(player), powerup);
         this.target = target;
         this.activePowerup = powerup.getType();
         switch (powerup.getType()) {
@@ -34,6 +34,9 @@ public class PowerupsController {
                 break;
             case NEWTON:
                 requireTarget();
+                break;
+            case TAGBACK_GRENADE:
+                markPlayer();
                 break;
         }
     }
@@ -138,10 +141,14 @@ public class PowerupsController {
             current = this.board.getArena().getSquareByCoordinate(x, y - 1);
             if (current != null && current.getNearbyAccessibility().get(CardinalPoint.NORTH)) {
                 targets.add(target);
-                continue;
             }
         }
         return targets;
+    }
+
+    private void markPlayer() {
+        this.board.attackPlayer(this.activePlayer.getCharacter(), this.target.getCharacter(), 1, EffectType.MARK);
+        this.controller.checkEnemyTurnPowerup();
     }
 
     public List<Player> getNewtonTargets() {
