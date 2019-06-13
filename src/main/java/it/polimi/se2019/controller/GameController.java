@@ -46,6 +46,7 @@ public class GameController implements Observer {
             this.powerupsControllers.put(c, new PowerupsController(this.model, this, this.turnController));
         }
         this.view = view;
+        this.powerupRequestsTimer = new Timer();
     }
 
     @Override
@@ -311,7 +312,6 @@ public class GameController implements Observer {
                 send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP, player,
                         this.model.getPlayerByCharacter(player).getPowerupsByType(PowerupType.TAGBACK_GRENADE)));
             }
-            this.powerupRequestsTimer = new Timer();
             this.powerupRequestsTimer.schedule(new TimerTask() {
                     @Override
                     public void run() {
