@@ -58,6 +58,7 @@ public class EffectsController {
     //for test only
     public void setEffectsQueue(List<WeaponEffect> effects) {
         this.effectsQueue = effects;
+        this.currentEffect = effects.get(0);
     }
 
     //for test only
@@ -206,7 +207,7 @@ public class EffectsController {
                 break;
             case ALTERNATIVE:
                 this.effectsQueue.addAll(0, this.weapon.getAlternativeMode());
-                this.effectOrder = WeaponEffectOrderType.PRIMARY;
+                this.effectOrder = WeaponEffectOrderType.ALTERNATIVE;
                 break;
             case SECONDARYONE:
                 this.effectsQueue.addAll(0, this.weapon.getSecondaryEffectOne());

@@ -318,7 +318,7 @@ public abstract class View {
     abstract void handleGameSetupTimer(TimerMessageType action, long duration);
 
     void handlePowerupTimer(TimerMessageType action) {
-        if (this.state == SELECTPOWERUPPOSITION) {
+        if (this.state == USEMULTIPLEPOWERUPS) {
             this.state = OTHERTURN;
         }
     }

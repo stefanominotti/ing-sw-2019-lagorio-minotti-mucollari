@@ -32,12 +32,31 @@ public class AppTest {
             this.turnController = new TurnController(this.board, null, null);
             this.controller = new EffectsController(this.board,null);
             this.controller.setActivePlayer(this.board.getPlayers().get(this.board.getCurrentPlayer()));
+            //primarySHOCKWAVE();
+            alternativeSHOCKWAVE();
+        }catch(UnsupportedOperationException e){}
+    }
+
+    private void primarySHOCKWAVE() {
+        try {
             List<WeaponEffect> effects = new ArrayList<>();
             for (WeaponEffect effect : weapon.getPrimaryEffect()) {
                 effects.add(weapon.getPrimaryEffect().get(0));
                 controller.setEffectsQueue(effects);
                 this.pack = this.controller.seeEffectPossibility(effect);
                 handleMultipleSquareRequest();
+            }
+        }catch(UnsupportedOperationException e){}
+    }
+
+    private void alternativeSHOCKWAVE() {
+        try {
+            List<WeaponEffect> effects = new ArrayList<>();
+            for (WeaponEffect effect : weapon.getPrimaryEffect()) {
+                effects.add(weapon.getAlternativeMode().get(0));
+                controller.setEffectsQueue(effects);
+                this.pack = this.controller.seeEffectPossibility(effect);
+                controller.effectApplication(this.pack);
             }
         }catch(UnsupportedOperationException e){}
     }
@@ -115,22 +134,5 @@ public class AppTest {
         }
     }
 
-    @Test
-    public void tempTestTractorBeam() {
-        this.weapon = Weapon.TRACTOR_BEAM;
-        try {
-            this.board = (new GameLoader()).loadBoard();
-            this.player = this.board.getPlayers().get(this.board.getCurrentPlayer());
-            this.turnController = new TurnController(this.board, null, null);
-            this.controller = new EffectsController(this.board,null);
-            this.controller.setActivePlayer(this.board.getPlayers().get(this.board.getCurrentPlayer()));
-            List<WeaponEffect> effects = new ArrayList<>();
-            for (WeaponEffect effect : weapon.getPrimaryEffect()) {
-                effects.add(weapon.getPrimaryEffect().get(0));
-                controller.setEffectsQueue(effects);
-                this.pack = this.controller.seeEffectPossibility(effect);
-            }
-        }catch(UnsupportedOperationException e){}
-    }
 
 }

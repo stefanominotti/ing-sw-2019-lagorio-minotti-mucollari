@@ -312,10 +312,13 @@ public class GameController implements Observer {
                 send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP, player,
                         this.model.getPlayerByCharacter(player).getPowerupsByType(PowerupType.TAGBACK_GRENADE)));
             }
+            this.model.pauseTurnTimer();
+            this.powerupRequestsTimer = new Timer();
             this.powerupRequestsTimer.schedule(new TimerTask() {
                     @Override
                     public void run() {
                         GameController.this.sendAll(new TimerMessage(TimerMessageType.STOP, TimerType.POWERUP));
+                        GameController.this.model.resumeTurnTimer();
                         GameController.this.effectsController.handleEffectsQueue();
                     }
             }, 10L*1000L);

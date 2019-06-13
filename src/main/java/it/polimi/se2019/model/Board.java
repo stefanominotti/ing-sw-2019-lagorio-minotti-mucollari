@@ -33,6 +33,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static it.polimi.se2019.model.GameState.*;
+import static it.polimi.se2019.model.PowerupType.TAGBACK_GRENADE;
 import static java.util.Map.Entry.comparingByValue;
 import static java.util.stream.Collectors.toMap;
 
@@ -58,6 +59,7 @@ public class Board extends Observable {
     private int currentPlayer;
     private List<Player> finalFrenzyOrder;
     private List<Player> deathPlayers;
+    private long timerRemainingTime;
 
     public Board() {
         this.gameState = ACCEPTINGPLAYERS;
@@ -545,7 +547,8 @@ public class Board extends Observable {
                         return;
                     }
                     Weapon toAdd = this.weaponsDeck.get(0).getWeaponType();
-                    square.addWeapon(this.weaponsDeck.get(0));
+                    //square.addWeapon(this.weaponsDeck.get(0));TODO
+                    square.addWeapon(new WeaponCard(Weapon.RAILGUN));
                     added.put(new Coordinates(square.getX(), square.getY()), toAdd);
                     this.weaponsDeck.remove(0);
                 }
@@ -590,7 +593,10 @@ public class Board extends Observable {
             fillPowerupsDeck();
         }
         Powerup powerup = this.powerupsDeck.get(0);
-        player.addPowerup(powerup);
+        //player.addPowerup(powerup);TODO
+        player.addPowerup(new Powerup(TAGBACK_GRENADE, AmmoType.YELLOW));
+        player.addPowerup(new Powerup(TAGBACK_GRENADE, AmmoType.YELLOW));
+        player.addPowerup(new Powerup(TAGBACK_GRENADE, AmmoType.YELLOW));
         this.powerupsDeck.remove(powerup);
         notifyChanges(new PowerupMessage(PowerupMessageType.ADD, player.getCharacter(), powerup));
         notifyChanges(new PowerupMessage(PowerupMessageType.ADD, player.getCharacter(), null));
@@ -970,5 +976,22 @@ public class Board extends Observable {
             }
         }
         return null;
+    }
+
+    public void pauseTurnTimer() {
+        LocalDateTime now = LocalDateTime.now();
+        this.timerRemainingTime = this.turnTimer/1000L -
+                Duration.between(this.gameTimerStartDate, LocalDateTime.now()).getSeconds();
+        this.timer.cancel();
+    }
+
+    public void resumeTurnTimer() {
+        this.timer = new Timer();
+        this.timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                endTurn(Board.this.players.get(Board.this.currentPlayer));
+            }
+        }, this.timerRemainingTime);
     }
 }

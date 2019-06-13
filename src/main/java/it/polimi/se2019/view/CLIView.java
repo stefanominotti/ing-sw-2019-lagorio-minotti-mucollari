@@ -624,7 +624,7 @@ public class CLIView extends View {
 
     @Override
     void handlePowerupTimer(TimerMessageType action) {
-        if (getState() == SELECTPOWERUPPOSITION) {
+        if (getState() == USEMULTIPLEPOWERUPS) {
             showMessage("Time out, sorry");
         }
         super.handlePowerupTimer(action);
