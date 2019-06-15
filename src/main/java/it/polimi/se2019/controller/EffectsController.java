@@ -1,6 +1,9 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.messages.payment.PaymentMessage;
+import it.polimi.se2019.model.messages.payment.PaymentMessageType;
+import it.polimi.se2019.model.messages.payment.PaymentType;
 import it.polimi.se2019.model.messages.selections.SelectionMessageType;
 import it.polimi.se2019.model.messages.selections.SelectionListMessage;
 import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
@@ -197,6 +200,19 @@ public class EffectsController {
             }
         }
         return true;
+    }
+
+    public Map<AmmoType, Integer> getEffectCost(WeaponEffectOrderType effectType) {
+        switch (effectType) {
+            case SECONDARYONE:
+                return this.weapon.getSecondaryEffectOne().get(0).getCost();
+            case SECONDARYTWO:
+                return this.weapon.getSecondaryEffectTwo().get(0).getCost();
+            case ALTERNATIVE:
+                return this.weapon.getAlternativeMode().get(0).getCost();
+
+        }
+        return null;
     }
 
     public void effectSelected(WeaponEffectOrderType effectType) {
@@ -596,7 +612,21 @@ public class EffectsController {
 
     void activateCombo(boolean active) {
         if (active) {
-            effectSelected(this.activeCombo);
+            Map<AmmoType, Integer> effectCost = null;
+            if(this.activeCombo == SECONDARYONE) {
+                effectCost = this.weapon.getSecondaryEffectOne().get(0).getCost();
+            } else if (this.activeCombo == SECONDARYTWO) {
+                effectCost = this.weapon.getSecondaryEffectTwo().get(0).getCost();
+            }
+            if (effectCost != null && (effectCost.get(AmmoType.BLUE) > 0 ||
+                    effectCost.get(AmmoType.RED) > 0 || effectCost.get(AmmoType.YELLOW) > 0)) {
+                this.controller.setTffectSelection(this.activeCombo);
+                this.controller.send(new PaymentMessage(PaymentMessageType.REQUEST, PaymentType.EFFECT,
+                        this.activePlayer.getCharacter(), effectCost));
+
+            } else {
+                effectSelected(this.activeCombo);
+            }
         } else {
             handleEffectsQueue();
         }
@@ -626,6 +656,7 @@ public class EffectsController {
                         this.activePlayer.getCharacter(),
                         new ArrayList<>(getAvailableEffects().keySet())));
             } else {
+                this.activePlayer.getWeaponCardByWeapon(this.weapon).setReady(false);
                 resetController();
                 this.controller.endEffects();
             }

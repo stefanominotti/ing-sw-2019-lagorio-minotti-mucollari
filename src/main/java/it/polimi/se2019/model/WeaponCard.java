@@ -28,7 +28,7 @@ public class WeaponCard {
         this.owner = owner;
     }
 
-    void setReady(boolean ready) {
+    public void setReady(boolean ready) {
         this.ready = ready;
     }
 }

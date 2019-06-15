@@ -106,6 +106,15 @@ public class Player {
         return new ArrayList<>(this.weapons);
     }
 
+    public WeaponCard getWeaponCardByWeapon(Weapon weapon) {
+        for(WeaponCard weaponCard : this.weapons) {
+            if(weaponCard.getWeaponType() == weapon) {
+                return weaponCard;
+            }
+        }
+        return null;
+    }
+
     public List<GameCharacter> getRevengeMarks() {
         return new ArrayList<>(this.revengeMarks);
     }

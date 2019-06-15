@@ -547,8 +547,7 @@ public class Board extends Observable {
                         return;
                     }
                     Weapon toAdd = this.weaponsDeck.get(0).getWeaponType();
-                    //square.addWeapon(this.weaponsDeck.get(0));TODO
-                    square.addWeapon(new WeaponCard(Weapon.RAILGUN));
+                    square.addWeapon(this.weaponsDeck.get(0));
                     added.put(new Coordinates(square.getX(), square.getY()), toAdd);
                     this.weaponsDeck.remove(0);
                 }
@@ -593,10 +592,7 @@ public class Board extends Observable {
             fillPowerupsDeck();
         }
         Powerup powerup = this.powerupsDeck.get(0);
-        //player.addPowerup(powerup);TODO
-        player.addPowerup(new Powerup(TAGBACK_GRENADE, AmmoType.YELLOW));
-        player.addPowerup(new Powerup(TAGBACK_GRENADE, AmmoType.YELLOW));
-        player.addPowerup(new Powerup(TAGBACK_GRENADE, AmmoType.YELLOW));
+        player.addPowerup(powerup);
         this.powerupsDeck.remove(powerup);
         notifyChanges(new PowerupMessage(PowerupMessageType.ADD, player.getCharacter(), powerup));
         notifyChanges(new PowerupMessage(PowerupMessageType.ADD, player.getCharacter(), null));

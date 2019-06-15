@@ -8,7 +8,9 @@ import it.polimi.se2019.model.messages.board.SkullsMessage;
 import it.polimi.se2019.model.messages.client.ClientMessage;
 import it.polimi.se2019.model.messages.client.ClientReadyMessage;
 import it.polimi.se2019.model.messages.payment.PaymentMessage;
+import it.polimi.se2019.model.messages.payment.PaymentMessageType;
 import it.polimi.se2019.model.messages.payment.PaymentSentMessage;
+import it.polimi.se2019.model.messages.payment.PaymentType;
 import it.polimi.se2019.model.messages.player.PlayerMessage;
 import it.polimi.se2019.model.messages.player.PlayerReadyMessage;
 import it.polimi.se2019.model.messages.selections.SelectionListMessage;
@@ -20,6 +22,7 @@ import it.polimi.se2019.model.messages.timer.TimerType;
 import it.polimi.se2019.model.messages.turn.TurnContinuationMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 import it.polimi.se2019.view.VirtualView;
+import org.omg.PortableInterceptor.INACTIVE;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -36,6 +39,7 @@ public class GameController implements Observer {
     private EffectsController effectsController;
     private Timer powerupRequestsTimer;
     private int powerupRequests;
+    private WeaponEffectOrderType effectSelection;
 
     public GameController(Board board, VirtualView view) {
         this.model = board;
@@ -264,8 +268,14 @@ public class GameController implements Observer {
     }
 
     private void handleEffectSelection(WeaponEffectOrderType effectSelection) {
+        Map<AmmoType, Integer> effectCost = this.effectsController.getEffectCost(effectSelection);
         if (effectSelection == null) {
             this.turnController.handleEndAction();
+        } else if (effectCost != null && (effectCost.get(AmmoType.BLUE) > 0 ||
+                effectCost.get(AmmoType.RED) > 0 || effectCost.get(AmmoType.YELLOW) > 0)) {
+            this.effectSelection = effectSelection;
+            send(new PaymentMessage(PaymentMessageType.REQUEST, PaymentType.EFFECT,
+                    this.turnController.getActivePlayer().getCharacter(), effectCost));
         } else {
             this.effectsController.effectSelected(effectSelection);
         }
@@ -289,12 +299,22 @@ public class GameController implements Observer {
     }
 
     private void update(PaymentMessage message) {
-        switch (message.getPaymentType()) {
+        handlePayment(message.getAmmos(), ((PaymentSentMessage) message).getPowerups(), message.getPaymentType());
+    }
+
+    private void handlePayment(Map<AmmoType, Integer> ammos, List<Powerup> powerups, PaymentType type) {
+        this.model.useAmmos(this.turnController.getActivePlayer(), ammos);
+        for (Powerup p : powerups) {
+            this.model.removePowerup(this.turnController.getActivePlayer(), p);
+        }
+        switch (type) {
             case WEAPON:
-                this.turnController.payWeapon(message.getAmmos(), ((PaymentSentMessage) message).getPowerups());
+                this.turnController.paidWeapon();
+                break;
+            case EFFECT:
+                this.effectsController.effectSelected(effectSelection);
                 break;
         }
-
     }
 
     void send(SingleReceiverMessage message) {
@@ -343,6 +363,10 @@ public class GameController implements Observer {
             }
         }
         return validPlayers;
+    }
+
+    void setTffectSelection(WeaponEffectOrderType effectSelection) {
+        this.effectSelection = effectSelection;
     }
 
     void sendOthers(GameCharacter character, Message message) {

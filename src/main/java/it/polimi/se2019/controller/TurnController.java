@@ -398,11 +398,7 @@ public class TurnController {
         }
     }
 
-    void payWeapon(Map<AmmoType, Integer> ammos, List<Powerup> powerups) {
-        this.board.useAmmos(this.activePlayer, ammos);
-        for (Powerup p : powerups) {
-            this.board.removePowerup(this.activePlayer, p);
-        }
+    void paidWeapon() {
         if (this.switchWeapon == null) {
             this.board.giveWeapon(this.activePlayer, this.weaponToGet);
         } else {
