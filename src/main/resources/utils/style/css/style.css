@@ -5,6 +5,14 @@
     -fx-background-position: center center;
 }
 
+.backgroud-dark-heavy{
+	-fx-background-color: #292c2f;
+}
+
+.backgroud-dark-tiny{
+	-fx-background-color: #333639;
+}
+
 .root {
 	-fx-background-color: #DDDDDD;
 }
