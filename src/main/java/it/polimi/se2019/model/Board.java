@@ -655,8 +655,45 @@ public class Board extends Observable {
                 new Coordinates(square.getX(), square.getY())));
     }
 
-    public boolean verifyGameFinished() {
-        return this.skulls == 0;
+    public void endGame() {
+        List<Integer> points = new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1));
+
+        List<GameCharacter> trackReworked = new ArrayList<>();
+        for (Map.Entry<Integer, List<GameCharacter>> i : this.killshotTrack.entrySet()) {
+            for (GameCharacter p : i.getValue()) {
+                trackReworked.add(p);
+            }
+        }
+
+        Map<GameCharacter, Integer> killsByPlayer = new HashMap<>();
+        for (GameCharacter p : trackReworked) {
+            if (killsByPlayer.containsKey(p)) {
+                continue;
+            }
+            int damages = 0;
+            for (GameCharacter c : trackReworked) {
+                if (c == p) {
+                    damages++;
+                }
+            }
+            killsByPlayer.put(p, damages);
+        }
+
+        Map<GameCharacter, Integer> sorted = killsByPlayer
+                .entrySet()
+                .stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(
+                        toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                                LinkedHashMap::new));
+
+        int index = 0;
+        for (GameCharacter p : sorted.keySet()) {
+            raisePlayerScore(getPlayerByCharacter(p), points.get(index));
+            index++;
+        }
+
+        // TODO
     }
 
     void startFinalFrenzy(Player player) {
@@ -787,15 +824,29 @@ public class Board extends Observable {
     }
 
     public void attackPlayer(GameCharacter player, GameCharacter target, int damage, EffectType type) {
+        int marks;
+        boolean notify = true;
         switch (type) {
             case DAMAGE:
                 getPlayerByCharacter(target).addDamages(player, damage);
                 break;
             case MARK:
-                getPlayerByCharacter(target).addRevengeMarks(player, damage);
+                if (getPlayerByCharacter(target).getMarksNumber(player) == 3) {
+                    marks = 0;
+                    notify = false;
+                } else if (getPlayerByCharacter(target).getMarksNumber(player) + damage > 3) {
+                    marks = 3 - getPlayerByCharacter(target).getMarksNumber(player);
+                } else {
+                    marks = damage;
+                }
+                if (marks != 0) {
+                    getPlayerByCharacter(target).addRevengeMarks(player, marks);
+                }
                 break;
         }
-        notifyChanges(new AttackMessage(target, player, damage, type));
+        if (notify) {
+            notifyChanges(new AttackMessage(target, player, damage, type));
+        }
     }
 
     void marksToDamages(GameCharacter player, GameCharacter attacker) {
@@ -807,6 +858,67 @@ public class Board extends Observable {
         }
         p.resetMarks(attacker);
         notifyChanges(new MarksToDamagesMessage(player, attacker));
+    }
+
+    void handleDeadPlayer(GameCharacter character) {
+        Player player = getPlayerByCharacter(character);
+        this.skulls--;
+        // notify TODO
+        GameCharacter kill = player.getDamages().get(10);
+        GameCharacter overkill = null;
+        try {
+            overkill = player.getDamages().get(11);
+        } catch (IndexOutOfBoundsException e) {
+            // Ignore
+        }
+        List<GameCharacter> killsToAdd = new ArrayList<>();
+        killsToAdd.add(kill);
+        if (overkill != null) {
+            killsToAdd.add(overkill);
+        }
+        this.killshotTrack.put(this.skulls, killsToAdd);
+        // notify TODO
+
+        // notify first blood TODO
+
+        raisePlayerScore(getPlayerByCharacter(player.getDamages().get(0)), 1);
+
+        Map<GameCharacter, Integer> damagesByPlayer = new HashMap<>();
+        for (GameCharacter p : player.getDamages()) {
+            if (damagesByPlayer.containsKey(p)) {
+                continue;
+            }
+            int damages = 0;
+            for (GameCharacter c : player.getDamages()) {
+                if (c == p) {
+                    damages++;
+                }
+            }
+            damagesByPlayer.put(p, damages);
+        }
+
+        Map<GameCharacter, Integer> sorted = damagesByPlayer
+                .entrySet()
+                .stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(
+                        toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                                LinkedHashMap::new));
+
+        int index = 0;
+        for (GameCharacter p : sorted.keySet()) {
+            int amount;
+            try {
+                amount = player.getKillshotPoints().get(index);
+            } catch (IndexOutOfBoundsException e) {
+                amount = 1;
+            }
+            raisePlayerScore(getPlayerByCharacter(p), amount);
+            index++;
+        }
+
+        player.reduceKillshotPoints();
+        // notify TODO
     }
 
     public List<Square> getSquaresByDistance (Player player, List<String> amount) {

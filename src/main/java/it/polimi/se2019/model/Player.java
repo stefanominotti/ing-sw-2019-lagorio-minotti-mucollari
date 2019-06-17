@@ -79,10 +79,10 @@ public class Player {
     }
 
     public List<Integer> getKillshotPoints() {
-        return this.killshotPoints;
+        return new ArrayList<>(this.killshotPoints);
     }
 
-    public void reducekillshotPoints() {
+    public void reduceKillshotPoints() {
         this.killshotPoints.remove(0);
     }
 
@@ -222,6 +222,16 @@ public class Player {
 
     void flipBoard() {
         this.killshotPoints = new ArrayList<>(Arrays.asList(2, 1, 1, 1));
+    }
+
+    int getMarksNumber(GameCharacter character) {
+        int number = 0;
+        for (GameCharacter p : this.revengeMarks) {
+            if (p == character) {
+                number++;
+            }
+        }
+        return number;
     }
 
     int getPowerupsNumber() {
