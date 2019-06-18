@@ -42,3 +42,7 @@
 .img-shadow {
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);
 }
+
+.square-disabled {
+	-fx-background-color: rgba(219,219,219,0.6);
+}
