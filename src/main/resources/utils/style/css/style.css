@@ -5,6 +5,14 @@
     -fx-background-position: center center;
 }
 
+.backgroud-dark-heavy{
+	-fx-background-color: #292c2f;
+}
+
+.backgroud-dark-tiny{
+	-fx-background-color: #333639;
+}
+
 .root {
 	-fx-background-color: #DDDDDD;
 }
@@ -33,4 +41,8 @@
 
 .img-shadow {
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);
+}
+
+.square-disabled {
+	-fx-background-color: rgba(219,219,219,0.6);
 }
