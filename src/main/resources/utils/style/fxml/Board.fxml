@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -19,25 +19,30 @@
    <children>
       <HBox alignment="TOP_RIGHT" prefHeight="400.0" prefWidth="610.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <VBox alignment="CENTER" prefHeight="744.0" prefWidth="904.0" styleClass="backgroud-dark-heavy" stylesheets="@../css/style.css" HBox.hgrow="ALWAYS">
+            <VBox prefHeight="744.0" prefWidth="904.0" styleClass="backgroud-dark-heavy" stylesheets="@adrenalina/progetto/src/main/resources/utils/style/css/style.css" HBox.hgrow="ALWAYS">
                <children>
-                  <Pane VBox.vgrow="ALWAYS">
+                  <Pane VBox.vgrow="NEVER">
                      <children>
                         <ImageView fitHeight="678.0" fitWidth="985.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../../../arenas/img/arena_1.png" />
+                              <Image url="@adrenalina/progetto/src/main/resources/arenas/img/arena_1.png" />
                            </image>
                         </ImageView>
-                        <GridPane layoutX="477.0" prefHeight="129.0" prefWidth="288.0">
+                        <GridPane layoutX="477.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="130.0" prefWidth="288.0">
                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="906.0" minWidth="10.0" prefWidth="741.9367599487305" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="906.0" minWidth="10.0" prefWidth="741.9367599487305" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="906.0" minWidth="10.0" prefWidth="741.9367599487305" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="740.0" minWidth="10.0" prefWidth="740.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="740.0" minWidth="10.0" prefWidth="740.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="740.0" minWidth="10.0" prefWidth="740.0" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="806.4194488525391" minWidth="0.0" prefWidth="164.06324005126953" />
                           </columnConstraints>
                           <rowConstraints>
-                            <RowConstraints maxHeight="502.7734069824219" minHeight="10.0" prefHeight="481.67279052734375" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="481.0" minHeight="10.0" prefHeight="481.0" vgrow="SOMETIMES" />
                           </rowConstraints>
+                           <children>
+                              <ImageView fitHeight="129.0" fitWidth="92.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fitHeight="129.0" fitWidth="92.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" />
+                              <ImageView fitHeight="129.0" fitWidth="92.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" />
+                           </children>
                         </GridPane>
                         <GridPane layoutX="63.0" layoutY="27.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="308.0">
                            <columnConstraints>
@@ -56,319 +61,349 @@
                            <children>
                               <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                                  <image>
-                                    <Image url="@../../../drops/drop_blue_blue.png" />
+                                    <Image url="@adrenalina/progetto/src/main/resources/drops/drop_blue_blue.png" />
                                  </image>
                               </ImageView>
                               <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                                  <image>
-                                    <Image url="@../../../drops/drop_yellow_yellow.png" />
+                                    <Image url="@adrenalina/progetto/src/main/resources/drops/drop_yellow_yellow.png" />
                                  </image>
                               </ImageView>
                               <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                                  <image>
-                                    <Image url="@../../../drops/drop_purple_blue.png" />
+                                    <Image url="@adrenalina/progetto/src/main/resources/drops/drop_purple_blue.png" />
                                  </image>
                               </ImageView>
                               <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                                  <image>
-                                    <Image url="@../../icons/skull.png" />
+                                    <Image url="@adrenalina/progetto/src/main/resources/utils/icons/skull.png" />
                                  </image>
                               </ImageView>
                               <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                                  <image>
-                                    <Image url="@../../../drops/drop_purple.png" />
+                                    <Image url="@adrenalina/progetto/src/main/resources/drops/drop_purple.png" />
                                  </image>
                               </ImageView>
                               <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                                  <image>
-                                    <Image url="@../../icons/skull.png" />
+                                    <Image url="@adrenalina/progetto/src/main/resources/utils/icons/skull.png" />
                                  </image>
                               </ImageView>
                               <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                                  <image>
-                                    <Image url="@../../icons/skull.png" />
+                                    <Image url="@adrenalina/progetto/src/main/resources/utils/icons/skull.png" />
                                  </image>
                               </ImageView>
                               <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                                  <image>
-                                    <Image url="@../../icons/skull.png" />
+                                    <Image url="@adrenalina/progetto/src/main/resources/utils/icons/skull.png" />
                                  </image>
                               </ImageView>
                            </children>
                         </GridPane>
-                        <GridPane alignment="CENTER" layoutX="145.0" layoutY="140.0" prefHeight="166.0" prefWidth="136.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" prefWidth="39.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" prefWidth="39.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" prefWidth="39.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="108.38755798339844" minWidth="10.0" prefWidth="17.517135620117188" />
-                          </columnConstraints>
-                          <rowConstraints>
-                              <RowConstraints maxHeight="101.06101989746094" minHeight="10.0" prefHeight="30.557815551757812" vgrow="SOMETIMES" />
-                              <RowConstraints prefHeight="37.0" vgrow="SOMETIMES" />
-                            <RowConstraints prefHeight="37.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="80.59848022460938" minHeight="0.0" prefHeight="40.67344665527344" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="64.11563110351562" minHeight="10.0" prefHeight="29.4625244140625" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                              <ImageView fitHeight="40.0" fitWidth="47.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.vgrow="NEVER">
-                                 <image>
-                                    <Image url="@../../../ammotiles/img/ammotile_2.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="33.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <image>
-                                    <Image url="@../../../characters/bashee.png" />
-                                 </image>
-                              </ImageView>
-                           </children>
-                        </GridPane>
-                        <GridPane alignment="CENTER" layoutX="155.0" layoutY="150.0" prefHeight="166.0" prefWidth="136.0">
+                        <GridPane layoutX="-75.0" layoutY="321.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="130.0" prefWidth="288.0" rotate="-90.0">
                            <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" prefWidth="39.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" prefWidth="39.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" prefWidth="39.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="108.38755798339844" minWidth="10.0" prefWidth="17.517135620117188" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="740.0" minWidth="10.0" prefWidth="740.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="740.0" minWidth="10.0" prefWidth="740.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="740.0" minWidth="10.0" prefWidth="740.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="806.4194488525391" minWidth="0.0" prefWidth="164.06324005126953" />
                            </columnConstraints>
                            <rowConstraints>
-                              <RowConstraints maxHeight="101.06101989746094" minHeight="10.0" prefHeight="30.557815551757812" vgrow="SOMETIMES" />
-                              <RowConstraints prefHeight="37.0" vgrow="SOMETIMES" />
-                              <RowConstraints prefHeight="37.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="80.59848022460938" minHeight="0.0" prefHeight="40.67344665527344" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="64.11563110351562" minHeight="10.0" prefHeight="29.4625244140625" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="481.0" minHeight="10.0" prefHeight="481.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <ImageView fitHeight="40.0" fitWidth="47.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.vgrow="NEVER">
-                                 <image>
-                                    <Image url="@../../../ammotiles/img/ammotile_2.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="33.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <image>
-                                    <Image url="@../../../characters/bashee.png" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fitHeight="129.0" fitWidth="92.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fitHeight="129.0" fitWidth="92.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" />
+                              <ImageView fitHeight="129.0" fitWidth="92.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" />
+                           </children>
+                        </GridPane>
+                        <GridPane layoutX="695.0" layoutY="460.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="130.0" prefWidth="288.0" rotate="90.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="740.0" minWidth="10.0" prefWidth="740.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="740.0" minWidth="10.0" prefWidth="740.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="740.0" minWidth="10.0" prefWidth="740.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="806.4194488525391" minWidth="0.0" prefWidth="164.06324005126953" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints maxHeight="481.0" minHeight="10.0" prefHeight="481.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <ImageView fitHeight="129.0" fitWidth="92.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fitHeight="129.0" fitWidth="92.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" />
+                              <ImageView fitHeight="129.0" fitWidth="92.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" />
+                           </children>
+                        </GridPane>
+                        <GridPane layoutX="780.0" layoutY="173.0" prefHeight="160.0" prefWidth="100.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="481.0" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints maxHeight="740.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <ImageView fitHeight="152.0" fitWidth="99.0" pickOnBounds="true" preserveRatio="true" />
+                           </children>
+                        </GridPane>
+                        <GridPane layoutX="806.0" layoutY="33.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="102.0" prefWidth="76.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="481.0" minWidth="10.0" prefWidth="100.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints maxHeight="740.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <ImageView fitHeight="100.0" fitWidth="74.0" pickOnBounds="true" preserveRatio="true" />
                            </children>
                         </GridPane>
                      </children>
                   </Pane>
-                  <StackPane>
+                  <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="122.0" prefWidth="904.0">
                      <children>
-                        <HBox alignment="BOTTOM_LEFT">
+                        <VBox alignment="CENTER" prefHeight="122.0" prefWidth="121.0" styleClass="backgroud-dark-tiny">
                            <children>
-                              <StackPane alignment="BOTTOM_LEFT">
-                                 <children>
-                                    <Pane maxHeight="126.0" maxWidth="493.0" minHeight="124.0" minWidth="489.0" prefHeight="122.0" prefWidth="489.0">
-                                       <children>
-                                          <ImageView fitHeight="122.0" fitWidth="489.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../../../player_boards/player_board_banshee.png" />
-                                             </image>
-                                             <viewport>
-                                                <Rectangle2D />
-                                             </viewport>
-                                          </ImageView>
-                                          <GridPane layoutX="42.0" layoutY="41.0" prefHeight="40.0" prefWidth="332.0">
-                                             <columnConstraints>
-                                                <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="906.0" minWidth="0.0" prefWidth="0.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
-                                             </columnConstraints>
-                                             <rowConstraints>
-                                                <RowConstraints maxHeight="502.7734069824219" minHeight="10.0" prefHeight="481.0" vgrow="SOMETIMES" />
-                                             </rowConstraints>
-                                             <children>
-                                                <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
-                                                   <image>
-                                                      <Image url="@../../../drops/drop_yellow.png" />
-                                                   </image>
-                                                </ImageView>
-                                                <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
-                                                <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
-                                                <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
-                                                <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
-                                                <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
-                                                <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="6" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
-                                                <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="7" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
-                                                <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="8" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
-                                                <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="9" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
-                                                <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="10" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
-                                                <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="11" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
-                                             </children>
-                                          </GridPane>
-                                          <GridPane layoutX="101.0" layoutY="86.0" maxHeight="30.0" maxWidth="158.0" minHeight="30.0" minWidth="157.0" prefHeight="30.0" prefWidth="157.0">
-                                            <columnConstraints>
-                                              <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="26.0" minWidth="26.0" prefWidth="26.0" />
-                                                <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="26.0" minWidth="26.0" prefWidth="26.0" />
-                                                <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="26.0" minWidth="26.0" prefWidth="26.0" />
-                                                <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="26.0" minWidth="26.0" prefWidth="26.0" />
-                                                <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="26.0" minWidth="26.0" prefWidth="26.0" />
-                                              <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="26.0" minWidth="26.0" prefWidth="26.0" />
-                                            </columnConstraints>
-                                            <rowConstraints>
-                                              <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            </rowConstraints>
-                                             <children>
-                                                <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
-                                                   <image>
-                                                      <Image url="@../../icons/skull.png" />
-                                                   </image>
-                                                </ImageView>
-                                                <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" />
-                                                <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" />
-                                                <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" />
-                                                <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4" />
-                                                <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5" />
-                                             </children>
-                                          </GridPane>
-                                       </children>
-                                    </Pane>
-                                 </children>
-                                 <HBox.margin>
-                                    <Insets />
-                                 </HBox.margin>
-                              </StackPane>
-                              <VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="95.0" prefWidth="100.0" styleClass="backgroud-dark-tiny">
-                                 <children>
-                                    <Label text="Ammos" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="13.0" />
-                                       </font></Label>
-                                    <HBox alignment="CENTER_LEFT" minHeight="35.0" prefHeight="20.0">
-                                       <children>
-                                          <ImageView fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../../../ammos/ammo_red.png" />
-                                             </image>
-                                             <HBox.margin>
-                                                <Insets left="10.0" />
-                                             </HBox.margin>
-                                          </ImageView>
-                                          <Label alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefWidth="40.0" text="x2" textFill="WHITE">
-                                             <HBox.margin>
-                                                <Insets left="6.0" />
-                                             </HBox.margin>
-                                          </Label>
-                                       </children>
-                                    </HBox>
-                                    <HBox alignment="CENTER_LEFT" minHeight="35.0">
-                                       <children>
-                                          <ImageView fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../../../ammos/ammo_blue.png" />
-                                             </image>
-                                             <HBox.margin>
-                                                <Insets left="10.0" />
-                                             </HBox.margin>
-                                          </ImageView>
-                                          <Label alignment="CENTER" minWidth="-Infinity" prefWidth="40.0" text="x5" textFill="WHITE">
-                                             <HBox.margin>
-                                                <Insets left="6.0" />
-                                             </HBox.margin>
-                                          </Label>
-                                       </children>
-                                    </HBox>
-                                    <HBox alignment="CENTER_LEFT" minHeight="35.0">
-                                       <children>
-                                          <ImageView fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../../../ammos/ammo_yellow.png" />
-                                             </image>
-                                             <HBox.margin>
-                                                <Insets left="10.0" />
-                                             </HBox.margin>
-                                          </ImageView>
-                                          <Label alignment="CENTER" minWidth="-Infinity" prefWidth="40.0" text="x6" textFill="WHITE">
-                                             <HBox.margin>
-                                                <Insets left="6.0" />
-                                             </HBox.margin>
-                                          </Label>
-                                       </children>
-                                    </HBox>
-                                 </children>
-                                 <HBox.margin>
-                                    <Insets left="30.0" />
-                                 </HBox.margin>
-                              </VBox>
-                              <VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="95.0" prefWidth="100.0" styleClass="backgroud-dark-tiny">
-                                 <children>
-                                    <Label text="Points" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="13.0" />
-                                       </font>
-                                    </Label>
-                                    <HBox alignment="CENTER_LEFT" minHeight="35.0" prefHeight="20.0">
-                                       <children>
-                                          <ImageView fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../../../scores/score_1.png" />
-                                             </image>
-                                             <HBox.margin>
-                                                <Insets left="10.0" />
-                                             </HBox.margin>
-                                          </ImageView>
-                                          <Label alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefWidth="40.0" text="x2" textFill="WHITE">
-                                             <HBox.margin>
-                                                <Insets left="6.0" />
-                                             </HBox.margin>
-                                          </Label>
-                                       </children>
-                                    </HBox>
-                                    <HBox alignment="CENTER_LEFT" minHeight="35.0">
-                                       <children>
-                                          <ImageView fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../../../scores/score_2.png" />
-                                             </image>
-                                             <HBox.margin>
-                                                <Insets left="10.0" />
-                                             </HBox.margin>
-                                          </ImageView>
-                                          <Label alignment="CENTER" minWidth="-Infinity" prefWidth="40.0" text="x5" textFill="WHITE">
-                                             <HBox.margin>
-                                                <Insets left="6.0" />
-                                             </HBox.margin>
-                                          </Label>
-                                       </children>
-                                    </HBox>
-                                    <HBox alignment="CENTER_LEFT" minHeight="35.0">
-                                       <children>
-                                          <ImageView fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../../../scores/score_4.png" />
-                                             </image>
-                                             <HBox.margin>
-                                                <Insets left="10.0" />
-                                             </HBox.margin>
-                                          </ImageView>
-                                          <Label alignment="CENTER" minWidth="-Infinity" prefWidth="40.0" text="x6" textFill="WHITE">
-                                             <HBox.margin>
-                                                <Insets left="6.0" />
-                                             </HBox.margin>
-                                          </Label>
-                                       </children>
-                                    </HBox>
-                                 </children>
-                                 <HBox.margin>
-                                    <Insets left="20.0" />
-                                 </HBox.margin>
-                              </VBox>
+                              <ImageView fitHeight="55.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@adrenalina/progetto/src/main/resources/utils/icons/characters_icon/banshee.png" />
+                                 </image>
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                              </ImageView>
+                              <Label text="Your Board" textFill="WHITE">
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
                            </children>
-                        </HBox>
+                        </VBox>
+                        <StackPane alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="122.0" prefWidth="490.0">
+                           <children>
+                              <Pane prefHeight="123.0" prefWidth="517.0">
+                                 <children>
+                                    <ImageView fitHeight="122.0" fitWidth="590.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@adrenalina/progetto/src/main/resources/player_boards/player_board_banshee.png" />
+                                       </image>
+                                    </ImageView>
+                                    <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="338.0" translateX="43.0" translateY="40.0">
+                                       <columnConstraints>
+                                          <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="906.0" minWidth="0.0" prefWidth="0.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints maxHeight="502.7734069824219" minHeight="10.0" prefHeight="481.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" x="20.0" y="30.0" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
+                                             <image>
+                                                <Image url="@adrenalina/progetto/src/main/resources/drops/drop_yellow.png" />
+                                             </image>
+                                          </ImageView>
+                                          <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
+                                          <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
+                                          <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
+                                          <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
+                                          <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
+                                          <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="6" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
+                                          <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="7" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
+                                          <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="8" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
+                                          <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="9" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
+                                          <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="10" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
+                                          <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="11" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
+                                             <image>
+                                                <Image url="@adrenalina/progetto/src/main/resources/drops/drop_blue.png" />
+                                             </image></ImageView>
+                                       </children>
+                                    </GridPane>
+                                    <GridPane maxHeight="30.0" maxWidth="158.0" minHeight="30.0" minWidth="157.0" prefHeight="30.0" prefWidth="157.0" translateX="105.0" translateY="88.0">
+                                       <columnConstraints>
+                                          <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="26.0" minWidth="26.0" prefWidth="26.0" />
+                                          <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="26.0" minWidth="26.0" prefWidth="26.0" />
+                                          <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="26.0" minWidth="26.0" prefWidth="26.0" />
+                                          <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="26.0" minWidth="26.0" prefWidth="26.0" />
+                                          <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="26.0" minWidth="26.0" prefWidth="26.0" />
+                                          <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="26.0" minWidth="26.0" prefWidth="26.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
+                                             <image>
+                                                <Image url="@adrenalina/progetto/src/main/resources/utils/icons/skull.png" />
+                                             </image>
+                                          </ImageView>
+                                          <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" />
+                                          <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" />
+                                          <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" />
+                                          <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4" />
+                                          <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5" />
+                                       </children>
+                                    </GridPane>
+                                    <GridPane layoutX="234.0" prefHeight="19.0" prefWidth="147.0">
+                                      <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="274.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="274.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="274.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="274.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="274.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="274.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="274.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="274.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="274.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="274.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="274.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="274.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints />
+                                      </rowConstraints>
+                                       <children>
+                                          <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@adrenalina/progetto/src/main/resources/drops/drop_blue.png" />
+                                             </image>
+                                          </ImageView>
+                                          <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
+                                             <image>
+                                                <Image url="@adrenalina/progetto/src/main/resources/drops/drop_purple.png" />
+                                             </image>
+                                          </ImageView>
+                                          <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" />
+                                          <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" />
+                                          <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4" />
+                                          <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5" />
+                                          <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="7" />
+                                          <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="8" />
+                                          <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="9" />
+                                          <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="10" />
+                                          <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="11" />
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </Pane>
+                           </children>
+                        </StackPane>
+                        <VBox alignment="TOP_CENTER" maxHeight="-Infinity" prefHeight="122.0" prefWidth="100.0" styleClass="backgroud-dark-tiny">
+                           <children>
+                              <Label alignment="CENTER" prefHeight="17.0" prefWidth="113.0" text="Your Ammos" textAlignment="CENTER" textFill="WHITE">
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <HBox alignment="CENTER" prefHeight="20.0" prefWidth="100.0" VBox.vgrow="NEVER">
+                                 <children>
+                                    <ImageView fitHeight="26.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@adrenalina/progetto/src/main/resources/ammos/ammo_red.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Label alignment="CENTER" prefHeight="10.0" prefWidth="34.0" text="x5" textFill="WHITE" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox alignment="CENTER" prefHeight="20.0" prefWidth="100.0">
+                                 <children>
+                                    <ImageView fitHeight="26.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@adrenalina/progetto/src/main/resources/ammos/ammo_yellow.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Label alignment="CENTER" prefHeight="10.0" prefWidth="34.0" text="x4" textFill="WHITE" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox alignment="CENTER" prefHeight="20.0" prefWidth="100.0">
+                                 <children>
+                                    <ImageView fitHeight="26.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@adrenalina/progetto/src/main/resources/ammos/ammo_blue.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Label alignment="CENTER" prefHeight="10.0" prefWidth="34.0" text="x3" textFill="WHITE" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </HBox>
+                           </children>
+                           <HBox.margin>
+                              <Insets left="46.0" />
+                           </HBox.margin>
+                        </VBox>
+                        <VBox maxHeight="-Infinity" prefHeight="122.0" prefWidth="100.0" styleClass="backgroud-dark-tiny">
+                           <children>
+                              <Label alignment="CENTER" prefHeight="17.0" prefWidth="121.0" text="Your Points" textFill="WHITE">
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <HBox alignment="CENTER" prefHeight="20.0" prefWidth="100.0">
+                                 <children>
+                                    <ImageView fitHeight="26.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@adrenalina/progetto/src/main/resources/scores/score_1.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Label alignment="CENTER" prefHeight="10.0" prefWidth="34.0" text="x10" textFill="WHITE" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox alignment="CENTER" prefHeight="20.0" prefWidth="100.0">
+                                 <children>
+                                    <ImageView fitHeight="26.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@adrenalina/progetto/src/main/resources/scores/score_2.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Label alignment="CENTER" prefHeight="10.0" prefWidth="34.0" text="x1" textFill="WHITE" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox alignment="CENTER" prefHeight="20.0" prefWidth="100.0">
+                                 <children>
+                                    <ImageView fitHeight="26.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@adrenalina/progetto/src/main/resources/scores/score_4.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Label alignment="CENTER" prefHeight="10.0" prefWidth="34.0" text="x5" textFill="WHITE" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </HBox>
+                           </children>
+                           <HBox.margin>
+                              <Insets left="46.0" />
+                           </HBox.margin>
+                        </VBox>
                      </children>
-                  </StackPane>
+                  </HBox>
                </children>
             </VBox>
-            <VBox alignment="CENTER" prefHeight="800.0" prefWidth="366.0" styleClass="backgroud-dark-heavy" stylesheets="@../css/style.css" HBox.hgrow="ALWAYS">
+            <VBox alignment="CENTER" prefHeight="800.0" prefWidth="366.0" styleClass="backgroud-dark-heavy" stylesheets="@adrenalina/progetto/src/main/resources/utils/style/css/style.css" HBox.hgrow="ALWAYS">
                <children>
                   <StackPane alignment="TOP_CENTER" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="NEVER">
                      <children>
@@ -376,12 +411,47 @@
                            <children>
                               <ImageView fitHeight="78.0" fitWidth="342.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../icons/logo.png" />
+                                    <Image url="@adrenalina/progetto/src/main/resources/utils/icons/logo.png" />
                                  </image>
                                  <VBox.margin>
                                     <Insets top="20.0" />
                                  </VBox.margin>
                               </ImageView>
+                              <GridPane alignment="CENTER" prefHeight="127.0" prefWidth="321.0" styleClass="backgroud-dark-tiny">
+                                <columnConstraints>
+                                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Button mnemonicParsing="false" prefHeight="42.0" prefWidth="132.0" styleClass="button-danger" text="End Turn" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Button>
+                                    <Button mnemonicParsing="false" prefHeight="42.0" prefWidth="132.0" styleClass="button-active" text="Move" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Button>
+                                    <Button mnemonicParsing="false" prefHeight="42.0" prefWidth="132.0" styleClass="button-active" text="Move &amp; Pick up" textFill="WHITE" GridPane.columnIndex="1">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Button>
+                                    <Button mnemonicParsing="false" prefHeight="42.0" prefWidth="132.0" styleClass="button-active" text="Shoot" textFill="WHITE" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="20.0" />
+                                 </VBox.margin>
+                              </GridPane>
                            </children>
                         </VBox>
                      </children>
