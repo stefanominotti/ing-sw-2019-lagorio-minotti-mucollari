@@ -442,13 +442,7 @@ public class TurnController {
             requiredAmmo.put(weapon.getWeaponType().getColor(), toSum);
             boolean rechargeable = true;
             for (Map.Entry<AmmoType, Integer> ammo : requiredAmmo.entrySet()) {
-                Integer powerupAmmo = 0;
-                for (Powerup powerup : this.activePlayer.getPowerups()) {
-                    if (powerup.getColor() == ammo.getKey()) {
-                        powerupAmmo++;
-                    }
-                }
-                if (ammo.getValue() > this.activePlayer.getAvailableAmmos().get(ammo.getKey()) + powerupAmmo) {
+                if (this.activePlayer.getAvailableAmmos().get(ammo.getKey()) < ammo.getValue()) {
                     rechargeable = false;
                     break;
                 }
@@ -477,22 +471,22 @@ public class TurnController {
                 this.activePlayer.getCharacter(), getRechargeableWeapons()));
     }
 
-    void sendReloadPaymentRequest(Weapon weapon) {
+    void reloadWeapon(Weapon weapon) {
         if (weapon == null) {
             endTurn();
             return;
         }
-        this.weaponToGet = this.activePlayer.getWeaponCardByWeapon(weapon);
         Map<AmmoType, Integer> requiredAmmo = new EnumMap<>(AmmoType.class);
         requiredAmmo.putAll(weapon.getBuyCost());
         int toSum = requiredAmmo.get(weapon.getColor()) + 1;
         requiredAmmo.put(weapon.getColor(), toSum);
-        this.controller.send(new PaymentMessage(PaymentMessageType.REQUEST, PaymentType.RELOAD,
-                this.activePlayer.getCharacter(), requiredAmmo));
-    }
-
-    void reloadWeapon() {
-        this.board.loadWeapon(this.activePlayer, this.weaponToGet);
+        this.board.useAmmos(this.activePlayer, requiredAmmo);
+        for (WeaponCard w : this.activePlayer.getWeapons()) {
+            if (w.getWeaponType() == weapon) {
+                this.board.loadWeapon(this.activePlayer, w);
+                break;
+            }
+        }
         if (this.movesLeft != 0) {
             // muoviti e spara (frenesia finale) TODO
         } else {

@@ -35,7 +35,7 @@ public class BoardTest {
         assertEquals(1, this.board.getPlayers().size());
     }
 
-    /*@Test
+    @Test
     public void getValidCharactersTest() {
         this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
         assertNotNull(this.board.getValidCharacters());
@@ -47,7 +47,7 @@ public class BoardTest {
         this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
         assertNotNull(this.board.getValidCharacters());
         assertEquals(this.board.getPlayers().get(0), this.board.getPlayerByCharacter(GameCharacter.BANSHEE));
-    }*/
+    }
 
     @Test
     public void skullTest() {
