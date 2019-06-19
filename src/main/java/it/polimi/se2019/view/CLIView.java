@@ -384,7 +384,7 @@ public class CLIView extends View {
             }
         }
 
-        if (0 >= selection || selection > payableAmmos.size() + payablePowerups.size() + 1) {
+        if (0 >= selection || selection > payableAmmos.size() + payablePowerups.size()) {
             showMessage("Invalid number, retry:");
             return;
         }

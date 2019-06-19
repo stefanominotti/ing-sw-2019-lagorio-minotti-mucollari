@@ -90,6 +90,10 @@ public class Player {
         return this.dead;
     }
 
+    void setDead(boolean dead) {
+        this.dead = dead;
+    }
+
     public GameCharacter getCharacter() {
         return this.character;
     }

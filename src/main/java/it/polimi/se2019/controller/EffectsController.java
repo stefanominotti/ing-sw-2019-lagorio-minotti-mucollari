@@ -216,6 +216,7 @@ public class EffectsController {
     }
 
     public void effectSelected(WeaponEffectOrderType effectType) {
+        this.activePlayer.getWeaponCardByWeapon(this.weapon).setReady(false);
         switch (effectType) {
             case PRIMARY:
                 this.effectsQueue.addAll(0, this.weapon.getPrimaryEffect());
@@ -257,7 +258,7 @@ public class EffectsController {
         switch (constraint.getTarget()) {
             case OTHERS:
                 Set<Square> targetSquares = new HashSet<>();
-                for (Player target : this.board.getAvilablePlayers()) {
+                for (Player target : this.board.getAvailablePlayers()) {
                     if (!target.equals(this.activePlayer)) {
                         targetSquares.addAll(this.board.getSquaresByDistance(target, constraint.getDistanceValues()));
                     }
@@ -275,7 +276,7 @@ public class EffectsController {
     }
 
     private List<Player> filterByPositionConstraintPlayers(List<PositionConstraint> constraints) {
-        List<Player> availablePlayers = this.board.getAvilablePlayers();
+        List<Player> availablePlayers = this.board.getAvailablePlayers();
         List<Player> targetPlayers = new ArrayList<>();
         for (PositionConstraint constraint : constraints) {
             switch (constraint.getType()) {
@@ -333,7 +334,7 @@ public class EffectsController {
                             constraint.getTarget()).getPosition().getRoom());
                     break;
                 case DISTANCE:
-                    for (Player player : this.board.getAvilablePlayers()) {
+                    for (Player player : this.board.getAvailablePlayers()) {
                         if (!player.equals(this.activePlayer) && player.getPosition() != null) {
                             targetRooms.add(player.getPosition().getRoom());
                         }
@@ -366,7 +367,7 @@ public class EffectsController {
         EffectTarget target = effect.getTarget();
         TargetPositionType positionType = target.getPositionType();
         List<PositionConstraint> constraints = target.getPositionConstraints();
-        List<Player> availablePlayers = this.board.getAvilablePlayers();
+        List<Player> availablePlayers = this.board.getAvailablePlayers();
         switch (positionType) {
             case EVERYWHERE:
                 availablePlayers = filterByPositionConstraintPlayers(constraints);
@@ -384,7 +385,7 @@ public class EffectsController {
     private List<Player> moveOthersPlayersCase(WeaponEffect effect) {
         EffectTarget target = effect.getTarget();
         List<PositionConstraint> constraints = target.getPositionConstraints();
-        List<Player> availablePlayers = this.board.getAvilablePlayers();
+        List<Player> availablePlayers = this.board.getAvailablePlayers();
         if (!constraints.isEmpty()) {
             availablePlayers = filterByPositionConstraintPlayers(constraints);
         }
@@ -586,6 +587,9 @@ public class EffectsController {
                         int damage = Integer.parseInt(this.currentEffect.getAmount().get(0));
                         this.board.attackPlayer(this.activePlayer.getCharacter(),
                                 character, damage, this.currentEffect.getType());
+                        if (this.board.getPlayerByCharacter(character).getDamages().size() >= 11) {
+                            this.board.handleDeadPlayer(character);
+                        }
                         setEnviroment(square, this.board.getPlayerByCharacter(character).getPosition());
                         setHitByCases(character);
                     }
@@ -656,7 +660,6 @@ public class EffectsController {
                         this.activePlayer.getCharacter(),
                         new ArrayList<>(getAvailableEffects().keySet())));
             } else {
-                this.activePlayer.getWeaponCardByWeapon(this.weapon).setReady(false);
                 resetController();
                 this.controller.endEffects();
             }

@@ -11,7 +11,7 @@ public class WeaponCardTest {
     @Test
     public void getWeaponTypeTest() { assertEquals(Weapon.LOCK_RIFLE, weaponCard.getWeaponType()); }
 
-    @Test
+    /*@Test
     public void getOwnerTest() {
         assertNull(weaponCard.getOwner());
         weaponCard.setOwner(playerTest);
@@ -22,7 +22,7 @@ public class WeaponCardTest {
     public void setOwnerTest() {
         weaponCard.setOwner(playerTest);
         assertEquals(playerTest, weaponCard.getOwner());
-    }
+    }*/
 
     @Test
     public void setReadyTest() {
