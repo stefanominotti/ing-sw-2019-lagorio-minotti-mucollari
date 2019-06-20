@@ -154,17 +154,7 @@ public class Board extends Observable {
         return new ArrayList<>(this.players);
     }
 
-    public List<Player> getValidPlayers() {
-        List<Player> validPlayers = new ArrayList<>();
-        for (Player p : this.players) {
-            if (p.getNickname() != null) {
-                validPlayers.add(p);
-            }
-        }
-        return validPlayers;
-    }
-
-    public List<Player> getAvilablePlayers() {
+    public List<Player> getAvailablePlayers() {
         List<Player> players = new ArrayList<>();
         for (Player p : this.players) {
             if(p.getPosition() != null) {
@@ -176,7 +166,7 @@ public class Board extends Observable {
 
     public List<GameCharacter> getValidCharacters() {
         List<GameCharacter> validCharacters = new ArrayList<>();
-        for (Player p : getValidPlayers()) {
+        for (Player p : this.players) {
             validCharacters.add(p.getCharacter());
         }
         return validCharacters;
@@ -205,13 +195,13 @@ public class Board extends Observable {
         }
         notifyChanges(new PlayerCreatedMessage(character, nickname, others));
 
-        if (getValidPlayers().size() > 3) {
+        if (this.players.size() > 3) {
             long remainingTime = this.startTimer /1000L -
                     Duration.between(this.gameTimerStartDate, LocalDateTime.now()).getSeconds();
             notifyChanges(new TimerMessage(TimerMessageType.UPDATE, TimerType.SETUP, remainingTime));
         }
 
-        if (getValidPlayers().size() == 3) {
+        if (this.players.size() == 3) {
             this.timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
@@ -254,7 +244,7 @@ public class Board extends Observable {
                     notifyChanges(new ClientDisconnectedMessage(player, true));
                 }
                 this.players.remove(getPlayerByCharacter(player));
-                if (this.gameTimerStartDate != null && getValidPlayers().size() == 2) {
+                if (this.gameTimerStartDate != null && this.players.size() == 2) {
                     this.timer.cancel();
                     this.gameTimerStartDate = null;
                     this.timer = new Timer();
@@ -263,7 +253,7 @@ public class Board extends Observable {
                 break;
             case SETTINGUPGAME:
                 boolean isMaster = false;
-                if (getPlayerByCharacter(player) == getValidPlayers().get(0)) {
+                if (getPlayerByCharacter(player) == this.players.get(0)) {
                     isMaster = true;
                 }
                 this.players.remove(getPlayerByCharacter(player));
@@ -386,17 +376,36 @@ public class Board extends Observable {
     }
 
     public void endTurn(Player player) {
+        this.timer.cancel();
         if(this.gameState == FIRSTTURN && this.currentPlayer == this.players.size() - 1) {
             this.gameState = INGAME;
         }
-        Player nextPlayer;
-        if(availableDeathPlayers()) {
-            int index = 0;
-            do {
-                nextPlayer = this.deathPlayers.get(index);
-                index++;
-            } while (!nextPlayer.isConnected());
-        } else {
+
+        if (player.isDead()) {
+            Room room =
+                    getArena().getRoomByColor(RoomColor.valueOf(player.getPowerups().get(0).getColor().toString()));
+
+            removePowerup(player, player.getPowerups().get(0));
+            respawnPlayer(player, room);
+        }
+
+        Player nextPlayer = null;
+        for (Player p : this.deathPlayers) {
+            if (!player.isConnected()) {
+                drawPowerup(p);
+
+                Room room =
+                        this.arena.getRoomByColor(RoomColor.valueOf(p.getPowerups().get(0).getColor().toString()));
+
+                removePowerup(p, p.getPowerups().get(0));
+                respawnPlayer(p, room);
+            } else {
+                nextPlayer = p;
+                break;
+            }
+        }
+
+        if (nextPlayer == null) {
             incrementCurrentPlayer();
             nextPlayer = this.players.get(this.currentPlayer);
         }
@@ -458,6 +467,7 @@ public class Board extends Observable {
     }
 
     public void startTurnTimer(Player player) {
+        this.timer = new Timer();
         if (player == this.players.get(this.currentPlayer)) {
             this.timer.schedule(new TimerTask() {
                 @Override
@@ -608,13 +618,8 @@ public class Board extends Observable {
     }
 
     public void loadWeapon(Player player, WeaponCard weapon) {
-        for (WeaponCard w : player.getWeapons()) {
-            if (w == weapon) {
-                w.setReady(true);
-                notifyChanges(new WeaponMessage(WeaponMessageType.RELOAD, w.getWeaponType(), player.getCharacter()));
-                return;
-            }
-        }
+        weapon.setReady(true);
+        notifyChanges(new WeaponMessage(WeaponMessageType.RELOAD, weapon.getWeaponType(), player.getCharacter()));
     }
 
     public void giveWeapon(Player player, WeaponCard weapon) {
@@ -651,6 +656,8 @@ public class Board extends Observable {
         Square square = room.getSpawn();
         player.setPosition(square);
         square.addPlayer(player);
+        player.setDead(false);
+        this.deathPlayers.remove(player);
         notifyChanges(new SpawnMessage(player.getCharacter(),
                 new Coordinates(square.getX(), square.getY())));
     }
@@ -718,7 +725,7 @@ public class Board extends Observable {
 
     public void raisePlayerScore(Player p, int score) {
         p.raiseScore(score);
-        notifyChanges(new ScoreMessage(p.getCharacter(), p.getScore()));
+        notifyChanges(new ScoreMessage(p.getCharacter(), score));
     }
 
     public List<Player> getVisiblePlayers (Player player) {
@@ -860,10 +867,16 @@ public class Board extends Observable {
         notifyChanges(new MarksToDamagesMessage(player, attacker));
     }
 
-    void handleDeadPlayer(GameCharacter character) {
+    public void handleDeadPlayer(GameCharacter character) {
         Player player = getPlayerByCharacter(character);
+
+        player.setDead(true);
+        this.deathPlayers.add(player);
+
+        notifyChanges(new PlayerMessage(PlayerMessageType.DEATH, character));
+
         this.skulls--;
-        // notify TODO
+
         GameCharacter kill = player.getDamages().get(10);
         GameCharacter overkill = null;
         try {
@@ -876,10 +889,11 @@ public class Board extends Observable {
         if (overkill != null) {
             killsToAdd.add(overkill);
         }
-        this.killshotTrack.put(this.skulls, killsToAdd);
-        // notify TODO
+        this.killshotTrack.put(this.skulls + 1, killsToAdd);
 
-        // notify first blood TODO
+        notifyChanges(new KillshotTrackMessage(this.skulls + 1, killsToAdd));
+
+        notifyChanges(new PlayerMessage(PlayerMessageType.FIRST_BLOOD, player.getDamages().get(0)));
 
         raisePlayerScore(getPlayerByCharacter(player.getDamages().get(0)), 1);
 
@@ -918,7 +932,8 @@ public class Board extends Observable {
         }
 
         player.reduceKillshotPoints();
-        // notify TODO
+
+        notifyChanges(new PlayerMessage(PlayerMessageType.KILLSHOT_POINTS, player.getCharacter()));
     }
 
     public List<Square> getSquaresByDistance (Player player, List<String> amount) {

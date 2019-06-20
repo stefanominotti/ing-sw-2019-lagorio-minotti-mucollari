@@ -11,7 +11,7 @@ public class SelfPlayerBoard extends PlayerBoard {
 
     private List<Weapon> readyWeapons;
     private List<Powerup> powerups;
-    int score;
+    private int score;
 
     SelfPlayerBoard(GameCharacter character, String name) {
         super(character, name);

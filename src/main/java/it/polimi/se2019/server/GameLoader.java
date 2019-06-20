@@ -55,9 +55,9 @@ public class GameLoader {
         this.board.loadArena(this.gson.fromJson(jsonElement.get("arena"), String.class));
         for (JsonElement jsonPlayer : jsonPlayers) {
             Player player = this.gson.fromJson(jsonPlayer.getAsJsonObject().get("player"), Player.class);
-            for (WeaponCard weapon : player.getWeapons()) {
+            /* for (WeaponCard weapon : player.getWeapons()) {
                 weapon.setOwner(player);
-            }
+            } */
             if (player.isDead()) {
                 this.board.addDeadPlayer(player);
             }

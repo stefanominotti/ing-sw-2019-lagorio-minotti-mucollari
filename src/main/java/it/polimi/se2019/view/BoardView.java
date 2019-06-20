@@ -41,6 +41,10 @@ public class BoardView {
         return this.skulls;
     }
 
+    void setSkulls(int skulls) {
+        this.skulls = skulls;
+    }
+
     public List<SquareView> getSquares() {
         return new ArrayList<>(this.squares);
     }
@@ -72,13 +76,10 @@ public class BoardView {
         return new HashMap<>(this.killshotTrack);
     }
 
-    void addKillshotPoints(GameCharacter attacker, int skullNumber) {
-        this.killshotTrack.get(skullNumber).add(attacker);
+    void addKillshotPoints(List<GameCharacter> players, int skullNumber) {
+        this.killshotTrack.put(skullNumber, players);
     }
 
-    void decrementSkulls(int amount) {
-        this.skulls -= amount;
-    }
 
     String arenaToString() {
         return arenaToString(new ArrayList<>());

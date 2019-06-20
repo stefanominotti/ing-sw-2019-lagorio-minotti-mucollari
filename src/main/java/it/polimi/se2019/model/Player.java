@@ -243,5 +243,9 @@ public class Player {
     }
 
     void resetAfterDeath() {}
+
+    void setDead(boolean dead) {
+        this.dead = dead;
+    }
 }
 

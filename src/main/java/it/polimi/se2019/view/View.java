@@ -354,6 +354,54 @@ public abstract class View {
             case MARKS_TO_DAMAGES:
                 handleMarksToDamages(message.getCharacter(), ((MarksToDamagesMessage) message).getAttacker());
                 break;
+            case FIRST_BLOOD:
+                handleFirstBlood(message.getCharacter());
+                break;
+            case KILLSHOT_POINTS:
+                handleKillshotPointsChange(message.getCharacter());
+                break;
+            case DEATH:
+                handleDeath(message.getCharacter());
+                break;
+            case SCORE:
+                handleScoreChange(message.getCharacter(), ((ScoreMessage) message).getScore());
+                break;
+        }
+    }
+
+    void handleScoreChange(GameCharacter player, int score) {
+        if (player == this.character) {
+            this.selfPlayerBoard.raiseScore(score);
+        }
+    }
+
+    void handleDeath(GameCharacter player) {
+        PlayerBoard board;
+        if (player == this.character) {
+            board = this.selfPlayerBoard;
+        } else {
+            board = getBoardByCharacter(player);
+        }
+        if (board != null) {
+            board.resetDamages();
+        }
+    }
+
+    void handleKillshotPointsChange(GameCharacter player) {
+        PlayerBoard board;
+        if (player == this.character) {
+            board = this.selfPlayerBoard;
+        } else {
+            board = getBoardByCharacter(player);
+        }
+        if (board != null) {
+            board.reduceKillshotPoints();
+        }
+    }
+
+    void handleFirstBlood(GameCharacter player) {
+        if (this.character == player) {
+            this.selfPlayerBoard.raiseScore(1);
         }
     }
 
@@ -707,7 +755,16 @@ public abstract class View {
             case AMMO_TILES_REFILLED:
                 handleTilesRefilled(((AmmoTilesRefilledMessage) message).getTiles());
                 break;
+            case KILLSHOT_TRACK:
+                handleKillshotTrackChange(((KillshotTrackMessage) message).getSkulls(),
+                        ((KillshotTrackMessage) message).getPlayers());
+                break;
         }
+    }
+
+    void handleKillshotTrackChange(int skulls, List<GameCharacter> players) {
+        this.board.setSkulls(skulls - 1);
+        this.board.addKillshotPoints(players, skulls);
     }
 
     void handleSetupInterrupted() {

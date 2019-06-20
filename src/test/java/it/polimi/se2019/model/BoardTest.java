@@ -29,20 +29,6 @@ public class BoardTest {
     }
 
     @Test
-    public void getValidPlayersTest() {
-        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
-        assertNotNull(this.board.getPlayers());
-        assertEquals(1, this.board.getPlayers().size());
-    }
-
-    @Test
-    public void getValidCharactersTest() {
-        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
-        assertNotNull(this.board.getValidCharacters());
-        assertEquals(Arrays.asList(GameCharacter.BANSHEE), this.board.getValidCharacters());
-    }
-
-    @Test
     public void getPlayerByCharacter() {
         this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
         assertNotNull(this.board.getValidCharacters());

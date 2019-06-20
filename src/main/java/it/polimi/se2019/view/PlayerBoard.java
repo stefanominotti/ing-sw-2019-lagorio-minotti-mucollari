@@ -98,11 +98,8 @@ public class PlayerBoard implements Serializable {
         }
     }
 
-    void removeMarks(GameCharacter target) {
-        while (this.revengeMarks.contains(target)) {
-            this.revengeMarks.remove(target);
-        }
-        this.revengeMarks.remove(target);
+    void resetDamages() {
+        this.damages = new ArrayList<>();
     }
 
     void addAmmos(Map<AmmoType, Integer> ammos) {
@@ -150,6 +147,10 @@ public class PlayerBoard implements Serializable {
         while (this.revengeMarks.contains(player)) {
             this.revengeMarks.remove(player);
         }
+    }
+
+    public void reduceKillshotPoints() {
+        this.killshotPoints.remove(0);
     }
 
     public String toString() {

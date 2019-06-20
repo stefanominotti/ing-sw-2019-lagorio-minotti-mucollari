@@ -6,5 +6,5 @@ public enum BoardMessageType {
     ARENA,
     GAME_SET,
     SETUP_INTERRUPTED,
-    SKULLS
+    KILLSHOT_TRACK, SKULLS
 }

@@ -384,7 +384,7 @@ public class CLIView extends View {
             }
         }
 
-        if (0 >= selection || selection > payableAmmos.size() + payablePowerups.size() + 1) {
+        if (0 >= selection || selection > payableAmmos.size() + payablePowerups.size()) {
             showMessage("Invalid number, retry:");
             return;
         }
@@ -754,6 +754,45 @@ public class CLIView extends View {
     }
 
     @Override
+    void handleScoreChange(GameCharacter player, int score) {
+        if (player == getCharacter()) {
+            showMessage("You got " + score + " points");
+        } else {
+            showMessage(player + " got " + score + " points");
+        }
+    }
+
+    @Override
+    void handleDeath(GameCharacter player) {
+        super.handleDeath(player);
+        if (getCharacter() == player) {
+            showMessage("You died");
+        } else {
+            showMessage(player + " died");
+        }
+    }
+
+    @Override
+    void handleKillshotPointsChange(GameCharacter player) {
+        super.handleKillshotPointsChange(player);
+        if (getCharacter() == player) {
+            showMessage("Your killshot points have been reduced");
+        } else {
+            showMessage(player + "'s killshot points have been reduced");
+        }
+    }
+
+    @Override
+    void handleFirstBlood(GameCharacter player) {
+        super.handleFirstBlood(player);
+        if (getCharacter() == player) {
+            showMessage("You got 1 point for first blood");
+        } else {
+            showMessage(player + " got 1 point for first blood");
+        }
+    }
+
+    @Override
     void handleInvalidToken() {
         showMessage("Invalid token");
         super.handleInvalidToken();
@@ -937,6 +976,19 @@ public class CLIView extends View {
     void handleTurnContinuation(GameCharacter player) {
         super.handleTurnContinuation(player);
         showMessage(player + " is playing...");
+    }
+
+    @Override
+    void handleKillshotTrackChange(int skulls, List<GameCharacter> players) {
+        super.handleKillshotTrackChange(skulls, players);
+        showMessage((skulls-1) + " skulls left");
+        if (players.size() == 1) {
+            showMessage(players.get(0) + " got 1 mark on killshot track");
+        } else if (players.size() == 2 && players.get(0) == players.get(1)) {
+            showMessage(players.get(0) + " got 2 marks on killshot track");
+        } else {
+            showMessage(players.get(0) + " and " + players.get(1) + " got 1 mark on killshot track");
+        }
     }
 
     @Override
