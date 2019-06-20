@@ -19,13 +19,13 @@
    <children>
       <HBox alignment="TOP_RIGHT" prefHeight="400.0" prefWidth="610.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <VBox prefHeight="744.0" prefWidth="904.0" styleClass="backgroud-dark-heavy" stylesheets="@adrenalina/progetto/src/main/resources/utils/style/css/style.css" HBox.hgrow="ALWAYS">
+            <VBox prefHeight="744.0" prefWidth="904.0" styleClass="backgroud-dark-heavy" stylesheets="@../css/style.css" HBox.hgrow="ALWAYS">
                <children>
                   <Pane VBox.vgrow="NEVER">
                      <children>
                         <ImageView fitHeight="678.0" fitWidth="985.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@adrenalina/progetto/src/main/resources/arenas/img/arena_1.png" />
+                              <Image url="@../../../arenas/img/arena_1.png" />
                            </image>
                         </ImageView>
                         <GridPane layoutX="477.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="130.0" prefWidth="288.0">
@@ -61,42 +61,42 @@
                            <children>
                               <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                                  <image>
-                                    <Image url="@adrenalina/progetto/src/main/resources/drops/drop_blue_blue.png" />
+                                    <Image url="@../../../drops/drop_blue_blue.png" />
                                  </image>
                               </ImageView>
                               <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                                  <image>
-                                    <Image url="@adrenalina/progetto/src/main/resources/drops/drop_yellow_yellow.png" />
+                                    <Image url="@../../../drops/drop_yellow_yellow.png" />
                                  </image>
                               </ImageView>
                               <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                                  <image>
-                                    <Image url="@adrenalina/progetto/src/main/resources/drops/drop_purple_blue.png" />
+                                    <Image url="@../../../drops/drop_purple_blue.png" />
                                  </image>
                               </ImageView>
                               <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                                  <image>
-                                    <Image url="@adrenalina/progetto/src/main/resources/utils/icons/skull.png" />
+                                    <Image url="@../../icons/skull.png" />
                                  </image>
                               </ImageView>
                               <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                                  <image>
-                                    <Image url="@adrenalina/progetto/src/main/resources/drops/drop_purple.png" />
+                                    <Image url="@../../../drops/drop_purple.png" />
                                  </image>
                               </ImageView>
                               <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                                  <image>
-                                    <Image url="@adrenalina/progetto/src/main/resources/utils/icons/skull.png" />
+                                    <Image url="@../../icons/skull.png" />
                                  </image>
                               </ImageView>
                               <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                                  <image>
-                                    <Image url="@adrenalina/progetto/src/main/resources/utils/icons/skull.png" />
+                                    <Image url="@../../icons/skull.png" />
                                  </image>
                               </ImageView>
                               <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                                  <image>
-                                    <Image url="@adrenalina/progetto/src/main/resources/utils/icons/skull.png" />
+                                    <Image url="@../../icons/skull.png" />
                                  </image>
                               </ImageView>
                            </children>
@@ -163,7 +163,7 @@
                            <children>
                               <ImageView fitHeight="55.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@adrenalina/progetto/src/main/resources/utils/icons/characters_icon/banshee.png" />
+                                    <Image url="@../../icons/characters_icon/banshee.png" />
                                  </image>
                                  <VBox.margin>
                                     <Insets top="10.0" />
@@ -185,7 +185,7 @@
                                  <children>
                                     <ImageView fitHeight="122.0" fitWidth="590.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@adrenalina/progetto/src/main/resources/player_boards/player_board_banshee.png" />
+                                          <Image url="@../../../player_boards/player_board_banshee.png" />
                                        </image>
                                     </ImageView>
                                     <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="338.0" translateX="43.0" translateY="40.0">
@@ -209,7 +209,7 @@
                                        <children>
                                           <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" x="20.0" y="30.0" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
                                              <image>
-                                                <Image url="@adrenalina/progetto/src/main/resources/drops/drop_yellow.png" />
+                                                <Image url="@../../../drops/drop_yellow.png" />
                                              </image>
                                           </ImageView>
                                           <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
@@ -224,7 +224,7 @@
                                           <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="10" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
                                           <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="11" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
                                              <image>
-                                                <Image url="@adrenalina/progetto/src/main/resources/drops/drop_blue.png" />
+                                                <Image url="@../../../drops/drop_blue.png" />
                                              </image></ImageView>
                                        </children>
                                     </GridPane>
@@ -243,7 +243,7 @@
                                        <children>
                                           <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
                                              <image>
-                                                <Image url="@adrenalina/progetto/src/main/resources/utils/icons/skull.png" />
+                                                <Image url="@../../icons/skull.png" />
                                              </image>
                                           </ImageView>
                                           <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" />
@@ -274,12 +274,12 @@
                                        <children>
                                           <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
-                                                <Image url="@adrenalina/progetto/src/main/resources/drops/drop_blue.png" />
+                                                <Image url="@../../../drops/drop_blue.png" />
                                              </image>
                                           </ImageView>
                                           <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
                                              <image>
-                                                <Image url="@adrenalina/progetto/src/main/resources/drops/drop_purple.png" />
+                                                <Image url="@../../../drops/drop_purple.png" />
                                              </image>
                                           </ImageView>
                                           <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" />
@@ -308,7 +308,7 @@
                                  <children>
                                     <ImageView fitHeight="26.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@adrenalina/progetto/src/main/resources/ammos/ammo_red.png" />
+                                          <Image url="@../../../ammos/ammo_red.png" />
                                        </image>
                                     </ImageView>
                                     <Label alignment="CENTER" prefHeight="10.0" prefWidth="34.0" text="x5" textFill="WHITE" />
@@ -321,7 +321,7 @@
                                  <children>
                                     <ImageView fitHeight="26.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@adrenalina/progetto/src/main/resources/ammos/ammo_yellow.png" />
+                                          <Image url="@../../../ammos/ammo_yellow.png" />
                                        </image>
                                     </ImageView>
                                     <Label alignment="CENTER" prefHeight="10.0" prefWidth="34.0" text="x4" textFill="WHITE" />
@@ -334,7 +334,7 @@
                                  <children>
                                     <ImageView fitHeight="26.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@adrenalina/progetto/src/main/resources/ammos/ammo_blue.png" />
+                                          <Image url="@../../../ammos/ammo_blue.png" />
                                        </image>
                                     </ImageView>
                                     <Label alignment="CENTER" prefHeight="10.0" prefWidth="34.0" text="x3" textFill="WHITE" />
@@ -359,7 +359,7 @@
                                  <children>
                                     <ImageView fitHeight="26.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@adrenalina/progetto/src/main/resources/scores/score_1.png" />
+                                          <Image url="@../../../scores/score_1.png" />
                                        </image>
                                     </ImageView>
                                     <Label alignment="CENTER" prefHeight="10.0" prefWidth="34.0" text="x10" textFill="WHITE" />
@@ -372,7 +372,7 @@
                                  <children>
                                     <ImageView fitHeight="26.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@adrenalina/progetto/src/main/resources/scores/score_2.png" />
+                                          <Image url="@../../../scores/score_2.png" />
                                        </image>
                                     </ImageView>
                                     <Label alignment="CENTER" prefHeight="10.0" prefWidth="34.0" text="x1" textFill="WHITE" />
@@ -385,7 +385,7 @@
                                  <children>
                                     <ImageView fitHeight="26.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@adrenalina/progetto/src/main/resources/scores/score_4.png" />
+                                          <Image url="@../../../scores/score_4.png" />
                                        </image>
                                     </ImageView>
                                     <Label alignment="CENTER" prefHeight="10.0" prefWidth="34.0" text="x5" textFill="WHITE" />
@@ -403,7 +403,7 @@
                   </HBox>
                </children>
             </VBox>
-            <VBox alignment="CENTER" prefHeight="800.0" prefWidth="366.0" styleClass="backgroud-dark-heavy" stylesheets="@adrenalina/progetto/src/main/resources/utils/style/css/style.css" HBox.hgrow="ALWAYS">
+            <VBox alignment="CENTER" prefHeight="800.0" prefWidth="366.0" styleClass="backgroud-dark-heavy" stylesheets="@../css/style.css" HBox.hgrow="ALWAYS">
                <children>
                   <StackPane alignment="TOP_CENTER" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="NEVER">
                      <children>
@@ -411,7 +411,7 @@
                            <children>
                               <ImageView fitHeight="78.0" fitWidth="342.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@adrenalina/progetto/src/main/resources/utils/icons/logo.png" />
+                                    <Image url="@../../icons/logo.png" />
                                  </image>
                                  <VBox.margin>
                                     <Insets top="20.0" />
