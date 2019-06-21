@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="550.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.CardChoiceController">
+   <children>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="backgroud-dark-heavy" stylesheets="@../css/style.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <top>
+            <ImageView fitHeight="57.0" fitWidth="214.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+               <image>
+                  <Image url="@../../icons/logo.png" />
+               </image>
+               <BorderPane.margin>
+                  <Insets top="30.0" />
+               </BorderPane.margin>
+            </ImageView>
+         </top>
+         <center>
+            <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="396.0" prefWidth="527.0" styleClass="backgroud-dark-tiny" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets top="-30.0" />
+               </BorderPane.margin>
+               <children>
+                  <ImageView fx:id="cardImage" fitHeight="286.0" fitWidth="190.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../weapons/img/electroscythe.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="40.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <VBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="280.0" prefWidth="317.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <HBox fx:id="statusPanel" alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="322.0" VBox.vgrow="NEVER">
+                           <children>
+                              <Label prefHeight="25.0" prefWidth="51.0" text="Status:" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <ImageView fx:id="statusImage" fitHeight="33.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../icons/unloaded_weapon.png" />
+                                 </image>
+                                 <HBox.margin>
+                                    <Insets left="5.0" />
+                                 </HBox.margin>
+                              </ImageView>
+                              <Label fx:id="statusDescription" prefHeight="17.0" prefWidth="66.0" text="unloaded" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets left="10.0" />
+                                 </HBox.margin>
+                              </Label>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <VBox fx:id="primaryPanel" prefHeight="2.0" prefWidth="332.0">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="322.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <RadioButton fx:id="primaryChoice" mnemonicParsing="false" prefHeight="18.0" prefWidth="28.0" text="RadioButton">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="effectChoice" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <Label fx:id="primaryName" prefHeight="25.0" prefWidth="90.0" text="effetto base:" textFill="WHITE" HBox.hgrow="SOMETIMES">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <ImageView fx:id="primaryCost1Image" fitHeight="33.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                    </ImageView>
+                                    <ImageView fx:id="primaryCost2Image" fitHeight="33.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                    </ImageView>
+                                    <ImageView fx:id="primaryCost3Image" fitHeight="33.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../icons" />
+                                       </image>
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                    </ImageView>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                                 <padding>
+                                    <Insets top="20.0" />
+                                 </padding>
+                              </HBox>
+                              <Label fx:id="primaryDescription" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" VBox.vgrow="ALWAYS">
+                                 <padding>
+                                    <Insets left="10.0" />
+                                 </padding>
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <VBox fx:id="secondaryOnePanel" prefHeight="38.0" prefWidth="317.0">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="322.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <RadioButton fx:id="secondaryOne" mnemonicParsing="false" prefHeight="18.0" prefWidth="28.0" text="RadioButton" toggleGroup="$effectChoice" />
+                                    <Label fx:id="secondaryOneName" prefHeight="25.0" prefWidth="141.0" text="modalità alternativa:" textFill="WHITE" HBox.hgrow="SOMETIMES">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <ImageView fx:id="secondaryOneCost1Image" fitHeight="33.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                       <image>
+                                          <Image url="@../../../ammos/ammo_blue.png" />
+                                       </image>
+                                    </ImageView>
+                                    <ImageView fx:id="secondaryOneCost2Image" fitHeight="33.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                       <image>
+                                          <Image url="@../../../ammos/ammo_red.png" />
+                                       </image>
+                                    </ImageView>
+                                    <ImageView fx:id="secondaryOneCost3Image" fitHeight="33.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../icons" />
+                                       </image>
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                    </ImageView>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <Label fx:id="secondaryOneDescription" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" VBox.vgrow="ALWAYS">
+                                 <padding>
+                                    <Insets left="10.0" />
+                                 </padding>
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <VBox fx:id="secondaryTwoPanel" prefHeight="38.0" prefWidth="317.0">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="322.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <RadioButton fx:id="secondaryTwoChoice" mnemonicParsing="false" prefHeight="18.0" prefWidth="28.0" text="RadioButton" toggleGroup="$effectChoice" />
+                                    <Label fx:id="secondaryTwoName" prefHeight="25.0" prefWidth="141.0" text="modalità alternativa:" textFill="WHITE" HBox.hgrow="SOMETIMES">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <ImageView fx:id="secondaryTwoCost1Image1" fitHeight="33.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                       <image>
+                                          <Image url="@../../../ammos/ammo_blue.png" />
+                                       </image>
+                                    </ImageView>
+                                    <ImageView fx:id="secondaryTwoCost2Image" fitHeight="33.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                       <image>
+                                          <Image url="@../../../ammos/ammo_red.png" />
+                                       </image>
+                                    </ImageView>
+                                    <ImageView fx:id="secondaryOneCost3Image" fitHeight="33.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../icons" />
+                                       </image>
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                    </ImageView>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <Label fx:id="secondaryOneDescription1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" VBox.vgrow="ALWAYS">
+                                 <padding>
+                                    <Insets left="10.0" />
+                                 </padding>
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <VBox fx:id="actionsPanel" alignment="BOTTOM_RIGHT" prefHeight="53.0" prefWidth="317.0" VBox.vgrow="NEVER">
+                           <children>
+                              <Button fx:id="shootButton" mnemonicParsing="false" prefHeight="31.0" prefWidth="89.0" styleClass="button-active" text="Shoot" textFill="WHITE">
+                                 <VBox.margin>
+                                    <Insets right="20.0" top="10.0" />
+                                 </VBox.margin>
+                              </Button>
+                           </children></VBox>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>

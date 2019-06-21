@@ -31,12 +31,16 @@
 	-fx-background-color: #ffc107;
 }
 
-.button-danger {
+.button-std {
 	-fx-background-color: #007bff;
 }
 
-.button-danger-focus {
+.button-std-focus {
 	-fx-background-color: #0360c4;
+}
+
+.button-danger {
+	-fx-background-color: #dc3545;
 }
 
 .img-shadow {

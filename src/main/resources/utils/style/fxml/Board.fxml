@@ -19,7 +19,7 @@
    <children>
       <HBox alignment="TOP_RIGHT" prefHeight="400.0" prefWidth="610.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <VBox prefHeight="744.0" prefWidth="904.0" styleClass="backgroud-dark-heavy" stylesheets="@../css/style.css" HBox.hgrow="ALWAYS">
+            <VBox prefHeight="744.0" prefWidth="904.0" styleClass="backgroud-dark-heavy" stylesheets="@../css/style.css" HBox.hgrow="NEVER">
                <children>
                   <Pane VBox.vgrow="ALWAYS">
                      <children>
@@ -403,7 +403,7 @@
                   </HBox>
                </children>
             </VBox>
-            <VBox alignment="TOP_CENTER" prefHeight="800.0" prefWidth="366.0" styleClass="backgroud-dark-heavy" stylesheets="@../css/style.css" HBox.hgrow="ALWAYS">
+            <VBox alignment="TOP_CENTER" prefHeight="801.0" prefWidth="382.0" styleClass="backgroud-dark-heavy" stylesheets="@../css/style.css" HBox.hgrow="ALWAYS">
                <children>
                   <ImageView fitHeight="78.0" fitWidth="342.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -423,7 +423,7 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="42.0" prefWidth="132.0" styleClass="button-danger" text="End Turn" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Button mnemonicParsing="false" prefHeight="42.0" prefWidth="132.0" styleClass="button-std" text="End Turn" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -479,7 +479,7 @@
                      <children>
                         <GridPane prefHeight="363.0" prefWidth="381.0" styleClass="backgroud-dark-tiny">
                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="87.0" minWidth="10.0" prefWidth="56.71697998046875" />
+                              <ColumnConstraints hgrow="ALWAYS" maxWidth="87.0" minWidth="57.0" prefWidth="57.0" />
                               <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="107.0" minWidth="10.0" prefWidth="107.0" />
                             <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="107.0" minWidth="10.0" prefWidth="107.0" />
                             <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="107.0" minWidth="10.0" prefWidth="107.0" />
@@ -490,7 +490,7 @@
                           </rowConstraints>
                            <children>
                               <ImageView fitHeight="58.0" fitWidth="63.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1" />
-                              <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                              <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
                                  <children>
                                     <ImageView fitHeight="30.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -507,7 +507,7 @@
                                     </Label>
                                  </children>
                               </VBox>
-                              <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
+                              <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER">
                                  <children>
                                     <ImageView fitHeight="30.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                        <image>

@@ -49,7 +49,7 @@
                   <Label fx:id="removeSuccessLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="11.0" prefWidth="290.0" textFill="#28a745" />
                </children>
             </VBox>
-            <Button fx:id="removeButton" layoutX="78.0" layoutY="237.0" mnemonicParsing="false" onAction="#removeToken" prefHeight="30.0" prefWidth="149.0" styleClass="button-danger" stylesheets="@../css/style.css" text="Remove invalid token" textFill="WHITE" />
+            <Button fx:id="removeButton" layoutX="78.0" layoutY="237.0" mnemonicParsing="false" onAction="#removeToken" prefHeight="30.0" prefWidth="149.0" styleClass="button-std" stylesheets="@../css/style.css" text="Remove invalid token" textFill="WHITE" />
          </children>
       </AnchorPane>
    </center>
