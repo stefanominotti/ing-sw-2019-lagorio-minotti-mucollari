@@ -102,6 +102,7 @@ public class CLIView extends View {
         if (input.equalsIgnoreCase("y") || input.equalsIgnoreCase("n")) {
             getClient().send(new SingleSelectionMessage(SelectionMessageType.PERSISTENCE, getCharacter(), input));
             this.inputEnabled = false;
+            return;
         }
         showMessage("Invalid input, retry:");
     }
