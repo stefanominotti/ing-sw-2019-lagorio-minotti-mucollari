@@ -310,11 +310,6 @@ public class Board extends Observable {
      * @param player you want to handle disconnection
      */
     public void handleDisconnection(GameCharacter player) {
-        if (getPlayerByCharacter(player).getNickname() == null) {
-            this.players.remove(getPlayerByCharacter(player));
-            notifyChanges(new ClientDisconnectedMessage(player, true));
-            return;
-        }
         switch(this.gameState) {
             case ACCEPTINGPLAYERS:
                 if (getPlayerByCharacter(player).getNickname() != null) {
@@ -347,7 +342,11 @@ public class Board extends Observable {
                             this.players.get(0).getCharacter()));
                 }
                 break;
+            case ENDED:
+                //TODO
+                break;
             default:
+                this.timer.cancel();
                 int validPlayers = 0;
                 Player disconnected = getPlayerByCharacter(player);
                 disconnected.disconnect();

@@ -123,7 +123,15 @@ public class GameController implements Observer {
     private void handleClientDisconnected(GameCharacter character) {
         this.model.handleDisconnection(character);
         if (this.model.getPlayerByCharacter(character) == this.turnController.getActivePlayer() && this.gameStarted) {
-            this.turnController.endTurn();
+            int validPlayers = 0;
+            for (Player p : this.model.getPlayers()) {
+                if (p.isConnected()) {
+                    validPlayers++;
+                }
+            }
+            if(validPlayers >= 3) {
+                this.turnController.endTurn();
+            }
         }
     }
 
