@@ -40,6 +40,11 @@ import static java.util.stream.Collectors.toMap;
 public class Board extends Observable {
 
     private static final int MAX_WEAPONS_STORE = 3;
+    private static final int MAX_POWERUPS = 3;
+    private static final long DEFAULT_START_TIMER = 10L*1000L;
+    private static final long DEFAULT_TURN_TIMER = 100L*1000L;
+    private static final long DEFAULT_RESPAWN_TIMER = 30L*1000L;
+    private static final int MIN_PLAYERS = 3;
 
     private long startTimer;
     private long turnTimer;
@@ -61,6 +66,9 @@ public class Board extends Observable {
     private List<GameCharacter> deathPlayers;
     private long timerRemainingTime;
 
+    /**
+     * Class constructor, it builds the board
+     */
     public Board() {
         this.gameState = ACCEPTINGPLAYERS;
         this.players = new ArrayList<>();
@@ -76,6 +84,9 @@ public class Board extends Observable {
         loadTimers();
     }
 
+    /**
+     * Writes board data to JSON
+     */
     public String toJson() {
         Gson gson = new Gson();
         StringBuilder jObject = new StringBuilder("{");
@@ -93,6 +104,10 @@ public class Board extends Observable {
         return jObject.toString();
     }
 
+    /**
+     * Creates model and view for a player
+     * @param player of which you want to create model and view
+     */
     public void  createModelView(Player player) {
         List<SquareView> squareViews = new ArrayList<>();
         for(Square square : this.arena.getAllSquares()) {
@@ -141,19 +156,37 @@ public class Board extends Observable {
                 track, playerBoards, playerWeapons, player.getPowerups(), player.getScore(), otherPlayers));
     }
 
+
+    /**
+     * Gets status of the game
+     * @return game state
+     */
     public GameState getGameState() {
         return this.gameState;
     }
 
+
+    /**
+     * Notifies changes to the Observers
+     * @param object to notify
+     */
     private void notifyChanges(Object object) {
         setChanged();
         notifyObservers(object);
     }
 
+    /**
+     * Gets player list of the board
+     * @return List of players of the board
+     */
     public List<Player> getPlayers() {
         return new ArrayList<>(this.players);
     }
 
+    /**
+     * Gets available players, which have a defined position on the board
+     * @return List of valid players
+     */
     public List<Player> getAvailablePlayers() {
         List<Player> players = new ArrayList<>();
         for (Player p : this.players) {
@@ -164,6 +197,10 @@ public class Board extends Observable {
         return players;
     }
 
+    /**
+     * Gets valid characters of the board
+     * @return List of GameCharacter of the board
+     */
     public List<GameCharacter> getValidCharacters() {
         List<GameCharacter> validCharacters = new ArrayList<>();
         for (Player p : this.players) {
@@ -172,6 +209,11 @@ public class Board extends Observable {
         return validCharacters;
     }
 
+    /**
+     * Gets the player by its character
+     * @param character of player you want to get
+     * @return player of that character
+     */
     public Player getPlayerByCharacter(GameCharacter character) {
         for (Player player : this.players) {
             if (player.getCharacter() == character) {
@@ -181,6 +223,12 @@ public class Board extends Observable {
         return null;
     }
 
+    /**
+     * Adds a new player to the board
+     * @param character of player you want to add
+     * @param nickname of player you want to add
+     * @param token of player you want to add
+     */
     public void addPlayer(GameCharacter character, String nickname, String token) {
         if (getPlayerByCharacter(character) != null) {
             getPlayerByCharacter(character).connect();
@@ -213,10 +261,17 @@ public class Board extends Observable {
         }
     }
 
+    /**
+     * Sets the players to the board
+     * @param players List of players you want to set
+     */
     public void setPlayers(List<Player> players) {
         this.players = players;
     }
 
+    /**
+     * Finalizes players creation sending messages to notify game status
+     */
     private void finalizePlayersCreation() {
         this.gameState = SETTINGUPGAME;
         List<Player> toRemove = new ArrayList<>();
@@ -232,6 +287,10 @@ public class Board extends Observable {
         notifyChanges(new PlayerMessage(PlayerMessageType.START_SETUP, this.players.get(0).getCharacter()));
     }
 
+    /**
+     * Handles a player disconnection removing him from the game
+     * @param player you want to handle disconnection
+     */
     public void handleDisconnection(GameCharacter player) {
         if (getPlayerByCharacter(player).getNickname() == null) {
             this.players.remove(getPlayerByCharacter(player));
@@ -280,17 +339,25 @@ public class Board extends Observable {
                         validPlayers++;
                     }
                 }
-                if (validPlayers < 3) {
+                if (validPlayers < MIN_PLAYERS) {
                     // termina partita TODO
                 }
         }
 
     }
 
+    /**
+     * Gets skulls number
+     * @return number of skulls of the board
+     */
     public int getSkulls() {
         return this.skulls;
     }
 
+    /**
+     * Sets skulls number
+     * @param skulls number to set
+     */
     public void setSkulls(int skulls){
         // this.skulls = skulls; TODO
         this.skulls = 1;
@@ -300,15 +367,18 @@ public class Board extends Observable {
         notifyChanges(new PlayerMessage(PlayerMessageType.SKULLS_SET, this.players.get(0).getCharacter()));
     }
 
+    /**
+     * Loads timers from server settings file or default if it's not available
+     */
     public void loadTimers() {
         String path = System.getProperty("user.home");
         FileReader reader;
         try {
             reader = new FileReader(path + "/" + "server_settings.json");
         } catch (IOException E) {
-            this.startTimer = 10L*1000L;
-            this.turnTimer = 100L*1000L;
-            this.respawnTimer = 30L*1000L;
+            this.startTimer = DEFAULT_START_TIMER;
+            this.turnTimer = DEFAULT_TURN_TIMER;
+            this.respawnTimer = DEFAULT_RESPAWN_TIMER;
             return;
         }
 
@@ -321,6 +391,10 @@ public class Board extends Observable {
         this.respawnTimer = gson.fromJson(jsonElement.get("respawnTimer"), Long.class);
     }
 
+    /**
+     * Creates an arena by its ID
+     * @param arenaNumber number of the arena you want to build
+     */
     public void createArena(String arenaNumber) {
         this.arena = new Arena(arenaNumber);
         Map<Coordinates, RoomColor> arenaColor = new HashMap<>();
@@ -341,6 +415,10 @@ public class Board extends Observable {
         finalizeGameSetup();
     }
 
+    /**
+     * Loads the arena by its ID
+     * @param arenaNumber number of the Arena you want to load
+     */
     public void loadArena(String arenaNumber) {
         this.arena = new Arena(arenaNumber);
         Map<Coordinates, RoomColor> arenaColor = new HashMap<>();
@@ -356,10 +434,17 @@ public class Board extends Observable {
         }
     }
 
+    /**
+     * Gets the arena
+     * @return the arena
+     */
     public Arena getArena() {
         return this.arena;
     }
 
+    /**
+     * Finalizes game setup filling ammo tiles, weapons and powerups decks on the board
+     */
     private void finalizeGameSetup() {
         fillAmmosDeck();
         fillWeaponsDeck();
@@ -372,10 +457,18 @@ public class Board extends Observable {
         startTurn(this.players.get(this.currentPlayer));
     }
 
+    /**
+     * Adds a dead player
+     * @param player you want to make dead
+     */
     public void addDeadPlayer(Player player) {
         this.deathPlayers.add(player.getCharacter());
     }
 
+    /**
+     * Ends a player turn and reset the board
+     * @param character you want him to end turn
+     */
     public void endTurn(GameCharacter character) {
         Player player = getPlayerByCharacter(character);
         this.timer.cancel();
@@ -425,6 +518,10 @@ public class Board extends Observable {
         startTurn(nextPlayer);
     }
 
+    /**
+     * Knows if there are any dead players
+     * @return true if are there, else false
+     */
     public boolean availableDeathPlayers() {
         if (this.deathPlayers.isEmpty()) {
             return false;
@@ -438,6 +535,10 @@ public class Board extends Observable {
         return false;
     }
 
+    /**
+     * Starts a player turn
+     * @param player you want to start turn
+     */
     public void startTurn(Player player) {
         TurnType type;
         if(player.isDead()) {
@@ -468,6 +569,9 @@ public class Board extends Observable {
         notifyChanges(new TurnMessage(TurnMessageType.START, type, player.getCharacter()));
     }
 
+    /**
+     * Increments the current player index
+     */
     private void incrementCurrentPlayer() {
         if(this.currentPlayer == this.players.size() - 1) {
             this.currentPlayer = 0;
@@ -479,6 +583,10 @@ public class Board extends Observable {
         }
     }
 
+    /**
+     * Starts a player turn timer
+     * @param character you want to start turn timer
+     */
     public void startTurnTimer(GameCharacter character) {
         this.timer = new Timer();
         if (character == this.players.get(this.currentPlayer).getCharacter()) {
@@ -499,14 +607,25 @@ public class Board extends Observable {
         }
     }
 
+    /**
+     * Gets the current player
+     * @return the current player
+     */
     public int getCurrentPlayer() {
         return this.currentPlayer;
     }
 
+    /**
+     * Adds a player to Final Frenzy players list
+     * @param player you want to add to the list
+     */
     public void addFrenzyOrderPlayer(Player player) {
         this.finalFrenzyOrder.add(player.getCharacter());
     }
 
+    /**
+     * Fills the weapons deck with a random weapon
+     */
     private void fillWeaponsDeck() {
         for(Weapon weapon : Weapon.values()) {
             this.weaponsDeck.add(new WeaponCard(weapon));
@@ -514,6 +633,9 @@ public class Board extends Observable {
         Collections.shuffle(this.weaponsDeck);
     }
 
+    /**
+     * Fills the powerups deck with a random powerup
+     */
     private void fillPowerupsDeck() {
         if(this.powerupsDiscardPile.isEmpty()) {
             for(PowerupType type : PowerupType.values()) {
@@ -531,6 +653,9 @@ public class Board extends Observable {
         Collections.shuffle(powerupsDeck);
     }
 
+    /**
+     * Fills the ammos deck loading data from JSON
+     */
     private void fillAmmosDeck() {
         if(this.ammosDiscardPile.isEmpty()) {
             String path = "ammotiles/data/ammotile_";
@@ -552,9 +677,11 @@ public class Board extends Observable {
         this.ammosDeck = this.ammosDiscardPile;
         this.ammosDiscardPile = new ArrayList<>();
         Collections.shuffle(this.ammosDeck);
-
     }
 
+    /**
+     * Fills the weapons store
+     */
     private void fillWeaponStores() {
         Map<Coordinates, Weapon> added = new HashMap<>();
         for(Room room : this.arena.getRoomList()) {
@@ -583,6 +710,9 @@ public class Board extends Observable {
         }
     }
 
+    /**
+     * Fills the ammo tiles on the arena
+     */
     private void fillAmmoTiles() {
         Map<Coordinates, AmmoTile> added = new HashMap<>();
         for(Room room : this.arena.getRoomList()) {
@@ -605,12 +735,21 @@ public class Board extends Observable {
         }
     }
 
+    /**
+     * Removes a powerup from a player and adds it to the discard pile
+     * @param player you want to remove a powerup to
+     * @param powerup you want to remove
+     */
     public void removePowerup(Player player, Powerup powerup) {
         player.removePowerup(player.getPowerupByType(powerup.getType(), powerup.getColor()));
         this.powerupsDiscardPile.add(powerup);
         notifyChanges(new PowerupMessage(PowerupMessageType.DISCARD, player.getCharacter(), powerup));
     }
 
+    /**
+     * Draws a powerup from powerups deck
+     * @param player you want him to draw a powerup
+     */
     public void drawPowerup(Player player) {
         if (this.powerupsDeck.isEmpty()) {
             fillPowerupsDeck();
@@ -622,6 +761,12 @@ public class Board extends Observable {
         notifyChanges(new PowerupMessage(PowerupMessageType.ADD, player.getCharacter(), null));
     }
 
+    /**
+     * Switchs two weapons of a player
+     * @param player you want him to switch weapons
+     * @param oldCard weapon to switch
+     * @param newCard weapon switched
+     */
     public void switchWeapon(Player player, WeaponCard oldCard, WeaponCard newCard) {
         player.removeWeapon(oldCard);
         player.getPosition().removeWeapon(newCard);
@@ -631,19 +776,34 @@ public class Board extends Observable {
         notifyChanges(new WeaponSwitchMessage(newCard.getWeaponType(), oldCard.getWeaponType(), player.getCharacter()));
     }
 
+    /**
+     * Loads a weapon and make it ready to shoot
+     * @param player you want him to load weapon
+     * @param weapon needed to be loaded
+     */
     public void loadWeapon(Player player, WeaponCard weapon) {
         weapon.setReady(true);
         notifyChanges(new WeaponMessage(WeaponMessageType.RELOAD, weapon.getWeaponType(), player.getCharacter()));
     }
 
+    /**
+     * Gives a weapon to a player
+     * @param player you want to give a weapon to
+     * @param weapon you want to give
+     */
     public void giveWeapon(Player player, WeaponCard weapon) {
         player.getPosition().removeWeapon(weapon);
         player.addWeapon(weapon);
         notifyChanges(new WeaponMessage(WeaponMessageType.PICKUP, weapon.getWeaponType(), player.getCharacter()));
     }
 
+    /**
+     * Gives an ammo tile to a player
+     * @param player you want to give an ammo tile to
+     * @param tile you want to give
+     */
     public void giveAmmoTile(Player player, AmmoTile tile) {
-        if(tile.hasPowerup() && player.getPowerups().size() < 3) {
+        if(tile.hasPowerup() && player.getPowerups().size() < MAX_POWERUPS) {
             drawPowerup(player);
         }
         Map<AmmoType, Integer> addedAmmos = player.addAmmos(tile.getAmmos());
@@ -652,11 +812,21 @@ public class Board extends Observable {
         notifyChanges(new AmmosMessage(AmmosMessageType.ADD, player.getCharacter(), addedAmmos));
     }
 
+    /**
+     * Uses ammo
+     * @param player who uses ammo
+     * @param usedAmmos Map with ammo and quantity to be used
+     */
     public void useAmmos(Player player, Map<AmmoType, Integer> usedAmmos) {
         player.removeAmmos(usedAmmos);
         notifyChanges(new AmmosMessage(AmmosMessageType.REMOVE, player.getCharacter(), usedAmmos));
     }
 
+    /**
+     * Moves a player in a square
+     * @param player you want to move
+     * @param square where you want to move the player
+     */
     public void movePlayer(Player player, Square square) {
         if(player.getPosition() != null) {
             player.getPosition().removePlayer(player);
@@ -666,6 +836,11 @@ public class Board extends Observable {
         notifyChanges(new MovementMessage(player.getCharacter(), new Coordinates(square.getX(), square.getY())));
     }
 
+    /**
+     * Respawns a player in a room
+     * @param player you want to respawn
+     * @param room where you want to respawn the player
+     */
     public void respawnPlayer(Player player, Room room) {
         Square square = room.getSpawn();
         player.setPosition(square);
@@ -676,6 +851,9 @@ public class Board extends Observable {
                 new Coordinates(square.getX(), square.getY())));
     }
 
+    /**
+     * Handles Game Finale
+     */
     public void endGame() {
         List<Integer> points = new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1));
 
@@ -717,6 +895,10 @@ public class Board extends Observable {
         notifyChanges(new BoardMessage(BoardMessageType.GAME_FINISHED));
     }
 
+    /**
+     * Handles Final Frenzy mode for a player setting up the his board
+     * @param character you want to start Final Frenzy mode
+     */
     private void startFinalFrenzy(GameCharacter character) {
         Player player = getPlayerByCharacter(character);
         int index = this.players.indexOf(player);
@@ -758,11 +940,21 @@ public class Board extends Observable {
 
     }
 
-    public void raisePlayerScore(Player p, int score) {
-        p.raiseScore(score);
-        notifyChanges(new ScoreMessage(p.getCharacter(), score));
+    /**
+     * Raises a player score
+     * @param player you want to increase his score
+     * @param score amount to increase
+     */
+    public void raisePlayerScore(Player player, int score) {
+        player.raiseScore(score);
+        notifyChanges(new ScoreMessage(player.getCharacter(), score));
     }
 
+    /**
+     * Gets visible players from a player
+     * @param player of which you want to get visible players
+     * @return List of visible players for that player
+     */
     public List<Player> getVisiblePlayers (Player player) {
 
         List<Player> visiblePlayers = new ArrayList<>();
@@ -778,6 +970,11 @@ public class Board extends Observable {
         return visiblePlayers;
     }
 
+    /**
+     * Gets visible rooms from a player
+     * @param player of which you want to get visible rooms
+     * @return List of visible rooms for that player
+     */
     public List<Room> getVisibleRooms (Player player) {
         if (player.getPosition() == null) {
             return new ArrayList<>();
@@ -797,6 +994,11 @@ public class Board extends Observable {
         return visibleRooms;
     }
 
+    /**
+     * Gets visible squares from a player
+     * @param player of which you want to get visible squares
+     * @return List of visible squares for that player
+     */
     public List<Square> getVisibleSquares (Player player) {
         if (player.getPosition() == null) {
             return new ArrayList<>();
@@ -810,7 +1012,12 @@ public class Board extends Observable {
         return availableSquares;
     }
 
-    //Usare se il target e' uno Square
+    /**
+     * Gets players with a distance from a player position
+     * @param square of the reference player
+     * @param amount List of distances constraints
+     * @return List of players far from the player that distance
+     */
     public List<Player> getPlayersByDistance (Square square, List<String> amount) {
         List<Player> validPlayers = new ArrayList<>();
         for(Square s : getSquaresByDistance(square, amount)) {
@@ -819,7 +1026,12 @@ public class Board extends Observable {
         return validPlayers;
     }
 
-    //Usare se il target e' un Player
+    /**
+     * Gets players with a distance from the reference player. The reference player is removed from resulting list
+     * @param player from which you want to get other players by distance
+     * @param amount List of distances constraints
+     * @return List of players far from the player that distance
+     */
     public List<Player> getPlayersByDistance (Player player, List<String> amount) {
         if (player.getPosition() == null) {
             return new ArrayList<>();
@@ -836,6 +1048,12 @@ public class Board extends Observable {
         return validPlayers;
     }
 
+    /**
+     * Gets squares with a distance from a square
+     * @param square from which you want to get other squares
+     * @param amount List of distances constraints
+     * @return List of squares far from the reference square that distance
+     */
     public List<Square> getSquaresByDistance (Square square, List<String> amount) {
         List<Square> availableSquares = new ArrayList<>();
         if (amount.size() == 1) {
@@ -865,6 +1083,13 @@ public class Board extends Observable {
         return availableSquares;
     }
 
+    /**
+     * Performs an attack to a player
+     * @param player GameCharacter of the attacker
+     * @param target GameCharacter of the player to be attacked
+     * @param damage amount of damage to deal
+     * @param type of the effect used during attack
+     */
     public void attackPlayer(GameCharacter player, GameCharacter target, int damage, EffectType type) {
         int marks;
         boolean notify = true;
@@ -891,6 +1116,11 @@ public class Board extends Observable {
         }
     }
 
+    /**
+     * Converts marks given to a player into damages
+     * @param player of which you want to convert marks
+     * @param attacker player of which marks need to be converted
+     */
     void marksToDamages(GameCharacter player, GameCharacter attacker) {
         Player p = getPlayerByCharacter(player);
         for(GameCharacter c : p.getRevengeMarks()) {
@@ -902,6 +1132,10 @@ public class Board extends Observable {
         notifyChanges(new MarksToDamagesMessage(player, attacker));
     }
 
+    /**
+     * Handles a player death
+     * @param character of which you want to handle the death
+     */
     public void handleDeadPlayer(GameCharacter character) {
         Player player = getPlayerByCharacter(character);
 
@@ -980,6 +1214,12 @@ public class Board extends Observable {
         }
     }
 
+    /**
+     * Gets squares with a distance from a player position
+     * @param player of which you want to get squares by distance
+     * @param amount List of distances constraints
+     * @return List of squares far from the player that distance
+     */
     public List<Square> getSquaresByDistance (Player player, List<String> amount) {
         if (player.getPosition() == null) {
             return new ArrayList<>();
@@ -987,6 +1227,12 @@ public class Board extends Observable {
         return getSquaresByDistance(player.getPosition(), amount);
     }
 
+    /**
+     * Gets players on a cardinal direction by the reference player
+     * @param activePlayer of which you want to get players on a cardinal direction
+     * @param cardinalPoint of you want to get players
+     * @return List of player on that direction from the reference player
+     */
     public List<Player> getPlayersOnCardinalDirection(Player activePlayer, CardinalPoint cardinalPoint) {
         if (activePlayer.getPosition() == null) {
             return new ArrayList<>();
@@ -1032,6 +1278,12 @@ public class Board extends Observable {
         return result;
     }
 
+    /**
+     * Gets players on a cardinal direction by the reference square
+     * @param square of which you want to get players on a cardinal direction
+     * @param cardinalPoint of you want to get players
+     * @return List of player on that direction from the reference square
+     */
     public List<Player> getPlayersOnCardinalDirection(Square square, CardinalPoint cardinalPoint) {
         List<Player> validPlayers = new ArrayList<>();
 
@@ -1041,6 +1293,12 @@ public class Board extends Observable {
         return validPlayers;
     }
 
+    /**
+     * Gets squares on a cardinal direction by the reference square
+     * @param square of which you want to get squares on a cardinal direction
+     * @param cardinalPoint of you want to get squares
+     * @return List of squares on that direction from the reference square
+     */
     public List<Square> getSquaresOnCardinalDirection(Square square, CardinalPoint cardinalPoint) {
         List<Square> squares = new ArrayList<>();
 
@@ -1086,6 +1344,12 @@ public class Board extends Observable {
         return squares;
     }
 
+    /**
+     * Gets visible squares on a cardinal direction by the reference player
+     * @param player of which you want to get visible squares on a cardinal direction
+     * @param cardinalPoint of you want to get squares
+     * @return List of visible squares on that direction from the reference player
+     */
     public List<Square> getVisibleSquaresOnCardinalDirection(Player player, CardinalPoint cardinalPoint) {
         if (player.getPosition() == null) {
             return new ArrayList<>();
@@ -1130,12 +1394,23 @@ public class Board extends Observable {
         return squares;
     }
 
+    /**
+     * Gets players not visible from the reference player
+     * @param player of which you want to get not visible players
+     * @return List of not visible players from the player
+     */
     public List<Player> getNotVisiblePlayers(Player player) {
         List<Player> validPlayers = new ArrayList<>(this.players);
         validPlayers.removeAll(getVisiblePlayers(player));
         return validPlayers;
     }
 
+    /**
+     * Gets the cardinal direction of a square from the reference square
+     * @param square1 the reference square
+     * @param square2 the other square
+     * @return the cardinal direction of the other square from the reference square
+     */
     public CardinalPoint getCardinalFromSquares(Square square1, Square square2) {
         for(CardinalPoint cardinal : CardinalPoint.values()){
             if(square1.getNearbySquares().get(cardinal) != null && square1.getNearbySquares().get(cardinal).equals(square2)) {
@@ -1145,12 +1420,18 @@ public class Board extends Observable {
         return null;
     }
 
+    /**
+     * Sets in pause the turn timer
+     */
     public void pauseTurnTimer() {
         this.timerRemainingTime = this.turnTimer/1000L -
                 Duration.between(this.gameTimerStartDate, LocalDateTime.now()).getSeconds();
         this.timer.cancel();
     }
 
+    /**
+     * Resumes the turn timer
+     */
     public void resumeTurnTimer() {
         this.timer = new Timer();
         this.timer.schedule(new TimerTask() {
