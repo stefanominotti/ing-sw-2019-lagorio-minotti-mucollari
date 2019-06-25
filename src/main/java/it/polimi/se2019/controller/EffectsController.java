@@ -607,8 +607,7 @@ public class EffectsController {
         }
         this.effectsQueue.remove(0);
         if (this.currentEffect.getType() == EffectType.DAMAGE) {
-            this.controller.askPowerup(PowerupType.TAGBACK_GRENADE, pack.getCharacters());
-            // this.controller.askPowerup(PowerupType.TARGETING_SCOPE, pack.getCharacters());
+            this.controller.askPowerup(pack.getCharacters());
             return;
         }
         handleEffectsQueue();

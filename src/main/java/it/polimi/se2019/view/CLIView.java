@@ -371,45 +371,67 @@ public class CLIView extends View {
 
         List<AmmoType> payableAmmos = new ArrayList<>();
         List<Powerup> payablePowerups = new ArrayList<>();
-        for (Map.Entry<AmmoType, Integer> ammo : getAmmosSelection().entrySet()) {
-            if (ammo.getValue() != 0 && getRequiredPayment().keySet().contains(ammo.getKey()) &&
-                    getRequiredPayment().get(ammo.getKey()) != 0) {
-                payableAmmos.add(ammo.getKey());
-            }
-        }
-        for (Powerup p : getPowerupsSelection()) {
-            if (getRequiredPayment().keySet().contains(p.getColor()) &&
-                    getRequiredPayment().get(p.getColor()) != 0) {
-                payablePowerups.add(p);
-            }
-        }
 
-        if (0 >= selection || selection > payableAmmos.size() + payablePowerups.size()) {
-            showMessage("Invalid number, retry:");
-            return;
-        }
-        selection--;
+        if (getRequiredPayment().isEmpty()) {
+            payableAmmos = new ArrayList<>(getAmmosSelection().keySet());
+            payablePowerups = new ArrayList<>(getPowerupsSelection());
 
-        int newValue;
-        if (selection < payableAmmos.size()) {
-            newValue = getPaidAmmos().get(payableAmmos.get(selection)) + 1;
-            putPaidAmmos(payableAmmos.get(selection), newValue);
-            newValue = getAmmosSelection().get(payableAmmos.get(selection)) - 1;
-            putAmmosSelection(payableAmmos.get(selection), newValue);
-            newValue = getRequiredPayment().get(payableAmmos.get(selection)) - 1;
-            putRequiredPayment(payableAmmos.get(selection), newValue);
-        } else {
-            selection -= payableAmmos.size();
-            addPaidPowerup(payablePowerups.get(selection));
-            removePowerupSelection(payablePowerups.get(selection));
-            newValue = getRequiredPayment().get(payablePowerups.get(selection).getColor()) - 1;
-            putRequiredPayment(payablePowerups.get(selection).getColor(), newValue);
-        }
-
-        for (Map.Entry<AmmoType, Integer> ammo : getRequiredPayment().entrySet()) {
-            if (ammo.getValue() != 0) {
-                requirePayment();
+            if (0 >= selection || selection > payableAmmos.size() + payablePowerups.size()) {
+                showMessage("Invalid number, retry:");
                 return;
+            }
+            selection--;
+
+            if (selection < payableAmmos.size()) {
+                putPaidAmmos(payableAmmos.get(selection), 1);
+            } else {
+                selection -= payableAmmos.size();
+                addPaidPowerup(payablePowerups.get(selection));
+            }
+
+        } else {
+            for (Map.Entry<AmmoType, Integer> ammo : getAmmosSelection().entrySet()) {
+                if (ammo.getValue() != 0 && getRequiredPayment().keySet().contains(ammo.getKey()) &&
+                        getRequiredPayment().get(ammo.getKey()) != 0) {
+                    payableAmmos.add(ammo.getKey());
+                }
+            }
+            for (Powerup p : getPowerupsSelection()) {
+                if (getRequiredPayment().keySet().contains(p.getColor()) &&
+                        getRequiredPayment().get(p.getColor()) != 0) {
+                    payablePowerups.add(p);
+                }
+            }
+
+            if (0 >= selection || selection > payableAmmos.size() + payablePowerups.size()) {
+                showMessage("Invalid number, retry:");
+                return;
+            }
+            selection--;
+
+            int newValue;
+            if (selection < payableAmmos.size()) {
+                newValue = getPaidAmmos().get(payableAmmos.get(selection)) + 1;
+                putPaidAmmos(payableAmmos.get(selection), newValue);
+                newValue = getAmmosSelection().get(payableAmmos.get(selection)) - 1;
+                putAmmosSelection(payableAmmos.get(selection), newValue);
+                newValue = getRequiredPayment().get(payableAmmos.get(selection)) - 1;
+                putRequiredPayment(payableAmmos.get(selection), newValue);
+            } else {
+                selection -= payableAmmos.size();
+                addPaidPowerup(payablePowerups.get(selection));
+                removePowerupSelection(payablePowerups.get(selection));
+                newValue = getRequiredPayment().get(payablePowerups.get(selection).getColor()) - 1;
+                putRequiredPayment(payablePowerups.get(selection).getColor(), newValue);
+            }
+        }
+
+        if(!getRequiredPayment().isEmpty()) {
+            for (Map.Entry<AmmoType, Integer> ammo : getRequiredPayment().entrySet()) {
+                if (ammo.getValue() != 0) {
+                    requirePayment();
+                    return;
+                }
             }
         }
 
@@ -1462,26 +1484,32 @@ public class CLIView extends View {
     void requirePayment() {
         StringBuilder text = new StringBuilder("You must pay ");
         String toAppend;
-        for (Map.Entry<AmmoType, Integer> ammo : getRequiredPayment().entrySet()) {
-            if (ammo.getValue() == 0) {
-                continue;
+        if(getRequiredPayment().isEmpty()) {
+            text.append("one ammo of any color");
+        } else {
+            for (Map.Entry<AmmoType, Integer> ammo : getRequiredPayment().entrySet()) {
+                if (ammo.getValue() == 0) {
+                    continue;
+                }
+                toAppend = ammo.getValue() + "x" + ammo.getKey() + ", ";
+                text.append(toAppend);
             }
-            toAppend = ammo.getValue() + "x" + ammo.getKey() + ", ";
-            text.append(toAppend);
+            text.setLength((text.length() - 1));
+
         }
-        text.setLength((text.length() - 1));
         text.append("\nSelect ammos or powerups:\n");
         int index = 1;
         for (Map.Entry<AmmoType, Integer> ammo : getAmmosSelection().entrySet()) {
             if (ammo.getValue() != 0 && getRequiredPayment().keySet().contains(ammo.getKey()) &&
-                    getRequiredPayment().get(ammo.getKey()) != 0) {
+                    getRequiredPayment().get(ammo.getKey()) != 0 || getRequiredPayment().isEmpty()) {
                 toAppend = "[" + index + "] - " + ammo.getKey() + " ammo\n";
                 text.append(toAppend);
                 index++;
             }
         }
         for (Powerup p : getPowerupsSelection()) {
-            if (getRequiredPayment().keySet().contains(p.getColor()) && getRequiredPayment().get(p.getColor()) != 0) {
+            if (getRequiredPayment().keySet().contains(p.getColor()) && getRequiredPayment().get(p.getColor()) != 0
+                    || getRequiredPayment().isEmpty()) {
                 toAppend = "[" + index + "] - " + p.getType() + " " + p.getColor() + "\n";
                 text.append(toAppend);
                 index++;

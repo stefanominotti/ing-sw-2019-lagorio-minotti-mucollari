@@ -1,11 +1,16 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.messages.payment.PaymentMessage;
+import it.polimi.se2019.model.messages.payment.PaymentMessageType;
+import it.polimi.se2019.model.messages.payment.PaymentType;
 import it.polimi.se2019.model.messages.selections.SelectionMessageType;
 import it.polimi.se2019.model.messages.selections.SelectionListMessage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PowerupsController {
 
@@ -32,12 +37,11 @@ public class PowerupsController {
                 this.target = this.activePlayer;
                 sendPositions();
                 break;
-            case NEWTON:
-                requireTarget();
-                break;
             case TAGBACK_GRENADE:
                 markPlayer();
                 break;
+            default:
+                requireTarget();
         }
     }
 
@@ -49,7 +53,7 @@ public class PowerupsController {
         List<Coordinates> positions = new ArrayList<>();
         switch (this.activePowerup) {
             case TELEPORTER:
-                for(Square s : this.board.getArena().getAllSquares()) {
+                for (Square s : this.board.getArena().getAllSquares()) {
                     positions.add(new Coordinates(s.getX(), s.getY()));
                 }
                 break;
@@ -58,34 +62,34 @@ public class PowerupsController {
                 int y = this.target.getPosition().getY();
                 Square current = this.board.getArena().getSquareByCoordinate(x + 1, y);
                 if (current != null && current.getNearbyAccessibility().get(CardinalPoint.WEST)) {
-                    positions.add(new Coordinates(x+1, y));
+                    positions.add(new Coordinates(x + 1, y));
                     current = this.board.getArena().getSquareByCoordinate(x + 2, y);
                     if (current != null && current.getNearbyAccessibility().get(CardinalPoint.WEST)) {
-                        positions.add(new Coordinates(x+2, y));
+                        positions.add(new Coordinates(x + 2, y));
                     }
                 }
                 current = this.board.getArena().getSquareByCoordinate(x - 1, y);
                 if (current != null && current.getNearbyAccessibility().get(CardinalPoint.EAST)) {
-                    positions.add(new Coordinates(x-1, y));
+                    positions.add(new Coordinates(x - 1, y));
                     current = this.board.getArena().getSquareByCoordinate(x - 2, y);
                     if (current != null && current.getNearbyAccessibility().get(CardinalPoint.EAST)) {
-                        positions.add(new Coordinates(x-2, y));
+                        positions.add(new Coordinates(x - 2, y));
                     }
                 }
                 current = this.board.getArena().getSquareByCoordinate(x, y - 1);
                 if (current != null && current.getNearbyAccessibility().get(CardinalPoint.SOUTH)) {
-                    positions.add(new Coordinates(x, y-1));
+                    positions.add(new Coordinates(x, y - 1));
                     current = this.board.getArena().getSquareByCoordinate(x, y - 2);
                     if (current != null && current.getNearbyAccessibility().get(CardinalPoint.SOUTH)) {
-                        positions.add(new Coordinates(x, y-2));
+                        positions.add(new Coordinates(x, y - 2));
                     }
                 }
                 current = this.board.getArena().getSquareByCoordinate(x, y + 1);
                 if (current != null && current.getNearbyAccessibility().get(CardinalPoint.NORTH)) {
-                    positions.add(new Coordinates(x, y+1));
+                    positions.add(new Coordinates(x, y + 1));
                     current = this.board.getArena().getSquareByCoordinate(x, y + 2);
                     if (current != null && current.getNearbyAccessibility().get(CardinalPoint.NORTH)) {
-                        positions.add(new Coordinates(x, y+2));
+                        positions.add(new Coordinates(x, y + 2));
                     }
                 }
                 break;
@@ -95,19 +99,30 @@ public class PowerupsController {
     }
 
     private void requireTarget() {
-        List<GameCharacter> targets = new ArrayList<>();
-        for (Player p : this.board.getPlayers()) {
-            if (p.getPosition() != null && p != this.activePlayer) {
-                targets.add(p.getCharacter());
+        List<GameCharacter> avialableTargets = new ArrayList<>();
+        if(this.activePowerup == PowerupType.TARGETING_SCOPE) {
+            avialableTargets = this.controller.getEffectTargets();
+        } else {
+            for (Player p : this.board.getPlayers()) {
+                if (p.getPosition() != null && p != this.activePlayer) {
+                    avialableTargets.add(p.getCharacter());
+                }
             }
         }
+
         this.controller.send(new SelectionListMessage<>(SelectionMessageType.POWERUP_TARGET,
-                this.activePlayer.getCharacter(), targets));
+                this.activePlayer.getCharacter(), avialableTargets));
     }
 
     public void receiveTarget(GameCharacter target) {
         this.target = this.board.getPlayerByCharacter(target);
-        sendPositions();
+        if (this.activePowerup == PowerupType.TARGETING_SCOPE) {
+            this.board.attackPlayer(activePlayer.getCharacter(), this.target.getCharacter(), 1, EffectType.DAMAGE);
+            this.controller.send(new PaymentMessage(PaymentMessageType.REQUEST, PaymentType.POWERUP,
+                    this.turnController.getActivePlayer().getCharacter(), new HashMap<>()));
+        } else {
+            sendPositions();
+        }
     }
 
     public void receivePosition(Coordinates position) {

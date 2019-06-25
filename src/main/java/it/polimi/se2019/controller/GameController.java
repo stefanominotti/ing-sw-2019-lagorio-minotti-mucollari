@@ -11,7 +11,6 @@ import it.polimi.se2019.model.messages.payment.PaymentMessage;
 import it.polimi.se2019.model.messages.payment.PaymentMessageType;
 import it.polimi.se2019.model.messages.payment.PaymentSentMessage;
 import it.polimi.se2019.model.messages.payment.PaymentType;
-import it.polimi.se2019.model.messages.player.PlayerMessage;
 import it.polimi.se2019.model.messages.player.PlayerReadyMessage;
 import it.polimi.se2019.model.messages.selections.SelectionListMessage;
 import it.polimi.se2019.model.messages.selections.SelectionMessageType;
@@ -22,7 +21,6 @@ import it.polimi.se2019.model.messages.timer.TimerType;
 import it.polimi.se2019.model.messages.turn.TurnContinuationMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 import it.polimi.se2019.view.VirtualView;
-import org.omg.PortableInterceptor.INACTIVE;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -40,6 +38,7 @@ public class GameController implements Observer {
     private Timer powerupRequestsTimer;
     private int powerupRequests;
     private WeaponEffectOrderType effectSelection;
+    private List<GameCharacter> effectTargets;
 
     public GameController(Board board, VirtualView view) {
         this.model = board;
@@ -155,7 +154,8 @@ public class GameController implements Observer {
                     this.powerupRequestsTimer.cancel();
                 }
                 if (message.getList() == null) {
-                    handleUsePowerupSelection(message.getCharacter(), null);
+                    send(new TurnContinuationMessage(message.getCharacter(), this.turnController.getActivePlayer().getCharacter()));
+                    checkEnemyTurnPowerup();
                 } else {
                     for (Powerup p : (List<Powerup>) message.getList()) {
                         handleUsePowerupSelection(message.getCharacter(), p);
@@ -188,7 +188,12 @@ public class GameController implements Observer {
                 handlePowerupDiscardSelection((Powerup) message.getSelection());
                 break;
             case USE_POWERUP:
-                handleUsePowerupSelection(message.getCharacter(), (Powerup) message.getSelection());
+                if(this.powerupRequests == 1 && ((Powerup) message.getSelection()) == null) {
+                    this.powerupRequests--;
+                    this.effectsController.handleEffectsQueue();
+                } else {
+                    handleUsePowerupSelection(message.getCharacter(), (Powerup) message.getSelection());
+                }
                 break;
             case PICKUP_WEAPON:
                 handleWeaponPickupSelection((Weapon) message.getSelection());
@@ -240,11 +245,8 @@ public class GameController implements Observer {
     }
 
     private void handleUsePowerupSelection(GameCharacter player, Powerup powerup) {
-        if (powerup == null && this.turnController.getActivePlayer().getCharacter() == player) {
-            this.turnController.cancelPowerup();
-        } else if (powerup == null && this.turnController.getActivePlayer().getCharacter() != player) {
-            send(new TurnContinuationMessage(player, this.turnController.getActivePlayer().getCharacter()));
-            checkEnemyTurnPowerup();
+        if (powerup == null) {
+            this.turnController.handleEndPowerup();
         } else {
             if (powerup.getType() == PowerupType.TAGBACK_GRENADE) {
                 this.powerupsControllers.get(player).startEffect(player, powerup,
@@ -320,6 +322,8 @@ public class GameController implements Observer {
             case RELOAD:
                 this.turnController.reloadWeapon();
                 break;
+            case POWERUP:
+                checkEnemyTurnPowerup();
         }
     }
 
@@ -331,39 +335,68 @@ public class GameController implements Observer {
         this.view.sendAll(message);
     }
 
-    void askPowerup(PowerupType type, List<GameCharacter> players) {
-        if (type == PowerupType.TAGBACK_GRENADE && !checkTagbackGrenade(players).isEmpty()) {
-            this.powerupRequests = checkTagbackGrenade(players).size();
-            for (GameCharacter player : checkTagbackGrenade(players)) {
-                send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP, player,
-                        this.model.getPlayerByCharacter(player).getPowerupsByType(PowerupType.TAGBACK_GRENADE)));
-            }
-            this.model.pauseTurnTimer();
-            this.powerupRequestsTimer = new Timer();
-            this.powerupRequestsTimer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        GameController.this.sendAll(new TimerMessage(TimerMessageType.STOP, TimerType.POWERUP));
-                        GameController.this.model.resumeTurnTimer();
-                        GameController.this.effectsController.handleEffectsQueue();
-                    }
-            }, 10L*1000L);
-        } else {
-            this.effectsController.handleEffectsQueue();
+    boolean canPayPowerup() {
+        if(this.turnController.getActivePlayer().getAvailableAmmos().get(AmmoType.YELLOW) == 0 &&
+                this.turnController.getActivePlayer().getAvailableAmmos().get(AmmoType.RED) == 0 &&
+                this.turnController.getActivePlayer().getAvailableAmmos().get(AmmoType.BLUE) == 0 &&
+                this.turnController.getActivePlayer().getPowerups().size() - 1 == 0) {
+            return false;
         }
+        return true;
+    }
+
+    void askPowerup(List<GameCharacter> players) {
+        this.effectTargets = players;
+        if(checkTagbackGrenadeCharacters(players).isEmpty() &&
+                (this.turnController.getActivePlayer().getPowerupsByType(PowerupType.TARGETING_SCOPE).isEmpty() || !canPayPowerup())) {
+            this.effectsController.handleEffectsQueue();
+            return;
+        } else if (checkTagbackGrenadeCharacters(players).isEmpty() &&
+                !this.turnController.getActivePlayer().getPowerupsByType(PowerupType.TARGETING_SCOPE).isEmpty() && canPayPowerup()) {
+            checkTaergetingScope();
+            return;
+        }
+        checkTagbackGrande();
+    }
+
+    void checkTagbackGrande() {
+        this.powerupRequests = checkTagbackGrenadeCharacters(this.effectTargets).size();
+        for (GameCharacter player : checkTagbackGrenadeCharacters(this.effectTargets)) {
+            send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP, player,
+                    this.model.getPlayerByCharacter(player).getPowerupsByType(PowerupType.TAGBACK_GRENADE)));
+        }
+        this.model.pauseTurnTimer();
+        this.powerupRequestsTimer = new Timer();
+        this.powerupRequestsTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                GameController.this.sendAll(new TimerMessage(TimerMessageType.STOP, TimerType.POWERUP));
+                GameController.this.model.resumeTurnTimer();
+                checkEnemyTurnPowerup();
+            }
+        }, 10L*1000L);
+    }
+
+    void checkTaergetingScope() {
+        send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP, this.turnController.getActivePlayer().getCharacter(),
+                this.turnController.getActivePlayer().getPowerupsByType(PowerupType.TARGETING_SCOPE)));
     }
 
     void checkEnemyTurnPowerup() {
         if (this.powerupRequests == 0) {
-            this.effectsController.handleEffectsQueue();
+           if(!this.turnController.getActivePlayer().getPowerupsByType(PowerupType.TARGETING_SCOPE).isEmpty() && canPayPowerup()) {
+               checkTaergetingScope();
+               return;
+           }
+           this.effectsController.handleEffectsQueue();
         }
     }
 
-    List<GameCharacter> checkTagbackGrenade(List<GameCharacter> players) {
+    List<GameCharacter> checkTagbackGrenadeCharacters(List<GameCharacter> players) {
         List<GameCharacter> validPlayers = new ArrayList<>();
         for (GameCharacter player : players) {
             Player toVerify = this.model.getPlayerByCharacter(player);
-            if (!toVerify.getPowerupsByType(PowerupType.TAGBACK_GRENADE).isEmpty() &&
+            if (toVerify.isConnected() && !toVerify.getPowerupsByType(PowerupType.TAGBACK_GRENADE).isEmpty() &&
                     toVerify.getPosition().canSee(this.turnController.getActivePlayer().getPosition())) {
                 validPlayers.add(player);
             }
@@ -373,6 +406,10 @@ public class GameController implements Observer {
 
     void setTffectSelection(WeaponEffectOrderType effectSelection) {
         this.effectSelection = effectSelection;
+    }
+
+    List<GameCharacter> getEffectTargets() {
+        return this.effectTargets;
     }
 
     void sendOthers(GameCharacter character, Message message) {

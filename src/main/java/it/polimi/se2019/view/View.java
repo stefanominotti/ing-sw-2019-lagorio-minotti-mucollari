@@ -146,7 +146,7 @@ public abstract class View {
     }
 
     Map<AmmoType, Integer> getRequiredPayment() {
-        return new EnumMap<>(this.requiredPayment);
+        return this.requiredPayment;
     }
 
     PowerupType getActivePowerup() {
@@ -902,8 +902,7 @@ public abstract class View {
 
     void handleUsePowerupRequest(List<Powerup> powerups) {
         this.powerupsSelection = powerups;
-        if (powerups.get(0).getType() == PowerupType.TAGBACK_GRENADE ||
-                powerups.get(0).getType() == PowerupType.TARGETING_SCOPE) {
+        if (powerups.get(0).getType() == PowerupType.TAGBACK_GRENADE) {
             this.state = USEMULTIPLEPOWERUPS;
         } else {
             this.state = USEPOWERUP;

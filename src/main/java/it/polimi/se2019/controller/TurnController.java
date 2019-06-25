@@ -275,10 +275,6 @@ public class TurnController {
                 this.activePlayer.getCharacter(), getMoveReloadShootMovements()));
     }
 
-    void cancelPowerup() {
-        sendActions();
-    }
-
     void calculatePowerupAction() {
         List<Powerup> availablePowerups = new ArrayList<>();
         for (Powerup p : this.activePlayer.getPowerups()) {
@@ -499,11 +495,12 @@ public class TurnController {
     }
 
     void handleReload() {
-        if (!canReload() && !this.moveShoot) {
+        List<Weapon> toReload = getRechargeableWeapons();
+        if (toReload.isEmpty() && !this.moveShoot) {
             endTurn();
             return;
         }
-        if (!canReload() && this.moveShoot) {
+        if (toReload.isEmpty() && this.moveShoot) {
             this.effectsController.setActivePlayer(this.activePlayer);
             if (this.effectsController.getAvailableWeapons().isEmpty()) {
                 handleEndAction();
@@ -514,7 +511,7 @@ public class TurnController {
             return;
         }
         this.controller.send(new SelectionListMessage<>(SelectionMessageType.RELOAD,
-                this.activePlayer.getCharacter(), getRechargeableWeapons()));
+                this.activePlayer.getCharacter(), toReload));
     }
 
     void sendReloadPaymentRequest(Weapon weapon) {
