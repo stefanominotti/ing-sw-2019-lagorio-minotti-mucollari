@@ -170,8 +170,9 @@ public class BoardView {
                 builder.append(c.getIdentifier() + " ");
                 i++;
             }
-            while (i<2) {
+            while (i < 2) {
                 builder.append("_ ");
+                i++;
             }
             builder.append("|");
         }

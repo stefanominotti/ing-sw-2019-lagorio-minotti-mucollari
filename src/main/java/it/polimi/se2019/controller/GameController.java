@@ -27,8 +27,6 @@ import java.util.logging.Logger;
 
 public class GameController implements Observer {
 
-    private static final Logger LOGGER = Logger.getLogger(GameController.class.getName());
-
     private Board model;
     private TurnController turnController;
     private Map<GameCharacter, PowerupsController> powerupsControllers;
@@ -39,8 +37,6 @@ public class GameController implements Observer {
     private int powerupRequests;
     private WeaponEffectOrderType effectSelection;
     private List<GameCharacter> effectTargets;
-    private int persistenceYes;
-    private int persistenceNo;
 
     public GameController(Board board, VirtualView view) {
         this.model = board;

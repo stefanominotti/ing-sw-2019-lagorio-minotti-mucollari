@@ -753,7 +753,7 @@ public class CLIView extends View {
         }
 
         if (character == getCharacter()) {
-            String toAppend = " from " + character;
+            String toAppend = " from " + attacker;
             text.append(toAppend);
         } else {
             String toAppend = " to " + character;
@@ -996,9 +996,9 @@ public class CLIView extends View {
     void handleWeaponUnload(GameCharacter character, Weapon weapon) {
         super.handleWeaponUnload(character, weapon);
         if (character == getCharacter()) {
-            showMessage("Your " + weapon + " is now unloaded");
+            showMessage("Your used " + weapon);
         } else {
-            showMessage(character + "'s " + weapon + "is now unloaded");
+            showMessage(character + " used " + weapon);
         }
     }
 
@@ -1016,6 +1016,7 @@ public class CLIView extends View {
     void handleEndTurn(GameCharacter character) {
         if (character == getCharacter()) {
             showMessage("Turn finished");
+            this.inputEnabled = false;
         } else {
             showMessage(character + "'s turn finished");
         }

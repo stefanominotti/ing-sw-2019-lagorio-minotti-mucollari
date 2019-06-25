@@ -547,7 +547,6 @@ public class Board extends Observable {
             incrementCurrentPlayer();
             nextPlayer = this.players.get(this.currentPlayer);
         }
-        notifyChanges(new TurnMessage(TurnMessageType.END, player.getCharacter()));
         startTurn(nextPlayer);
     }
 
@@ -1121,6 +1120,9 @@ public class Board extends Observable {
                 }
                 if (marks != 0) {
                     getPlayerByCharacter(target).addRevengeMarks(player, marks);
+                }
+                if (getPlayerByCharacter(target).getDamages().size() >= 11) {
+                    handleDeadPlayer(target);
                 }
                 break;
             default:
