@@ -113,7 +113,7 @@ public class Board extends Observable {
      * Creates model and view for a player
      * @param player of which you want to create model and view
      */
-    public void  createModelView(Player player) {
+    public void createModelView(Player player) {
         List<SquareView> squareViews = new ArrayList<>();
         for(Square square : this.arena.getAllSquares()) {
             List<GameCharacter> activePlayers = new ArrayList<>();
