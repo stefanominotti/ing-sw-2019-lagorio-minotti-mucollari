@@ -105,6 +105,7 @@ public class Board extends Observable {
         jObject.append("\"killshotTrack\": " + gson.toJson(this.killshotTrack));
         jObject.append("},");
         jObject.append("\"finalFrenzyOrder\":" + gson.toJson(this.finalFrenzyOrder));
+        jObject.append("\"deathPlayers\":" + gson.toJson(this.deathPlayers));
         return jObject.toString();
     }
 
@@ -547,6 +548,7 @@ public class Board extends Observable {
             incrementCurrentPlayer();
             nextPlayer = this.players.get(this.currentPlayer);
         }
+        notifyChanges(new TurnMessage(TurnMessageType.END, player.getCharacter()));
         startTurn(nextPlayer);
     }
 
@@ -554,17 +556,8 @@ public class Board extends Observable {
      * Knows if there are any dead players
      * @return true if are there, else false
      */
-    public boolean availableDeathPlayers() {
-        if (this.deathPlayers.isEmpty()) {
-            return false;
-        }
-        for (GameCharacter c : this.deathPlayers) {
-            Player p = getPlayerByCharacter(c);
-            if (p.isConnected()) {
-                return true;
-            }
-        }
-        return false;
+    public List<GameCharacter> getDeadPlayers() {
+        return this.deathPlayers;
     }
 
     /**

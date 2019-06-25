@@ -112,9 +112,12 @@ public class GameController implements Observer {
             }
         }
         if(counter == this.model.getPlayers().size()) {
-            this.model.startTurn(this.model.getPlayers().get(this.model.getCurrentPlayer()));
+            if(this.model.getDeadPlayers().isEmpty()) {
+                this.model.startTurn(this.model.getPlayers().get(this.model.getCurrentPlayer()));
+            } else {
+                this.model.startTurn(this.model.getPlayerByCharacter(this.model.getDeadPlayers().get(0)));
+            }
         }
-        //continuare la partita
     }
 
     private void handleClientDisconnected(GameCharacter character) {

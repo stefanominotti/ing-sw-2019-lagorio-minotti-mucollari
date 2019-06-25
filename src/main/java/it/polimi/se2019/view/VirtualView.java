@@ -131,7 +131,7 @@ public class
     }
 
     private void update(TurnMessage message) {
-        if (message.getType() == TurnMessageType.END) {
+        if (message.getType() == TurnMessageType.START) {
             this.server.saveGame();
         } else if (message.getType() == TurnMessageType.CONTINUATION) {
             send((SingleReceiverMessage) message);
