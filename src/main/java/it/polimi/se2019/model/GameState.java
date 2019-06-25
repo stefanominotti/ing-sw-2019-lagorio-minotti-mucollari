@@ -6,5 +6,5 @@ public enum GameState {
     SETTINGUPGAME,
     FIRSTTURN,
     INGAME,
-    FINALFRENZY;
+    FINALFRENZY, ENDED;
 }

@@ -405,6 +405,9 @@ public abstract class View {
         } else {
             board = getBoardByCharacter(player);
         }
+        if (board != null) {
+            board.resetDamages();
+        }
     }
 
     void handleKillshotPointsChange(GameCharacter player) {
@@ -676,6 +679,9 @@ public abstract class View {
             case RELOAD:
                 handleWeaponReload(message.getCharacter(), message.getWeapon());
                 break;
+            case UNLOAD:
+                handleWeaponUnload(message.getCharacter(), message.getWeapon());
+                break;
         }
     }
 
@@ -713,6 +719,17 @@ public abstract class View {
             PlayerBoard playerBoard = getBoardByCharacter(character);
             if (playerBoard != null) {
                 playerBoard.reloadWeapon(weapon);
+            }
+        }
+    }
+
+    void handleWeaponUnload(GameCharacter character, Weapon weapon) {
+        if (character == this.character) {
+            this.selfPlayerBoard.unloadWeapon(weapon);
+        } else {
+            PlayerBoard playerBoard = getBoardByCharacter(character);
+            if (playerBoard != null) {
+                playerBoard.unloadWeapon(weapon);
             }
         }
     }

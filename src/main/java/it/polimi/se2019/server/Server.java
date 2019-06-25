@@ -28,7 +28,7 @@ public class Server {
     private boolean connectionAllowed;
     private List<VirtualClientInterface> temporaryClients;
 
-    Server() {
+    private Server() {
         this.clients = new EnumMap<>(GameCharacter.class);
         this.connectionAllowed = true;
         this.temporaryClients = new ArrayList<>();

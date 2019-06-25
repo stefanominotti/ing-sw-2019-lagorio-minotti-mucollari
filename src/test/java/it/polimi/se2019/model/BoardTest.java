@@ -44,7 +44,7 @@ public class BoardTest {
     
     @Test
     public void getVisiblePlayersTest() {
-        board.loadArena("1");
+        this.board.loadArena("1");
 
         this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
         this.board.addPlayer(GameCharacter.D_STRUCT_OR, "playerTest2", "token");

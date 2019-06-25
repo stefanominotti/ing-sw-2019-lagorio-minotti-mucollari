@@ -353,7 +353,7 @@ public class GameController implements Observer {
             return;
         } else if (checkTagbackGrenadeCharacters(players).isEmpty() &&
                 !this.turnController.getActivePlayer().getPowerupsByType(PowerupType.TARGETING_SCOPE).isEmpty() && canPayPowerup()) {
-            checkTaergetingScope();
+            checkTargetingScope();
             return;
         }
         checkTagbackGrande();
@@ -372,12 +372,13 @@ public class GameController implements Observer {
             public void run() {
                 GameController.this.sendAll(new TimerMessage(TimerMessageType.STOP, TimerType.POWERUP));
                 GameController.this.model.resumeTurnTimer();
+                GameController.this.powerupRequests = 0;
                 checkEnemyTurnPowerup();
             }
-        }, 10L*1000L);
+        }, this.model.getPowerupsTimerDuration());
     }
 
-    void checkTaergetingScope() {
+    void checkTargetingScope() {
         send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP, this.turnController.getActivePlayer().getCharacter(),
                 this.turnController.getActivePlayer().getPowerupsByType(PowerupType.TARGETING_SCOPE)));
     }
@@ -385,7 +386,7 @@ public class GameController implements Observer {
     void checkEnemyTurnPowerup() {
         if (this.powerupRequests == 0) {
            if(!this.turnController.getActivePlayer().getPowerupsByType(PowerupType.TARGETING_SCOPE).isEmpty() && canPayPowerup()) {
-               checkTaergetingScope();
+               checkTargetingScope();
                return;
            }
            this.effectsController.handleEffectsQueue();
@@ -404,7 +405,7 @@ public class GameController implements Observer {
         return validPlayers;
     }
 
-    void setTffectSelection(WeaponEffectOrderType effectSelection) {
+    void setEffectSelection(WeaponEffectOrderType effectSelection) {
         this.effectSelection = effectSelection;
     }
 

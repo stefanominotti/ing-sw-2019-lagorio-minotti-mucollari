@@ -978,6 +978,16 @@ public class CLIView extends View {
     }
 
     @Override
+    void handleWeaponUnload(GameCharacter character, Weapon weapon) {
+        super.handleWeaponUnload(character, weapon);
+        if (character == getCharacter()) {
+            showMessage("Your " + weapon + " is now unloaded");
+        } else {
+            showMessage(character + "'s " + weapon + "is now unloaded");
+        }
+    }
+
+    @Override
     void handleStartTurn(TurnMessage message, GameCharacter character) {
         if (character != getCharacter()) {
             showMessage(character + " is playing");
@@ -1029,7 +1039,7 @@ public class CLIView extends View {
 
     @Override
     void handleGameFinished() {
-        showMessage("Game finished, ranking will show soon...");
+        showMessage("Game finished, ranking will be shown soon...");
     }
 
     @Override

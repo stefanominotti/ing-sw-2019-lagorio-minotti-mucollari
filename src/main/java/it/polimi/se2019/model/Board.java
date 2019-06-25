@@ -44,11 +44,13 @@ public class Board extends Observable {
     private static final long DEFAULT_START_TIMER = 10L*1000L;
     private static final long DEFAULT_TURN_TIMER = 100L*1000L;
     private static final long DEFAULT_RESPAWN_TIMER = 30L*1000L;
+    private static final long DEFAULT_POWERUPS_TIMER = 10L*1000L;
     private static final int MIN_PLAYERS = 3;
 
     private long startTimer;
     private long turnTimer;
     private long respawnTimer;
+    private long powerupsTimer;
     private int skulls;
     private Arena arena;
     private List<Player> players;
@@ -184,24 +186,32 @@ public class Board extends Observable {
     }
 
     /**
+     * Gets powerups timer duration
+     * @return Powerups timer duration
+     */
+    public long getPowerupsTimerDuration() {
+        return this.powerupsTimer;
+    }
+
+    /**
      * Gets available players, which have a defined position on the board
      * @return List of valid players
      */
     public List<Player> getAvailablePlayers() {
-        List<Player> players = new ArrayList<>();
+        List<Player> availablePlayers = new ArrayList<>();
         for (Player p : this.players) {
             if(p.getPosition() != null) {
-                players.add(p);
+                availablePlayers.add(p);
             }
         }
-        return players;
+        return availablePlayers;
     }
 
     /**
      * Gets valid characters of the board
      * @return List of GameCharacter of the board
      */
-    public List<GameCharacter> getValidCharacters() {
+    List<GameCharacter> getValidCharacters() {
         List<GameCharacter> validCharacters = new ArrayList<>();
         for (Player p : this.players) {
             validCharacters.add(p.getCharacter());
@@ -340,6 +350,7 @@ public class Board extends Observable {
                     }
                 }
                 if (validPlayers < MIN_PLAYERS) {
+                    endGame();
                     // termina partita TODO
                 }
         }
@@ -379,6 +390,7 @@ public class Board extends Observable {
             this.startTimer = DEFAULT_START_TIMER;
             this.turnTimer = DEFAULT_TURN_TIMER;
             this.respawnTimer = DEFAULT_RESPAWN_TIMER;
+            this.powerupsTimer = DEFAULT_POWERUPS_TIMER;
             return;
         }
 
@@ -386,9 +398,17 @@ public class Board extends Observable {
         JsonParser parser = new JsonParser();
         JsonObject jsonElement = (JsonObject)parser.parse(reader);
 
-        this.startTimer = gson.fromJson(jsonElement.get("startTimer"), Long.class);
-        this.turnTimer = gson.fromJson(jsonElement.get("turnTimer"), Long.class);
-        this.respawnTimer = gson.fromJson(jsonElement.get("respawnTimer"), Long.class);
+        try {
+            this.startTimer = gson.fromJson(jsonElement.get("startTimer"), Long.class);
+            this.turnTimer = gson.fromJson(jsonElement.get("turnTimer"), Long.class);
+            this.respawnTimer = gson.fromJson(jsonElement.get("respawnTimer"), Long.class);
+            this.powerupsTimer = gson.fromJson(jsonElement.get("powerupsTimer"), Long.class);
+        } catch (ClassCastException | NullPointerException e) {
+            this.startTimer = DEFAULT_START_TIMER;
+            this.turnTimer = DEFAULT_TURN_TIMER;
+            this.respawnTimer = DEFAULT_RESPAWN_TIMER;
+            this.powerupsTimer = DEFAULT_POWERUPS_TIMER;
+        }
     }
 
     /**
@@ -787,6 +807,16 @@ public class Board extends Observable {
     }
 
     /**
+     * Unloads a weapon
+     * @param player you want him to unload weapon
+     * @param weapon needed to be unloaded
+     */
+    public void unloadWeapon(Player player, WeaponCard weapon) {
+        weapon.setReady(false);
+        notifyChanges(new WeaponMessage(WeaponMessageType.UNLOAD, weapon.getWeaponType(), player.getCharacter()));
+    }
+
+    /**
      * Gives a weapon to a player
      * @param player you want to give a weapon to
      * @param weapon you want to give
@@ -855,6 +885,7 @@ public class Board extends Observable {
      * Handles Game Finale
      */
     public void endGame() {
+        this.gameState = ENDED;
         List<Integer> points = new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1));
 
         List<GameCharacter> trackReworked = new ArrayList<>();
@@ -960,10 +991,8 @@ public class Board extends Observable {
         List<Player> visiblePlayers = new ArrayList<>();
         for(Square s : this.arena.getAllSquares()){
             for (Player p : this.players){
-                if(p.getPosition() == s && p != player) {
-                    if (player.getPosition().canSee(p.getPosition())){
-                        visiblePlayers.add(p);
-                    }
+                if(p.getPosition() == s && p != player && player.getPosition().canSee(p.getPosition())) {
+                    visiblePlayers.add(p);
                 }
             }
         }
@@ -984,11 +1013,9 @@ public class Board extends Observable {
         visibleRooms.add(playerSquare.getRoom());
 
         for(CardinalPoint point : CardinalPoint.values()) {
-            if(playerSquare.getNearbyAccessibility().get(point)) {
-                if(playerSquare.getNearbySquares().get(point).getRoom().getColor() != playerSquare.getRoom().getColor()
-                        && !visibleRooms.contains(playerSquare.getNearbySquares().get(point).getRoom())){
-                    visibleRooms.add(playerSquare.getNearbySquares().get(point).getRoom());
-                }
+            if(playerSquare.getNearbyAccessibility().get(point) && playerSquare.getNearbySquares().get(point).getRoom().getColor() != playerSquare.getRoom().getColor()
+                    && !visibleRooms.contains(playerSquare.getNearbySquares().get(point).getRoom())) {
+                visibleRooms.add(playerSquare.getNearbySquares().get(point).getRoom());
             }
         }
         return visibleRooms;
@@ -1110,6 +1137,8 @@ public class Board extends Observable {
                     getPlayerByCharacter(target).addRevengeMarks(player, marks);
                 }
                 break;
+            default:
+                // Ignore
         }
         if (notify) {
             notifyChanges(new AttackMessage(target, player, damage, type));
@@ -1439,6 +1468,6 @@ public class Board extends Observable {
             public void run() {
                 endTurn(Board.this.players.get(Board.this.currentPlayer).getCharacter());
             }
-        }, this.timerRemainingTime);
+        }, this.timerRemainingTime*1000L);
     }
 }

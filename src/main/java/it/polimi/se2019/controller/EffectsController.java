@@ -216,7 +216,7 @@ public class EffectsController {
     }
 
     public void effectSelected(WeaponEffectOrderType effectType) {
-        this.activePlayer.getWeaponCardByWeapon(this.weapon).setReady(false);
+        this.board.unloadWeapon(this.activePlayer, this.activePlayer.getWeaponCardByWeapon(this.weapon));
         switch (effectType) {
             case PRIMARY:
                 this.effectsQueue.addAll(0, this.weapon.getPrimaryEffect());
@@ -624,7 +624,7 @@ public class EffectsController {
             }
             if (effectCost != null && (effectCost.get(AmmoType.BLUE) > 0 ||
                     effectCost.get(AmmoType.RED) > 0 || effectCost.get(AmmoType.YELLOW) > 0)) {
-                this.controller.setTffectSelection(this.activeCombo);
+                this.controller.setEffectSelection(this.activeCombo);
                 this.controller.send(new PaymentMessage(PaymentMessageType.REQUEST, PaymentType.EFFECT,
                         this.activePlayer.getCharacter(), effectCost));
 
