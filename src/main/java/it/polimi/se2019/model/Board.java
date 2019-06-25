@@ -104,7 +104,7 @@ public class Board extends Observable {
         jObject.append("\"ammosDiscardPile\": " + gson.toJson(this.ammosDiscardPile) + ',');
         jObject.append("\"killshotTrack\": " + gson.toJson(this.killshotTrack));
         jObject.append("},");
-        jObject.append("\"finalFrenzyOrder\":" + gson.toJson(this.finalFrenzyOrder));
+        jObject.append("\"finalFrenzyOrder\":" + gson.toJson(this.finalFrenzyOrder) + ',');
         jObject.append("\"deathPlayers\":" + gson.toJson(this.deathPlayers));
         return jObject.toString();
     }
