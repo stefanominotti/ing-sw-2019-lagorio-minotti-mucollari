@@ -963,7 +963,14 @@ public abstract class View {
                     handleEffectRequireRequest();
                 }
                 break;
+            case PERSISTENCE:
+                handlePersistenceRequest();
+                break;
         }
+    }
+
+    void handlePersistenceRequest() {
+        this.state = PERSISTENCESELECTION;
     }
 
     void handleEffectRequireRequest() {

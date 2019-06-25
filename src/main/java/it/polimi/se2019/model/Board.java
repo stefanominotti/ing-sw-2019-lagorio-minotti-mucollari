@@ -14,6 +14,8 @@ import it.polimi.se2019.model.messages.client.LoadViewMessage;
 import it.polimi.se2019.model.messages.player.*;
 import it.polimi.se2019.model.messages.powerups.PowerupMessage;
 import it.polimi.se2019.model.messages.powerups.PowerupMessageType;
+import it.polimi.se2019.model.messages.selections.SelectionMessageType;
+import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
 import it.polimi.se2019.model.messages.timer.TimerMessage;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
 import it.polimi.se2019.model.messages.timer.TimerType;
@@ -355,7 +357,13 @@ public class Board extends Observable {
                     }
                 }
                 if (validPlayers < MIN_PLAYERS) {
-                    endGame();
+                    for (Player p : this.players) {
+                        if (p.isConnected()) {
+                            notifyChanges(new SingleSelectionMessage(SelectionMessageType.PERSISTENCE, p.getCharacter(),
+                                    null));
+                            break;
+                        }
+                    }
                     // termina partita TODO
                 }
         }
@@ -375,8 +383,7 @@ public class Board extends Observable {
      * @param skulls number to set
      */
     public void setSkulls(int skulls){
-        // this.skulls = skulls; TODO
-        this.skulls = 1;
+        this.skulls = skulls;
         for (int i=0; i<this.skulls; i++) {
             this.killshotTrack.put(i + 1, new ArrayList<>());
         }
@@ -711,8 +718,7 @@ public class Board extends Observable {
                         return;
                     }
                     Weapon toAdd = this.weaponsDeck.get(0).getWeaponType();
-                    // square.addWeapon(this.weaponsDeck.get(0)); TODO
-                    square.addWeapon(new WeaponCard(Weapon.LOCK_RIFLE));
+                    square.addWeapon(this.weaponsDeck.get(0));
                     added.put(new Coordinates(square.getX(), square.getY()), toAdd);
                     this.weaponsDeck.remove(0);
                 }

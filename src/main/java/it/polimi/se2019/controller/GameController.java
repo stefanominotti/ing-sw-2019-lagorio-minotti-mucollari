@@ -39,6 +39,8 @@ public class GameController implements Observer {
     private int powerupRequests;
     private WeaponEffectOrderType effectSelection;
     private List<GameCharacter> effectTargets;
+    private int persistenceYes;
+    private int persistenceNo;
 
     public GameController(Board board, VirtualView view) {
         this.model = board;
@@ -213,6 +215,15 @@ public class GameController implements Observer {
             case EFFECT_POSSIBILITY:
                 handleEffectPossibilitySelection((EffectPossibilityPack) message.getSelection());
                 break;
+            case PERSISTENCE:
+                handlePersistenceSelection((String) message.getSelection());
+                break;
+        }
+    }
+
+    private void handlePersistenceSelection(String selection) {
+        if (selection.equalsIgnoreCase("n")) {
+            this.model.endGame();
         }
     }
 

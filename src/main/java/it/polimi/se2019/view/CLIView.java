@@ -68,7 +68,8 @@ public class CLIView extends View {
             handleActionInput(input);
         } else if (getState() == SELECTMOVEMENT || getState() == SELECTPICKUP || getState() == SELECTPOWERUPPOSITION) {
             handlePositionInput(input);
-        } else if (getState() == SELECTWEAPON || getState() == SWITCHWEAPON || getState() == RECHARGEWEAPON || getState() == USEWEAPON) {
+        } else if (getState() == SELECTWEAPON || getState() == SWITCHWEAPON || getState() == RECHARGEWEAPON ||
+                getState() == USEWEAPON) {
             handleWeaponInput(input);
         } else if (getState() == PAYMENT) {
             handlePaymentInput(input);
@@ -92,7 +93,17 @@ public class CLIView extends View {
             handleEffectMultipleSquaresInput(input);
         } else if (getState() == USEMULTIPLEPOWERUPS) {
             handleMultiplePowerupsInput(input);
+        } else if (getState() == PERSISTENCESELECTION) {
+            handlePersistenceInput(input);
         }
+    }
+
+    private void handlePersistenceInput(String input) {
+        if (input.equalsIgnoreCase("y") || input.equalsIgnoreCase("n")) {
+            getClient().send(new SingleSelectionMessage(SelectionMessageType.PERSISTENCE, getCharacter(), input));
+            this.inputEnabled = false;
+        }
+        showMessage("Invalid input, retry:");
     }
 
     private void handleNicknameInput(String input) {
@@ -639,6 +650,7 @@ public class CLIView extends View {
     void handlePowerupTimer(TimerMessageType action) {
         if (getState() == USEMULTIPLEPOWERUPS) {
             showMessage("Time out, sorry");
+            this.inputEnabled = false;
         }
         super.handlePowerupTimer(action);
     }
@@ -887,8 +899,10 @@ public class CLIView extends View {
     @Override
     void loadView(GameCharacter character, int skulls, List<SquareView> squares,
                   Map<Integer, List<GameCharacter>> killshotTrack, List<PlayerBoard> playerBoards,
-                  List<Weapon> weapons, List<Powerup> powerups, int score, Map<GameCharacter, String> others) {
-        super.loadView(character, skulls, squares, killshotTrack, playerBoards, weapons, powerups, score, others);
+                  List<Weapon> weapons, List<Powerup> powerups, int score, Map<GameCharacter, String> others,
+                  boolean isFrenzy, boolean isBeforeFirstPlayer) {
+        super.loadView(character, skulls, squares, killshotTrack, playerBoards, weapons, powerups, score, others,
+                isFrenzy, isBeforeFirstPlayer);
         showMessage("You are " + getCharacter());
         for (Map.Entry<GameCharacter, String> player : others.entrySet()) {
             if (player.getKey() != getCharacter()) {
@@ -1228,6 +1242,13 @@ public class CLIView extends View {
         text.append(toAppend);
         text.setLength(text.length() - 1);
         showMessage(text.toString());
+        this.inputEnabled = true;
+    }
+
+    @Override
+    void handlePersistenceRequest() {
+        super.handlePersistenceRequest();
+        showMessage("Do you want to save game state? [Y/N]");
         this.inputEnabled = true;
     }
 
