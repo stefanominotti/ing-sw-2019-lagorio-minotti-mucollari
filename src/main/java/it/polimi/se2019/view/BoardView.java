@@ -19,6 +19,8 @@ public class BoardView {
         this.killshotTrack = new HashMap<>();
         this.skulls = skulls;
         this.squares = squares;
+        this.beforeFirstPlayer = false;
+        this.frenzy = false;
         this.positions = new EnumMap<>(GameCharacter.class);
         for (SquareView square : this.squares) {
             square.setBoard(this);
@@ -26,10 +28,12 @@ public class BoardView {
     }
 
     BoardView(int skulls, List<SquareView> squares,
-              Map<Integer, List<GameCharacter>> killshotTrack) {
+              Map<Integer, List<GameCharacter>> killshotTrack, boolean frenzy, boolean beforeFirstPlayer) {
         this.skulls = skulls;
         this.squares = squares;
         this.killshotTrack = killshotTrack;
+        this.frenzy = frenzy;
+        this.beforeFirstPlayer = beforeFirstPlayer;
         this.positions = new EnumMap<>(GameCharacter.class);
         for(SquareView square : this.squares) {
             for(GameCharacter player : square.getActivePlayers()) {

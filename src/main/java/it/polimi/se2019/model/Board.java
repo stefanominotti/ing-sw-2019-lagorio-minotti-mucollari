@@ -154,9 +154,14 @@ public class Board extends Observable {
         for (Map.Entry<Integer, List<GameCharacter>> kill : this.killshotTrack.entrySet()) {
             track.put(kill.getKey(), new ArrayList<>(kill.getValue()));
         }
+
+
         notifyChanges(new LoadViewMessage(player.getCharacter(), player.getNickname(), this.skulls, squareViews,
-                track, playerBoards, playerWeapons, player.getPowerups(), player.getScore(), otherPlayers));
+                track, playerBoards, playerWeapons, player.getPowerups(), player.getScore(), otherPlayers,
+                !this.finalFrenzyOrder.isEmpty(), isPlayerBeforeFirst(player)));
     }
+
+
 
 
     /**
@@ -567,18 +572,7 @@ public class Board extends Observable {
             type = TurnType.FIRST_TURN;
         } else if(!this.finalFrenzyOrder.isEmpty()) {
             this.skulls = -1;
-            int currentPlayerOrder = 0;
-            int firstPlayerOrder = 0;
-            for(GameCharacter c : this.finalFrenzyOrder) {
-                Player p = getPlayerByCharacter(c);
-                if(p == this.players.get(this.currentPlayer)) {
-                    currentPlayerOrder = this.players.indexOf(p);
-                }
-                if(p == this.players.get(0)) {
-                    firstPlayerOrder = this.players.indexOf(p);
-                }
-            }
-            if(currentPlayerOrder < firstPlayerOrder) {
+            if(isPlayerBeforeFirst(player)) {
                 type = TurnType.FINAL_FRENZY_FIRST;
             } else {
                 type = TurnType.FINAL_FRENZY_AFTER;
@@ -948,27 +942,21 @@ public class Board extends Observable {
             }
         }
 
-        int currentPlayerOrder = 0;
-        int firstPlayerOrder = 0;
-
         for (Player toNotify : this.players) {
-            for (GameCharacter c : this.finalFrenzyOrder) {
-                Player p = getPlayerByCharacter(c);
-                if (p == toNotify) {
-                    currentPlayerOrder = this.players.indexOf(p);
-                }
-                if (p == this.players.get(0)) {
-                    firstPlayerOrder = this.players.indexOf(p);
-                }
-            }
+            notifyChanges(new FinalFrenzyMessage(toNotify.getCharacter(), isPlayerBeforeFirst(toNotify)));
 
-            if (currentPlayerOrder < firstPlayerOrder) {
-                notifyChanges(new FinalFrenzyMessage(toNotify.getCharacter(), true));
-            } else {
-                notifyChanges(new FinalFrenzyMessage(toNotify.getCharacter(), false));
-            }
         }
 
+    }
+
+    private boolean isPlayerBeforeFirst(Player player) {
+        if(this.finalFrenzyOrder.isEmpty()) {
+            return false;
+        }
+        int playerOrder = this.finalFrenzyOrder.indexOf(player.getCharacter());
+        int firstPlayerOrder = this.finalFrenzyOrder.indexOf(this.players.get(0).getCharacter());
+
+        return playerOrder < firstPlayerOrder;
     }
 
     /**

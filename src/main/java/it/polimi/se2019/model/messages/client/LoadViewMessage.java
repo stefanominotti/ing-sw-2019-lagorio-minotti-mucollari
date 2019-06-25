@@ -82,4 +82,13 @@ public class LoadViewMessage extends ClientMessage {
     public Map<GameCharacter, String> getOtherPlayers() {
         return this.otherPlayers;
     }
+
+    public boolean isFrenzy() {
+        return this.frenzy;
+    }
+
+    public boolean isBeforeFirstPlayer() {
+        return this.beforeFirstPlayer;
+    }
+
 }
