@@ -23,11 +23,13 @@ public class LoadViewMessage extends ClientMessage {
     private final List<Powerup> powerups;
     private final int score;
     private final Map<GameCharacter, String> otherPlayers;
+    private boolean frenzy;
+    private boolean beforeFirstPlayer;
 
     public LoadViewMessage(GameCharacter character, String nickname, int skulls, List<SquareView> squares,
                            Map<Integer, List<GameCharacter>> killshotTrack, List<PlayerBoard> playerBoards,
                            List<Weapon> readyWeapons, List<Powerup> powerups, int score,
-                           Map<GameCharacter, String> otherPlayers) {
+                           Map<GameCharacter, String> otherPlayers, boolean frenzy, boolean beforeFirstPlayer) {
 
         super(ClientMessageType.LOAD_VIEW, character);
         this.nickname = nickname;
@@ -39,6 +41,9 @@ public class LoadViewMessage extends ClientMessage {
         this.powerups = powerups;
         this.score = score;
         this.otherPlayers = otherPlayers;
+        this.beforeFirstPlayer = frenzy;
+        this.frenzy = beforeFirstPlayer;
+
     }
 
 

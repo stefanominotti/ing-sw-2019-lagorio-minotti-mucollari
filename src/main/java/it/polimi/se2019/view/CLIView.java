@@ -249,7 +249,7 @@ public class CLIView extends View {
         try {
             for (String i : inputList) {
                 int index = Integer.parseInt(i);
-                if (index == getPowerupsSelection().size()+1 && inputList.length == 1) {
+                if (index == getPowerupsSelection().size() + 1 && inputList.length == 1) {
                     this.inputEnabled = false;
                     setState(OTHERTURN);
                     getClient().send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP, getCharacter(), null));
@@ -372,43 +372,33 @@ public class CLIView extends View {
         List<AmmoType> payableAmmos = new ArrayList<>();
         List<Powerup> payablePowerups = new ArrayList<>();
 
-        if (getRequiredPayment().isEmpty()) {
-            payableAmmos = new ArrayList<>(getAmmosSelection().keySet());
-            payablePowerups = new ArrayList<>(getPowerupsSelection());
-
-            if (0 >= selection || selection > payableAmmos.size() + payablePowerups.size()) {
-                showMessage("Invalid number, retry:");
-                return;
+        for (Map.Entry<AmmoType, Integer> ammo : getAmmosSelection().entrySet()) {
+            if (ammo.getValue() != 0 && (getRequiredPayment().keySet().contains(ammo.getKey()) &&
+                    getRequiredPayment().get(ammo.getKey()) != 0 || getRequiredPayment().isEmpty())) {
+                payableAmmos.add(ammo.getKey());
             }
-            selection--;
+        }
+        for (Powerup p : getPowerupsSelection()) {
+            if (getRequiredPayment().keySet().contains(p.getColor()) &&
+                    getRequiredPayment().get(p.getColor()) != 0 || getRequiredPayment().isEmpty()) {
+                payablePowerups.add(p);
+            }
+        }
 
+        if (0 >= selection || selection > payableAmmos.size() + payablePowerups.size()) {
+            showMessage("Invalid number, retry:");
+            return;
+        }
+        selection--;
+
+        if(getRequiredPayment().isEmpty()) {
             if (selection < payableAmmos.size()) {
                 putPaidAmmos(payableAmmos.get(selection), 1);
             } else {
                 selection -= payableAmmos.size();
                 addPaidPowerup(payablePowerups.get(selection));
             }
-
         } else {
-            for (Map.Entry<AmmoType, Integer> ammo : getAmmosSelection().entrySet()) {
-                if (ammo.getValue() != 0 && getRequiredPayment().keySet().contains(ammo.getKey()) &&
-                        getRequiredPayment().get(ammo.getKey()) != 0) {
-                    payableAmmos.add(ammo.getKey());
-                }
-            }
-            for (Powerup p : getPowerupsSelection()) {
-                if (getRequiredPayment().keySet().contains(p.getColor()) &&
-                        getRequiredPayment().get(p.getColor()) != 0) {
-                    payablePowerups.add(p);
-                }
-            }
-
-            if (0 >= selection || selection > payableAmmos.size() + payablePowerups.size()) {
-                showMessage("Invalid number, retry:");
-                return;
-            }
-            selection--;
-
             int newValue;
             if (selection < payableAmmos.size()) {
                 newValue = getPaidAmmos().get(payableAmmos.get(selection)) + 1;
@@ -426,7 +416,8 @@ public class CLIView extends View {
             }
         }
 
-        if(!getRequiredPayment().isEmpty()) {
+
+        if (!getRequiredPayment().isEmpty()) {
             for (Map.Entry<AmmoType, Integer> ammo : getRequiredPayment().entrySet()) {
                 if (ammo.getValue() != 0) {
                     requirePayment();
@@ -443,13 +434,13 @@ public class CLIView extends View {
 
     private void handleEffectInput(String input) {
         boolean valid = false;
-        if(input.equalsIgnoreCase("C") && !isWeaponActivated()) {
+        if (input.equalsIgnoreCase("C") && !isWeaponActivated()) {
             this.inputEnabled = false;
             getClient().send(new SingleSelectionMessage(SelectionMessageType.ACTION, getCharacter(),
                     ActionType.CANCEL));
             return;
         }
-        if(input.equalsIgnoreCase("S") && isWeaponActivated()) {
+        if (input.equalsIgnoreCase("S") && isWeaponActivated()) {
             this.inputEnabled = false;
             getClient().send(new SingleSelectionMessage(SelectionMessageType.EFFECT, getCharacter(), null));
             return;
@@ -483,7 +474,7 @@ public class CLIView extends View {
         if (getState() == EFFECTCOMBO) {
             this.inputEnabled = false;
             getClient().send(new SingleSelectionMessage(SelectionMessageType.EFFECT_COMBO, getCharacter(), input));
-        } else if(getState() == EFFECTREQUIRE) {
+        } else if (getState() == EFFECTREQUIRE) {
             if (input.equals("Y")) {
                 super.setPossibilityRequire(true);
                 return;
@@ -549,9 +540,9 @@ public class CLIView extends View {
                 }
             }
             List<String> targetsAmaunt = getEffectPossibility().getTargetsAmount();
-            if(targetsAmaunt.size() == 1 && characters.size() != Integer.parseInt(targetsAmaunt.get(0)) ||
+            if (targetsAmaunt.size() == 1 && characters.size() != Integer.parseInt(targetsAmaunt.get(0)) ||
                     targetsAmaunt.size() > 1 && (characters.size() < Integer.parseInt(targetsAmaunt.get(0)) ||
-                    (targetsAmaunt.get(1) != "MAX" && characters.size() > Integer.parseInt(targetsAmaunt.get(1))))) {
+                            (targetsAmaunt.get(1) != "MAX" && characters.size() > Integer.parseInt(targetsAmaunt.get(1))))) {
                 showMessage("Invalid input, retry: ");
                 return;
             }
@@ -578,16 +569,16 @@ public class CLIView extends View {
                 String[] strings = i.split(".");
                 int squareIndex = Integer.parseInt(strings[0]) - 1;
                 int characterIndex = Integer.parseInt(strings[1]) - 1;
-                if(squareIndex < 0 || characterIndex < 0 || squareIndex >= availableCharacters.size()) {
+                if (squareIndex < 0 || characterIndex < 0 || squareIndex >= availableCharacters.size()) {
                     showMessage("Invalid input, retry: ");
                     return;
                 }
-                for(Map.Entry<Coordinates, List<GameCharacter>> characters : availableCharacters.entrySet()) {
-                    if(squareIndex == 0 && availableSquares.contains(characters.getKey()) && characterIndex < characters.getValue().size()) {
+                for (Map.Entry<Coordinates, List<GameCharacter>> characters : availableCharacters.entrySet()) {
+                    if (squareIndex == 0 && availableSquares.contains(characters.getKey()) && characterIndex < characters.getValue().size()) {
                         selectedCharacters.add(characters.getValue().get(characterIndex));
                         availableSquares.remove(characters.getKey());
                         break;
-                    } else if(squareIndex < 0 || squareIndex == 0 && (!availableSquares.contains(characters.getKey()) || characterIndex >= characters.getValue().size())) {
+                    } else if (squareIndex < 0 || squareIndex == 0 && (!availableSquares.contains(characters.getKey()) || characterIndex >= characters.getValue().size())) {
                         showMessage("Invalid input, retry: ");
                         return;
                     }
@@ -595,7 +586,7 @@ public class CLIView extends View {
                 }
             }
             List<String> targetsAmount = getEffectPossibility().getTargetsAmount();
-            if(targetsAmount.size() == 1 && selectedCharacters.size() != Integer.parseInt(targetsAmount.get(0)) ||
+            if (targetsAmount.size() == 1 && selectedCharacters.size() != Integer.parseInt(targetsAmount.get(0)) ||
                     targetsAmount.size() > 1 && (selectedCharacters.size() < Integer.parseInt(targetsAmount.get(0)) ||
                             (!targetsAmount.get(1).equals("MAX") && selectedCharacters.size() > Integer.parseInt(targetsAmount.get(1))))) {
                 showMessage("Invalid input, retry: ");
@@ -1014,7 +1005,7 @@ public class CLIView extends View {
     @Override
     void handleKillshotTrackChange(int skulls, List<GameCharacter> players) {
         super.handleKillshotTrackChange(skulls, players);
-        showMessage((skulls-1) + " skulls left");
+        showMessage((skulls - 1) + " skulls left");
         String player1;
         if (players.contains(getCharacter())) {
             player1 = "You";
@@ -1295,7 +1286,7 @@ public class CLIView extends View {
     @Override
     void handleEffectTargetRequest() {
         super.handleEffectTargetRequest();
-        if(getEffectPossibility().getCharacters().size() == 1 &&
+        if (getEffectPossibility().getCharacters().size() == 1 &&
                 getEffectPossibility().getCharacters().get(0) == super.getCharacter()) {
             handleEffectMoveRequest();
             return;
@@ -1390,7 +1381,7 @@ public class CLIView extends View {
         super.handleMultipleSquareRequest();
         List<String> targetsAmount = getEffectPossibility().getTargetsAmount();
         StringBuilder text = new StringBuilder();
-        if(targetsAmount.size() == 1) {
+        if (targetsAmount.size() == 1) {
             int amount = Integer.parseInt(targetsAmount.get(0));
             text.append("Choose " + amount + " players each in different squares\n");
         } else if (targetsAmount.get(1) == "MAX") {
@@ -1405,7 +1396,7 @@ public class CLIView extends View {
         for (Map.Entry<Coordinates, List<GameCharacter>> square : getEffectPossibility().getMultipleSquares().entrySet()) {
             text.append("\nFrom [" + square.getKey().getX() + ", " + square.getKey().getY() + "]:\n");
             int characterIndex = 1;
-            for(GameCharacter character : square.getValue()) {
+            for (GameCharacter character : square.getValue()) {
                 text.append("[" + squareIndex + "." + characterIndex + "] - " + character + "\n");
                 characterIndex++;
             }
@@ -1484,7 +1475,7 @@ public class CLIView extends View {
     void requirePayment() {
         StringBuilder text = new StringBuilder("You must pay ");
         String toAppend;
-        if(getRequiredPayment().isEmpty()) {
+        if (getRequiredPayment().isEmpty()) {
             text.append("one ammo of any color");
         } else {
             for (Map.Entry<AmmoType, Integer> ammo : getRequiredPayment().entrySet()) {
@@ -1500,8 +1491,8 @@ public class CLIView extends View {
         text.append("\nSelect ammos or powerups:\n");
         int index = 1;
         for (Map.Entry<AmmoType, Integer> ammo : getAmmosSelection().entrySet()) {
-            if (ammo.getValue() != 0 && getRequiredPayment().keySet().contains(ammo.getKey()) &&
-                    getRequiredPayment().get(ammo.getKey()) != 0 || getRequiredPayment().isEmpty()) {
+            if (ammo.getValue() != 0 && (getRequiredPayment().keySet().contains(ammo.getKey()) &&
+                    getRequiredPayment().get(ammo.getKey()) != 0 || getRequiredPayment().isEmpty())) {
                 toAppend = "[" + index + "] - " + ammo.getKey() + " ammo\n";
                 text.append(toAppend);
                 index++;
