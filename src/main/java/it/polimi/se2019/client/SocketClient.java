@@ -9,14 +9,13 @@ import java.net.Socket;
 public class SocketClient extends AbstractClient implements Runnable {
 
     private static final int PORT = 12345;
-    private static final String HOST = "localhost";
 
     private Socket socket;
 
-    public SocketClient(View view) {
+    public SocketClient(View view, String ip) {
         super(view);
         try {
-            this.socket = new Socket(HOST, PORT);
+            this.socket = new Socket(ip, PORT);
         } catch (IOException e) {
             getView().handleConnectionError();
         }

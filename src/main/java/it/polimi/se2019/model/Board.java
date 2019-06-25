@@ -57,8 +57,8 @@ public class Board extends Observable {
     private Timer timer;
     private LocalDateTime gameTimerStartDate;
     private int currentPlayer;
-    private List<Player> finalFrenzyOrder;
-    private List<Player> deathPlayers;
+    private List<GameCharacter> finalFrenzyOrder;
+    private List<GameCharacter> deathPlayers;
     private long timerRemainingTime;
 
     public Board() {
@@ -292,9 +292,10 @@ public class Board extends Observable {
     }
 
     public void setSkulls(int skulls){
-        this.skulls = skulls;
+        // this.skulls = skulls; TODO
+        this.skulls = 1;
         for (int i=0; i<this.skulls; i++) {
-            this.killshotTrack.put(i+1, new ArrayList<>());
+            this.killshotTrack.put(i + 1, new ArrayList<>());
         }
         notifyChanges(new PlayerMessage(PlayerMessageType.SKULLS_SET, this.players.get(0).getCharacter()));
     }
@@ -372,10 +373,11 @@ public class Board extends Observable {
     }
 
     public void addDeadPlayer(Player player) {
-        this.deathPlayers.add(player);
+        this.deathPlayers.add(player.getCharacter());
     }
 
-    public void endTurn(Player player) {
+    public void endTurn(GameCharacter character) {
+        Player player = getPlayerByCharacter(character);
         this.timer.cancel();
         if(this.gameState == FIRSTTURN && this.currentPlayer == this.players.size() - 1) {
             this.gameState = INGAME;
@@ -390,7 +392,8 @@ public class Board extends Observable {
         }
 
         Player nextPlayer = null;
-        for (Player p : this.deathPlayers) {
+        for (GameCharacter c : this.deathPlayers) {
+            Player p = getPlayerByCharacter(c);
             if (!player.isConnected()) {
                 drawPowerup(p);
 
@@ -405,13 +408,20 @@ public class Board extends Observable {
             }
         }
 
-        if (nextPlayer == null) {
-            incrementCurrentPlayer();
-            nextPlayer = this.players.get(this.currentPlayer);
-        }
         fillAmmoTiles();
         fillWeaponStores();
         notifyChanges(new TurnMessage(TurnMessageType.END, player.getCharacter()));
+        if (nextPlayer == null) {
+            if (!this.finalFrenzyOrder.isEmpty() && player.getCharacter() == this.finalFrenzyOrder.get(this.finalFrenzyOrder.size() - 1)) {
+                endGame();
+                return;
+            }
+            if (this.skulls == 0) {
+                startFinalFrenzy(this.players.get(this.currentPlayer).getCharacter());
+            }
+            incrementCurrentPlayer();
+            nextPlayer = this.players.get(this.currentPlayer);
+        }
         startTurn(nextPlayer);
     }
 
@@ -419,7 +429,8 @@ public class Board extends Observable {
         if (this.deathPlayers.isEmpty()) {
             return false;
         }
-        for (Player p : this.deathPlayers) {
+        for (GameCharacter c : this.deathPlayers) {
+            Player p = getPlayerByCharacter(c);
             if (p.isConnected()) {
                 return true;
             }
@@ -434,9 +445,11 @@ public class Board extends Observable {
         } else if(this.gameState == FIRSTTURN || player.getPosition() == null) {
             type = TurnType.FIRST_TURN;
         } else if(!this.finalFrenzyOrder.isEmpty()) {
+            this.skulls = -1;
             int currentPlayerOrder = 0;
             int firstPlayerOrder = 0;
-            for(Player p : this.finalFrenzyOrder) {
+            for(GameCharacter c : this.finalFrenzyOrder) {
+                Player p = getPlayerByCharacter(c);
                 if(p == this.players.get(this.currentPlayer)) {
                     currentPlayerOrder = this.players.indexOf(p);
                 }
@@ -466,24 +479,24 @@ public class Board extends Observable {
         }
     }
 
-    public void startTurnTimer(Player player) {
+    public void startTurnTimer(GameCharacter character) {
         this.timer = new Timer();
-        if (player == this.players.get(this.currentPlayer)) {
+        if (character == this.players.get(this.currentPlayer).getCharacter()) {
             this.timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    endTurn(player);
+                    endTurn(character);
                 }
             }, this.turnTimer);
+            this.gameTimerStartDate = LocalDateTime.now();
         } else {
             this.timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    endTurn(player);
+                    endTurn(character);
                 }
             }, this.respawnTimer);
         }
-        this.gameTimerStartDate = LocalDateTime.now();
     }
 
     public int getCurrentPlayer() {
@@ -491,7 +504,7 @@ public class Board extends Observable {
     }
 
     public void addFrenzyOrderPlayer(Player player) {
-        this.finalFrenzyOrder.add(player);
+        this.finalFrenzyOrder.add(player.getCharacter());
     }
 
     private void fillWeaponsDeck() {
@@ -557,7 +570,8 @@ public class Board extends Observable {
                         return;
                     }
                     Weapon toAdd = this.weaponsDeck.get(0).getWeaponType();
-                    square.addWeapon(this.weaponsDeck.get(0));
+                    // square.addWeapon(this.weaponsDeck.get(0)); TODO
+                    square.addWeapon(new WeaponCard(Weapon.LOCK_RIFLE));
                     added.put(new Coordinates(square.getX(), square.getY()), toAdd);
                     this.weaponsDeck.remove(0);
                 }
@@ -657,7 +671,7 @@ public class Board extends Observable {
         player.setPosition(square);
         square.addPlayer(player);
         player.setDead(false);
-        this.deathPlayers.remove(player);
+        this.deathPlayers.remove(player.getCharacter());
         notifyChanges(new SpawnMessage(player.getCharacter(),
                 new Coordinates(square.getX(), square.getY())));
     }
@@ -700,27 +714,48 @@ public class Board extends Observable {
             index++;
         }
 
-        // TODO
+        notifyChanges(new BoardMessage(BoardMessageType.GAME_FINISHED));
     }
 
-    void startFinalFrenzy(Player player) {
+    private void startFinalFrenzy(GameCharacter character) {
+        Player player = getPlayerByCharacter(character);
         int index = this.players.indexOf(player);
-        for (int i=index+1; i<this.players.size(); i++) {
-            this.finalFrenzyOrder.add(this.players.get(i));
+        for (int i = index + 1; i < this.players.size(); i++) {
+            this.finalFrenzyOrder.add(this.players.get(i).getCharacter());
         }
-        for (int i=0; i<=index; i++) {
-            this.finalFrenzyOrder.add(this.players.get(i));
+        for (int i = 0; i <= index; i++) {
+            this.finalFrenzyOrder.add(this.players.get(i).getCharacter());
         }
 
         for (Player p : this.players) {
             if (p.getDamages().isEmpty()) {
                 p.flipBoard();
 
-                // notify TODO
+                notifyChanges(new PlayerMessage(PlayerMessageType.BOARD_FLIP, p.getCharacter()));
             }
         }
 
-        // notify TODO
+        int currentPlayerOrder = 0;
+        int firstPlayerOrder = 0;
+
+        for (Player toNotify : this.players) {
+            for (GameCharacter c : this.finalFrenzyOrder) {
+                Player p = getPlayerByCharacter(c);
+                if (p == toNotify) {
+                    currentPlayerOrder = this.players.indexOf(p);
+                }
+                if (p == this.players.get(0)) {
+                    firstPlayerOrder = this.players.indexOf(p);
+                }
+            }
+
+            if (currentPlayerOrder < firstPlayerOrder) {
+                notifyChanges(new FinalFrenzyMessage(toNotify.getCharacter(), true));
+            } else {
+                notifyChanges(new FinalFrenzyMessage(toNotify.getCharacter(), false));
+            }
+        }
+
     }
 
     public void raisePlayerScore(Player p, int score) {
@@ -871,31 +906,34 @@ public class Board extends Observable {
         Player player = getPlayerByCharacter(character);
 
         player.setDead(true);
-        this.deathPlayers.add(player);
+        this.deathPlayers.add(player.getCharacter());
 
         notifyChanges(new PlayerMessage(PlayerMessageType.DEATH, character));
-
-        this.skulls--;
-
-        GameCharacter kill = player.getDamages().get(10);
-        GameCharacter overkill = null;
-        try {
-            overkill = player.getDamages().get(11);
-        } catch (IndexOutOfBoundsException e) {
-            // Ignore
+        if (this.skulls != -1) {
+            this.skulls--;
         }
-        List<GameCharacter> killsToAdd = new ArrayList<>();
-        killsToAdd.add(kill);
-        if (overkill != null) {
-            killsToAdd.add(overkill);
-        }
-        this.killshotTrack.put(this.skulls + 1, killsToAdd);
 
-        notifyChanges(new KillshotTrackMessage(this.skulls + 1, killsToAdd));
+        if (this.finalFrenzyOrder.isEmpty()) {
+            GameCharacter kill = player.getDamages().get(10);
+            GameCharacter overkill = null;
+            try {
+                overkill = player.getDamages().get(11);
+            } catch (IndexOutOfBoundsException e) {
+                // Ignore
+            }
+            List<GameCharacter> killsToAdd = new ArrayList<>(this.killshotTrack.get(this.skulls + 1));
+            killsToAdd.add(kill);
+            if (overkill != null) {
+                killsToAdd.add(overkill);
+            }
+            this.killshotTrack.put(this.skulls + 1, killsToAdd);
+
+            notifyChanges(new KillshotTrackMessage(this.skulls + 1, killsToAdd));
+        }
 
         notifyChanges(new PlayerMessage(PlayerMessageType.FIRST_BLOOD, player.getDamages().get(0)));
 
-        raisePlayerScore(getPlayerByCharacter(player.getDamages().get(0)), 1);
+        getPlayerByCharacter(player.getDamages().get(0)).raiseScore(1);
 
         Map<GameCharacter, Integer> damagesByPlayer = new HashMap<>();
         for (GameCharacter p : player.getDamages()) {
@@ -931,9 +969,15 @@ public class Board extends Observable {
             index++;
         }
 
-        player.reduceKillshotPoints();
+        player.resetDamages();
 
-        notifyChanges(new PlayerMessage(PlayerMessageType.KILLSHOT_POINTS, player.getCharacter()));
+        if (this.finalFrenzyOrder.isEmpty()) {
+            player.reduceKillshotPoints();
+            notifyChanges(new PlayerMessage(PlayerMessageType.KILLSHOT_POINTS, player.getCharacter()));
+        } else {
+            player.flipBoard();
+            notifyChanges(new PlayerMessage(PlayerMessageType.BOARD_FLIP, player.getCharacter()));
+        }
     }
 
     public List<Square> getSquaresByDistance (Player player, List<String> amount) {
@@ -1102,7 +1146,6 @@ public class Board extends Observable {
     }
 
     public void pauseTurnTimer() {
-        LocalDateTime now = LocalDateTime.now();
         this.timerRemainingTime = this.turnTimer/1000L -
                 Duration.between(this.gameTimerStartDate, LocalDateTime.now()).getSeconds();
         this.timer.cancel();
@@ -1113,7 +1156,7 @@ public class Board extends Observable {
         this.timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                endTurn(Board.this.players.get(Board.this.currentPlayer));
+                endTurn(Board.this.players.get(Board.this.currentPlayer).getCharacter());
             }
         }, this.timerRemainingTime);
     }

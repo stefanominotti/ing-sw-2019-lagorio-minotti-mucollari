@@ -17,6 +17,7 @@ public class Client {
 
         int connection;
         int UI;
+        String ip;
 
         try {
             FileReader configReader = new FileReader(CONFIG_PATH + "/" + "client_settings.json");
@@ -24,9 +25,13 @@ public class Client {
             connection = ((JsonObject)parser.parse(configReader)).get("connection").getAsInt();
             configReader = new FileReader(CONFIG_PATH + "/" + "client_settings.json");
             UI = ((JsonObject)parser.parse(configReader)).get("UI").getAsInt();
-        } catch (IOException e) {
+            configReader = new FileReader(CONFIG_PATH + "/" + "client_settings.json");
+            ip = ((JsonObject)parser.parse(configReader)).get("serverIP").getAsString();
+        } catch (IOException | ClassCastException e) {
+            System.out.print("AAAAA");
             connection = 0;
             UI = 0;
+            ip = "127.0.0.1";
         }
 
         if (connection != 0 && connection != 1) {
@@ -38,9 +43,9 @@ public class Client {
         }
 
         if (UI == 0) {
-            new CLIView(connection);
+            new CLIView(connection, ip);
         } else {
-            String[] arguments = { String.valueOf(connection) };
+            String[] arguments = { String.valueOf(connection), ip };
             Application.launch(GUIApp.class, arguments);
         }
     }

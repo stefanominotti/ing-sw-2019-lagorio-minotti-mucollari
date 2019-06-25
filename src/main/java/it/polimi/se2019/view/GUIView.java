@@ -19,10 +19,10 @@ public class GUIView extends View {
     private GUIApp GUIApp;
     private AbstractSceneController controller;
 
-    public GUIView(int connection, GUIApp GUIApp) {
+    public GUIView(int connection, String ip, GUIApp GUIApp) {
         super();
         this.GUIApp = GUIApp;
-        super.connect(connection);
+        super.connect(connection, ip);
     }
 
     void setActiveController(AbstractSceneController controller) {
@@ -199,6 +199,11 @@ public class GUIView extends View {
 
     @Override
     void handleEndTurn(GameCharacter character) {
+
+    }
+
+    @Override
+    void handleGameFinished() {
 
     }
 

@@ -234,6 +234,10 @@ public class Player {
         return number;
     }
 
+    void resetDamages() {
+        this.damages = new ArrayList<>();
+    }
+
     int getPowerupsNumber() {
         return this.powerups.size();
     }
@@ -244,7 +248,7 @@ public class Player {
 
     void resetAfterDeath() {}
 
-    void setDead(boolean dead) {
+    public void setDead(boolean dead) {
         this.dead = dead;
     }
 }

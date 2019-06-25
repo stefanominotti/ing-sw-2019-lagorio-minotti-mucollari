@@ -116,6 +116,9 @@ public class SelfPlayerBoard extends PlayerBoard {
             builder.append(w + ", ");
         }
         builder.setLength(builder.length() - 2);
+        builder.append("\n\n");
+
+        builder.append("Score: " + this.score);
         builder.append("\n");
 
         return builder.toString();

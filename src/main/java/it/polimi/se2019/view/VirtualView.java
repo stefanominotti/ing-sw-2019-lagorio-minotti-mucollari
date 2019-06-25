@@ -13,6 +13,7 @@ import it.polimi.se2019.model.messages.player.PlayerMessage;
 import it.polimi.se2019.model.messages.player.PlayerMessageType;
 import it.polimi.se2019.model.messages.player.PlayerReadyMessage;
 import it.polimi.se2019.model.messages.powerups.PowerupMessage;
+import it.polimi.se2019.model.messages.powerups.PowerupMessageType;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessageType;
 import it.polimi.se2019.server.Server;
@@ -90,7 +91,7 @@ public class
             send(message);
             sendOthers(message.getCharacter(),
                     new PlayerReadyMessage(message.getCharacter(), ((PlayerCreatedMessage) message).getNickname()));
-        } else if (message.getType() == PlayerMessageType.SKULLS_SET) {
+        } else if (message.getType() == PlayerMessageType.SKULLS_SET || message.getType() == PlayerMessageType.FRENZY) {
             send(message);
         } else if (message.getType() == PlayerMessageType.START_SETUP ||
                 message.getType() == PlayerMessageType.MASTER_CHANGED) {
@@ -118,6 +119,10 @@ public class
     }
 
     private void update(PowerupMessage message) {
+        if (message.getType() == PowerupMessageType.DISCARD) {
+            sendAll(message);
+            return;
+        }
         if(message.getPowerup() == null) {
             sendOthers(message.getCharacter(), message);
         } else {

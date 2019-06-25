@@ -18,7 +18,7 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
     private RMIServerInterface server;
     private final ConcurrentLinkedQueue<Message> queue;
 
-    public RMIProtocolClient(View view) {
+    public RMIProtocolClient(View view, String ip) {
         super(view);
 
         this.queue = new ConcurrentLinkedQueue<>();
@@ -32,7 +32,7 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
         }).start();
 
         try {
-            this.server = (RMIServerInterface) Naming.lookup("//localhost/MyServer");
+            this.server = (RMIServerInterface) Naming.lookup("//" + ip + "/MyServer");
             RMIClientInterface remoteRef = (RMIClientInterface) UnicastRemoteObject.exportObject(this, 0);
             this.server.addClient(remoteRef);
         } catch (MalformedURLException | RemoteException | NotBoundException e) {

@@ -10,6 +10,9 @@ import java.util.*;
 
 public class PlayerBoard implements Serializable {
 
+    private static final int KILLSHOT_POINTS_SIZE = 6;
+    private static final int KILLSHOT_POINTS_SIZE_FRENZY = 4;
+
     private GameCharacter character;
     private String nickname;
     private Map<AmmoType, Integer> availableAmmos;
@@ -19,6 +22,7 @@ public class PlayerBoard implements Serializable {
     private List<Weapon> unloadedWeapons;
     private int weaponsNumber;
     private int powerupsNumber;
+    boolean frenzyBoard;
 
     PlayerBoard(GameCharacter character, String nickname) {
         this.nickname = nickname;
@@ -48,6 +52,11 @@ public class PlayerBoard implements Serializable {
         this.weaponsNumber = weaponsNumber;
         this.powerupsNumber = powerupsNumber;
         this.unloadedWeapons = new ArrayList<>(unloadedWeapons);
+    }
+
+    void flipBoard() {
+        this.frenzyBoard = true;
+        this.killshotPoints = new ArrayList<>(Arrays.asList(2, 1, 1, 1));
     }
 
     List<Integer> getKillshotPoints() {
@@ -191,7 +200,11 @@ public class PlayerBoard implements Serializable {
         builder.append("\n");
 
         builder.append("Killshot: ");
-        for(i=0; i<6-this.killshotPoints.size(); i++) {
+        int size = KILLSHOT_POINTS_SIZE;
+        if (this.frenzyBoard) {
+            size = KILLSHOT_POINTS_SIZE_FRENZY;
+        }
+        for(i=0; i<size-this.killshotPoints.size(); i++) {
             builder.append("x ");
         }
         for (Integer p : this.killshotPoints) {

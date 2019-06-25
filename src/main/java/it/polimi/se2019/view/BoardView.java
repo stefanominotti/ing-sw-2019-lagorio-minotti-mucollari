@@ -12,6 +12,8 @@ public class BoardView {
     private List<SquareView> squares;
     private Map<Integer, List<GameCharacter>> killshotTrack;
     private Map<GameCharacter, SquareView> positions;
+    private boolean frenzy;
+    private boolean beforeFirstPlayer;
 
     BoardView(int skulls, List<SquareView> squares) {
         this.killshotTrack = new HashMap<>();
@@ -35,6 +37,22 @@ public class BoardView {
             }
             square.setBoard(this);
         }
+    }
+
+    public void setBeforeFirstPlayer(boolean beforeFirstPlayer) {
+        this.beforeFirstPlayer = beforeFirstPlayer;
+    }
+
+    public boolean isBeforeFirstPlayer() {
+        return this.beforeFirstPlayer;
+    }
+
+    void setFrenzy(boolean frenzy) {
+        this.frenzy = frenzy;
+    }
+
+    public boolean isFrenzy() {
+        return this.frenzy;
     }
 
     public int getSkulls() {

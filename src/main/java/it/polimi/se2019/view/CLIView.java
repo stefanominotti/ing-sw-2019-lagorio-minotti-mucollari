@@ -23,10 +23,10 @@ public class CLIView extends View {
 
     private boolean inputEnabled;
 
-    public CLIView(int connection) {
+    public CLIView(int connection, String ip) {
         super();
 
-        super.connect(connection);
+        super.connect(connection, ip);
 
         Thread inputThread = new Thread() {
             Scanner scanner = new Scanner(System.in);
@@ -753,6 +753,17 @@ public class CLIView extends View {
         }
     }
 
+
+    @Override
+    void handleBoardFlip(GameCharacter player) {
+        super.handleBoardFlip(player);
+        if (player == getCharacter()) {
+            showMessage("Your board flipped");
+        } else {
+            showMessage(player + "'s board flipped");
+        }
+    }
+
     @Override
     void handleScoreChange(GameCharacter player, int score) {
         if (player == getCharacter()) {
@@ -982,13 +993,30 @@ public class CLIView extends View {
     void handleKillshotTrackChange(int skulls, List<GameCharacter> players) {
         super.handleKillshotTrackChange(skulls, players);
         showMessage((skulls-1) + " skulls left");
-        if (players.size() == 1) {
-            showMessage(players.get(0) + " got 1 mark on killshot track");
-        } else if (players.size() == 2 && players.get(0) == players.get(1)) {
-            showMessage(players.get(0) + " got 2 marks on killshot track");
+        String player1;
+        if (players.contains(getCharacter())) {
+            player1 = "You";
         } else {
-            showMessage(players.get(0) + " and " + players.get(1) + " got 1 mark on killshot track");
+            player1 = players.get(0).toString();
         }
+        if (players.size() == 1) {
+            showMessage(player1 + " got 1 mark on killshot track");
+        } else if (players.size() == 2 && players.get(0) == players.get(1)) {
+            showMessage(player1 + " got 2 marks on killshot track");
+        } else {
+            showMessage(player1 + " and " + players.get(1) + " got 1 mark on killshot track");
+        }
+    }
+
+    @Override
+    void handleFinalFrenzy(boolean beforeFirst) {
+        super.handleFinalFrenzy(beforeFirst);
+        showMessage("Final frenzy started");
+    }
+
+    @Override
+    void handleGameFinished() {
+        showMessage("Game finished, ranking will show soon...");
     }
 
     @Override
@@ -1088,7 +1116,7 @@ public class CLIView extends View {
     @Override
     void handleReloadRequest(List<Weapon> weapons) {
         super.handleReloadRequest(weapons);
-        StringBuilder text = new StringBuilder("Select a weapon to recharge or skip:\n");
+        StringBuilder text = new StringBuilder("Select a weapon to reload or skip:\n");
         int index = 1;
         for (Weapon weapon : weapons) {
             String toAppend = "[" + index + "] - " + weapon + "\n";
@@ -1382,22 +1410,32 @@ public class CLIView extends View {
         for (ActionType action : getActionsSelection()) {
             switch (action) {
                 case MOVE:
-                    toAppend = "[" + number + "] - Move yourself by up to 3 squares\n";
+                    if (getBoard().isFrenzy() && getBoard().isBeforeFirstPlayer()) {
+                        toAppend = "[" + number + "] - Move yourself by up to 4 squares\n";
+                    } else {
+                        toAppend = "[" + number + "] - Move yourself by up to 3 squares\n";
+                    }
                     text.append(toAppend);
                     break;
                 case PICKUP:
-                    if (getSelfPlayerBoard().getDamages().size() < 3) {
+                    if (!getBoard().isFrenzy() && getSelfPlayerBoard().getDamages().size() < 3) {
                         toAppend = "[" + number + "] - Move yourself by up to 1 square and pickup\n";
-                    } else {
+                    } else if (!getBoard().isFrenzy() || (getBoard().isFrenzy() && getBoard().isBeforeFirstPlayer())) {
                         toAppend = "[" + number + "] - Move yourself by up to 2 squares and pickup\n";
+                    } else {
+                        toAppend = "[" + number + "] - Move yourself by up to 3 squares and pickup\n";
                     }
                     text.append(toAppend);
                     break;
                 case SHOT:
-                    if (getSelfPlayerBoard().getDamages().size() < 6) {
+                    if (!getBoard().isFrenzy() && getSelfPlayerBoard().getDamages().size() < 6) {
                         toAppend = "[" + number + "] - Shoot\n";
-                    } else {
+                    } else if (!getBoard().isFrenzy()) {
                         toAppend = "[" + number + "] - Move yourself by up to 1 square and shoot\n";
+                    } else if (getBoard().isFrenzy() && getBoard().isBeforeFirstPlayer()) {
+                        toAppend = "[" + number + "] - Move yourself by up to 1 square, reload and shoot\n";
+                    } else {
+                        toAppend = "[" + number + "] - Move yourself by up to 2 squares, reload and shoot\n";
                     }
                     text.append(toAppend);
                     break;

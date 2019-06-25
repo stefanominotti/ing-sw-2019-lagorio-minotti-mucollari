@@ -79,14 +79,14 @@ public abstract class View {
         this.charactersSelection = new ArrayList<>();
     }
 
-    void connect(int connectionType) {
+    void connect(int connectionType, String ip) {
         if (connectionType == 0) {
-            Runnable r = new SocketClient(this);
+            Runnable r = new SocketClient(this, ip);
             (new Thread(r)).start();
             this.client = (SocketClient)r;
         } else {
             try {
-                this.client = new RMIProtocolClient(this);
+                this.client = new RMIProtocolClient(this, ip);
             } catch (IllegalStateException e) {
                 handleConnectionError();
             }
@@ -366,6 +366,29 @@ public abstract class View {
             case SCORE:
                 handleScoreChange(message.getCharacter(), ((ScoreMessage) message).getScore());
                 break;
+            case BOARD_FLIP:
+                handleBoardFlip(message.getCharacter());
+                break;
+            case FRENZY:
+                handleFinalFrenzy(((FinalFrenzyMessage) message).isBeforeFirstPlayer());
+                break;
+        }
+    }
+
+    void handleFinalFrenzy(boolean beforeFirst) {
+        this.board.setFrenzy(true);
+        this.board.setBeforeFirstPlayer(beforeFirst);
+    }
+
+    void handleBoardFlip(GameCharacter player) {
+        PlayerBoard board;
+        if (player == this.character) {
+            board = this.selfPlayerBoard;
+        } else {
+            board = getBoardByCharacter(player);
+        }
+        if (board != null) {
+            board.flipBoard();
         }
     }
 
@@ -381,9 +404,6 @@ public abstract class View {
             board = this.selfPlayerBoard;
         } else {
             board = getBoardByCharacter(player);
-        }
-        if (board != null) {
-            board.resetDamages();
         }
     }
 
@@ -759,8 +779,13 @@ public abstract class View {
                 handleKillshotTrackChange(((KillshotTrackMessage) message).getSkulls(),
                         ((KillshotTrackMessage) message).getPlayers());
                 break;
+            case GAME_FINISHED:
+                handleGameFinished();
+                break;
         }
     }
+
+    abstract void handleGameFinished();
 
     void handleKillshotTrackChange(int skulls, List<GameCharacter> players) {
         this.board.setSkulls(skulls - 1);

@@ -587,7 +587,8 @@ public class EffectsController {
                         int damage = Integer.parseInt(this.currentEffect.getAmount().get(0));
                         this.board.attackPlayer(this.activePlayer.getCharacter(),
                                 character, damage, this.currentEffect.getType());
-                        if (this.board.getPlayerByCharacter(character).getDamages().size() >= 11) {
+                        if (this.board.getPlayerByCharacter(character).getDamages().size() >= 11 &&
+                                this.currentEffect.getType() == EffectType.DAMAGE) {
                             this.board.handleDeadPlayer(character);
                         }
                         setEnviroment(square, this.board.getPlayerByCharacter(character).getPosition());

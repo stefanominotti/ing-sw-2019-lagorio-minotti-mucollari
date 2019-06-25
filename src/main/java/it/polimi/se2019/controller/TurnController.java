@@ -20,12 +20,12 @@ public class TurnController {
     private Player activePlayer;
     private int movesLeft;
     private TurnState state;
-    private Player powerupTarget;
     private boolean finalFrenzy;
     private boolean beforeFirstPlayer;
     private WeaponCard weaponToGet;
     private WeaponCard switchWeapon;
     private EffectsController effectsController;
+    private boolean moveShoot;
 
     public TurnController(Board board, GameController controller, EffectsController effectsController) {
         this.state = TurnState.SELECTACTION;
@@ -55,8 +55,9 @@ public class TurnController {
             case AFTER_DEATH:
                 this.movesLeft = 0;
                 this.state = DEATH_RESPAWNING;
-                countScore();
-                this.board.drawPowerup(this.activePlayer);
+                if (this.activePlayer.getPowerups().size() < 3) {
+                    this.board.drawPowerup(this.activePlayer);
+                }
                 this.controller.send(new SelectionListMessage<>(SelectionMessageType.DISCARD_POWERUP, player,
                         new ArrayList<>(this.activePlayer.getPowerups())));
                 break;
@@ -77,37 +78,7 @@ public class TurnController {
                 sendActions();
                 break;
         }
-        this.board.startTurnTimer(this.activePlayer);
-    }
-
-    private void countScore() {
-        Map<GameCharacter, Integer> playersOrder = new LinkedHashMap<>();
-        int points;
-        List<GameCharacter> damages = this.activePlayer.getDamages();
-        this.board.getPlayerByCharacter(damages.get(0)).raiseScore(1);
-        for(Player player : this.board.getPlayers()) {
-            points = 0;
-            for(GameCharacter present : damages){
-                if(player.getCharacter() == present) {
-                    points++;
-                }
-            }
-            if(points > 0) {
-                playersOrder.put(player.getCharacter(), points);
-            }
-        }
-        playersOrder = playersOrder.entrySet()
-                .stream()
-                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(
-                        toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                                LinkedHashMap::new));
-        int index = 0;
-        for(GameCharacter player : playersOrder.keySet()) {
-            this.board.raisePlayerScore(this.board.getPlayerByCharacter(player),
-                    this.activePlayer.getKillshotPoints().get(index));
-            index++;
-        }
+        this.board.startTurnTimer(this.activePlayer.getCharacter());
     }
 
     void handlePowerupDiscarded(Powerup powerup) {
@@ -123,9 +94,8 @@ public class TurnController {
                 this.board.respawnPlayer(this.activePlayer, room);
                 if(this.state == TurnState.FIRST_RESPAWNING) {
                     sendActions();
-                }
-                if (this.state == TurnState.DEATH_RESPAWNING){
-                    this.board.endTurn(this.activePlayer);
+                } else {
+                    this.board.endTurn(this.activePlayer.getCharacter());
                 }
             }
         }
@@ -165,13 +135,13 @@ public class TurnController {
         }
         List<Coordinates> movements = new ArrayList<>();
         for (Square s : this.board.getArena().getAllSquares()) {
-            if(s.getWeaponsStore() != null && s.getWeaponsStore().size() == 0) {
+            if(s.getWeaponsStore() != null && s.getWeaponsStore().isEmpty()) {
                 continue;
             }
             if(s.getWeaponsStore() != null) {
                 List<Weapon> availableWeapons = new ArrayList<>();
                 for (WeaponCard weapon : s.getWeaponsStore()) {
-                    Map<AmmoType, Integer> availablaPayments = new EnumMap<>(AmmoType.class);
+                    Map<AmmoType, Integer> availablePayments = new EnumMap<>(AmmoType.class);
                     for (Map.Entry<AmmoType, Integer> ammo : this.activePlayer.getAvailableAmmos().entrySet()) {
                         int value = ammo.getValue();
                         for (Powerup p : this.activePlayer.getPowerups()) {
@@ -179,11 +149,11 @@ public class TurnController {
                                 value += 1;
                             }
                         }
-                        availablaPayments.put(ammo.getKey(), value);
+                        availablePayments.put(ammo.getKey(), value);
                     }
                     boolean valid = true;
                     for (Map.Entry<AmmoType, Integer> ammoCost : weapon.getWeaponType().getBuyCost().entrySet()) {
-                        if (ammoCost.getValue() > availablaPayments.get(ammoCost.getKey())) {
+                        if (ammoCost.getValue() > availablePayments.get(ammoCost.getKey())) {
                             valid = false;
                             break;
                         }
@@ -252,6 +222,59 @@ public class TurnController {
         sendActions();
     }
 
+    List<Coordinates> getMoveReloadShootMovements() {
+        List<String> distance;
+        boolean reload = false;
+        if ((this.finalFrenzy && this.beforeFirstPlayer) ||
+                (!this.finalFrenzy && this.activePlayer.getDamages().size() > 5)) {
+            distance = Arrays.asList("0", "1");
+        } else {
+            distance = Arrays.asList("0", "2");
+        }
+        if (this.finalFrenzy) {
+            reload = true;
+        }
+        List<Coordinates> movements = new ArrayList<>();
+        Map<Weapon, Boolean> originalLoadedWeapons = new EnumMap<>(Weapon.class);
+        if (reload) {
+            for (WeaponCard weapon : this.activePlayer.getWeapons()) {
+                originalLoadedWeapons.put(weapon.getWeaponType(), weapon.isReady());
+
+                if (getRechargeableWeapons().contains(weapon.getWeaponType())) {
+                    weapon.setReady(true);
+                }
+            }
+        }
+        Square originalPosition = this.activePlayer.getPosition();
+        this.effectsController.setActivePlayer(this.activePlayer);
+        for (Square s : this.board.getSquaresByDistance(this.activePlayer, distance)) {
+            this.activePlayer.setPosition(s);
+            if (!this.effectsController.getAvailableWeapons().isEmpty()) {
+                movements.add(new Coordinates(s.getX(), s.getY()));
+            }
+        }
+        if (reload) {
+            for (Map.Entry<Weapon, Boolean> w : originalLoadedWeapons.entrySet()) {
+                this.activePlayer.getWeaponCardByWeapon(w.getKey()).setReady(w.getValue());
+            }
+        }
+        this.activePlayer.setPosition(originalPosition);
+        return movements;
+    }
+
+    void calculateShootAction() {
+        if (!this.finalFrenzy && this.activePlayer.getDamages().size() < 6) {
+            this.effectsController.setActivePlayer(this.activePlayer);
+            this.controller.send(new SelectionListMessage<>(SelectionMessageType.USE_WEAPON,
+                    this.activePlayer.getCharacter(), this.effectsController.getAvailableWeapons()));
+            return;
+        }
+
+        this.moveShoot = true;
+        this.controller.send(new SelectionListMessage<>(SelectionMessageType.MOVE,
+                this.activePlayer.getCharacter(), getMoveReloadShootMovements()));
+    }
+
     void cancelPowerup() {
         sendActions();
     }
@@ -280,8 +303,9 @@ public class TurnController {
     }
 
     private void sendActions() {
+        this.moveShoot = false;
         List<ActionType> availableActions = new ArrayList<>();
-        if (this.movesLeft == 0) {
+        if (this.movesLeft == 0 || this.board.getSkulls() == 0) {
             if (canReload()) {
                 availableActions.add(ActionType.RELOAD);
             }
@@ -293,8 +317,13 @@ public class TurnController {
             } else {
                 availableActions = new ArrayList<>(Arrays.asList(ActionType.MOVE, ActionType.PICKUP));
             }
-            this.effectsController.setActivePlayer(this.activePlayer);
-            if (!this.effectsController.getAvailableWeapons().isEmpty() && !this.finalFrenzy) {
+
+            if (!this.finalFrenzy && this.activePlayer.getDamages().size() < 6) {
+                this.effectsController.setActivePlayer(this.activePlayer);
+                if (!this.effectsController.getAvailableWeapons().isEmpty() && !this.finalFrenzy) {
+                    availableActions.add(ActionType.SHOT);
+                }
+            } else if (!getMoveReloadShootMovements().isEmpty()) {
                 availableActions.add(ActionType.SHOT);
             }
         }
@@ -314,6 +343,7 @@ public class TurnController {
     }
 
     void handleEndAction() {
+        this.moveShoot = false;
         sendActions();
         this.state = TurnState.SELECTACTION;
     }
@@ -324,7 +354,11 @@ public class TurnController {
 
     void movementAction(Coordinates coordinates) {
         this.board.movePlayer(this.activePlayer, this.board.getArena().getSquareByCoordinate(coordinates.getX(), coordinates.getY()));
-        handleEndAction();
+        if (!this.moveShoot) {
+            handleEndAction();
+        } else {
+            handleReload();
+        }
     }
 
     void pickupAction(Coordinates coordinates) {
@@ -465,12 +499,18 @@ public class TurnController {
     }
 
     void handleReload() {
-        if (!canReload() && !this.finalFrenzy) {
+        if (!canReload() && !this.moveShoot) {
             endTurn();
             return;
         }
-        if (canReload() && this.finalFrenzy) {
-            // gestione ricarica durante azione frenesia finale TODO
+        if (!canReload() && this.moveShoot) {
+            this.effectsController.setActivePlayer(this.activePlayer);
+            if (this.effectsController.getAvailableWeapons().isEmpty()) {
+                handleEndAction();
+                return;
+            }
+            this.controller.send(new SelectionListMessage<>(SelectionMessageType.USE_WEAPON,
+                    this.activePlayer.getCharacter(), this.effectsController.getAvailableWeapons()));
             return;
         }
         this.controller.send(new SelectionListMessage<>(SelectionMessageType.RELOAD,
@@ -478,8 +518,18 @@ public class TurnController {
     }
 
     void sendReloadPaymentRequest(Weapon weapon) {
-        if (weapon == null) {
+        if (weapon == null && !this.moveShoot) {
             endTurn();
+            return;
+        }
+        if (weapon == null && this.moveShoot) {
+            this.effectsController.setActivePlayer(this.activePlayer);
+            if (this.effectsController.getAvailableWeapons().isEmpty()) {
+                handleEndAction();
+                return;
+            }
+            this.controller.send(new SelectionListMessage<>(SelectionMessageType.USE_WEAPON,
+                    this.activePlayer.getCharacter(), this.effectsController.getAvailableWeapons()));
             return;
         }
         this.weaponToGet = this.activePlayer.getWeaponCardByWeapon(weapon);
@@ -487,13 +537,30 @@ public class TurnController {
         requiredAmmo.putAll(weapon.getBuyCost());
         int toSum = requiredAmmo.get(weapon.getColor()) + 1;
         requiredAmmo.put(weapon.getColor(), toSum);
-        this.board.useAmmos(this.activePlayer, requiredAmmo);
+
         this.controller.send(new PaymentMessage(PaymentMessageType.REQUEST, PaymentType.RELOAD,
                 this.activePlayer.getCharacter(), requiredAmmo));
     }
 
     void reloadWeapon() {
         this.board.loadWeapon(this.activePlayer, this.weaponToGet);
+        if (canReload()) {
+            this.controller.send(new SelectionListMessage<>(SelectionMessageType.RELOAD,
+                    this.activePlayer.getCharacter(), getRechargeableWeapons()));
+            return;
+        }
+        if (this.moveShoot) {
+            this.effectsController.setActivePlayer(this.activePlayer);
+            if (this.effectsController.getAvailableWeapons().isEmpty()) {
+                handleEndAction();
+                return;
+            }
+            this.controller.send(new SelectionListMessage<>(SelectionMessageType.USE_WEAPON,
+                    this.activePlayer.getCharacter(), this.effectsController.getAvailableWeapons()));
+        } else {
+            endTurn();
+        }
+
     }
 
     void useWeapon(Weapon weapon) {
@@ -503,14 +570,8 @@ public class TurnController {
                 new ArrayList<>(this.effectsController.getAvailableEffects().keySet())));
     }
 
-    private void calculateShootAction() {
-        this.effectsController.setActivePlayer(this.activePlayer);
-        this.controller.send(new SelectionListMessage<>(SelectionMessageType.USE_WEAPON,
-                this.activePlayer.getCharacter(), this.effectsController.getAvailableWeapons()));
-    }
-
     void endTurn() {
-        this.board.endTurn(this.activePlayer);
+        this.board.endTurn(this.activePlayer.getCharacter());
     }
 
     public boolean canUseNewton() {

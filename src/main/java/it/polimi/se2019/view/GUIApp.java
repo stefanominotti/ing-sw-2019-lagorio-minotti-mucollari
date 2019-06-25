@@ -20,7 +20,8 @@ public class GUIApp extends Application {
     public void start(Stage window) {
         this.stage = window;
         this.stage.setTitle("Adrenaline - Sign up");
-        this.view = new GUIView(Integer.parseInt(getParameters().getRaw().get(0)), this);
+        this.view = new GUIView(Integer.parseInt(getParameters().getRaw().get(0)), getParameters().getRaw().get(1),
+                this);
         this.stage.setOnCloseRequest(e -> System.exit(0));
     }
 
