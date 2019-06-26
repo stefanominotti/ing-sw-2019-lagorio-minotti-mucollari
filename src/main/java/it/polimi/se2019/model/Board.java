@@ -1160,7 +1160,7 @@ public class Board extends Observable {
         switch (type) {
             case DAMAGE:
                 getPlayerByCharacter(target).addDamages(player, damage);
-                marksToDamages(target, player;
+                marksToDamages(target, player);
                 if (getPlayerByCharacter(target).getDamages().size() >= 11) {
                     handleDeadPlayer(target);
                 }

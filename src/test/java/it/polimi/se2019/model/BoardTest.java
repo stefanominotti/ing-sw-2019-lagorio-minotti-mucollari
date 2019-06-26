@@ -28,7 +28,7 @@ public class BoardTest {
     public void toJsonTest() {
         assertEquals("{\"skulls\": 0,\"gameState\": \"ACCEPTING_PLAYERS\",\"currentPlayer\": 0," +
                 "\"weaponsDeck\": [],\"powerupsDeck\": [],\"ammosDeck\": [],\"powerupsDiscardPile\": []," +
-                "\"ammosDiscardPile\": [],\"killshotTrack\": {}},\"finalFrenzyOrder\":[],\"deathPlayers\":[]",
+                "\"ammosDiscardPile\": [],\"killshotTrack\": {}},\"finalFrenzyOrder\":[],\"deadPlayers\":[]",
                 this.board.toJson());
     }
 
