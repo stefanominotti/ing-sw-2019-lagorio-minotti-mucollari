@@ -8,14 +8,12 @@ import java.net.Socket;
 
 public class SocketClient extends AbstractClient implements Runnable {
 
-    private static final int PORT = 12345;
-
     private Socket socket;
 
-    public SocketClient(View view, String ip) {
+    public SocketClient(View view, String ip, int port) {
         super(view);
         try {
-            this.socket = new Socket(ip, PORT);
+            this.socket = new Socket(ip, port);
         } catch (IOException e) {
             getView().handleConnectionError();
         }

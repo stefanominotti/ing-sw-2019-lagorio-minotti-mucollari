@@ -23,10 +23,10 @@ public class CLIView extends View {
 
     private boolean inputEnabled;
 
-    public CLIView(int connection, String ip) {
+    public CLIView(int connection, String ip, int port) {
         super();
 
-        super.connect(connection, ip);
+        super.connect(connection, ip, port);
 
         Thread inputThread = new Thread() {
             Scanner scanner = new Scanner(System.in);

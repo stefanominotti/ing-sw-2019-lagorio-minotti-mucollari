@@ -8,8 +8,10 @@ import it.polimi.se2019.model.messages.client.ClientMessageType;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,12 +23,12 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
 
     private static final Logger LOGGER = Logger.getLogger(RMIProtocolServer.class.getName());
 
-    private final static int PORT = 1099;
     private transient Server server;
     private Map<RMIClientInterface, RMIVirtualClient> clientCorrespondency;
     private final ConcurrentLinkedQueue<ClientMessagePair> queue;
+    private Registry registry;
 
-    RMIProtocolServer(Server server) throws RemoteException {
+    RMIProtocolServer(Server server, int port) throws RemoteException {
         this.server = server;
         this.clientCorrespondency = new HashMap<>();
 
@@ -42,7 +44,7 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
         }).start();
 
         try {
-            LocateRegistry.createRegistry(PORT);
+            this.registry = LocateRegistry.createRegistry(port);
         } catch (RemoteException e) {
             LOGGER.log(Level.SEVERE, "Registry already present");
         }
@@ -53,6 +55,14 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
             LOGGER.log(Level.SEVERE, "Can't register given object");
         } catch (RemoteException e) {
             LOGGER.log(Level.SEVERE, "Client error");
+        }
+    }
+
+    void stopServer() {
+        try {
+            UnicastRemoteObject.unexportObject(this.registry,true);
+        } catch (NoSuchObjectException e) {
+            // Ignore
         }
     }
 

@@ -1,5 +1,8 @@
 package it.polimi.se2019.server;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import it.polimi.se2019.controller.GameController;
 import it.polimi.se2019.model.Board;
 import it.polimi.se2019.model.GameCharacter;
@@ -10,6 +13,8 @@ import it.polimi.se2019.model.messages.nickname.NicknameMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessageType;
 import it.polimi.se2019.view.VirtualView;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.logging.Level;
@@ -18,6 +23,10 @@ import java.util.logging.Logger;
 public class Server {
 
     private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
+    private static final String PATH = System.getProperty("user.home");
+    private static final String SERVER_SETTINGS = "/server_settings.json";
+    private static final int DEFAULT_PORT_SOCKET = 1099;
+    private static final int DEFAULT_PORT_RMI = 12345;
 
     private Map<GameCharacter, VirtualClientInterface> clients;
     private Map<VirtualClientInterface, String> clientNicknames;
@@ -28,8 +37,27 @@ public class Server {
     private List<VirtualClientInterface> temporaryClients;
     private SocketServer socketServer;
     private RMIProtocolServer rmiProtocolServer;
+    private int portSocket;
+    private int portRMI;
 
     private Server() {
+        this.portRMI = DEFAULT_PORT_RMI;
+        this.portSocket = DEFAULT_PORT_SOCKET;
+        try {
+            FileReader settings = new FileReader(PATH + SERVER_SETTINGS);
+            Gson gson = new Gson();
+            JsonParser parser = new JsonParser();
+            JsonObject jsonElement = (JsonObject)parser.parse(settings);
+            portSocket = gson.fromJson(jsonElement.get("portSocket"), Integer.class);
+            portRMI = gson.fromJson(jsonElement.get("portRMI"), Integer.class);
+            if(portRMI == portSocket) {
+                LOGGER.log(Level.SEVERE, "Invalid ports, ports set to default (RMI: " + DEFAULT_PORT_RMI +
+                        ", Socket: " + DEFAULT_PORT_SOCKET + ")");
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Invalid settings file, ports set to default (RMI: " + DEFAULT_PORT_RMI +
+                    ", Socket: " + DEFAULT_PORT_SOCKET + ")");
+        }
         resetServer();
     }
 
@@ -181,8 +209,11 @@ public class Server {
     public void resetServer() {
         if(this.socketServer != null) {
             while (!this.socketServer.isClosed()) {
-                socketServer.stop();
+                socketServer.stopServer();
             }
+        }
+        if(this.rmiProtocolServer != null) {
+            this.rmiProtocolServer.stopServer();
         }
         this.clients = new EnumMap<>(GameCharacter.class);
         this.connectionAllowed = true;
@@ -190,9 +221,9 @@ public class Server {
         this.clientNicknames = new HashMap<>();
         this.gameLoader = new GameLoader();
         startMVC(this.gameLoader.loadBoard());
-        this.socketServer = new SocketServer(this);
+        this.socketServer = new SocketServer(this, this.portSocket);
         try {
-            this.rmiProtocolServer = new RMIProtocolServer(this);
+            this.rmiProtocolServer = new RMIProtocolServer(this, this.portRMI);
         } catch (RemoteException e) {
             LOGGER.log(Level.SEVERE, "Unable to start RMI server");
             System.exit(0);

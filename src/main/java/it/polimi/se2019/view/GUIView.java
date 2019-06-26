@@ -19,10 +19,10 @@ public class GUIView extends View {
     private GUIApp GUIApp;
     private AbstractSceneController controller;
 
-    public GUIView(int connection, String ip, GUIApp GUIApp) {
+    public GUIView(int connection, String ip, int port,  GUIApp GUIApp) {
         super();
         this.GUIApp = GUIApp;
-        super.connect(connection, ip);
+        super.connect(connection, ip, port);
     }
 
     void setActiveController(AbstractSceneController controller) {

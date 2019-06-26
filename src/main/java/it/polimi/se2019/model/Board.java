@@ -46,6 +46,8 @@ public class Board extends Observable {
     private static final long DEFAULT_RESPAWN_TIMER = 30L*1000L;
     private static final long DEFAULT_POWERUPS_TIMER = 10L*1000L;
     private static final int MIN_PLAYERS = 3;
+    private static final String PATH = System.getProperty("user.home");
+    private static final String SERVER_SETTINGS = "/server_settings.json";
 
     private long startTimer;
     private long turnTimer;
@@ -428,10 +430,9 @@ public class Board extends Observable {
      * Loads timers from server settings file or default if it's not available
      */
     public void loadTimers() {
-        String path = System.getProperty("user.home");
         FileReader reader;
         try {
-            reader = new FileReader(path + "/" + "server_settings.json");
+            reader = new FileReader(PATH + SERVER_SETTINGS);
         } catch (IOException E) {
             setDefaultTimers();
             return;
@@ -547,7 +548,7 @@ public class Board extends Observable {
             this.gameState = IN_GAME;
         }
 
-        if (player.isDead()) {
+        if (player.isDead() || player.getPosition() == null) {
             Room room =
                     getArena().getRoomByColor(RoomColor.valueOf(player.getPowerups().get(0).getColor().toString()));
 

@@ -21,7 +21,7 @@ public class GUIApp extends Application {
         this.stage = window;
         this.stage.setTitle("Adrenaline - Sign up");
         this.view = new GUIView(Integer.parseInt(getParameters().getRaw().get(0)), getParameters().getRaw().get(1),
-                this);
+                Integer.parseInt(getParameters().getRaw().get(2)),this);
         this.stage.setOnCloseRequest(e -> System.exit(0));
     }
 

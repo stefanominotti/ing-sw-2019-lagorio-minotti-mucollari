@@ -7,20 +7,20 @@ import it.polimi.se2019.model.messages.client.ClientMessageType;
 
 class SocketServer {
 
-    private static final int PORT = 12345;
     private Server server;
     private ClientHandler clientHandler;
 
-    SocketServer(Server server) {
+    SocketServer(Server server, int port) {
         this.server = server;
-        this.clientHandler = new ClientHandler(this, PORT);
+        this.clientHandler = new ClientHandler(this, port);
         this.clientHandler.start();
     }
 
-    void stop() {
-        this.clientHandler.stopClientHandler();
+    void stopServer() {
+        this.clientHandler.stopServer();
     }
-    public boolean isClosed() {
+
+    boolean isClosed() {
         return this.clientHandler.isClosed();
     }
 

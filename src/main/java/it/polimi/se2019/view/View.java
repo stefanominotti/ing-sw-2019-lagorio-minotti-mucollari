@@ -79,9 +79,9 @@ public abstract class View {
         this.charactersSelection = new ArrayList<>();
     }
 
-    void connect(int connectionType, String ip) {
+    void connect(int connectionType, String ip, int port) {
         if (connectionType == 0) {
-            Runnable r = new SocketClient(this, ip);
+            Runnable r = new SocketClient(this, ip, port);
             (new Thread(r)).start();
             this.client = (SocketClient)r;
         } else {
@@ -546,7 +546,7 @@ public abstract class View {
             case LOAD_VIEW:
                 loadView(message.getCharacter(), ((LoadViewMessage) message).getSkulls(),
                         ((LoadViewMessage) message).getSquares(), ((LoadViewMessage) message).getKillshotTrack(),
-                        ((LoadViewMessage) message).getPayerBoards(), ((LoadViewMessage) message).getReadyWeapons(),
+                        ((LoadViewMessage) message).getPlayerBoards(), ((LoadViewMessage) message).getReadyWeapons(),
                         ((LoadViewMessage) message).getPowerups(), ((LoadViewMessage) message).getScore(),
                         ((LoadViewMessage) message).getOtherPlayers(), ((LoadViewMessage) message).isFrenzy(),
                         ((LoadViewMessage) message).isBeforeFirstPlayer());
@@ -1104,9 +1104,7 @@ public abstract class View {
     }
 
     public void removeToken() {
-        if ( !(new File(PATH + FILE_NAME)).delete() ) {
-            LOGGER.log(Level.WARNING, "Can't remove file");
-        }
+        (new File(PATH + FILE_NAME)).delete();
     }
 
 }

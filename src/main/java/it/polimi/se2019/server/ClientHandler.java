@@ -3,6 +3,7 @@ package it.polimi.se2019.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,11 +25,16 @@ public class ClientHandler extends Thread {
         }
     }
 
-    public void stopClientHandler() {
+    void stopServer() {
         this.active = false;
+        try {
+            this.serverSocket.close();
+        } catch (IOException e) {
+            // Ignore
+        }
     }
 
-    public boolean isClosed() {
+    boolean isClosed() {
         return this.serverSocket.isClosed();
     }
 
@@ -40,14 +46,11 @@ public class ClientHandler extends Thread {
             try {
                 newClientConnection = this.serverSocket.accept();
                 this.server.addClient(new SocketVirtualClient(newClientConnection, this.server));
+            } catch (SocketException e) {
+                // Ignore
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "Error on adding new SocketVirtualClient to Server", e);
             }
-        }
-        try {
-            this.serverSocket.close();
-        }  catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error on adding new SocketVirtualClient to Server", e);
         }
     }
 }
