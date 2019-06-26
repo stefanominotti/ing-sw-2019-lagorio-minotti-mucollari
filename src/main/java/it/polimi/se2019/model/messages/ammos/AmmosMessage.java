@@ -7,12 +7,21 @@ import it.polimi.se2019.model.messages.MessageType;
 
 import java.util.Map;
 
+/**
+ * Class for handling ammo message
+ */
 public class AmmosMessage extends Message {
 
     private AmmosMessageType type;
     private GameCharacter character;
     private Map<AmmoType, Integer> ammos;
 
+    /**
+     * Class constructor, it builds an ammo message
+     * @param type of the ammo message
+     * @param character addressee of the message
+     * @param ammos map with ammo and its quantity to be sent
+     */
     public AmmosMessage(AmmosMessageType type, GameCharacter character, Map<AmmoType, Integer> ammos) {
         setMessageType(MessageType.AMMOS_MESSAGE);
         this.type = type;
@@ -20,14 +29,26 @@ public class AmmosMessage extends Message {
         this.ammos = ammos;
     }
 
+    /**
+     * Gets the ammon of the message
+     * @return Map with ammo and its quantity
+     */
     public Map<AmmoType, Integer> getAmmos() {
         return this.ammos;
     }
 
+    /**
+     * Gets the addressee of the message
+     * @return the Game Character of the addressee
+     */
     public GameCharacter getCharacter() {
         return this.character;
     }
 
+    /**
+     * Gets the type of the ammo message
+     * @return the type of the ammo
+     */
     public AmmosMessageType getType() {
         return this.type;
     }

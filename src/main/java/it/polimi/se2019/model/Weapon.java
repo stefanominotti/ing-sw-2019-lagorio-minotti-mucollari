@@ -7,7 +7,9 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.*;
-
+/**
+ * Enumeration Class for handling weapons
+ */
 public enum Weapon {
     LOCK_RIFLE("lock_rifle.json"),
     ELECTROSCYTHE("electroscythe.json"),
@@ -40,6 +42,10 @@ public enum Weapon {
     private List<WeaponEffect> secondaryEffectOne;
     private List<WeaponEffect> secondaryEffectTwo;
 
+    /**
+     * Class constructor, it builds a weapon
+     * @param filename name of the JSON containing params of the weapon you want to build
+     */
     Weapon(String filename) {
         this.primaryEffect = null;
         this.alternativeMode = null;
@@ -77,22 +83,42 @@ public enum Weapon {
         }
     }
 
+    /**
+     * Gets the weapon name
+     * @return the name of the weapon
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * Gets the weapon color
+     * @return the color of the weapon
+     */
     public AmmoType getColor() {
         return this.color;
     }
 
+    /**
+     * Gets the buy cost of the weapon
+     * @return Map with ammo type and its quantity to buy
+     */
     public Map<AmmoType, Integer> getBuyCost() {
         return new EnumMap<>(this.buyCost);
     }
 
+    /**
+     * Gets the primary effect of the weapon
+     * @return List of the effects of the primary effect
+     */
     public List<WeaponEffect> getPrimaryEffect() {
         return new ArrayList<>(this.primaryEffect);
     }
 
+    /**
+     * Gets the alternative mode of the weapon
+     * @return List of the effect of the alternative mode, empty if it doesn't have it
+     */
     public List<WeaponEffect> getAlternativeMode() {
         if (this.alternativeMode == null) {
             return new ArrayList<>();
@@ -100,6 +126,10 @@ public enum Weapon {
         return new ArrayList<>(this.alternativeMode);
     }
 
+    /**
+     * Gets the secondary effect one of the weapon
+     * @return List of the effect of the secondary effect one, empty if it doesn't have it
+     */
     public List<WeaponEffect> getSecondaryEffectOne() {
         if (this.secondaryEffectOne == null) {
             return new ArrayList<>();
@@ -107,6 +137,10 @@ public enum Weapon {
         return new ArrayList<>(this.secondaryEffectOne);
     }
 
+    /**
+     * Gets the secondary effect two of the weapon
+     * @return List of the effect of the secondary effect two, empty if it doesn't have it
+     */
     public List<WeaponEffect> getSecondaryEffectTwo() {
         if (this.secondaryEffectTwo == null) {
             return new ArrayList<>();

@@ -1,10 +1,11 @@
 package it.polimi.se2019.model.messages.player;
 
-import it.polimi.se2019.controller.ActionType;
 import it.polimi.se2019.model.Coordinates;
 import it.polimi.se2019.model.GameCharacter;
-import it.polimi.se2019.model.messages.Message;
 
+/**
+ * Class for handling movement message
+ */
 public class MovementMessage extends PlayerMessage {
 
     private Coordinates coordinates;

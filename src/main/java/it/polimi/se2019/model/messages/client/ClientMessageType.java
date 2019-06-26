@@ -1,5 +1,8 @@
 package it.polimi.se2019.model.messages.client;
 
+/**
+ * Enumeration Class for handling client message type
+ */
 public enum ClientMessageType {
     READY,
     RECONNECTED,

@@ -1,7 +1,7 @@
 package it.polimi.se2019.model;
 
 /**
- * Enumeration Class for handling Ammo Tiles
+ * Enumeration Class for handling ammo tiles
  */
 public enum AmmoType {
 
@@ -13,15 +13,15 @@ public enum AmmoType {
 
     /**
      * Class constructor
-     * @param identifier the identifier of the Ammo Type
+     * @param identifier of the ammo type
      */
     AmmoType(char identifier) {
         this.identifier = identifier;
     }
 
     /**
-     * Gets the Ammo identifier
-     * @return char of Ammo identifier
+     * Gets the ammo identifier
+     * @return char of the ammo identifier
      */
     public char getIdentifier() {
         return this.identifier;

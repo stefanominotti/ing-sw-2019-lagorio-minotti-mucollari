@@ -1,5 +1,8 @@
 package it.polimi.se2019.model;
 
+/**
+ * Enumeration Class for handling room colors
+ */
 public enum RoomColor {
 
     BLUE('B'),
@@ -9,13 +12,13 @@ public enum RoomColor {
     GREEN('G'),
     WHITE('W');
 
-    private char identifier;
+    char identifier;
 
+    /**
+     * Class constructor, it builds a room color
+     * @param identifier of the room color
+     */
     RoomColor(char identifier) {
         this.identifier = identifier;
-    }
-
-    public char getIdentifier() {
-        return this.identifier;
     }
 }

@@ -1,5 +1,8 @@
 package it.polimi.se2019.model;
 
+/**
+ * Enumeration Class for handling room colors
+ */
 public enum TargetType {
 
     SELF,
@@ -8,5 +11,5 @@ public enum TargetType {
     SECONDPLAYER,
     SQUARE,
     ROOM,
-    CARDINALDIRECTION;
+    CARDINALDIRECTION
 }
