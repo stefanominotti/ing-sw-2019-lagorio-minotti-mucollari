@@ -28,7 +28,6 @@ public class Client {
             configReader = new FileReader(CONFIG_PATH + "/" + "client_settings.json");
             ip = ((JsonObject)parser.parse(configReader)).get("serverIP").getAsString();
         } catch (IOException | ClassCastException e) {
-            System.out.print("AAAAA");
             connection = 0;
             UI = 0;
             ip = "127.0.0.1";

@@ -9,24 +9,24 @@ import static org.junit.Assert.*;
 
 public class RoomTest {
 
-    Room roomSpawn;
-    Room roomNotSpawn;
+    private Board board;
+    private Room roomSpawn;
+    private Room roomNotSpawn;
 
     @Before
-    public void seUp() {
-        Arena arena = new Arena("1");
+    public void setUp() {
+        this.board = new Board();
+        this.board.loadArena("1");
+        Arena arena = this.board.getArena();
         this.roomSpawn = arena.getRoomList().get(0);
         this.roomNotSpawn = arena.getRoomList().get(3);
     }
 
     @Test
-    public void hasSpawnTest() {
-        Boolean spawn;
-        Boolean notSpawn;
-        spawn = this.roomSpawn.hasSpawn();
-        notSpawn = this.roomNotSpawn.hasSpawn();
-        assertTrue(spawn);
-        assertFalse(notSpawn);
+    public void spawnTest() {
+        assertTrue(this.roomSpawn.hasSpawn());
+        assertFalse(this.roomNotSpawn.hasSpawn());
+        assertNotNull(this.roomSpawn.getSpawn());
     }
 
     @Test
@@ -41,5 +41,18 @@ public class RoomTest {
         List<Square> squares;
         squares = this.roomSpawn.getSquares();
         assertNotNull(squares);
+    }
+
+    @Test
+    public void getPlayersTest() {
+        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
+        Player player1 = this.board.getPlayers().get(0);
+        this.board.addPlayer(GameCharacter.DOZER, "playerTest2", "token");
+        Player player2 = this.board.getPlayers().get(1);
+        this.board.movePlayer(player1, this.roomNotSpawn.getSquares().get(0));
+        this.board.movePlayer(player2, this.roomNotSpawn.getSquares().get(1));
+        assertEquals(2, this.roomNotSpawn.getPlayers().size());
+        assertEquals(player1, this.roomNotSpawn.getPlayers().get(0));
+        assertEquals(player2, this.roomNotSpawn.getPlayers().get(1));
     }
 }
