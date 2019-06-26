@@ -21,8 +21,8 @@ public class Arena {
     private List<Room> rooms;
 
     /**
-     * Class constructor, it builds an Arena
-     * @param filename of the Arena you want to get (eg. arena_1)
+     * Class constructor, it builds an arena
+     * @param filename of the arena you want to build (eg. arena_1)
      */
     public Arena(String filename){
         this.rooms = null;
@@ -50,27 +50,27 @@ public class Arena {
         }
     }
 
-
-    /** Gets JSON arena representation
-     * @return String representing arena number
+    /**
+     * Gets the arena representation from JSON
+     * @return String representing the arena number
      */
     public String toJson() {
         return String.valueOf(this.number);
     }
 
     /**
-     * Gets the Rooms of the Arena
-     * @return list of Rooms of the Arena
+     * Gets the rooms of the arena
+     * @return List of the rooms of the arena
      */
     public List<Room> getRoomList() {
         return new ArrayList<>(this.rooms);
     }
 
     /**
-     * Gets a Square of the Arena from its coordinates
-     * @param x coordinate X of the Square you want to get
-     * @param y coordinate Y of the Square you want to get
-     * @return the Square with coordinates X and Y
+     * Gets a square of the Arena from its coordinates
+     * @param x coordinate X of the square you want to get
+     * @param y coordinate Y of the square you want to get
+     * @return the square with coordinates X and Y
      */
     public Square getSquareByCoordinate(int x, int y) {
         for(Room room : this.rooms) {
@@ -84,8 +84,8 @@ public class Arena {
     }
 
     /**
-     * Gets the Squares of the Arena
-     * @return List of Squares of the Arena
+     * Gets the squares of the arena
+     * @return List of squares of the arena
      */
     public List<Square> getAllSquares() {
         List<Square> squares  = new ArrayList<>();
@@ -97,11 +97,10 @@ public class Arena {
         return squares;
     }
 
-
     /**
-     * Gets a Room of the Arena by its color
-     * @param color of the Room you want to get
-     * @return Room of that color, null if it doesn't exist
+     * Gets a room of the arena by its color
+     * @param color of the room you want to get
+     * @return room of that color, null if it doesn't exist
      */
     public Room getRoomByColor(RoomColor color) {
         for(Room room : this.rooms) {

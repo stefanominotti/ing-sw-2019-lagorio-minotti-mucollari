@@ -30,7 +30,7 @@ public class AmmosMessage extends Message {
     }
 
     /**
-     * Gets the ammon of the message
+     * Gets the ammo of the message
      * @return Map with ammo and its quantity
      */
     public Map<AmmoType, Integer> getAmmos() {
@@ -47,7 +47,7 @@ public class AmmosMessage extends Message {
 
     /**
      * Gets the type of the ammo message
-     * @return the type of the ammo
+     * @return the type of the ammo message
      */
     public AmmosMessageType getType() {
         return this.type;

@@ -1,5 +1,8 @@
 package it.polimi.se2019.model;
 
+/**
+ * Enumeration Class for handling game state
+ */
 public enum GameState {
 
     ACCEPTING_PLAYERS,

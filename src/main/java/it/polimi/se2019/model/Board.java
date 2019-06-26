@@ -72,7 +72,7 @@ public class Board extends Observable {
     private Map<GameCharacter, Integer> pointsFromKillshotTrack;
 
     /**
-     * Class constructor, it builds the board
+     * Class constructor, it builds a board
      */
     public Board() {
         this.gameState = ACCEPTING_PLAYERS;
@@ -320,7 +320,7 @@ public class Board extends Observable {
 
     /**
      * Handles a player disconnection removing him from the game
-     * @param player you want to handle disconnection
+     * @param player of which you want to handle disconnection
      */
     public void handleDisconnection(GameCharacter player) {
         switch(this.gameState) {
@@ -341,7 +341,7 @@ public class Board extends Observable {
 
     /**
      * Handles a player disconnection during accepting players phase
-     * @param player you want to handle disconnection
+     * @param player of which you want to handle disconnection
      */
     private void handleAcceptingPlayersDisconnection(GameCharacter player) {
         if (getPlayerByCharacter(player).getNickname() != null) {
@@ -358,7 +358,7 @@ public class Board extends Observable {
 
     /**
      * Handles a player disconnection during game set up
-     * @param player you want to handle disconnection
+     * @param player of which you want to handle disconnection
      */
     private void handleSettingUpGameDisconnection(GameCharacter player) {
         boolean isMaster = false;
@@ -382,7 +382,7 @@ public class Board extends Observable {
 
     /**
      * Handles a player disconnection when game is started
-     * @param player you want to handle disconnection
+     * @param player of which you want to handle disconnection
      */
     private void handleInGameDisconnection(GameCharacter player) {
         this.timer.cancel();
@@ -452,6 +452,9 @@ public class Board extends Observable {
         }
     }
 
+    /**
+     * Sets default values for timers
+     */
     void setDefaultTimers() {
         this.startTimer = DEFAULT_START_TIMER;
         this.turnTimer = DEFAULT_TURN_TIMER;
@@ -667,9 +670,9 @@ public class Board extends Observable {
         this.finalFrenzyOrder.add(player.getCharacter());
     }
 
-
-    /** Get final frenzy order
-     * @return Ordered list of characters
+    /**
+     * Gets Final Frenzy players order
+     * @return Ordered list of characters for the Final Frenzy
      */
     List<GameCharacter> getFinalFrenzyOrder() {
         return new ArrayList<>(this.finalFrenzyOrder);
@@ -709,10 +712,18 @@ public class Board extends Observable {
         Collections.shuffle(powerupsDeck);
     }
 
+    /**
+     * Gets the powerups deck
+     * @return List of powerups of the deck
+     */
     List<Powerup> getPowerupsDeck() {
         return new ArrayList<>(this.powerupsDeck);
     }
 
+    /**
+     * Gets the powerups discard pile
+     * @return List of powerups of the pile
+     */
     List<Powerup> getPowerupsDiscardPile() {
         return new ArrayList<>(this.powerupsDiscardPile);
     }
@@ -746,10 +757,18 @@ public class Board extends Observable {
         Collections.shuffle(this.ammosDeck);
     }
 
+    /**
+     * Gets the ammo deck
+     * @return List of ammo of the deck
+     */
     List<AmmoTile> getAmmosDeck() {
         return new ArrayList<>(this.ammosDeck);
     }
 
+    /**
+     * Gets the ammo discard pile
+     * @return List of ammo of the pile
+     */
     List<AmmoTile> getAmmosDiscardPile() {
         return new ArrayList<>(this.ammosDiscardPile);
     }
@@ -821,7 +840,7 @@ public class Board extends Observable {
     }
 
     /**
-     * Draws a powerup from powerups deck
+     * Draws a powerup from the powerups deck
      * @param player you want him to draw a powerup
      */
     public void drawPowerup(Player player) {
@@ -988,8 +1007,9 @@ public class Board extends Observable {
         notifyChanges(new EndGameMessage(calculateRanking()));
     }
 
-    /** Calculates the final ranking of the match
-     * @return Ordered map with characters and scores
+    /**
+     * Calculates the final ranking of the match
+     * @return Ordered map with characters and corresponding scores
      */
     Map<GameCharacter, Integer> calculateRanking() {
         Map<GameCharacter, Integer> points = new LinkedHashMap<>();
@@ -1056,6 +1076,11 @@ public class Board extends Observable {
 
     }
 
+    /**
+     * Knows if a player is playing before the first player in this turn
+     * @param player of which you want to know if is playing before the first player in this turn
+     * @return true if it is, else false
+     */
     private boolean isPlayerBeforeFirst(Player player) {
         if(this.finalFrenzyOrder.isEmpty()) {
             return false;
@@ -1118,7 +1143,7 @@ public class Board extends Observable {
 
     /**
      * Gets visible squares from a player
-     * @param player of which you want to get visible squares
+     * @param player of which you want to get the visible squares
      * @return List of visible squares for that player
      */
     public List<Square> getVisibleSquares (Player player) {
@@ -1135,7 +1160,7 @@ public class Board extends Observable {
     }
 
     /**
-     * Gets players with a distance from a player position
+     * Gets players with a certain distance from a player position
      * @param square of the reference player
      * @param amount List of distances constraints
      * @return List of players far from the player that distance
@@ -1149,8 +1174,8 @@ public class Board extends Observable {
     }
 
     /**
-     * Gets players with a distance from the reference player. The reference player is removed from resulting list
-     * @param player from which you want to get other players by distance
+     * Gets players with a certain distance from a reference player. The reference player is removed from the resulting list
+     * @param player of which you want to get other players by distance
      * @param amount List of distances constraints
      * @return List of players far from the player that distance
      */
@@ -1171,7 +1196,7 @@ public class Board extends Observable {
     }
 
     /**
-     * Gets squares with a distance from a square
+     * Gets squares with a certain distance from the square
      * @param square from which you want to get other squares
      * @param amount List of distances constraints
      * @return List of squares far from the reference square that distance
@@ -1356,7 +1381,7 @@ public class Board extends Observable {
     }
 
     /**
-     * Gets squares with a distance from a player position
+     * Gets squares with a certain distance from a player position
      * @param player of which you want to get squares by distance
      * @param amount List of distances constraints
      * @return List of squares far from the player that distance
@@ -1369,10 +1394,10 @@ public class Board extends Observable {
     }
 
     /**
-     * Gets players on a cardinal direction by the reference player
+     * Gets players on a cardinal direction from a reference player
      * @param activePlayer of which you want to get players on a cardinal direction
-     * @param cardinalPoint of you want to get players
-     * @return List of player on that direction from the reference player
+     * @param cardinalPoint direction of where you want to get players
+     * @return List of players on that direction from the reference player position
      */
     public List<Player> getPlayersOnCardinalDirection(Player activePlayer, CardinalPoint cardinalPoint) {
         if (activePlayer.getPosition() == null) {
@@ -1420,7 +1445,7 @@ public class Board extends Observable {
     }
 
     /**
-     * Gets players on a cardinal direction by the reference square
+     * Gets players on a cardinal direction from a reference square
      * @param square of which you want to get players on a cardinal direction
      * @param cardinalPoint of you want to get players
      * @return List of player on that direction from the reference square
@@ -1435,7 +1460,7 @@ public class Board extends Observable {
     }
 
     /**
-     * Gets squares on a cardinal direction by the reference square
+     * Gets squares on a cardinal direction from a reference square
      * @param square of which you want to get squares on a cardinal direction
      * @param cardinalPoint of you want to get squares
      * @return List of squares on that direction from the reference square
@@ -1486,7 +1511,7 @@ public class Board extends Observable {
     }
 
     /**
-     * Gets visible squares on a cardinal direction by the reference player
+     * Gets visible squares on a cardinal direction from a reference player
      * @param player of which you want to get visible squares on a cardinal direction
      * @param cardinalPoint of you want to get squares
      * @return List of visible squares on that direction from the reference player
@@ -1536,7 +1561,7 @@ public class Board extends Observable {
     }
 
     /**
-     * Gets players not visible from the reference player
+     * Gets not visible players from a reference player
      * @param player of which you want to get not visible players
      * @return List of not visible players from the player
      */
@@ -1547,7 +1572,7 @@ public class Board extends Observable {
     }
 
     /**
-     * Gets the cardinal direction of a square from the reference square
+     * Gets the cardinal direction of a square from a reference square
      * @param square1 the reference square
      * @param square2 the other square
      * @return the cardinal direction of the other square from the reference square
@@ -1562,7 +1587,7 @@ public class Board extends Observable {
     }
 
     /**
-     * Sets in pause the turn timer
+     * Sets on pause the turn timer
      */
     public void pauseTurnTimer() {
         this.timerRemainingTime = this.turnTimer/1000L -

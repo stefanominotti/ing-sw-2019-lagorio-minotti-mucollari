@@ -1,5 +1,8 @@
 package it.polimi.se2019.model.messages.board;
 
+/**
+ * Enumeration Class for the board message type
+ */
 public enum BoardMessageType {
     AMMO_TILES_REFILLED,
     WEAPON_STORES_REFILLED,
