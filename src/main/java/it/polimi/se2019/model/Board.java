@@ -544,7 +544,7 @@ public class Board extends Observable {
         Player player = getPlayerByCharacter(character);
         this.timer.cancel();
         if(this.gameState == FIRST_TURN && this.currentPlayer == this.players.size() - 1) {
-            this.gameState = INGAME;
+            this.gameState = IN_GAME;
         }
 
         if (player.isDead()) {

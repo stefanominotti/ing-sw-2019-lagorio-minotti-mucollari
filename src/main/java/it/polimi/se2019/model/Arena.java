@@ -29,6 +29,9 @@ public class Arena {
         String path = ROOT + filename + ".json";
         ClassLoader classLoader = getClass().getClassLoader();
         InputStream inputStream = classLoader.getResourceAsStream(path);
+        if (inputStream == null) {
+            return;
+        }
         String jsonString = new Scanner(inputStream, "UTF-8").useDelimiter("\\A").next();
         JsonParser parser = new JsonParser();
         JsonObject jsonElement = (JsonObject)parser.parse(jsonString);
@@ -47,6 +50,10 @@ public class Arena {
         }
     }
 
+
+    /** Gets JSON arena representation
+     * @return String representing arena number
+     */
     public String toJson() {
         return String.valueOf(this.number);
     }
@@ -75,6 +82,7 @@ public class Arena {
         }
         return null;
     }
+
     /**
      * Gets the Squares of the Arena
      * @return List of Squares of the Arena

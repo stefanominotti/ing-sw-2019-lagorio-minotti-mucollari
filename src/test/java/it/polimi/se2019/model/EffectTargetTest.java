@@ -17,7 +17,6 @@ public class EffectTargetTest {
         assertEquals(TargetType.OTHERS, Weapon.LOCK_RIFLE.getPrimaryEffect().get(1).getTarget().getType());
     }
 
-
     @Test
     public void getAmountTest() {
         List<String> amount = new ArrayList<>();
@@ -29,9 +28,16 @@ public class EffectTargetTest {
     }
 
     @Test
+    public void getPositionTypeTest() {
+        assertEquals(TargetPositionType.EVERYWHERE,
+                Weapon.LOCK_RIFLE.getPrimaryEffect().get(0).getTarget().getPositionType());
+    }
+
+    @Test
     public void getPositionConstraintsTest() {
         List<String> distances = new ArrayList<>();
-        List<PositionConstraint> weaponPositionConstraints = Weapon.LOCK_RIFLE.getPrimaryEffect().get(0).getTarget().getPositionConstraints();
+        List<PositionConstraint> weaponPositionConstraints =
+                Weapon.LOCK_RIFLE.getPrimaryEffect().get(0).getTarget().getPositionConstraints();
         assertNotNull(weaponPositionConstraints);
         assertEquals(1, weaponPositionConstraints.size());
         assertEquals(PositionConstraintType.VISIBLE, weaponPositionConstraints.get(0).getType());
@@ -41,6 +47,14 @@ public class EffectTargetTest {
 
     @Test
     public void getAfterPositionConstraints() {
-        assertNull(Weapon.LOCK_RIFLE.getPrimaryEffect().get(0).getTarget().getAfterPositionConstraints());
+        assertEquals(0,
+                Weapon.LOCK_RIFLE.getPrimaryEffect().get(0).getTarget().getAfterPositionConstraints().size());
+    }
+
+    @Test
+    public void getTargetConstraintsTest() {
+        assertEquals(1, Weapon.LOCK_RIFLE.getPrimaryEffect().get(1).getTarget().getTargetConstraints().size());
+        assertEquals(TargetConstraint.ONLYHITBYMAIN,
+                Weapon.LOCK_RIFLE.getPrimaryEffect().get(1).getTarget().getTargetConstraints().toArray()[0]);
     }
 }

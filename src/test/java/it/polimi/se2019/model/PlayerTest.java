@@ -5,7 +5,8 @@ import org.junit.Test;
 
 import java.util.*;
 
-import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.*;
+import static org.junit.Assert.assertNull;
 
 public class PlayerTest {
 
@@ -21,26 +22,80 @@ public class PlayerTest {
     }
 
     @Test
+    public void toJsonTest() {
+        assertEquals("{\"token\": \"token\",\"name\": \"testNickname\",\"character\": \"BANSHEE\"," +
+                "\"score\": 0,\"dead\": false,\"connected\": false,\"damages\": []," +
+                "\"killshotPoints\": [8,6,4,2,1,1],\"availableAmmos\": {\"BLUE\":1,\"RED\":1,\"YELLOW\":1}," +
+                "\"revengeMarks\": [],\"weapons\": [],\"powerups\": []}", this.player.toJson());
+    }
+
+    @Test
     public void getCharacterTest() {
         assertEquals(CHARACTER, this.player.getCharacter());
     }
 
+    @Test
+    public void verifyPlayerTest() {
+        assertEquals(CHARACTER, this.player.verifyPlayer("token"));
+        assertNull(this.player.verifyPlayer("abcdef"));
+    }
+
+    @Test
+    public void getNicknameTest() {
+        assertEquals("testNickname", this.player.getNickname());
+    }
+
+    @Test
+    public void connectionTest() {
+        this.player.connect();
+        assertTrue(this.player.isConnected());
+        this.player.disconnect();
+        assertFalse(this.player.isConnected());
+    }
+
+    @Test
+    public void killshotPointsTest() {
+        List<Integer> killshotPoints = Arrays.asList(8, 6, 4, 2, 1, 1);
+        assertEquals(killshotPoints, this.player.getKillshotPoints());
+        this.player.reduceKillshotPoints();
+        killshotPoints = Arrays.asList(6, 4, 2, 1, 1);
+        assertEquals(killshotPoints, this.player.getKillshotPoints());
+        for (int i = 0; i < 6; i++) {
+            this.player.reduceKillshotPoints();
+        }
+        assertEquals(0, this.player.getKillshotPoints().size());
+    }
 
     @Test
     public void damagesTest() {
-        GameCharacter enemyChar = GameCharacter.D_STRUCT_OR;
-        this.board.addPlayer(enemyChar, "testNickname", "token");
-               this.player.addDamages(enemyChar, 5);
-        List<GameCharacter> damage = Arrays.asList(enemyChar, enemyChar, enemyChar, enemyChar, enemyChar);
+        GameCharacter enemyChar1 = GameCharacter.D_STRUCT_OR;
+        this.board.addPlayer(enemyChar1, "testNickname1", "token");
+               this.player.addDamages(enemyChar1, 5);
+        GameCharacter enemyChar2 = GameCharacter.BANSHEE;
+        this.board.addPlayer(enemyChar2, "testNickname2", "token");
+        this.player.addDamages(enemyChar2, 4);
+        List<GameCharacter> damage = Arrays.asList(enemyChar1, enemyChar1, enemyChar1, enemyChar1, enemyChar1,
+                enemyChar2, enemyChar2, enemyChar2, enemyChar2);
         assertEquals(damage, this.player.getDamages());
+        this.player.resetDamages();
+        assertEquals(0, this.player.getDamages().size());
+
+    }
+
+    @Test
+    public void deathTest() {
+        this.player.setDead(true);
+        assertTrue(this.player.isDead());
+        this.player.setDead(false);
+        assertFalse(this.player.isDead());
     }
 
     @Test
     public void weaponsTest() {
         WeaponCard weapon = new WeaponCard(Weapon.FURNACE);
         this.player.addWeapon(weapon);
-        List<WeaponCard> weapons = Arrays.asList(weapon);
-        assertEquals(weapons, this.player.getWeapons());
+        assertEquals(1, this.player.getWeapons().size());
+        assertEquals(weapon, this.player.getWeapons().get(0));
         this.player.removeWeapon(weapon);
         assertEquals(new ArrayList<WeaponCard>(), this.player.getWeapons());
     }
@@ -53,24 +108,17 @@ public class PlayerTest {
         this.board.addPlayer(enemyChar2, "testNickname2", "token");
         this.player.addRevengeMarks(enemyChar1, 3);
         this.player.addRevengeMarks(enemyChar2, 1);
-        List<GameCharacter> marks = new ArrayList<>();
-        marks.add(enemyChar1);
-        marks.add(enemyChar1);
-        marks.add(enemyChar1);
-        marks.add(enemyChar2);
+        List<GameCharacter> marks = new ArrayList<>(Arrays.asList(enemyChar1, enemyChar1, enemyChar1, enemyChar2));
         assertEquals(marks, this.player.getRevengeMarks());
-        // this.player.marksToDamages(enemyChar2);
+        assertEquals(3, this.player.getMarksNumber(enemyChar1));
+        this.player.resetMarks(enemyChar2);
         marks.remove(enemyChar2);
         assertEquals(marks, this.player.getRevengeMarks());
-        List<GameCharacter> damage = Arrays.asList(enemyChar2);
-        assertEquals(damage, this.player.getDamages());
-        // this.player.marksToDamages(enemyChar1);
-        marks.remove(enemyChar1);
-        marks.remove(enemyChar1);
-        marks.remove(enemyChar1);
+        this.player.resetMarks(enemyChar1);
+        for (int i = 0; i< 3; i++) {
+            marks.remove(enemyChar1);
+        }
         assertEquals(marks, this.player.getRevengeMarks());
-        damage = Arrays.asList(enemyChar2, enemyChar1, enemyChar1, enemyChar1);
-        assertEquals(damage, this.player.getDamages());
     }
 
     @Test
@@ -106,21 +154,32 @@ public class PlayerTest {
 
     @Test
     public void powerupsTest() {
-        Powerup powerup = new Powerup(PowerupType.NEWTON, AmmoType.YELLOW);
-        this.player.addPowerup(powerup);
-        List<Powerup> powerups = Arrays.asList(powerup);
-        assertEquals(powerups, this.player.getPowerups());
-        this.player.removePowerup(powerup);
-        assertEquals(new ArrayList<Powerup>(), this.player.getPowerups());
-    }
-    @Test
-    public void getPowerupsNumberTest() {
-        Powerup powerup = new Powerup(PowerupType.NEWTON, AmmoType.YELLOW);
-        Powerup powerup1 = new Powerup(PowerupType.TAGBACK_GRENADE, AmmoType.BLUE);
-        int number = 2;
-        this.player.addPowerup(powerup);
+        Powerup powerup1 = new Powerup(PowerupType.NEWTON, AmmoType.YELLOW);
         this.player.addPowerup(powerup1);
-        assertEquals(number, player.getPowerups().size());
-        assertEquals(number, player.getPowerups().size());
+        assertEquals(1, this.player.getPowerups().size());
+        assertEquals(powerup1, this.player.getPowerups().get(0));
+        this.player.removePowerup(powerup1);
+        assertEquals(new ArrayList<Powerup>(), this.player.getPowerups());
+        this.player.addPowerup(powerup1);
+        assertEquals(powerup1, this.player.getPowerupByType(PowerupType.NEWTON, AmmoType.YELLOW));
+        Powerup powerup2 = new Powerup(PowerupType.NEWTON, AmmoType.RED);
+        this.player.addPowerup(powerup2);
+        assertEquals(powerup1, this.player.getPowerupsByType(PowerupType.NEWTON).get(0));
+        assertEquals(powerup2, this.player.getPowerupsByType(PowerupType.NEWTON).get(1));
+    }
+
+    @Test
+    public void positionTest() {
+        this.board.loadArena("1");
+        Square square = this.board.getArena().getAllSquares().get(0);
+        this.player.setPosition(square);
+        assertEquals(square, this.player.getPosition());
+    }
+
+    @Test
+    public void flipBoardTest() {
+        List<Integer> killPoints = Arrays.asList(2, 1, 1, 1);
+        this.player.flipBoard();
+        assertEquals(killPoints, this.player.getKillshotPoints());
     }
 }

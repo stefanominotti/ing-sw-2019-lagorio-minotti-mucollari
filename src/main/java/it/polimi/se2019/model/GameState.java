@@ -5,6 +5,7 @@ public enum GameState {
     ACCEPTING_PLAYERS,
     SETTING_UP_GAME,
     FIRST_TURN,
-    INGAME,
-    FINALFRENZY, ENDED;
+    IN_GAME,
+    FINAL_FRENZY,
+    ENDED
 }

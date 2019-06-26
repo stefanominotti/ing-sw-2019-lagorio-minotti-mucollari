@@ -20,7 +20,7 @@ public class ArenaTest {
         for (int i = 0; i < NUMBER; i++) {
             String number = Integer.toString(i+1);
             Arena arena = new Arena(number);
-            arenaList.add(i, arena);
+            this.arenaList.add(i, arena);
         }
     }
 
@@ -164,13 +164,33 @@ public class ArenaTest {
                     Assert.assertNotNull(square);
                     int x = square.getX();
                     int y = square.getY();
-                    assertEquals(square, arenaList.get(i).getSquareByCoordinate(x, y));
+                    assertEquals(square, this.arenaList.get(i).getSquareByCoordinate(x, y));
                     if (x == 2 && y == 0 || x == 0 && y == 1 || x == 3 && y == 2) {
                         assertTrue(square.isSpawn());
                     } else {
                         assertFalse(square.isSpawn());
                     }
                 }
+            }
+        }
+    }
+
+    @Test
+    public void getAllSquaresTest() {
+        for (int i = 0; i < NUMBER; i++) {
+            switch (i) {
+                case 0:
+                    assertEquals(10, this.arenaList.get(i).getAllSquares().size());
+                    break;
+                case 1:
+                    assertEquals(11, this.arenaList.get(i).getAllSquares().size());
+                    break;
+                case 2:
+                    assertEquals(12, this.arenaList.get(i).getAllSquares().size());
+                    break;
+                case 3:
+                    assertEquals(11, this.arenaList.get(i).getAllSquares().size());
+                    break;
             }
         }
     }
@@ -396,5 +416,10 @@ public class ArenaTest {
                     break;
             }
         }
+    }
+
+    @Test
+    public void getRoomByColorTest() {
+        assertEquals(RoomColor.RED, this.arenaList.get(0).getRoomByColor(RoomColor.RED).getColor());
     }
 }

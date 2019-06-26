@@ -44,18 +44,30 @@ public class Player {
     public String toJson(){
         Gson gson = new Gson();
         StringBuilder jObject = new StringBuilder("{");
-        jObject.append("\"token\": " + "\"" + this.token + "\"" + ",");
-        jObject.append("\"name\": " + "\"" + this.name + "\"" + ",");
-        jObject.append("\"character\": " + "\"" + this.character + "\"" + ",");
-        jObject.append("\"score\": " + this.score + ",");
-        jObject.append("\"dead\": " + this.dead + ",");
-        jObject.append("\"connected\": " + false + ",");
-        jObject.append("\"damages\": " + gson.toJson(this.damages) + ",");
-        jObject.append("\"killshotPoints\": " + gson.toJson(this.killshotPoints) + ",");
-        jObject.append("\"availableAmmos\": " + gson.toJson(this.availableAmmos) + ",");
-        jObject.append("\"revengeMarks\": " + gson.toJson(this.revengeMarks) + ",");
-        jObject.append("\"weapons\": " + gson.toJson(this.weapons) + ",");
-        jObject.append("\"powerups\": " + gson.toJson(this.powerups) + "}");
+        String toAppend = "\"token\": " + "\"" + this.token + "\"" + ",";
+        jObject.append(toAppend);
+        toAppend = "\"name\": " + "\"" + this.name + "\"" + ",";
+        jObject.append(toAppend);
+        toAppend = "\"character\": " + "\"" + this.character + "\"" + ",";
+        jObject.append(toAppend);
+        toAppend = "\"score\": " + this.score + ",";
+        jObject.append(toAppend);
+        toAppend = "\"dead\": " + this.dead + ",";
+        jObject.append(toAppend);
+        toAppend = "\"connected\": " + false + ",";
+        jObject.append(toAppend);
+        toAppend = "\"damages\": " + gson.toJson(this.damages) + ",";
+        jObject.append(toAppend);
+        toAppend = "\"killshotPoints\": " + gson.toJson(this.killshotPoints) + ",";
+        jObject.append(toAppend);
+        toAppend = "\"availableAmmos\": " + gson.toJson(this.availableAmmos) + ",";
+        jObject.append(toAppend);
+        toAppend = "\"revengeMarks\": " + gson.toJson(this.revengeMarks) + ",";
+        jObject.append(toAppend);
+        toAppend = "\"weapons\": " + gson.toJson(this.weapons) + ",";
+        jObject.append(toAppend);
+        toAppend = "\"powerups\": " + gson.toJson(this.powerups) + "}";
+        jObject.append(toAppend);
         return jObject.toString();
     }
 
@@ -70,7 +82,7 @@ public class Player {
         this.connected = true;
     }
 
-    public void disconnect() {
+    void disconnect() {
         this.connected = false;
     }
 
@@ -78,11 +90,14 @@ public class Player {
         return this.connected;
     }
 
-    public List<Integer> getKillshotPoints() {
+    List<Integer> getKillshotPoints() {
         return new ArrayList<>(this.killshotPoints);
     }
 
-    public void reduceKillshotPoints() {
+    void reduceKillshotPoints() {
+        if (this.killshotPoints.isEmpty()) {
+            return;
+        }
         this.killshotPoints.remove(0);
     }
 
@@ -115,7 +130,7 @@ public class Player {
         return null;
     }
 
-    public List<GameCharacter> getRevengeMarks() {
+    List<GameCharacter> getRevengeMarks() {
         return new ArrayList<>(this.revengeMarks);
     }
 
@@ -148,11 +163,11 @@ public class Player {
         this.weapons.remove(weapon);
     }
 
-    public int getScore() {
+    int getScore() {
         return this.score;
     }
 
-    public void raiseScore(int amount) {
+    void raiseScore(int amount) {
         this.score = this.score + amount;
 
     }
@@ -238,17 +253,7 @@ public class Player {
         this.damages = new ArrayList<>();
     }
 
-    int getPowerupsNumber() {
-        return this.powerups.size();
-    }
-
-    int getAmmosNumber(AmmoType color) {
-        return  this.availableAmmos.get(color);
-    }
-
-    void resetAfterDeath() {}
-
-    public void setDead(boolean dead) {
+    void setDead(boolean dead) {
         this.dead = dead;
     }
 }
