@@ -57,6 +57,9 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
         } catch (ClassNotFoundException e) {
             LOGGER.log(Level.SEVERE, "Error on managing Stream", e);;
         }
+        if(!this.socket.isClosed()) {
+            this.socket.isClosed();
+        }
     }
 
     @Override

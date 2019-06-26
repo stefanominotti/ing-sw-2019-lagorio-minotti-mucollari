@@ -4,16 +4,24 @@ import it.polimi.se2019.model.messages.Message;
 import it.polimi.se2019.model.messages.client.ClientMessage;
 import it.polimi.se2019.model.messages.client.ClientMessageType;
 
-import java.rmi.RemoteException;
 
 class SocketServer {
 
-    private static int PORT = 12345;
+    private static final int PORT = 12345;
     private Server server;
+    private ClientHandler clientHandler;
 
     SocketServer(Server server) {
         this.server = server;
-        (new ClientHandler(this, PORT)).start();
+        this.clientHandler = new ClientHandler(this, PORT);
+        this.clientHandler.start();
+    }
+
+    void stop() {
+        this.clientHandler.stopClientHandler();
+    }
+    public boolean isClosed() {
+        return this.clientHandler.isClosed();
     }
 
     void addClient(SocketVirtualClient client) {
@@ -26,10 +34,6 @@ class SocketServer {
         } else if (this.server.getClientsNumber() == 5){
             client.send(new ClientMessage(ClientMessageType.LOBBY_FULL));
         }
-    }
-
-    void removeClient(SocketVirtualClient client) {
-        this.server.removeClient(client);
     }
 
     void notifyDisconnection(SocketVirtualClient client) {

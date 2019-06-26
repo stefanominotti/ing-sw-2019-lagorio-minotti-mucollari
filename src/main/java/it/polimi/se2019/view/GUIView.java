@@ -203,7 +203,12 @@ public class GUIView extends View {
     }
 
     @Override
-    void handleGameFinished() {
+    void handleGameFinished(Map<GameCharacter, Integer> ranking) {
+
+    }
+
+    @Override
+    void handlePersistenceFinish() {
 
     }
 

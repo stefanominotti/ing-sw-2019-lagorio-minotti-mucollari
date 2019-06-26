@@ -71,10 +71,6 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
         }
     }
 
-    void removeClient(RMIVirtualClient client) {
-        this.server.removeClient(client);
-    }
-
     void notifyDisconnection(RMIVirtualClient client) {
         this.server.notifyDisconnection(client);
     }

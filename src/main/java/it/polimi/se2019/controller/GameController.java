@@ -4,6 +4,7 @@ import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.messages.*;
 import it.polimi.se2019.model.messages.board.ArenaMessage;
 import it.polimi.se2019.model.messages.board.BoardMessage;
+import it.polimi.se2019.model.messages.board.BoardMessageType;
 import it.polimi.se2019.model.messages.board.SkullsMessage;
 import it.polimi.se2019.model.messages.client.ClientMessage;
 import it.polimi.se2019.model.messages.client.ClientReadyMessage;
@@ -232,6 +233,8 @@ public class GameController implements Observer {
     private void handlePersistenceSelection(String selection) {
         if (selection.equalsIgnoreCase("n")) {
             this.model.endGame();
+        } else {
+            sendAll(new BoardMessage(BoardMessageType.PERSISTENCE));
         }
     }
 

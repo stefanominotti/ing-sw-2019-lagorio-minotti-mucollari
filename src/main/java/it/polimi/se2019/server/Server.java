@@ -23,44 +23,26 @@ public class Server {
     private Map<VirtualClientInterface, String> clientNicknames;
     private GameLoader gameLoader;
     private VirtualView view;
-    private GameController controller;
     private Board model;
     private boolean connectionAllowed;
     private List<VirtualClientInterface> temporaryClients;
+    private SocketServer socketServer;
+    private RMIProtocolServer rmiProtocolServer;
 
     private Server() {
-        this.clients = new EnumMap<>(GameCharacter.class);
-        this.connectionAllowed = true;
-        this.temporaryClients = new ArrayList<>();
-        this.clientNicknames = new HashMap<>();
+        resetServer();
     }
 
     public static void main(String[] args) {
-        Server server = new Server();
-        server.gameLoader = new GameLoader();
-        server.startMVC(server.gameLoader.loadBoard());
-        new SocketServer(server);
-        try {
-            new RMIProtocolServer(server);
-        } catch (RemoteException e) {
-            LOGGER.log(Level.SEVERE, "Unable to start RMI server");
-            System.exit(0);
-        }
-        LOGGER.log(Level.INFO, "Waiting for clients");
+        new Server();
     }
-
-
 
     private void startMVC(Board board) {
         this.model = board;
         this.view = new VirtualView(this);
-        this.controller = new GameController(this.model, this.view);
-        this.view.addObserver(this.controller);
+        GameController controller = new GameController(this.model, this.view);
+        this.view.addObserver(controller);
         this.model.addObserver(this.view);
-    }
-
-    public List<GameCharacter> getClientsList() {
-        return new ArrayList<>(this.clients.keySet());
     }
 
     int getClientsNumber() {
@@ -83,24 +65,6 @@ public class Server {
         } else {
             client.send(new NicknameMessage(NicknameMessageType.REQUIRE));
         }
-    }
-
-    public void removeClient(GameCharacter character, Message message) {
-        this.clients.get(character).sendClose(message);
-        this.clients.remove(character);
-        LOGGER.log(Level.INFO, "Client disconnected");
-    }
-
-    public void removeClient(VirtualClientInterface client) {
-        client.exit();
-        for (Map.Entry<GameCharacter, VirtualClientInterface> c : this.clients.entrySet()) {
-            if (c.getValue() == client) {
-                this.clients.remove(c.getKey());
-                break;
-            }
-        }
-        this.clientNicknames.remove(client);
-        LOGGER.log(Level.INFO, "Client disconnected");
     }
 
     public void removeClient(GameCharacter character) {
@@ -132,15 +96,6 @@ public class Server {
     public void sendOthers(GameCharacter character, Message message) {
         for (Map.Entry<GameCharacter, VirtualClientInterface> client : this.clients.entrySet()) {
             if (client.getKey() == character) {
-                continue;
-            }
-            client.getValue().send(message);
-        }
-    }
-
-    public void sendOthers(List<GameCharacter> character, Message message) {
-        for (Map.Entry<GameCharacter, VirtualClientInterface> client : this.clients.entrySet()) {
-            if (character.contains(client.getKey())) {
                 continue;
             }
             client.getValue().send(message);
@@ -216,6 +171,33 @@ public class Server {
 
     public void saveGame() {
         this.gameLoader.saveBoard();
+    }
+
+    public void deleteGame() {
+        this.gameLoader.deleteGame();
+        resetServer();
+    }
+
+    public void resetServer() {
+        if(this.socketServer != null) {
+            while (!this.socketServer.isClosed()) {
+                socketServer.stop();
+            }
+        }
+        this.clients = new EnumMap<>(GameCharacter.class);
+        this.connectionAllowed = true;
+        this.temporaryClients = new ArrayList<>();
+        this.clientNicknames = new HashMap<>();
+        this.gameLoader = new GameLoader();
+        startMVC(this.gameLoader.loadBoard());
+        this.socketServer = new SocketServer(this);
+        try {
+            this.rmiProtocolServer = new RMIProtocolServer(this);
+        } catch (RemoteException e) {
+            LOGGER.log(Level.SEVERE, "Unable to start RMI server");
+            System.exit(0);
+        }
+        LOGGER.log(Level.INFO, "Waiting for clients");
     }
 
     void notifyDisconnection(VirtualClientInterface client) {

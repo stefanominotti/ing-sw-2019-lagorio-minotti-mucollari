@@ -1054,8 +1054,22 @@ public class CLIView extends View {
     }
 
     @Override
-    void handleGameFinished() {
-        showMessage("Game finished, ranking will be shown soon...");
+    void handleGameFinished(Map<GameCharacter, Integer> ranking) {
+        StringBuilder text = new StringBuilder("Game finished, ranking will be shown soon...");
+        int index = 0;
+        for(Map.Entry<GameCharacter, Integer> character : ranking.entrySet()) {
+            text.append("\n" + index + ": " + character.getKey() + " " + character.getValue());
+            index++;
+        }
+        text.setLength(text.length() - 1);
+        showMessage(text.toString());
+        super.handleGameFinished(ranking);
+    }
+
+    @Override
+    void handlePersistenceFinish() {
+        showMessage("Saved completed!");
+        super.handlePersistenceFinish();
     }
 
     @Override

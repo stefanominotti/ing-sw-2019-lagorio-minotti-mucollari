@@ -1,5 +1,6 @@
 package it.polimi.se2019.view;
 
+import it.polimi.se2019.model.Board;
 import it.polimi.se2019.model.GameCharacter;
 import it.polimi.se2019.model.messages.*;
 import it.polimi.se2019.model.messages.board.BoardMessage;
@@ -76,6 +77,12 @@ public class
             this.server.setConnectionAllowed(true);
         }
         sendAll(message);
+        if(message.getType() == BoardMessageType.GAME_FINISHED) {
+            this.server.deleteGame();
+        }
+        if(message.getType() == BoardMessageType.PERSISTENCE) {
+            this.server.resetServer();
+        }
     }
 
     private void update(PaymentMessage message) {

@@ -26,10 +26,7 @@ import it.polimi.se2019.model.messages.turn.TurnMessage;
 import it.polimi.se2019.model.messages.weapon.WeaponMessage;
 import it.polimi.se2019.model.messages.weapon.WeaponSwitchMessage;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -41,6 +38,9 @@ import static it.polimi.se2019.view.ClientState.*;
 public abstract class View {
 
     private static final Logger LOGGER = Logger.getLogger(View.class.getName());
+
+    private static final String PATH = System.getProperty("user.home");
+    private static final String FILE_NAME = "/AdrenalinaClient.token";
 
     private GameCharacter character;
     private AbstractClient client;
@@ -799,12 +799,21 @@ public abstract class View {
                         ((KillshotTrackMessage) message).getPlayers());
                 break;
             case GAME_FINISHED:
-                handleGameFinished();
+                handleGameFinished(((EndGameMessage) message).getRanking());
                 break;
+            case PERSISTENCE:
+                handlePersistenceFinish();
         }
     }
 
-    abstract void handleGameFinished();
+    void handlePersistenceFinish(){
+        System.exit(0);
+    }
+
+    void handleGameFinished(Map<GameCharacter, Integer> ranking) {
+        removeToken();
+        System.exit(0);
+    }
 
     void handleKillshotTrackChange(int skulls, List<GameCharacter> players) {
         this.board.setSkulls(skulls - 1);
@@ -1050,11 +1059,10 @@ public abstract class View {
     }
 
     String generateToken() {
-        String path = System.getProperty("user.home");
         String message = UUID.randomUUID().toString();
         StringBuffer hexString = new StringBuffer();
         MessageDigest md;
-        try(FileWriter writer = new FileWriter(path + "/" + "AdrenalinaClient.token")) {
+        try(FileWriter writer = new FileWriter(PATH + FILE_NAME)) {
             md = MessageDigest.getInstance("SHA-256");
             md.update(message.getBytes());
             byte[] digest = md.digest();
@@ -1073,8 +1081,7 @@ public abstract class View {
     }
 
     private String getToken() {
-        String path = System.getProperty("user.home");
-        try (BufferedReader reader = new BufferedReader(new FileReader(path + "/" + "AdrenalinaClient.token"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(PATH + FILE_NAME))) {
             String message = reader.readLine();
             MessageDigest md;
             md = MessageDigest.getInstance("SHA-256");
@@ -1094,6 +1101,12 @@ public abstract class View {
             LOGGER.log(Level.SEVERE, "Error corrupt data", e);
         }
         return null;
+    }
+
+    public void removeToken() {
+        if ( !(new File(PATH + FILE_NAME)).delete() ) {
+            LOGGER.log(Level.WARNING, "Can't remove file");
+        }
     }
 
 }

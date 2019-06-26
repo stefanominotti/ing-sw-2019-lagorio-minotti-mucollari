@@ -138,4 +138,10 @@ public class GameLoader {
 
 
     }
+
+    void deleteGame() {
+        if ( !(new File(this.filePath)).delete() ) {
+            LOGGER.log(Level.WARNING, "Can't remove file");
+        }
+    }
 }
