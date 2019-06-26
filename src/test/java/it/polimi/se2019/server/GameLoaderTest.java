@@ -32,7 +32,7 @@ public class GameLoaderTest {
         assertNotNull(this.board.getPlayers().get(0).getPowerups());
         //player
         /*assertEquals(4, this.board.getSkulls());
-        assertEquals(GameState.FIRSTTURN, this.board.getGameState());
+        assertEquals(GameState.FIRST_TURN, this.board.getGameState());
         assertEquals(GameCharacter.D_STRUCT_OR, this.board.getPlayers().get(0).getCharacter());
         assertEquals("primo" ,this.board.getPlayers().get(0).getNickname());
         assertEquals(0 ,this.board.getPlayers().get(0).getScore());

@@ -2,9 +2,9 @@ package it.polimi.se2019.model;
 
 public enum GameState {
 
-    ACCEPTINGPLAYERS,
-    SETTINGUPGAME,
-    FIRSTTURN,
+    ACCEPTING_PLAYERS,
+    SETTING_UP_GAME,
+    FIRST_TURN,
     INGAME,
     FINALFRENZY, ENDED;
 }

@@ -35,7 +35,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static it.polimi.se2019.model.GameState.*;
-import static it.polimi.se2019.model.PowerupType.TAGBACK_GRENADE;
 import static java.util.Map.Entry.comparingByValue;
 import static java.util.stream.Collectors.toMap;
 
@@ -67,14 +66,14 @@ public class Board extends Observable {
     private LocalDateTime gameTimerStartDate;
     private int currentPlayer;
     private List<GameCharacter> finalFrenzyOrder;
-    private List<GameCharacter> deathPlayers;
+    private List<GameCharacter> deadPlayers;
     private long timerRemainingTime;
 
     /**
      * Class constructor, it builds the board
      */
     public Board() {
-        this.gameState = ACCEPTINGPLAYERS;
+        this.gameState = ACCEPTING_PLAYERS;
         this.players = new ArrayList<>();
         this.weaponsDeck = new ArrayList<>();
         this.powerupsDeck = new ArrayList<>();
@@ -83,7 +82,7 @@ public class Board extends Observable {
         this.ammosDiscardPile = new ArrayList<>();
         this.killshotTrack = new HashMap<>();
         this.timer = new Timer();
-        this.deathPlayers = new ArrayList<>();
+        this.deadPlayers = new ArrayList<>();
         this.finalFrenzyOrder = new ArrayList<>();
         loadTimers();
     }
@@ -105,7 +104,7 @@ public class Board extends Observable {
         jObject.append("\"killshotTrack\": " + gson.toJson(this.killshotTrack));
         jObject.append("},");
         jObject.append("\"finalFrenzyOrder\":" + gson.toJson(this.finalFrenzyOrder) + ',');
-        jObject.append("\"deathPlayers\":" + gson.toJson(this.deathPlayers));
+        jObject.append("\"deadPlayers\":" + gson.toJson(this.deadPlayers));
         return jObject.toString();
     }
 
@@ -113,7 +112,7 @@ public class Board extends Observable {
      * Creates model and view for a player
      * @param player of which you want to create model and view
      */
-    public void createModelView(Player player) {
+    LoadViewMessage createModelView(Player player) {
         List<SquareView> squareViews = new ArrayList<>();
         for(Square square : this.arena.getAllSquares()) {
             List<GameCharacter> activePlayers = new ArrayList<>();
@@ -158,14 +157,19 @@ public class Board extends Observable {
             track.put(kill.getKey(), new ArrayList<>(kill.getValue()));
         }
 
-
-        notifyChanges(new LoadViewMessage(player.getCharacter(), player.getNickname(), this.skulls, squareViews,
+        return new LoadViewMessage(player.getCharacter(), player.getNickname(), this.skulls, squareViews,
                 track, playerBoards, playerWeapons, player.getPowerups(), player.getScore(), otherPlayers,
-                !this.finalFrenzyOrder.isEmpty(), isPlayerBeforeFirst(player)));
+                !this.finalFrenzyOrder.isEmpty(), isPlayerBeforeFirst(player));
+
     }
 
 
-
+    /** Sends model and view to a player
+     * @param player to send the message to
+     */
+    public void sendModelView(Player player) {
+        notifyChanges(createModelView(player));
+    }
 
     /**
      * Gets status of the game
@@ -174,7 +178,6 @@ public class Board extends Observable {
     public GameState getGameState() {
         return this.gameState;
     }
-
 
     /**
      * Notifies changes to the Observers
@@ -291,7 +294,7 @@ public class Board extends Observable {
      * Finalizes players creation sending messages to notify game status
      */
     private void finalizePlayersCreation() {
-        this.gameState = SETTINGUPGAME;
+        this.gameState = SETTING_UP_GAME;
         List<Player> toRemove = new ArrayList<>();
         for (Player p : this.players) {
             if (p.getNickname() == null) {
@@ -311,63 +314,87 @@ public class Board extends Observable {
      */
     public void handleDisconnection(GameCharacter player) {
         switch(this.gameState) {
-            case ACCEPTINGPLAYERS:
-                if (getPlayerByCharacter(player).getNickname() != null) {
-                    notifyChanges(new ClientDisconnectedMessage(player, true));
-                }
-                this.players.remove(getPlayerByCharacter(player));
-                if (this.gameTimerStartDate != null && this.players.size() == 2) {
-                    this.timer.cancel();
-                    this.gameTimerStartDate = null;
-                    this.timer = new Timer();
-                    notifyChanges(new TimerMessage(TimerMessageType.STOP, TimerType.SETUP));
-                }
+            case ACCEPTING_PLAYERS:
+                handleAcceptingPlayersDisconnection(player);
                 break;
-            case SETTINGUPGAME:
-                boolean isMaster = false;
-                if (getPlayerByCharacter(player) == this.players.get(0)) {
-                    isMaster = true;
-                }
-                this.players.remove(getPlayerByCharacter(player));
-                notifyChanges(new ClientDisconnectedMessage(player, true));
-                if (this.players.size() == 2) {
-                    this.gameState = ACCEPTINGPLAYERS;
-                    this.gameTimerStartDate = null;
-                    this.timer = new Timer();
-                    notifyChanges(new BoardMessage(BoardMessageType.SETUP_INTERRUPTED));
-                    break;
-                }
-                if (isMaster) {
-                    notifyChanges(new PlayerMessage(PlayerMessageType.MASTER_CHANGED,
-                            this.players.get(0).getCharacter()));
-                }
+            case SETTING_UP_GAME:
+                handleSettingUpGameDisconnection(player);
                 break;
             case ENDED:
                 //TODO
                 break;
             default:
-                this.timer.cancel();
-                int validPlayers = 0;
-                Player disconnected = getPlayerByCharacter(player);
-                disconnected.disconnect();
-                notifyChanges(new ClientDisconnectedMessage(player, true));
-                for (Player p : this.players) {
-                    if (p.isConnected()) {
-                        validPlayers++;
-                    }
-                }
-                if (validPlayers < MIN_PLAYERS) {
-                    for (Player p : this.players) {
-                        if (p.isConnected()) {
-                            notifyChanges(new SingleSelectionMessage(SelectionMessageType.PERSISTENCE, p.getCharacter(),
-                                    null));
-                            break;
-                        }
-                    }
-                    // termina partita TODO
-                }
+                handleInGameDisconnection(player);
         }
 
+    }
+
+    /**
+     * Handles a player disconnection during accepting players phase
+     * @param player you want to handle disconnection
+     */
+    private void handleAcceptingPlayersDisconnection(GameCharacter player) {
+        if (getPlayerByCharacter(player).getNickname() != null) {
+            notifyChanges(new ClientDisconnectedMessage(player, true));
+        }
+        this.players.remove(getPlayerByCharacter(player));
+        if (this.gameTimerStartDate != null && this.players.size() == 2) {
+            this.timer.cancel();
+            this.gameTimerStartDate = null;
+            this.timer = new Timer();
+            notifyChanges(new TimerMessage(TimerMessageType.STOP, TimerType.SETUP));
+        }
+    }
+
+    /**
+     * Handles a player disconnection during game set up
+     * @param player you want to handle disconnection
+     */
+    private void handleSettingUpGameDisconnection(GameCharacter player) {
+        boolean isMaster = false;
+        if (getPlayerByCharacter(player) == this.players.get(0)) {
+            isMaster = true;
+        }
+        this.players.remove(getPlayerByCharacter(player));
+        notifyChanges(new ClientDisconnectedMessage(player, true));
+        if (this.players.size() == 2) {
+            this.gameState = ACCEPTING_PLAYERS;
+            this.gameTimerStartDate = null;
+            this.timer = new Timer();
+            notifyChanges(new BoardMessage(BoardMessageType.SETUP_INTERRUPTED));
+            return;
+        }
+        if (isMaster) {
+            notifyChanges(new PlayerMessage(PlayerMessageType.MASTER_CHANGED,
+                    this.players.get(0).getCharacter()));
+        }
+    }
+
+    /**
+     * Handles a player disconnection when game is started
+     * @param player you want to handle disconnection
+     */
+    private void handleInGameDisconnection(GameCharacter player) {
+        this.timer.cancel();
+        int validPlayers = 0;
+        Player disconnected = getPlayerByCharacter(player);
+        disconnected.disconnect();
+        notifyChanges(new ClientDisconnectedMessage(player, true));
+        for (Player p : this.players) {
+            if (p.isConnected()) {
+                validPlayers++;
+            }
+        }
+        if (validPlayers < MIN_PLAYERS) {
+            for (Player p : this.players) {
+                if (p.isConnected()) {
+                    notifyChanges(new SingleSelectionMessage(SelectionMessageType.PERSISTENCE, p.getCharacter(),
+                            null));
+                    break;
+                }
+            }
+            // termina partita TODO
+        }
     }
 
     /**
@@ -399,10 +426,7 @@ public class Board extends Observable {
         try {
             reader = new FileReader(path + "/" + "server_settings.json");
         } catch (IOException E) {
-            this.startTimer = DEFAULT_START_TIMER;
-            this.turnTimer = DEFAULT_TURN_TIMER;
-            this.respawnTimer = DEFAULT_RESPAWN_TIMER;
-            this.powerupsTimer = DEFAULT_POWERUPS_TIMER;
+            setDefaultTimers();
             return;
         }
 
@@ -416,19 +440,30 @@ public class Board extends Observable {
             this.respawnTimer = gson.fromJson(jsonElement.get("respawnTimer"), Long.class);
             this.powerupsTimer = gson.fromJson(jsonElement.get("powerupsTimer"), Long.class);
         } catch (ClassCastException | NullPointerException e) {
-            this.startTimer = DEFAULT_START_TIMER;
-            this.turnTimer = DEFAULT_TURN_TIMER;
-            this.respawnTimer = DEFAULT_RESPAWN_TIMER;
-            this.powerupsTimer = DEFAULT_POWERUPS_TIMER;
+            setDefaultTimers();
         }
     }
 
+    void setDefaultTimers() {
+        this.startTimer = DEFAULT_START_TIMER;
+        this.turnTimer = DEFAULT_TURN_TIMER;
+        this.respawnTimer = DEFAULT_RESPAWN_TIMER;
+        this.powerupsTimer = DEFAULT_POWERUPS_TIMER;
+    }
+
     /**
-     * Creates an arena by its ID
+     * Creates an arena by its ID and notify the view
      * @param arenaNumber number of the arena you want to build
      */
     public void createArena(String arenaNumber) {
-        this.arena = new Arena(arenaNumber);
+        loadArena(arenaNumber);
+        notifyChanges(createArenaMessage());
+    }
+
+    /**
+     * Creates an arena message to be notified
+     */
+    GameSetMessage createArenaMessage() {
         Map<Coordinates, RoomColor> arenaColor = new HashMap<>();
         Map<Coordinates, Boolean> arenaSpawn = new HashMap<>();
         Map<Coordinates, Map<CardinalPoint, Boolean>> nearbyAccessibility = new HashMap<>();
@@ -443,8 +478,8 @@ public class Board extends Observable {
                 nearbyAccessibility.put(coordinates, localAccessibility);
             }
         }
-        notifyChanges(new GameSetMessage(this.skulls, Integer.parseInt(arenaNumber), arenaColor, arenaSpawn, nearbyAccessibility));
-        finalizeGameSetup();
+        return new GameSetMessage(this.skulls, Integer.parseInt(this.arena.toJson()), arenaColor, arenaSpawn,
+                nearbyAccessibility);
     }
 
     /**
@@ -453,17 +488,6 @@ public class Board extends Observable {
      */
     public void loadArena(String arenaNumber) {
         this.arena = new Arena(arenaNumber);
-        Map<Coordinates, RoomColor> arenaColor = new HashMap<>();
-        Map<Coordinates, Boolean> arenaSpawn = new HashMap<>();
-        for(Room room : this.arena.getRoomList()) {
-            for(Square square : room.getSquares()) {
-                Coordinates coordinates = new Coordinates(square.getX(), square.getY());
-                RoomColor color =  room.getColor();
-                Boolean spawn = square.isSpawn();
-                arenaColor.put(coordinates, color);
-                arenaSpawn.put(coordinates, spawn);
-            }
-        }
     }
 
     /**
@@ -477,14 +501,14 @@ public class Board extends Observable {
     /**
      * Finalizes game setup filling ammo tiles, weapons and powerups decks on the board
      */
-    private void finalizeGameSetup() {
+    public void finalizeGameSetup() {
         fillAmmosDeck();
         fillWeaponsDeck();
         fillPowerupsDeck();
         fillWeaponStores();
         fillAmmoTiles();
 
-        this.gameState = FIRSTTURN;
+        this.gameState = FIRST_TURN;
         this.currentPlayer = 0;
         startTurn(this.players.get(this.currentPlayer));
     }
@@ -494,7 +518,15 @@ public class Board extends Observable {
      * @param player you want to make dead
      */
     public void addDeadPlayer(Player player) {
-        this.deathPlayers.add(player.getCharacter());
+        this.deadPlayers.add(player.getCharacter());
+    }
+
+    /**
+     * Knows if there are any dead players
+     * @return true if are there, else false
+     */
+    public List<GameCharacter> getDeadPlayers() {
+        return this.deadPlayers;
     }
 
     /**
@@ -504,7 +536,7 @@ public class Board extends Observable {
     public void endTurn(GameCharacter character) {
         Player player = getPlayerByCharacter(character);
         this.timer.cancel();
-        if(this.gameState == FIRSTTURN && this.currentPlayer == this.players.size() - 1) {
+        if(this.gameState == FIRST_TURN && this.currentPlayer == this.players.size() - 1) {
             this.gameState = INGAME;
         }
 
@@ -517,7 +549,7 @@ public class Board extends Observable {
         }
 
         Player nextPlayer = null;
-        for (GameCharacter c : this.deathPlayers) {
+        for (GameCharacter c : this.deadPlayers) {
             Player p = getPlayerByCharacter(c);
             if (!player.isConnected()) {
                 drawPowerup(p);
@@ -551,14 +583,6 @@ public class Board extends Observable {
     }
 
     /**
-     * Knows if there are any dead players
-     * @return true if are there, else false
-     */
-    public List<GameCharacter> getDeadPlayers() {
-        return this.deathPlayers;
-    }
-
-    /**
      * Starts a player turn
      * @param player you want to start turn
      */
@@ -566,7 +590,7 @@ public class Board extends Observable {
         TurnType type;
         if(player.isDead()) {
             type = TurnType.AFTER_DEATH;
-        } else if(this.gameState == FIRSTTURN || player.getPosition() == null) {
+        } else if(this.gameState == FIRST_TURN || player.getPosition() == null) {
             type = TurnType.FIRST_TURN;
         } else if(!this.finalFrenzyOrder.isEmpty()) {
             this.skulls = -1;
@@ -584,7 +608,7 @@ public class Board extends Observable {
     /**
      * Increments the current player index
      */
-    private void incrementCurrentPlayer() {
+    void incrementCurrentPlayer() {
         if(this.currentPlayer == this.players.size() - 1) {
             this.currentPlayer = 0;
         } else {
@@ -593,6 +617,14 @@ public class Board extends Observable {
         if (!this.players.get(this.currentPlayer).isConnected()) {
             incrementCurrentPlayer();
         }
+    }
+
+    /**
+     * Gets the current player
+     * @return the current player
+     */
+    public int getCurrentPlayer() {
+        return this.currentPlayer;
     }
 
     /**
@@ -620,14 +652,6 @@ public class Board extends Observable {
     }
 
     /**
-     * Gets the current player
-     * @return the current player
-     */
-    public int getCurrentPlayer() {
-        return this.currentPlayer;
-    }
-
-    /**
      * Adds a player to Final Frenzy players list
      * @param player you want to add to the list
      */
@@ -635,20 +659,32 @@ public class Board extends Observable {
         this.finalFrenzyOrder.add(player.getCharacter());
     }
 
+
+    /** Get final frenzy order
+     * @return Ordered list of characters
+     */
+    List<GameCharacter> getFinalFrenzyOrder() {
+        return new ArrayList<>(this.finalFrenzyOrder);
+    }
+
     /**
      * Fills the weapons deck with a random weapon
      */
-    private void fillWeaponsDeck() {
+    void fillWeaponsDeck() {
         for(Weapon weapon : Weapon.values()) {
             this.weaponsDeck.add(new WeaponCard(weapon));
         }
         Collections.shuffle(this.weaponsDeck);
     }
 
+    List<WeaponCard> getWeaponsDeck() {
+        return new ArrayList<>(this.weaponsDeck);
+    }
+
     /**
      * Fills the powerups deck with a random powerup
      */
-    private void fillPowerupsDeck() {
+    void fillPowerupsDeck() {
         if(this.powerupsDiscardPile.isEmpty()) {
             for(PowerupType type : PowerupType.values()) {
                 for (AmmoType color : AmmoType.values()) {
@@ -665,10 +701,18 @@ public class Board extends Observable {
         Collections.shuffle(powerupsDeck);
     }
 
+    List<Powerup> getPowerupsDeck() {
+        return new ArrayList<>(this.powerupsDeck);
+    }
+
+    List<Powerup> getPowerupsDiscardPile() {
+        return new ArrayList<>(this.powerupsDiscardPile);
+    }
+
     /**
      * Fills the ammos deck loading data from JSON
      */
-    private void fillAmmosDeck() {
+    void fillAmmosDeck() {
         if(this.ammosDiscardPile.isEmpty()) {
             String path = "ammotiles/data/ammotile_";
             int ammosNumber;
@@ -691,10 +735,18 @@ public class Board extends Observable {
         Collections.shuffle(this.ammosDeck);
     }
 
+    List<AmmoTile> getAmmosDeck() {
+        return new ArrayList<>(this.ammosDeck);
+    }
+
+    List<AmmoTile> getAmmosDiscardPile() {
+        return new ArrayList<>(this.ammosDiscardPile);
+    }
+
     /**
      * Fills the weapons store
      */
-    private void fillWeaponStores() {
+    void fillWeaponStores() {
         Map<Coordinates, Weapon> added = new HashMap<>();
         for(Room room : this.arena.getRoomList()) {
             for(Square square : room.getSquares()) {
@@ -724,7 +776,7 @@ public class Board extends Observable {
     /**
      * Fills the ammo tiles on the arena
      */
-    private void fillAmmoTiles() {
+    void fillAmmoTiles() {
         Map<Coordinates, AmmoTile> added = new HashMap<>();
         for(Room room : this.arena.getRoomList()) {
             for(Square square : room.getSquares()) {
@@ -773,6 +825,17 @@ public class Board extends Observable {
     }
 
     /**
+     * Gives a weapon to a player
+     * @param player you want to give a weapon to
+     * @param weapon you want to give
+     */
+    public void giveWeapon(Player player, WeaponCard weapon) {
+        player.getPosition().removeWeapon(weapon);
+        player.addWeapon(weapon);
+        notifyChanges(new WeaponMessage(WeaponMessageType.PICKUP, weapon.getWeaponType(), player.getCharacter()));
+    }
+
+    /**
      * Switchs two weapons of a player
      * @param player you want him to switch weapons
      * @param oldCard weapon to switch
@@ -805,17 +868,6 @@ public class Board extends Observable {
     public void unloadWeapon(Player player, WeaponCard weapon) {
         weapon.setReady(false);
         notifyChanges(new WeaponMessage(WeaponMessageType.UNLOAD, weapon.getWeaponType(), player.getCharacter()));
-    }
-
-    /**
-     * Gives a weapon to a player
-     * @param player you want to give a weapon to
-     * @param weapon you want to give
-     */
-    public void giveWeapon(Player player, WeaponCard weapon) {
-        player.getPosition().removeWeapon(weapon);
-        player.addWeapon(weapon);
-        notifyChanges(new WeaponMessage(WeaponMessageType.PICKUP, weapon.getWeaponType(), player.getCharacter()));
     }
 
     /**
@@ -867,7 +919,7 @@ public class Board extends Observable {
         player.setPosition(square);
         square.addPlayer(player);
         player.setDead(false);
-        this.deathPlayers.remove(player.getCharacter());
+        this.deadPlayers.remove(player.getCharacter());
         notifyChanges(new SpawnMessage(player.getCharacter(),
                 new Coordinates(square.getX(), square.getY())));
     }
@@ -1157,7 +1209,7 @@ public class Board extends Observable {
         Player player = getPlayerByCharacter(character);
 
         player.setDead(true);
-        this.deathPlayers.add(player.getCharacter());
+        this.deadPlayers.add(player.getCharacter());
 
         notifyChanges(new PlayerMessage(PlayerMessageType.DEATH, character));
         if (this.skulls != -1) {

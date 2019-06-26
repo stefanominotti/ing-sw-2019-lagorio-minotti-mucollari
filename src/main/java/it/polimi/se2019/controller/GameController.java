@@ -97,7 +97,7 @@ public class GameController implements Observer {
         int counter = 0;
         Player player = this.model.getPlayerByCharacter(character);
         player.connect();
-        this.model.createModelView(player);
+        this.model.sendModelView(player);
         sendAll(new PlayerReadyMessage(player.getCharacter(), player.getNickname()));
         for(Player boardPlayer : this.model.getPlayers()) {
             if(boardPlayer.isConnected()) {
@@ -144,6 +144,7 @@ public class GameController implements Observer {
 
     private void handleArenaReceived(String arena) {
         this.model.createArena(arena);
+        this.model.finalizeGameSetup();
     }
 
     private void handleSkullsReceived(int skulls) {
