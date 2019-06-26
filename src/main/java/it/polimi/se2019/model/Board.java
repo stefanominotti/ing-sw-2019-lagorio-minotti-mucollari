@@ -1160,6 +1160,10 @@ public class Board extends Observable {
         switch (type) {
             case DAMAGE:
                 getPlayerByCharacter(target).addDamages(player, damage);
+                marksToDamages(target, player;
+                if (getPlayerByCharacter(target).getDamages().size() >= 11) {
+                    handleDeadPlayer(target);
+                }
                 break;
             case MARK:
                 if (getPlayerByCharacter(target).getMarksNumber(player) == 3) {
@@ -1172,9 +1176,6 @@ public class Board extends Observable {
                 }
                 if (marks != 0) {
                     getPlayerByCharacter(target).addRevengeMarks(player, marks);
-                }
-                if (getPlayerByCharacter(target).getDamages().size() >= 11) {
-                    handleDeadPlayer(target);
                 }
                 break;
             default:
