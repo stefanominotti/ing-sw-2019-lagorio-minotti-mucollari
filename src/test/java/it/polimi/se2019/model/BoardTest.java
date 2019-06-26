@@ -6,10 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 public class BoardTest {
     private Board board;
@@ -95,6 +93,107 @@ public class BoardTest {
         this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
         this.board.addDeadPlayer(this.board.getPlayers().get(0));
         assertEquals(1, this.board.getDeadPlayers().size());
+    }
+
+    @Test
+    public void handleDeathTest() {
+        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
+        Player player1 = this.board.getPlayers().get(0);
+        this.board.addPlayer(GameCharacter.D_STRUCT_OR, "playerTest2", "token");
+        Player player2 = this.board.getPlayers().get(1);
+        this.board.addPlayer(GameCharacter.DOZER, "playerTest3", "token");
+        Player player3 = this.board.getPlayers().get(2);
+        this.board.addPlayer(GameCharacter.VIOLET, "playerTest4", "token");
+        Player player4 = this.board.getPlayers().get(3);
+        this.board.setSkulls(2);
+        this.board.attackPlayer(player1.getCharacter(), player2.getCharacter(), 10, EffectType.DAMAGE);
+        assertEquals(10, player2.getDamages().size());
+        this.board.attackPlayer(player1.getCharacter(), player2.getCharacter(), 2, EffectType.DAMAGE);
+        assertEquals(0, player2.getDamages().size());
+        assertEquals(GameCharacter.BANSHEE, this.board.getKillshotTrack().get(2).get(0));
+        assertEquals(GameCharacter.BANSHEE, this.board.getKillshotTrack().get(2).get(1));
+        assertEquals(9, player1.getScore());
+        assertTrue(player2.isDead());
+        assertEquals(6, (long) player2.getKillshotPoints().get(0));
+        assertEquals(1, this.board.getSkulls());
+        this.board.attackPlayer(player1.getCharacter(), player3.getCharacter(), 5, EffectType.DAMAGE);
+        assertEquals(5, player3.getDamages().size());
+        this.board.attackPlayer(player2.getCharacter(), player3.getCharacter(), 5, EffectType.DAMAGE);
+        assertEquals(10, player3.getDamages().size());
+        this.board.attackPlayer(player4.getCharacter(), player3.getCharacter(), 1, EffectType.DAMAGE);
+        assertEquals(0, player3.getDamages().size());
+        assertEquals(18, player1.getScore());
+        assertEquals(6, player2.getScore());
+        assertEquals(4, player4.getScore());
+        assertEquals(1, this.board.getKillshotTrack().get(1).size());
+        assertEquals(GameCharacter.VIOLET, this.board.getKillshotTrack().get(1).get(0));
+    }
+
+    @Test
+    public void marksTest() {
+        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
+        Player player1 = this.board.getPlayers().get(0);
+        this.board.addPlayer(GameCharacter.D_STRUCT_OR, "playerTest2", "token");
+        Player player2 = this.board.getPlayers().get(1);
+        this.board.attackPlayer(player1.getCharacter(), player2.getCharacter(), 3, EffectType.MARK);
+        assertEquals(3, player2.getRevengeMarks().size());
+        this.board.attackPlayer(player1.getCharacter(), player2.getCharacter(), 2, EffectType.MARK);
+        assertEquals(3, player2.getRevengeMarks().size());
+        this.board.attackPlayer(player1.getCharacter(), player2.getCharacter(), 2, EffectType.DAMAGE);
+        assertEquals(5, player2.getDamages().size());
+    }
+
+    @Test
+    public void finalFrenzyStartTest() {
+        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
+        Player player1 = this.board.getPlayers().get(0);
+        this.board.addPlayer(GameCharacter.D_STRUCT_OR, "playerTest2", "token");
+        Player player2 = this.board.getPlayers().get(1);
+        this.board.setSkulls(1);
+        this.board.attackPlayer(player1.getCharacter(), player2.getCharacter(), 11, EffectType.DAMAGE);
+        assertEquals(0, this.board.getSkulls());
+        this.board.startFinalFrenzy(GameCharacter.BANSHEE);
+        assertEquals(2, this.board.getFinalFrenzyOrder().size());
+        assertEquals(GameCharacter.D_STRUCT_OR, this.board.getFinalFrenzyOrder().get(0));
+        assertEquals(GameCharacter.BANSHEE, this.board.getFinalFrenzyOrder().get(1));
+    }
+
+    @Test
+    public void endGameTest() {
+        this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
+        Player player1 = this.board.getPlayers().get(0);
+        this.board.addPlayer(GameCharacter.D_STRUCT_OR, "playerTest2", "token");
+        Player player2 = this.board.getPlayers().get(1);
+        this.board.addPlayer(GameCharacter.DOZER, "playerTest3", "token");
+        Player player3 = this.board.getPlayers().get(2);
+        this.board.setSkulls(5);
+        this.board.attackPlayer(player1.getCharacter(), player2.getCharacter(), 1, EffectType.DAMAGE);
+        assertEquals(1, player2.getDamages().size());
+        this.board.attackPlayer(player3.getCharacter(), player2.getCharacter(), 7, EffectType.DAMAGE);
+        assertEquals(8, player2.getDamages().size());
+        this.board.attackPlayer(player1.getCharacter(), player2.getCharacter(), 4, EffectType.DAMAGE);
+        assertEquals(0, player2.getDamages().size());
+        this.board.attackPlayer(player1.getCharacter(), player2.getCharacter(), 12, EffectType.DAMAGE);
+        assertEquals(0, player2.getDamages().size());
+        this.board.attackPlayer(player2.getCharacter(), player1.getCharacter(), 12, EffectType.DAMAGE);
+        assertEquals(0, player1.getDamages().size());
+        this.board.attackPlayer(player2.getCharacter(), player1.getCharacter(), 12, EffectType.DAMAGE);
+        assertEquals(0, player1.getDamages().size());
+        this.board.attackPlayer(player3.getCharacter(), player1.getCharacter(), 12, EffectType.DAMAGE);
+        assertEquals(0, player1.getDamages().size());
+        this.board.endGame();
+        assertEquals(22, player1.getScore());
+        assertEquals(22, player2.getScore());
+        assertEquals(17, player3.getScore());
+    }
+
+    @Test
+    public void calculateRankingTest() {
+        endGameTest();
+        Map<GameCharacter, Integer> ranking = this.board.calculateRanking();
+        assertEquals(GameCharacter.BANSHEE, ranking.keySet().toArray()[0]);
+        assertEquals(GameCharacter.D_STRUCT_OR, ranking.keySet().toArray()[1]);
+        assertEquals(GameCharacter.DOZER, ranking.keySet().toArray()[2]);
     }
 
     @Test

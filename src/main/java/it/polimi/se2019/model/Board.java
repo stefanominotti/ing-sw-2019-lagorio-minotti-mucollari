@@ -35,7 +35,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static it.polimi.se2019.model.GameState.*;
-import static java.util.Map.Entry.comparingByValue;
 import static java.util.stream.Collectors.toMap;
 
 public class Board extends Observable {
@@ -68,6 +67,7 @@ public class Board extends Observable {
     private List<GameCharacter> finalFrenzyOrder;
     private List<GameCharacter> deadPlayers;
     private long timerRemainingTime;
+    private Map<GameCharacter, Integer> pointsFromKillshotTrack;
 
     /**
      * Class constructor, it builds the board
@@ -84,6 +84,10 @@ public class Board extends Observable {
         this.timer = new Timer();
         this.deadPlayers = new ArrayList<>();
         this.finalFrenzyOrder = new ArrayList<>();
+        this.pointsFromKillshotTrack = new EnumMap<>(GameCharacter.class);
+        for (GameCharacter c : GameCharacter.values()) {
+            this.pointsFromKillshotTrack.put(c, 0);
+        }
         loadTimers();
     }
 
@@ -93,18 +97,30 @@ public class Board extends Observable {
     public String toJson() {
         Gson gson = new Gson();
         StringBuilder jObject = new StringBuilder("{");
-        jObject.append("\"skulls\": " + this.skulls + ",");
-        jObject.append("\"gameState\": " + "\"" + this.gameState + "\"" + ",");
-        jObject.append("\"currentPlayer\": " + this.currentPlayer + ",");
-        jObject.append("\"weaponsDeck\": " + gson.toJson(this.weaponsDeck) + ',');
-        jObject.append("\"powerupsDeck\": " + gson.toJson(this.powerupsDeck) + ',');
-        jObject.append("\"ammosDeck\": " + gson.toJson(this.ammosDeck) + ',');
-        jObject.append("\"powerupsDiscardPile\": " + gson.toJson(this.powerupsDiscardPile) + ',');
-        jObject.append("\"ammosDiscardPile\": " + gson.toJson(this.ammosDiscardPile) + ',');
-        jObject.append("\"killshotTrack\": " + gson.toJson(this.killshotTrack));
+        String toAppend;
+        toAppend = "\"skulls\": " + this.skulls + ",";
+        jObject.append(toAppend);
+        toAppend = "\"gameState\": " + "\"" + this.gameState + "\"" + ",";
+        jObject.append(toAppend);
+        toAppend = "\"currentPlayer\": " + this.currentPlayer + ",";
+        jObject.append(toAppend);
+        toAppend = "\"weaponsDeck\": " + gson.toJson(this.weaponsDeck) + ',';
+        jObject.append(toAppend);
+        toAppend = "\"powerupsDeck\": " + gson.toJson(this.powerupsDeck) + ',';
+        jObject.append(toAppend);
+        toAppend = "\"ammosDeck\": " + gson.toJson(this.ammosDeck) + ',';
+        jObject.append(toAppend);
+        toAppend = "\"powerupsDiscardPile\": " + gson.toJson(this.powerupsDiscardPile) + ',';
+        jObject.append(toAppend);
+        toAppend = "\"ammosDiscardPile\": " + gson.toJson(this.ammosDiscardPile) + ',';
+        jObject.append(toAppend);
+        toAppend = "\"killshotTrack\": " + gson.toJson(this.killshotTrack);
+        jObject.append(toAppend);
         jObject.append("},");
-        jObject.append("\"finalFrenzyOrder\":" + gson.toJson(this.finalFrenzyOrder) + ',');
-        jObject.append("\"deadPlayers\":" + gson.toJson(this.deadPlayers));
+        toAppend = "\"finalFrenzyOrder\":" + gson.toJson(this.finalFrenzyOrder) + ',';
+        jObject.append(toAppend);
+        toAppend = "\"deadPlayers\":" + gson.toJson(this.deadPlayers);
+        jObject.append(toAppend);
         return jObject.toString();
     }
 
@@ -169,14 +185,6 @@ public class Board extends Observable {
      */
     public void sendModelView(Player player) {
         notifyChanges(createModelView(player));
-    }
-
-    /**
-     * Gets status of the game
-     * @return game state
-     */
-    public GameState getGameState() {
-        return this.gameState;
     }
 
     /**
@@ -393,7 +401,6 @@ public class Board extends Observable {
                     break;
                 }
             }
-            // termina partita TODO
         }
     }
 
@@ -720,6 +727,9 @@ public class Board extends Observable {
             Gson gson = new Gson();
             for(ammosNumber = 1; ammosNumber < 13; ammosNumber++) {
                 InputStream inputStream = classLoader.getResourceAsStream(path + ammosNumber + ".json");
+                if (inputStream == null) {
+                    return;
+                }
                 String jsonString = new Scanner(inputStream, "UTF-8").useDelimiter("\\A").next();
                 JsonParser parser = new JsonParser();
                 JsonObject jsonElement = (JsonObject) parser.parse(jsonString);
@@ -933,12 +943,10 @@ public class Board extends Observable {
 
         List<GameCharacter> trackReworked = new ArrayList<>();
         for (Map.Entry<Integer, List<GameCharacter>> i : this.killshotTrack.entrySet()) {
-            for (GameCharacter p : i.getValue()) {
-                trackReworked.add(p);
-            }
+            trackReworked.addAll(i.getValue());
         }
 
-        Map<GameCharacter, Integer> killsByPlayer = new HashMap<>();
+        Map<GameCharacter, Integer> killsByPlayer = new LinkedHashMap<>();
         for (GameCharacter p : trackReworked) {
             if (killsByPlayer.containsKey(p)) {
                 continue;
@@ -955,25 +963,74 @@ public class Board extends Observable {
         Map<GameCharacter, Integer> sorted = killsByPlayer
                 .entrySet()
                 .stream()
-                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue(new Comparator<Integer>() {
+                    @Override
+                    public int compare(Integer o1, Integer o2) {
+                        if (o1 > o2) {
+                            return 1;
+                        } else {
+                            return -1;
+                        }
+                    }
+                })))
                 .collect(
                         toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                                 LinkedHashMap::new));
 
         int index = 0;
         for (GameCharacter p : sorted.keySet()) {
+            this.pointsFromKillshotTrack.put(p, points.get(index));
             raisePlayerScore(getPlayerByCharacter(p), points.get(index));
             index++;
         }
 
-        notifyChanges(new BoardMessage(BoardMessageType.GAME_FINISHED));
+        notifyChanges(new EndGameMessage(calculateRanking()));
+    }
+
+    /** Calculates the final ranking of the match
+     * @return Ordered map with characters and scores
+     */
+    Map<GameCharacter, Integer> calculateRanking() {
+        Map<GameCharacter, Integer> points = new LinkedHashMap<>();
+        for (Player p : this.players) {
+            points.put(p.getCharacter(), p.getScore());
+        }
+
+        return points
+                .entrySet()
+                .stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByKey(new Comparator<GameCharacter>() {
+                    @Override
+                    public int compare(GameCharacter o1, GameCharacter o2) {
+                        int s1 = Board.this.getPlayerByCharacter(o1).getScore();
+                        int s2 = Board.this.getPlayerByCharacter(o2).getScore();
+                        if (s1 > s2) {
+                            return 1;
+                        }
+                        if (s1 < s2) {
+                            return -1;
+                        }
+                        int p1 = Board.this.pointsFromKillshotTrack.get(o1);
+                        int p2 = Board.this.pointsFromKillshotTrack.get(o2);
+                        if (p1 > p2) {
+                            return 1;
+                        }
+                        if (p1 < p2) {
+                            return -1;
+                        }
+                        return 0;
+                    }
+                })))
+                .collect(
+                        toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                                LinkedHashMap::new));
     }
 
     /**
-     * Handles Final Frenzy mode for a player setting up the his board
+     * Handles Final Frenzy mode start
      * @param character you want to start Final Frenzy mode
      */
-    private void startFinalFrenzy(GameCharacter character) {
+    void startFinalFrenzy(GameCharacter character) {
         Player player = getPlayerByCharacter(character);
         int index = this.players.indexOf(player);
         for (int i = index + 1; i < this.players.size(); i++) {
@@ -1013,7 +1070,7 @@ public class Board extends Observable {
      * @param player you want to increase his score
      * @param score amount to increase
      */
-    public void raisePlayerScore(Player player, int score) {
+    void raisePlayerScore(Player player, int score) {
         player.raiseScore(score);
         notifyChanges(new ScoreMessage(player.getCharacter(), score));
     }
@@ -1069,7 +1126,7 @@ public class Board extends Observable {
         }
         List<Square> availableSquares = new ArrayList<>();
         for (Square s : this.arena.getAllSquares()) {
-            if (player.getPosition().canSee(s) && player.getPosition() != null) {
+            if (player.getPowerups() != null && player.getPosition().canSee(s) && player.getPosition() != null) {
                 availableSquares.add(s);
             }
         }
@@ -1147,6 +1204,10 @@ public class Board extends Observable {
         return availableSquares;
     }
 
+    Map<Integer, List<GameCharacter>> getKillshotTrack() {
+        return new HashMap<>(this.killshotTrack);
+    }
+
     /**
      * Performs an attack to a player
      * @param player GameCharacter of the attacker
@@ -1206,7 +1267,7 @@ public class Board extends Observable {
      * Handles a player death
      * @param character of which you want to handle the death
      */
-    public void handleDeadPlayer(GameCharacter character) {
+    void handleDeadPlayer(GameCharacter character) {
         Player player = getPlayerByCharacter(character);
 
         player.setDead(true);
@@ -1239,7 +1300,7 @@ public class Board extends Observable {
 
         getPlayerByCharacter(player.getDamages().get(0)).raiseScore(1);
 
-        Map<GameCharacter, Integer> damagesByPlayer = new HashMap<>();
+        Map<GameCharacter, Integer> damagesByPlayer = new LinkedHashMap<>();
         for (GameCharacter p : player.getDamages()) {
             if (damagesByPlayer.containsKey(p)) {
                 continue;
@@ -1256,7 +1317,16 @@ public class Board extends Observable {
         Map<GameCharacter, Integer> sorted = damagesByPlayer
                 .entrySet()
                 .stream()
-                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue(new Comparator<Integer>() {
+                    @Override
+                    public int compare(Integer o1, Integer o2) {
+                        if (o1 >= o2) {
+                            return 1;
+                        } else {
+                            return -1;
+                        }
+                    }
+                })))
                 .collect(
                         toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
                                 LinkedHashMap::new));
