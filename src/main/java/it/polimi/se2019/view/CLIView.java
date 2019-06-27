@@ -14,17 +14,26 @@ import it.polimi.se2019.model.messages.selections.SelectionMessageType;
 import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
-
 import java.util.*;
-
 import static it.polimi.se2019.view.ClientState.*;
 
+/**
+ * Class for handling CLI view
+ */
 public class CLIView extends View {
 
     private static final String INVALID_INPUT_MESSAGE = "Invalid input, retry:";
+    private static final int MIN_SKULLS = 3;
+    private static final int MAX_SKULLS = 8;
     
     private boolean inputEnabled;
 
+    /**
+     * Class constructor, it builds a CLI view
+     * @param connection "0" for socket, "1" for RMI
+     * @param ip of the server
+     * @param port of the server
+     */
     public CLIView(int connection, String ip, int port) {
         super();
 
@@ -45,6 +54,10 @@ public class CLIView extends View {
         inputThread.start();
     }
 
+    /**
+     * Handles client input
+     * @param input of the client
+     */
     private void handleInput(String input) {
         if (!this.inputEnabled || input == null) {
             return;
@@ -101,6 +114,10 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Handles client input on persistence question
+     * @param input answer of the client
+     */
     private void handlePersistenceInput(String input) {
         if (input.equalsIgnoreCase("y") || input.equalsIgnoreCase("n")) {
             getClient().send(new SingleSelectionMessage(SelectionMessageType.PERSISTENCE, getCharacter(), input));
@@ -110,11 +127,19 @@ public class CLIView extends View {
         showMessage(INVALID_INPUT_MESSAGE);
     }
 
+    /**
+     * Handles client nickname input
+     * @param input nickname of the client
+     */
     private void handleNicknameInput(String input) {
         this.inputEnabled = false;
         getClient().send(new NicknameMessage(NicknameMessageType.CONNECTED, input));
     }
 
+    /**
+     * Handles client skulls number input
+     * @param input skulls number chosen
+     */
     private void handleSkullsInput(String input) {
         int selection;
         try {
@@ -123,7 +148,7 @@ public class CLIView extends View {
             showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
-        if (selection < 3 || selection > 8) {
+        if (selection < MIN_SKULLS || selection > MAX_SKULLS) {
             showMessage("Skulls number must be between 3 and 8, retry: ");
             return;
         }
@@ -131,6 +156,10 @@ public class CLIView extends View {
         getClient().send(new SkullsMessage(selection));
     }
 
+    /**
+     * Handles client arena choice
+     * @param input arena chosen
+     */
     private void handleArenaInput(String input) {
         if (input.equals("1") || input.equals("2") || input.equals("3") || input.equals("4")) {
             this.inputEnabled = false;
@@ -140,6 +169,10 @@ public class CLIView extends View {
         showMessage("Arena must be [1, 2, 3, 4]:, retry:");
     }
 
+    /**
+     * Handles client character choice
+     * @param input character chosen
+     */
     private void handleCharacterInput(String input) {
         int selection;
         try {
@@ -172,6 +205,10 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Handles client position input
+     * @param input position x,y
+     */
     private void handlePositionInput(String input) {
         if (input.equalsIgnoreCase("c") && getState() != SELECT_POWERUP_POSITION) {
             this.inputEnabled = false;
@@ -221,6 +258,10 @@ public class CLIView extends View {
 
     }
 
+    /**
+     * Handles client powerup choice input
+     * @param input powerup chosen
+     */
     private void handlePowerupInput(String input) {
         int selection;
         try {
@@ -258,6 +299,10 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Handles client multiple powerup choice input
+     * @param input client choice
+     */
     private void handleMultiplePowerupsInput(String input) {
         String[] inputList = input.split(",");
         List<Powerup> powerups = new ArrayList<>();
@@ -286,6 +331,10 @@ public class CLIView extends View {
         getClient().send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP, getCharacter(), powerups));
     }
 
+    /**
+     * Handles client weapon choice input
+     * @param input weapon chosen
+     */
     private void handleWeaponInput(String input) {
         int selection;
 
@@ -333,6 +382,10 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Handles client action input
+     * @param input client choice
+     */
     private void handleActionInput(String input) {
         int selection;
         try {
@@ -375,6 +428,10 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Handles client payment choice
+     * @param input payment chosen
+     */
     private void handlePaymentInput(String input) {
         int selection;
         try {
@@ -447,6 +504,10 @@ public class CLIView extends View {
         resetSelections();
     }
 
+    /**
+     * Handles client effect choice
+     * @param input effect chosen
+     */
     private void handleEffectInput(String input) {
         boolean valid = false;
         if (input.equalsIgnoreCase("C") && !isWeaponActivated()) {
@@ -479,6 +540,10 @@ public class CLIView extends View {
         setWeaponActivated(true);
     }
 
+    /**
+     * Handle client decision input
+     * @param input client decision
+     */
     private void handleDecisionInput(String input) {
         input = input.toUpperCase();
         if (!input.equals("Y") && !input.equals("N")) {
@@ -499,6 +564,10 @@ public class CLIView extends View {
 
     }
 
+    /**
+     * Handles client square choice
+     * @param input square chosen
+     */
     private void handleSelectSquareInput(String input) {
         List<Coordinates> square = new ArrayList<>();
         try {
@@ -513,6 +582,10 @@ public class CLIView extends View {
         super.selectionEffectFinish();
     }
 
+    /**
+     * Handles client room choice
+     * @param input room chosen
+     */
     private void handleSelectRoomInput(String input) {
         List<RoomColor> room = new ArrayList<>();
         try {
@@ -527,6 +600,10 @@ public class CLIView extends View {
         super.selectionEffectFinish();
     }
 
+    /**
+     * Handles client cardinal point choice
+     * @param input cardinal point chosen
+     */
     private void handleSelectCardinalInput(String input) {
         List<CardinalPoint> cardinal = new ArrayList<>();
         try {
@@ -541,6 +618,10 @@ public class CLIView extends View {
         super.selectionEffectFinish();
     }
 
+    /**
+     * Handles clien effect target choice
+     * @param input target chosen
+     */
     private void handleEffectTargetInput(String input) {
         String[] inputList = input.split(",");
         List<GameCharacter> characters = new ArrayList<>();
@@ -574,6 +655,10 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Handles client multiple squares target input
+     * @param input multiple squares chosen and target chosen
+     */
     private void handleEffectMultipleSquaresInput(String input) {
         String[] inputList = input.split(",");
         Map<Coordinates, List<GameCharacter>> availableCharacters = new LinkedHashMap<>(getEffectPossibility().getMultipleSquares());
@@ -616,12 +701,18 @@ public class CLIView extends View {
         super.selectionEffectFinish();
     }
 
+    /**
+     * Shows connection errors message
+     */
     @Override
     public void handleConnectionError() {
         showMessage("Connection error, server unreachable or network unavailable\nTry to restart");
         super.handleConnectionError();
     }
 
+    /**
+     * Shows nickname request message
+     */
     @Override
     void handleNicknameRequest() {
         super.handleNicknameRequest();
@@ -629,6 +720,9 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows nickname duplicated message
+     */
     @Override
     void handleNicknameDuplicated() {
         super.handleNicknameDuplicated();
@@ -636,6 +730,11 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows setup timer message
+     * @param action type of timer message
+     * @param duration timer for setup
+     */
     @Override
     void handleGameSetupTimer(TimerMessageType action, long duration) {
         if (getState() == WAITING_START) {
@@ -652,6 +751,10 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows powerup timer message
+     * @param action type of timer message
+     */
     @Override
     void handlePowerupTimer(TimerMessageType action) {
         if (getState() == MULTIPLE_POWERUPS_SELECTION) {
@@ -661,9 +764,14 @@ public class CLIView extends View {
         super.handlePowerupTimer(action);
     }
 
+    /**
+     * Shows player created message
+     * @param character chosen by the player
+     * @param nickname chosen by the player
+     * @param otherPlayers map with character and its nickname of the other players
+     */
     @Override
-    void handlePlayerCreated(GameCharacter character, String nickname, Map<GameCharacter,
-            String> otherPlayers) {
+    void handlePlayerCreated(GameCharacter character, String nickname, Map<GameCharacter, String> otherPlayers) {
         super.handlePlayerCreated(character, nickname, otherPlayers);
         showMessage("Nickname " + nickname + " accepted! You are " + character);
         for (PlayerBoard board : getEnemyBoards()) {
@@ -671,6 +779,11 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows connected player message
+     * @param character of the connected player
+     * @param nickname of the connected player
+     */
     @Override
     void handleReadyPlayer(GameCharacter character, String nickname) {
         super.handleReadyPlayer(character, nickname);
@@ -679,6 +792,11 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows player spawned message
+     * @param character who has spawned
+     * @param coordinates where the character has spawned
+     */
     @Override
     void handleSpawnedPlayer(GameCharacter character, Coordinates coordinates) {
         super.handleSpawnedPlayer(character, coordinates);
@@ -691,6 +809,9 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows skulls set message
+     */
     @Override
     void handleSkullsSet() {
         super.handleSkullsSet();
@@ -698,6 +819,10 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows master changed message
+     * @param character active character
+     */
     @Override
     void handleMasterChanged(GameCharacter character) {
         super.handleMasterChanged(character);
@@ -709,6 +834,10 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows skull number request message
+     * @param character active character
+     */
     @Override
     void handleStartSetup(GameCharacter character) {
         super.handleStartSetup(character);
@@ -720,6 +849,11 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows movement message
+     * @param character who has moved
+     * @param coordinates where the character has moved
+     */
     @Override
     void handleMovement(GameCharacter character, Coordinates coordinates) {
         super.handleMovement(character, coordinates);
@@ -732,6 +866,13 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows attack message
+     * @param character who received the attack
+     * @param attacker who performed the attack
+     * @param amount of damage or marks give
+     * @param attackType type of the attack
+     */
     @Override
     void handleAttack(GameCharacter character, GameCharacter attacker, int amount, EffectType attackType) {
         super.handleAttack(character, attacker, amount, attackType);
@@ -772,6 +913,11 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows marks to damages conversion message
+     * @param player which the marks has to be converted
+     * @param attacker holder of the marks converted
+     */
     @Override
     void handleMarksToDamages(GameCharacter player, GameCharacter attacker) {
         super.handleMarksToDamages(player, attacker);
@@ -785,6 +931,10 @@ public class CLIView extends View {
     }
 
 
+    /**
+     * Shows board flipped message
+     * @param player active player
+     */
     @Override
     void handleBoardFlip(GameCharacter player) {
         super.handleBoardFlip(player);
@@ -795,6 +945,11 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows score changed message
+     * @param player of which the score has changed
+     * @param score amount of change
+     */
     @Override
     void handleScoreChange(GameCharacter player, int score) {
         if (player == getCharacter()) {
@@ -804,6 +959,10 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows player dead message
+     * @param player dead
+     */
     @Override
     void handleDeath(GameCharacter player) {
         super.handleDeath(player);
@@ -814,6 +973,10 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows kill shot points change message
+     * @param player of which the kill shot points changed
+     */
     @Override
     void handleKillshotPointsChange(GameCharacter player) {
         super.handleKillshotPointsChange(player);
@@ -824,6 +987,10 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows point for first blood message
+     * @param player who got point for first blood
+     */
     @Override
     void handleFirstBlood(GameCharacter player) {
         super.handleFirstBlood(player);
@@ -834,24 +1001,37 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows invalid token message
+     */
     @Override
     void handleInvalidToken() {
         showMessage("Invalid token");
         super.handleInvalidToken();
     }
 
+    /**
+     * Shows full lobby message
+     */
     @Override
     void handleFullLobby() {
         showMessage("Lobby is full");
         super.handleFullLobby();
     }
 
+    /**
+     * Shows reconnection attempt message
+     */
     @Override
     void handleReconnectionRequest() {
         showMessage("A game already exists, trying to reconnect");
         super.handleReconnectionRequest();
     }
 
+    /**
+     * Shows character choice request message
+     * @param availables List of the available characters
+     */
     @Override
     void handleCharacterSelectionRequest(List<GameCharacter> availables) {
         super.handleCharacterSelectionRequest(availables);
@@ -869,6 +1049,10 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows client disconnection message, it also handles setup messages in case the game is not yet started
+     * @param character who is disconnected
+     */
     @Override
     void handleClientDisconnected(GameCharacter character) {
         String nickname = "";
@@ -896,12 +1080,29 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows game already started message
+     */
     @Override
     void handleGameAlreadyStarted() {
         showMessage("Game already started, sorry");
         super.handleGameAlreadyStarted();
     }
 
+    /**
+     * Loads the view
+     * @param character active character
+     * @param skulls number
+     * @param squares list of the squares view
+     * @param killshotTrack map with points and list of characters
+     * @param playerBoards list of the player boards
+     * @param weapons list of the available weapons on stores
+     * @param powerups list of the available powerups
+     * @param score your raised points
+     * @param others map with the other characters
+     * @param isFrenzy true if the Final Frenzy mode is active, else false
+     * @param isBeforeFirstPlayer true if the player is playing before the first player in this turn, else false
+     */
     @Override
     void loadView(GameCharacter character, int skulls, List<SquareView> squares,
                   Map<Integer, List<GameCharacter>> killshotTrack, List<PlayerBoard> playerBoards,
@@ -917,6 +1118,11 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows powerup drawn message
+     * @param character who has drawn a powerup
+     * @param powerup drawn
+     */
     @Override
     void handlePowerupAdded(GameCharacter character, Powerup powerup) {
         super.handlePowerupAdded(character, powerup);
@@ -927,6 +1133,12 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows powerup removed message
+     * @param character who has removed a powerup
+     * @param powerup removed
+     * @param type of the powerup message
+     */
     @Override
     void handlePowerupRemoved(GameCharacter character, Powerup powerup, PowerupMessageType type) {
         super.handlePowerupRemoved(character, powerup, type);
@@ -937,6 +1149,11 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows ammo obtained message
+     * @param character who got ammo
+     * @param ammos obtained
+     */
     @Override
     void handleAddAmmos(GameCharacter character, Map<AmmoType, Integer> ammos) {
         super.handleAddAmmos(character, ammos);
@@ -952,6 +1169,11 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows ammo removed message
+     * @param character of which the ammo has to be removed
+     * @param ammos to be removed
+     */
     @Override
     void handleRemoveAmmos(GameCharacter character, Map<AmmoType, Integer> ammos) {
         super.handleRemoveAmmos(character, ammos);
@@ -967,6 +1189,11 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows weapon pickup
+     * @param character who pickups the weapon
+     * @param weapon picked up
+     */
     @Override
     void handleWeaponPickup(GameCharacter character, Weapon weapon) {
         super.handleWeaponPickup(character, weapon);
@@ -977,6 +1204,12 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows weapon switched message
+     * @param character who switchs weapons
+     * @param oldWeapon to be switched
+     * @param newWeapon switched
+     */
     @Override
     void handleWeaponSwitch(GameCharacter character, Weapon oldWeapon, Weapon newWeapon) {
         super.handleWeaponSwitch(character, oldWeapon, newWeapon);
@@ -987,6 +1220,11 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows weapon reloaded message
+     * @param character who reloaded a weapon
+     * @param weapon reloaded
+     */
     @Override
     void handleWeaponReload(GameCharacter character, Weapon weapon) {
         super.handleWeaponReload(character, weapon);
@@ -997,6 +1235,11 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows weaon used message
+     * @param character who uses weapon
+     * @param weapon used
+     */
     @Override
     void handleWeaponUnload(GameCharacter character, Weapon weapon) {
         super.handleWeaponUnload(character, weapon);
@@ -1007,6 +1250,11 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows start turn message
+     * @param message type of turn
+     * @param character who is playing
+     */
     @Override
     void handleStartTurn(TurnMessage message, GameCharacter character) {
         if (character != getCharacter()) {
@@ -1017,6 +1265,10 @@ public class CLIView extends View {
         super.handleStartTurn(message, character);
     }
 
+    /**
+     * Shows turn finished message
+     * @param character of which the turn has finished
+     */
     @Override
     void handleEndTurn(GameCharacter character) {
         if (character == getCharacter()) {
@@ -1027,12 +1279,21 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows turn continuation message
+     * @param player who is still playing
+     */
     @Override
     void handleTurnContinuation(GameCharacter player) {
         super.handleTurnContinuation(player);
         showMessage(player + " is playing...");
     }
 
+    /**
+     * Shows kill shot track change message
+     * @param skulls number
+     * @param players of which the kill shot track has changed
+     */
     @Override
     void handleKillshotTrackChange(int skulls, List<GameCharacter> players) {
         super.handleKillshotTrackChange(skulls, players);
@@ -1052,12 +1313,20 @@ public class CLIView extends View {
         }
     }
 
+    /**
+     * Shows Final Frenzy started message
+     * @param beforeFirst true if the player is playing before the first player in this turn, else false
+     */
     @Override
     void handleFinalFrenzy(boolean beforeFirst) {
         super.handleFinalFrenzy(beforeFirst);
         showMessage("Final frenzy started");
     }
 
+    /**
+     * Shows game finished message
+     * @param ranking map with game characters and total points raised
+     */
     @Override
     void handleGameFinished(Map<GameCharacter, Integer> ranking) {
         StringBuilder text = new StringBuilder("Game finished, ranking will be shown soon...");
@@ -1072,18 +1341,32 @@ public class CLIView extends View {
         super.handleGameFinished(ranking);
     }
 
+    /**
+     * Shows game save message
+     */
     @Override
     void handlePersistenceFinish() {
         showMessage("Saved completed!");
         super.handlePersistenceFinish();
     }
 
+    /**
+     * Shows too few player message
+     */
     @Override
     void handleSetupInterrupted() {
         super.handleSetupInterrupted();
         showMessage("Too few players, game setup interrupted");
     }
 
+    /**
+     * Shows game settings message
+     * @param colors Map with room colors and their coordinates
+     * @param spawns Map with coordinates and true if they are a spawn point, else false
+     * @param nearbyAccessibility Map with coordinates  and map with cardinal points and their accessibility
+     * @param skulls set for the game
+     * @param arena chosen for the game
+     */
     @Override
     void handleGameSet(Map<Coordinates, RoomColor> colors, Map<Coordinates, Boolean> spawns,
                        Map<Coordinates, Map<CardinalPoint, Boolean>> nearbyAccessibility, int skulls, int arena) {
@@ -1093,18 +1376,30 @@ public class CLIView extends View {
         showMessage(getBoard().arenaToString());
     }
 
+    /**
+     * Shows store refilled message
+     * @param weapons Map with weapon and coordinates of the square where the weapon has to be placed
+     */
     @Override
     void handleStoresRefilled(Map<Coordinates, Weapon> weapons) {
         super.handleStoresRefilled(weapons);
         showMessage("Weapon stores filled");
     }
 
+    /**
+     * Shows ammo tiles refilled message
+     * @param tiles Map with coordinates and tiles refilled
+     */
     @Override
     void handleTilesRefilled(Map<Coordinates, AmmoTile> tiles) {
         super.handleTilesRefilled(tiles);
         showMessage("Ammo tiles filled");
     }
 
+    /**
+     * Shows weapon switching request message
+     * @param weapons List of the weapon of switching
+     */
     @Override
     void handleWeaponSwitchRequest(List<Weapon> weapons) {
         super.handleWeaponSwitchRequest(weapons);
@@ -1125,6 +1420,10 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows squares choice request message for move and pickup action
+     * @param coordinates List of the available squares for move and pickup action
+     */
     @Override
     void handlePickupActionRequest(List<Coordinates> coordinates) {
         super.handlePickupActionRequest(coordinates);
@@ -1133,6 +1432,10 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows squares choice request message for move action
+     * @param coordinates List of the available coordinates for move action
+     */
     @Override
     void handleMovementActionRequest(List<Coordinates> coordinates) {
         super.handleMovementActionRequest(coordinates);
@@ -1141,6 +1444,10 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows targets choice request message for powerup targets
+     * @param targets List of the available characters targets
+     */
     @Override
     void handlePowerupTargetRequest(List<GameCharacter> targets) {
         super.handlePowerupTargetRequest(targets);
@@ -1157,6 +1464,10 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows squares choice request message for powerup movement
+     * @param coordinates List of the available coordinates for move action for powerup
+     */
     @Override
     void handlePowerupPositionRequest(List<Coordinates> coordinates) {
         super.handlePowerupPositionRequest(coordinates);
@@ -1174,6 +1485,10 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows weapons to reload choice message
+     * @param weapons List of the available weapons to be reloaded
+     */
     @Override
     void handleReloadRequest(List<Weapon> weapons) {
         super.handleReloadRequest(weapons);
@@ -1191,6 +1506,10 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows powerups to discard for spawn message
+     * @param powerups List of the available powerups to discard for spawn
+     */
     @Override
     void handleDiscardPowerupRequest(List<Powerup> powerups) {
         super.handleDiscardPowerupRequest(powerups);
@@ -1207,6 +1526,10 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows powerups choice message
+     * @param powerups
+     */
     @Override
     void handleUsePowerupRequest(List<Powerup> powerups) {
         super.handleUsePowerupRequest(powerups);
@@ -1229,6 +1552,10 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows weapons pickup choice message
+     * @param weapons List of the available weapons to pickup
+     */
     @Override
     void handleWeaponPickupRequest(List<Weapon> weapons) {
         super.handleWeaponPickupRequest(weapons);
@@ -1244,6 +1571,10 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows available actions choice request
+     * @param actions List of the avilable actions
+     */
     @Override
     void handleActionSelectionRequest(List<ActionType> actions) {
         super.handleActionSelectionRequest(actions);
@@ -1252,6 +1583,10 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows weapon choice request message
+     * @param weapons List of the available weapons to use
+     */
     @Override
     void handleWeaponUseRequest(List<Weapon> weapons) {
         super.handleWeaponUseRequest(weapons);
@@ -1269,6 +1604,9 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows persistence request message
+     */
     @Override
     void handlePersistenceRequest() {
         super.handlePersistenceRequest();
@@ -1276,6 +1614,10 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows the effect choice request message
+     * @param effects List of the available weapon effect macro
+     */
     @Override
     void handleEffectRequest(List<WeaponEffectOrderType> effects) {
         super.handleEffectRequest(effects);
@@ -1308,6 +1650,9 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows effect required request message
+     */
     @Override
     void handleEffectRequireRequest() {
         super.handleEffectRequireRequest();
@@ -1325,6 +1670,10 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows effect combo request message
+     * @param effect weapon effect macro of the combo
+     */
     @Override
     void handleEffectComboRequest(WeaponEffectOrderType effect) {
         super.handleEffectComboRequest(effect);
@@ -1338,6 +1687,9 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows effect targets choice request message
+     */
     @Override
     void handleEffectTargetRequest() {
         super.handleEffectTargetRequest();
@@ -1383,6 +1735,9 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows the select of the effect
+     */
     @Override
     void handleEffectSelectRequest() {
         super.handleEffectSelectRequest();
@@ -1416,6 +1771,9 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows movement request message
+     */
     @Override
     void handleEffectMoveRequest() {
         super.handleEffectMoveRequest();
@@ -1431,6 +1789,9 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**
+     * Shows multiple squares choice request message
+     */
     @Override
     void handleMultipleSquareRequest() {
         super.handleMultipleSquareRequest();
@@ -1470,10 +1831,17 @@ public class CLIView extends View {
         this.inputEnabled = true;
     }
 
+    /**+
+     * Shows a message
+     * @param message to be shown
+     */
     private void showMessage(String message) {
         System.out.println("\n" + message);
     }
 
+    /**
+     * Shows available player actions
+     */
     private void showActions() {
         StringBuilder text = new StringBuilder();
         text.append("Select one of these actions:\n");
@@ -1535,6 +1903,9 @@ public class CLIView extends View {
         showMessage(text.toString());
     }
 
+    /**
+     * Shows payment request message
+     */
     @Override
     void requirePayment() {
         StringBuilder text = new StringBuilder("You must pay ");

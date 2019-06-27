@@ -1,5 +1,8 @@
 package it.polimi.se2019.view;
 
+/**
+ * Enumeration class for handling scene type
+ */
 public enum SceneType {
     SELECT_NICKNAME,
     SELECT_CHARACTER,

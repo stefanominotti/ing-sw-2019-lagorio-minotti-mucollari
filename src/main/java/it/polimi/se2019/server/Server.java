@@ -19,13 +19,17 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Class for handling server
+ */
 public class Server {
 
     private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
     private static final String PATH = System.getProperty("user.home");
     private static final String SERVER_SETTINGS = "/server_settings.json";
-    private static final int DEFAULT_PORT_SOCKET = 12345;
-    private static final int DEFAULT_PORT_RMI = 1099;
+    private static final int DEFAULT_SOCKET_PORT = 12345;
+    private static final int DEFAULT_RMI_PORT = 1099;
+    private static final int MAX_CLIENT = 5;
 
     private Map<GameCharacter, VirtualClientInterface> clients;
     private Map<VirtualClientInterface, String> clientNicknames;
@@ -39,9 +43,12 @@ public class Server {
     private int portSocket;
     private int portRMI;
 
+    /**
+     * Class constructor, it builds a server
+     */
     private Server() {
-        this.portRMI = DEFAULT_PORT_RMI;
-        this.portSocket = DEFAULT_PORT_SOCKET;
+        this.portRMI = DEFAULT_RMI_PORT;
+        this.portSocket = DEFAULT_SOCKET_PORT;
         try(FileReader settings = new FileReader(PATH + SERVER_SETTINGS)) {
             Gson gson = new Gson();
             JsonParser parser = new JsonParser();
@@ -49,20 +56,28 @@ public class Server {
             this.portSocket = gson.fromJson(jsonElement.get("portSocket"), Integer.class);
             this.portRMI = gson.fromJson(jsonElement.get("portRMI"), Integer.class);
             if(this.portRMI == this.portSocket) {
-                LOGGER.log(Level.SEVERE, "Invalid ports, ports set to default (RMI: " + DEFAULT_PORT_RMI +
-                        ", Socket: " + DEFAULT_PORT_SOCKET + ")");
+                LOGGER.log(Level.SEVERE, "Invalid port, port set to default (RMI: " + DEFAULT_RMI_PORT +
+                        ", Socket: " + DEFAULT_SOCKET_PORT + ")");
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Invalid settings file, ports set to default (RMI: " + DEFAULT_PORT_RMI +
-                    ", Socket: " + DEFAULT_PORT_SOCKET + ")");
+            LOGGER.log(Level.SEVERE, "Invalid settings file, port set to default (RMI: " + DEFAULT_RMI_PORT +
+                    ", Socket: " + DEFAULT_SOCKET_PORT + ")");
         }
         resetServer();
     }
 
+    /**
+     * Main class
+     * @param args for options, not usable. Edit "server_settings.json" to set options
+     */
     public static void main(String[] args) {
         new Server();
     }
 
+    /**
+     * Starts MVC pattern
+     * @param board whit
+     */
     private void startMVC(Board board) {
         this.model = board;
         this.view = new VirtualView(this);
@@ -71,14 +86,26 @@ public class Server {
         this.model.addObserver(this.view);
     }
 
+    /**
+     * Gets clients number
+     * @return number of the connected clients
+     */
     int getClientsNumber() {
         return this.clients.size();
     }
 
+    /**
+     * Sets tje connection open or closed for accepting clients
+     * @param allowed true for open, false for close
+     */
     public void setConnectionAllowed(boolean allowed) {
         this.connectionAllowed = allowed;
     }
 
+    /**
+     * Knows if connections are allowed
+     * @return true if they are, else false
+     */
     boolean isConnectionAllowed() {
         return this.connectionAllowed;
     }
@@ -93,6 +120,10 @@ public class Server {
         }
     }
 
+    /**
+     * Removes a client
+     * @param character of which client has to be removed
+     */
     public void removeClient(GameCharacter character) {
 
         this.clients.get(character).exit();
@@ -100,6 +131,10 @@ public class Server {
         LOGGER.log(Level.INFO, "Client disconnected");
     }
 
+    /**
+     * Removes temporary clients
+     * @param message to inform their removal
+     */
     public void removeTemporaryClients(Message message) {
         for (VirtualClientInterface client : this.temporaryClients) {
             client.send(message);
@@ -109,16 +144,30 @@ public class Server {
         this.temporaryClients = new ArrayList<>();
     }
 
+    /**
+     * Send a message to a character
+     * @param character addressee
+     * @param message to be sent
+     */
     public void send(GameCharacter character, Message message) {
         this.clients.get(character).send(message);
     }
 
+    /**
+     * Send a message on broadcast
+     * @param message to be sent
+     */
     public void sendAll(Message message) {
         for (VirtualClientInterface client : this.clients.values()) {
             client.send(message);
         }
     }
 
+    /**
+     * Send a message to other characters
+     * @param character which the message has not be sent to
+     * @param message to be sent
+     */
     public void sendOthers(GameCharacter character, Message message) {
         for (Map.Entry<GameCharacter, VirtualClientInterface> client : this.clients.entrySet()) {
             if (client.getKey() == character) {
@@ -128,8 +177,13 @@ public class Server {
         }
     }
 
+    /**
+     * Receives message from a client
+     * @param message received from a client
+     * @param client sender of the message
+     */
     void receiveMessage(Message message, VirtualClientInterface client) {
-        if (this.clients.size() == 5 && !this.clients.containsValue(client)) {
+        if (this.clients.size() == MAX_CLIENT && !this.clients.containsValue(client)) {
             client.send(new ClientMessage(ClientMessageType.GAME_ALREADY_STARTED, null));
         }
         List<GameCharacter> availables = new ArrayList<>();
@@ -195,15 +249,24 @@ public class Server {
         }
     }
 
+    /**
+     * Saves the game
+     */
     public void saveGame() {
         this.gameLoader.saveBoard();
     }
 
+    /**
+     * Deletes the game save
+     */
     public void deleteGame() {
         this.gameLoader.deleteGame();
         resetServer();
     }
 
+    /**
+     * Resets the server
+     */
     public void resetServer() {
         if(this.socketServer != null) {
             while (!this.socketServer.isClosed()) {
@@ -229,6 +292,10 @@ public class Server {
         LOGGER.log(Level.INFO, "Waiting for clients");
     }
 
+    /**
+     * Notifies server disconnection
+     * @param client to be notified
+     */
     void notifyDisconnection(VirtualClientInterface client) {
         for (Map.Entry<GameCharacter, VirtualClientInterface> c : this.clients.entrySet()) {
             if (c.getValue() == client) {

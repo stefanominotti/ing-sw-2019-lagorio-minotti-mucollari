@@ -5,18 +5,30 @@ import it.polimi.se2019.model.messages.Message;
 
 import java.rmi.RemoteException;
 
+/**
+ * Class for handling RMI virtual client
+ */
 public class RMIVirtualClient extends Thread implements VirtualClientInterface {
 
     private final RMIClientInterface client;
     private RMIProtocolServer server;
     private boolean active;
 
+    /**
+     * Class constructor, it builds a RMI virtual client
+     * @param client the RMI client interface
+     * @param server of which the virtual client has to be added
+     */
     RMIVirtualClient(RMIClientInterface client, RMIProtocolServer server) {
         this.active = true;
         this.client = client;
         this.server = server;
     }
 
+    /**
+     * Sends a message
+     * @param message to be sent
+     */
     @Override
     public void send(Message message) {
         try {
@@ -26,12 +38,9 @@ public class RMIVirtualClient extends Thread implements VirtualClientInterface {
         }
     }
 
-    @Override
-    public void sendClose(Message message) {
-        send(message);
-        exit();
-    }
-
+    /**
+     * Runs the RMI virtual client
+     */
     @Override
     public void run() {
         while(this.active) {
@@ -49,6 +58,9 @@ public class RMIVirtualClient extends Thread implements VirtualClientInterface {
         }
     }
 
+    /**
+     * Ends the application
+     */
     @Override
     public void exit() {
         this.active = false;

@@ -9,6 +9,9 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Class for handling socket virtual client
+ */
 public class SocketVirtualClient extends Thread implements VirtualClientInterface {
 
     private static final Logger LOGGER = Logger.getLogger(SocketVirtualClient.class.getName());
@@ -17,12 +20,21 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
     private SocketServer server;
     private boolean active;
 
+    /**
+     * Class constructor, it builds a socket virtual client
+     * @param socket of which the virtual client has to be paired
+     * @param server of which the virtual client has to be added
+     */
     SocketVirtualClient(Socket socket, SocketServer server) {
         this.active = true;
         this.server = server;
         this.socket = socket;
     }
 
+    /**
+     * Sends a message
+     * @param message to be sent
+     */
     @Override
     public void send(Message message) {
         ObjectOutputStream writer;
@@ -36,12 +48,10 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
         }
     }
 
-    @Override
-    public void sendClose(Message message) {
-        send(message);
-        exit();
-    }
 
+    /**
+     * Runs the socket virtual client
+     */
     @Override
     public void run() {
         try {
@@ -62,12 +72,12 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
         }
     }
 
+    /**
+     * Ends the application
+     */
     @Override
     public void exit() {
         this.active = false;
     }
 
-    public void closeConnection() throws IOException {
-        this.socket.close();
-    }
 }
