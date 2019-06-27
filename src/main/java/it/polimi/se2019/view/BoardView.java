@@ -6,6 +6,9 @@ import java.util.*;
 
 import static it.polimi.se2019.view.SquareStringUtils.*;
 
+/**
+ * Class for handling board view
+ */
 public class BoardView {
 
     private int skulls;
@@ -15,6 +18,11 @@ public class BoardView {
     private boolean frenzy;
     private boolean beforeFirstPlayer;
 
+    /**
+     * Class constructor, it builds a board view
+     * @param skulls number set for the board
+     * @param squares square view which compose the arena
+     */
     BoardView(int skulls, List<SquareView> squares) {
         this.killshotTrack = new HashMap<>();
         this.skulls = skulls;
@@ -27,8 +35,17 @@ public class BoardView {
         }
     }
 
-    BoardView(int skulls, List<SquareView> squares,
-              Map<Integer, List<GameCharacter>> killshotTrack, boolean frenzy, boolean beforeFirstPlayer) {
+    /**
+     * Class constructor, it builds a board view when a game is already started and you want to resume it
+     * @param skulls number set for the board
+     * @param squares square view which compose the arena
+     * @param killshotTrack killshot tracks of the game characters
+     * @param frenzy true if Final Frenzy is active, else false
+     * @param beforeFirstPlayer true if the current player is playing before the first player, else false
+     */
+    BoardView(int skulls, List<SquareView> squares, Map<Integer, List<GameCharacter>> killshotTrack, boolean frenzy,
+              boolean beforeFirstPlayer) {
+
         this.skulls = skulls;
         this.squares = squares;
         this.killshotTrack = killshotTrack;
@@ -43,34 +60,67 @@ public class BoardView {
         }
     }
 
+    /**
+     * Sets that the player is playing before the first player
+     * @param beforeFirstPlayer true if it is, else false
+     */
     void setBeforeFirstPlayer(boolean beforeFirstPlayer) {
         this.beforeFirstPlayer = beforeFirstPlayer;
     }
 
+    /**
+     * Knows if the player is playing before the first player
+     * @return true if it is, else false
+     */
     boolean isBeforeFirstPlayer() {
         return this.beforeFirstPlayer;
     }
 
+    /**
+     * Starts the Final Frenzy mode
+     */
     void startFrenzy() {
         this.frenzy = true;
     }
 
+    /**
+     * Knows if the Final Frenzy mode is active
+     * @return true if it is, else false
+     */
     boolean isFrenzy() {
         return this.frenzy;
     }
 
+    /**
+     * Gets the skulls number
+     * @return skulls number
+     */
     public int getSkulls() {
         return this.skulls;
     }
 
+    /**
+     * Sets skull number for the game
+     * @param skulls number to be set
+     */
     void setSkulls(int skulls) {
         this.skulls = skulls;
     }
 
+    /**
+     * Gets the squares view
+     * @return List of the squares view
+     */
     public List<SquareView> getSquares() {
         return new ArrayList<>(this.squares);
     }
 
+    /**
+     * Gets the square view by its coordinate
+     * @param x coordinate of the square of which you want to get the square view
+     * @param y coordinate of the square of which you want to get the square view
+     * @return the square view with coordinate x, y
+     */
     SquareView getSquareByCoordinates(int x, int y) {
         for(SquareView square : this.squares) {
             if(square.getX() == x && square.getY() == y) {
@@ -80,6 +130,11 @@ public class BoardView {
         return null;
     }
 
+    /**
+     * Sets a player position
+     * @param player of which you want to set the position
+     * @param square where you want to set the player
+     */
     void setPlayerPosition(GameCharacter player, SquareView square) {
         if (this.positions.get(player) != null) {
             this.positions.get(player).removeActivePlayer(player);
@@ -90,10 +145,19 @@ public class BoardView {
         }
     }
 
+    /**
+     * Gets a character position
+     * @param character of which you want to get the position
+     * @return the square view of that character
+     */
     SquareView getPlayerPosition(GameCharacter character) {
         return this.positions.get(character);
     }
 
+    /**
+     * Gets the killshot track
+     * @return map with
+     */
     Map<Integer, List<GameCharacter>> getKillshotTrack() {
         return new HashMap<>(this.killshotTrack);
     }
@@ -102,11 +166,19 @@ public class BoardView {
         this.killshotTrack.put(skullNumber, players);
     }
 
-
+    /**
+     * Gets the arena as string
+     * @return the arena as string
+     */
     String arenaToString() {
         return arenaToString(new ArrayList<>());
     }
 
+    /**
+     * Writes the arena as a string
+     * @param markedCoordinates borders coordinates
+     * @return the string built
+     */
     String arenaToString(List<Coordinates> markedCoordinates) {
 
         StringBuilder builder = new StringBuilder();
@@ -160,6 +232,10 @@ public class BoardView {
         return builder.toString();
     }
 
+    /**
+     * Writes the killshot track as a string
+     * @return the string built
+     */
     String killshotTrackToString() {
         StringBuilder builder = new StringBuilder();
         String toAppend = "Skulls left: " + this.skulls + "\n";

@@ -6,9 +6,11 @@ import com.google.gson.JsonParser;
 import it.polimi.se2019.view.CLIView;
 import it.polimi.se2019.view.GUIApp;
 import javafx.application.Application;
-
 import java.io.FileReader;
 
+/**
+ * Class for handling clients
+ */
 public class Client {
 
     private static final String CONFIG_PATH = System.getProperty("user.home");
@@ -16,6 +18,10 @@ public class Client {
     private static final int DEFAULT_UI = 0;
     private static final int DEFAULT_CONNECTION = 0;
 
+    /**
+     * Main class
+     * @param args for options, not usable. Edit "client_settings.json" to set options
+     */
     public static void main(String[] args) {
 
         int connection;

@@ -1,5 +1,8 @@
 package it.polimi.se2019.view;
 
+/**
+ * Enumeration class for handling client state
+ */
 public enum ClientState {
     TYPING_NICKNAME,
     CHOOSING_CHARACTER,

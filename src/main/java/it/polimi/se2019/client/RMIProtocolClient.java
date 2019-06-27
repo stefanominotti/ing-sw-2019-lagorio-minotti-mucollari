@@ -13,11 +13,19 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static java.lang.Thread.sleep;
 
+/**
+ * Class for handling RMI protocol client, it handles thread to empty RMI messages queue and send message (RMI)
+ */
 public class RMIProtocolClient extends AbstractClient implements RMIClientInterface {
 
     private RMIServerInterface server;
     private final ConcurrentLinkedQueue<Message> queue;
 
+    /**
+     * Class constructor, it builds an RMI protocol client
+     * @param view which you want to pass
+     * @param ip of the server
+     */
     public RMIProtocolClient(View view, String ip) {
         super(view);
 
@@ -59,6 +67,10 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
         }).start();
     }
 
+    /**
+     * Sends a message to the client
+     * @param message you want to send
+     */
     @Override
     public void send(Message message) {
         try {
@@ -68,11 +80,18 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
         }
     }
 
+    /**
+     * Pings the client
+     */
     @Override
     public void ping() {
         // Used to check if client is still connected
     }
 
+    /**
+     * Notifies a message to the client adding it to the RMI messages queue
+     * @param message you want to notify
+     */
     @Override
     public void notify(Message message) {
         this.queue.add(message);

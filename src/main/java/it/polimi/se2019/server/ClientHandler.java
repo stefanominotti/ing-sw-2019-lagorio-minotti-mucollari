@@ -7,7 +7,9 @@ import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
+/**
+ * Class for handling client handler
+ */
 public class ClientHandler extends Thread {
 
     private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getName());
@@ -15,6 +17,11 @@ public class ClientHandler extends Thread {
     private final SocketServer server;
     private ServerSocket serverSocket;
 
+    /**
+     * Class constructor, it builds a client handler
+     * @param server of which you want to make a client handler
+     * @param port of the server
+     */
     ClientHandler(SocketServer server, int port) {
         this.server = server;
         try {
@@ -24,6 +31,9 @@ public class ClientHandler extends Thread {
         }
     }
 
+    /**
+     * Stops the server
+     */
     void stopServer() {
         try {
             this.serverSocket.close();
@@ -32,10 +42,17 @@ public class ClientHandler extends Thread {
         }
     }
 
+    /**
+     * Knows if the connection is active
+     * @return true if it is, else false
+     */
     boolean isClosed() {
         return this.serverSocket.isClosed();
     }
 
+    /**
+     * Runs the client handler, opening the connection
+     */
     @Override
     public void run() {
         boolean active = true;

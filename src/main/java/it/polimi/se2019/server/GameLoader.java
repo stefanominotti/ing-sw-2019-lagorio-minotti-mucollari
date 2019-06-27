@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
+/**
+ * Class for handling game loader
+ */
 public class GameLoader {
 
     private static final Logger LOGGER = Logger.getLogger(GameLoader.class.getName());
@@ -24,6 +26,9 @@ public class GameLoader {
     private JsonParser parser;
     private Gson gson;
 
+    /**
+     * Class constructor, it builds a game loader
+     */
     public GameLoader() {
         this.parser = new JsonParser();
         this.gson = new Gson();
@@ -37,6 +42,10 @@ public class GameLoader {
         this.board = new Board();
     }
 
+    /**
+     * Loads saved board from the game save
+     * @return board loaded
+     */
     public Board loadBoard() {
         FileReader reader;
         JsonObject jsonElement;
@@ -99,6 +108,9 @@ public class GameLoader {
         return this.board;
     }
 
+    /**
+     * Saves the board to the game save
+     */
     void saveBoard() {
         StringBuilder jObject = new StringBuilder("{");
         String toAppend = "\"board\":" + this.board.toJson() + ",";
@@ -155,6 +167,9 @@ public class GameLoader {
 
     }
 
+    /**
+     * Deletes the game save
+     */
     void deleteGame() {
         try {
             Files.delete(Paths.get(this.filePath));

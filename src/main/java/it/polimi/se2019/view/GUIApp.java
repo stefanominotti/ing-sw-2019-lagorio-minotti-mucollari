@@ -9,6 +9,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * Class for handling GUI application
+ */
 public class GUIApp extends Application {
 
     private static final String PATH = "utils/style/fxml/";
@@ -16,6 +19,10 @@ public class GUIApp extends Application {
     private Stage stage;
     private GUIView view;
 
+    /**
+     * Starts the application
+     * @param window has to be shown
+     */
     @Override
     public void start(Stage window) {
         this.stage = window;
@@ -25,6 +32,10 @@ public class GUIApp extends Application {
         this.stage.setOnCloseRequest(e -> System.exit(0));
     }
 
+    /**
+     * Shows an alert
+     * @param text which has to be shown
+     */
     void showAlert(String text) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -34,6 +45,10 @@ public class GUIApp extends Application {
         });
     }
 
+    /**
+     * Sets the scene you want to show
+     * @param scene you want to show
+     */
      void setScene(SceneType scene) {
         Platform.runLater(() -> {
             FXMLLoader loader = null;
