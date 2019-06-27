@@ -9,5 +9,5 @@ public enum TurnType {
     AFTER_DEATH,
     NORMAL,
     FINAL_FRENZY_FIRST,
-    FINAL_FRENZY_AFTER;
+    FINAL_FRENZY_AFTER
 }

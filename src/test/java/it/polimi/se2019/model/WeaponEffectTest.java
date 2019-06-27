@@ -6,7 +6,7 @@ import java.util.*;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class WeaponEffectTest {
 
@@ -44,7 +44,6 @@ public class WeaponEffectTest {
         assertEquals(TargetType.OTHERS, target.getType());
     }
 
-
     @Test
     public void getCostTest() {
         WeaponEffect effect = Weapon.ROCKET_LAUNCHER.getSecondaryEffectTwo().get(0);
@@ -53,5 +52,19 @@ public class WeaponEffectTest {
         cost.put(AmmoType.RED, 0);
         cost.put(AmmoType.YELLOW, 1);
         assertEquals(cost, effect.getCost());
+    }
+
+    @Test
+    public void isComboTest() {
+        WeaponEffect effect = Weapon.ROCKET_LAUNCHER.getSecondaryEffectTwo().get(0);
+        assertTrue(effect.isCombo());
+        effect = Weapon.LOCK_RIFLE.getPrimaryEffect().get(0);
+        assertFalse(effect.isCombo());
+    }
+
+    @Test
+    public void getRequiredDependencyTest() {
+        WeaponEffect effect = Weapon.ROCKET_LAUNCHER.getSecondaryEffectTwo().get(0);
+        assertEquals(0, (int) effect.getRequiredDependency());
     }
 }

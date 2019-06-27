@@ -49,7 +49,7 @@ public class Square {
     /**
      * Sets the nearby squares for the square
      */
-    void setNearbySquares(){
+    void setNearbySquares() {
         this.nearbySquares = new EnumMap<>(CardinalPoint.class);
         Square nearSquare;
         for(CardinalPoint cardinal : CardinalPoint.values()){
@@ -166,7 +166,7 @@ public class Square {
      * Gets the nearby squares and its direction from the square
      * @return Map with nearby squares and its direction
      */
-    public Map<CardinalPoint, Square> getNearbySquares() {
+    Map<CardinalPoint, Square> getNearbySquares() {
         return new EnumMap<>(this.nearbySquares);
     }
 
@@ -237,36 +237,18 @@ public class Square {
         this.weaponsStore.add(weapon);
     }
 
+    /**
+     * Removes a weapon card from the weapons store of the square
+     * @param weapon to remove from the square store
+     */
     void removeWeapon(WeaponCard weapon) {
         this.weaponsStore.remove(weapon);
     }
 
-    boolean isAtDirection(CardinalPoint direction, Square square) {
-        switch(direction) {
-            case EAST:
-                if(square.getY() == this.y && square.getX() < this.x) {
-                    return true;
-                }
-                break;
-            case WEST:
-                if(square.getY() == this.y && square.getX() > this.x) {
-                    return true;
-                }
-                break;
-            case NORTH:
-                if(square.getY() < this.y && square.getX() == this.x) {
-                    return true;
-                }
-                break;
-            case SOUTH:
-                if(square.getY() > this.y && square.getX() == this.x) {
-                    return true;
-                }
-        }
-        return false;
-    }
-
-
+    /** Calculates all the paths to a square
+     * @param square to which you want to calculate paths
+     * @return
+     */
     public List<List<Square>> pathsTo(Square square) {
         return new SquaresGraph(this.arena).findPaths(this, square);
     }
@@ -274,7 +256,7 @@ public class Square {
     /**
      * Gets the minimum distance from a square
      * @param square of which you want to calculate the minimum distance
-     * @return
+     * @return the minimum distance from the square
      */
     int minimumDistanceFrom(Square square) {
         return new SquaresGraph(this.arena).findMinimumDistance(this, square);

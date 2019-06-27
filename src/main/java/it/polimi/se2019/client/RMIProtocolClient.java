@@ -26,7 +26,10 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
         new Thread(() -> {
             while(true) {
                 if (!RMIProtocolClient.this.queue.isEmpty()) {
-                    getView().manageUpdate(RMIProtocolClient.this.queue.poll());
+                    Message message = RMIProtocolClient.this.queue.poll();
+                    if (message != null) {
+                        getView().manageUpdate(message);
+                    }
                 }
             }
         }).start();

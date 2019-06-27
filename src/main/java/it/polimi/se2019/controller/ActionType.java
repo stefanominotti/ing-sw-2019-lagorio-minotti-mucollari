@@ -8,5 +8,5 @@ public enum ActionType {
     SHOT,
     POWERUP,
     RELOAD,
-    CANCEL;
+    CANCEL
 }

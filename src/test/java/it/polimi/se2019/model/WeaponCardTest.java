@@ -9,32 +9,21 @@ public class WeaponCardTest {
     private Player playerTest = new Player(GameCharacter.D_STRUCT_OR, "testNickname", "token");
 
     @Test
-    public void getWeaponTypeTest() { assertEquals(Weapon.LOCK_RIFLE, weaponCard.getWeaponType()); }
-
-    /* @Test
-    public void getOwnerTest() {
-        assertNull(weaponCard.getOwner());
-        weaponCard.setOwner(playerTest);
-        assertEquals(playerTest, weaponCard.getOwner());
+    public void getWeaponTypeTest() {
+        assertEquals(Weapon.LOCK_RIFLE, weaponCard.getWeaponType());
     }
 
     @Test
-    public void setOwnerTest() {
-        weaponCard.setOwner(playerTest);
-        assertEquals(playerTest, weaponCard.getOwner());
-    } */
-
-    @Test
     public void setReadyTest() {
-        weaponCard.setReady(true);
+        this.weaponCard.setReady(true);
         assertTrue(weaponCard.isReady());
     }
 
     @Test
     public void isReadyTest() {
-        weaponCard.setReady(false);
-        assertFalse(weaponCard.isReady());
-        weaponCard.setReady(true);
-        assertTrue(weaponCard.isReady());
+        this.weaponCard.setReady(false);
+        assertFalse(this.weaponCard.isReady());
+        this.weaponCard.setReady(true);
+        assertTrue(this.weaponCard.isReady());
     }
 }
