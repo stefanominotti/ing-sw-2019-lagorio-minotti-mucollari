@@ -6,10 +6,19 @@ import it.polimi.se2019.view.View;
 import java.io.*;
 import java.net.Socket;
 
+/**
+ * Class for handling socket client, it handles thread to send message (Socket)
+ */
 public class SocketClient extends AbstractClient implements Runnable {
 
     private Socket socket;
 
+    /**
+     * Class constructor, it builds a socket client
+     * @param view you want to pass
+     * @param ip of the server
+     * @param port of the server for socket service
+     */
     public SocketClient(View view, String ip, int port) {
         super(view);
         try {
@@ -19,6 +28,10 @@ public class SocketClient extends AbstractClient implements Runnable {
         }
     }
 
+    /**
+     * Send a message to the client
+     * @param message you want to send
+     */
     @Override
     public void send(Message message) {
         try {
@@ -30,6 +43,9 @@ public class SocketClient extends AbstractClient implements Runnable {
         }
     }
 
+    /**
+     * Run the thread to handle client input
+     */
     @Override
     public void run() {
         try {
@@ -47,7 +63,7 @@ public class SocketClient extends AbstractClient implements Runnable {
                     } else {
                         getView().handleConnectionError();
                     }
-                } catch (IOException | ClassNotFoundException e) {
+                } catch (IOException | ClassNotFoundException | NullPointerException e) {
                     getView().handleConnectionError();
                 }
             }
@@ -56,6 +72,10 @@ public class SocketClient extends AbstractClient implements Runnable {
         }
     }
 
+    /**
+     * Notifies a message to the client
+     * @param message you want to notify
+     */
     @Override
     public void notify(Message message) {
        getView().manageUpdate(message);

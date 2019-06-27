@@ -5,6 +5,9 @@ import it.polimi.se2019.model.*;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * Class for handling effect possibility pack,
+ */
 public class EffectPossibilityPack implements Serializable {
     private List<String> targetsAmount;
     private List<GameCharacter> characters;
@@ -15,7 +18,18 @@ public class EffectPossibilityPack implements Serializable {
     private boolean require;
     private EffectType type;
 
-    public EffectPossibilityPack(List<String> targetsAmount, List<GameCharacter> characters,
+    /**
+     * 
+     * @param targetsAmount
+     * @param characters
+     * @param squares
+     * @param rooms
+     * @param cardinalPoints
+     * @param multipleSquares
+     * @param require
+     * @param type
+     */
+    EffectPossibilityPack(List<String> targetsAmount, List<GameCharacter> characters,
                                  List<Coordinates> squares, List<RoomColor> rooms, List<CardinalPoint> cardinalPoints,
                                  Map<Coordinates, List<GameCharacter>> multipleSquares, boolean require, EffectType type) {
         this.targetsAmount = targetsAmount;

@@ -155,7 +155,7 @@ public class EffectControllerTest {
                 apply(pack);
             } catch (UnsupportedOperationException e) {
                 if(effect.getEffectName() == null && !effect.isRequired()) {
-                    System.out.println("no targets available");
+                    System.out.println("not targets available");
                 } else {
                     throw new UnsupportedOperationException();
                 }
@@ -200,7 +200,7 @@ public class EffectControllerTest {
             System.out.println("*************");
         }
         catch (UnsupportedOperationException e) {
-            System.out.println("effets no available");
+            System.out.println("effects not available");
         }
         try {
             this.controller.setEffectOrder(WeaponEffectOrderType.SECONDARYONE);
@@ -209,7 +209,7 @@ public class EffectControllerTest {
         }
         catch (IllegalStateException ignore) {}
         catch (UnsupportedOperationException e) {
-            System.out.println("effets no available");
+            System.out.println("effects not available");
         }
         try {
             this.controller.setEffectOrder(WeaponEffectOrderType.SECONDARYTWO);
@@ -218,7 +218,7 @@ public class EffectControllerTest {
         }
         catch (IllegalStateException ignore) {}
         catch (UnsupportedOperationException e) {
-            System.out.println("effets no available");
+            System.out.println("effects not available");
         }
 
     }
@@ -237,7 +237,7 @@ public class EffectControllerTest {
         }
         catch (IllegalStateException ignore) {}
         catch (UnsupportedOperationException e) {
-            System.out.println("effets no available");
+            System.out.println("effects not available");
         }
     }
 }

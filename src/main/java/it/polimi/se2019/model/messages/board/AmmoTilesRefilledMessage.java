@@ -24,7 +24,7 @@ public class AmmoTilesRefilledMessage extends BoardMessage {
 
     /**
      * Gets the ammo tiles and their coordinates of the message
-     * @return map with ammo tiles and their quantity
+     * @return map with ammo tiles and their quantities
      */
     public Map<Coordinates, AmmoTile> getTiles() {
         return this.tiles;
