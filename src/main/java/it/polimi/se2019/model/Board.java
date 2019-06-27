@@ -3,7 +3,6 @@ package it.polimi.se2019.model;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.stream.MalformedJsonException;
 import it.polimi.se2019.model.messages.player.MarksToDamagesMessage;
 import it.polimi.se2019.model.messages.ammos.AmmosMessage;
 import it.polimi.se2019.model.messages.ammos.AmmosMessageType;
@@ -30,7 +29,6 @@ import it.polimi.se2019.view.PlayerBoard;
 import it.polimi.se2019.view.SquareView;
 
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -156,7 +154,7 @@ public class Board extends Observable {
 
         List<PlayerBoard> playerBoards = new ArrayList<>();
         List<Weapon> playerWeapons = new ArrayList<>();
-        Map<GameCharacter, String> otherPlayers = new HashMap<>();
+        Map<GameCharacter, String> otherPlayers = new EnumMap<>(GameCharacter.class);
         for(Player character : this.players) {
             List<Weapon> weapons = new ArrayList<>();
             for(WeaponCard weaponCard : player.getWeapons()) {
@@ -336,7 +334,6 @@ public class Board extends Observable {
                 handleSettingUpGameDisconnection(player);
                 break;
             case ENDED:
-                //TODO
                 break;
             default:
                 handleInGameDisconnection(player);
@@ -1140,7 +1137,8 @@ public class Board extends Observable {
         visibleRooms.add(playerSquare.getRoom());
 
         for(CardinalPoint point : CardinalPoint.values()) {
-            if(playerSquare.getNearbyAccessibility().get(point) && playerSquare.getNearbySquares().get(point).getRoom().getColor() != playerSquare.getRoom().getColor()
+            if(playerSquare.getNearbyAccessibility().get(point) &&
+                    playerSquare.getNearbySquares().get(point).getRoom().getColor() != playerSquare.getRoom().getColor()
                     && !visibleRooms.contains(playerSquare.getNearbySquares().get(point).getRoom())) {
                 visibleRooms.add(playerSquare.getNearbySquares().get(point).getRoom());
             }
@@ -1273,7 +1271,7 @@ public class Board extends Observable {
                 }
                 break;
             default:
-                // Ignore
+                break;
         }
         if (notify) {
             notifyChanges(new AttackMessage(target, player, damage, type));

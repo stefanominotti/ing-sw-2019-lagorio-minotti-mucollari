@@ -1,7 +1,6 @@
 package it.polimi.se2019.model.messages.client;
 
 import it.polimi.se2019.model.GameCharacter;
-import it.polimi.se2019.model.messages.Message;
 
 import java.util.List;
 

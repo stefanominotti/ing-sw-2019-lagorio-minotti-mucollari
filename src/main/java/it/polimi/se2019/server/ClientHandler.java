@@ -13,7 +13,6 @@ public class ClientHandler extends Thread {
     private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getName());
 
     private final SocketServer server;
-    private boolean active;
     private ServerSocket serverSocket;
 
     ClientHandler(SocketServer server, int port) {
@@ -21,12 +20,11 @@ public class ClientHandler extends Thread {
         try {
             this.serverSocket = new ServerSocket(port);
         } catch (IOException e) {
-           LOGGER.log(Level.SEVERE, "Error on creating Server Socket", e);
+           LOGGER.log(Level.SEVERE, "Error on creating Server Socket");
         }
     }
 
     void stopServer() {
-        this.active = false;
         try {
             this.serverSocket.close();
         } catch (IOException e) {
@@ -40,16 +38,18 @@ public class ClientHandler extends Thread {
 
     @Override
     public void run() {
-        this.active = true;
-        while(this.active) {
+        boolean active = true;
+        while(active) {
             Socket newClientConnection;
             try {
                 newClientConnection = this.serverSocket.accept();
                 this.server.addClient(new SocketVirtualClient(newClientConnection, this.server));
             } catch (SocketException e) {
+                active = false;
                 // Ignore
             } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Error on adding new SocketVirtualClient to Server", e);
+                active = false;
+                LOGGER.log(Level.SEVERE, "Error on adding new SocketVirtualClient to Server");
             }
         }
     }

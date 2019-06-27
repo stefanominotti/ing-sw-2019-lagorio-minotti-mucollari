@@ -7,7 +7,6 @@ import it.polimi.se2019.model.GameCharacter;
  */
 public class ScoreMessage extends PlayerMessage {
 
-    private GameCharacter character;
     private int score;
 
     /**

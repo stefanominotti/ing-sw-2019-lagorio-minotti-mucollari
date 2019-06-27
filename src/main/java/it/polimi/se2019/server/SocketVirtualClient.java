@@ -32,7 +32,7 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
             writer.writeObject(message);
             writer.flush();
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error on sending Message", e);
+            LOGGER.log(Level.SEVERE, "Error on sending Message");
         }
     }
 
@@ -55,7 +55,7 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
         } catch (IOException e) {
             this.server.notifyDisconnection(this);
         } catch (ClassNotFoundException e) {
-            LOGGER.log(Level.SEVERE, "Error on managing Stream", e);;
+            LOGGER.log(Level.SEVERE, "Error on managing Stream");
         }
         if(!this.socket.isClosed()) {
             this.socket.isClosed();

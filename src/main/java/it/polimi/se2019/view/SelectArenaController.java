@@ -1,12 +1,8 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.model.GameCharacter;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
-
-import java.rmi.RemoteException;
-import java.util.List;
 
 
 public class SelectArenaController extends AbstractSceneController {

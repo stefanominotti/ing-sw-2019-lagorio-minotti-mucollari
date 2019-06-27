@@ -56,6 +56,10 @@ public class SocketClient extends AbstractClient implements Runnable {
                 } catch (IOException e) {
                     getView().handleConnectionError();
                 }
+                if (inputStream == null) {
+                    getView().handleConnectionError();
+                    break;
+                }
                 try {
                     Message message = (Message) inputStream.readObject();
                     if (message != null) {

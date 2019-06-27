@@ -47,13 +47,13 @@ public class Room {
      * @return the spawn square of the room
      * @throws IllegalStateException if
      */
-    public Square getSpawn() throws IllegalStateException {
+    public Square getSpawn() {
         for(Square square : this.squares) {
             if(square.isSpawn()) {
                 return square;
             }
         }
-        throw new IllegalStateException("This room doesn't have a spawn point");
+        return null;
     }
 
     /**

@@ -21,6 +21,8 @@ import static it.polimi.se2019.view.ClientState.*;
 
 public class CLIView extends View {
 
+    private static final String INVALID_INPUT_MESSAGE = "Invalid input, retry:";
+    
     private boolean inputEnabled;
 
     public CLIView(int connection, String ip, int port) {
@@ -49,7 +51,7 @@ public class CLIView extends View {
         }
 
         if (input.equals("")) {
-            showMessage("Invalid input, retry: ");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
 
@@ -66,7 +68,8 @@ public class CLIView extends View {
             handlePowerupInput(input);
         } else if (getState() == SELECT_ACTION) {
             handleActionInput(input);
-        } else if (getState() == SELECT_MOVEMENT || getState() == SELECT_PICKUP || getState() == SELECT_POWERUP_POSITION) {
+        } else if (getState() == SELECT_MOVEMENT || getState() == SELECT_PICKUP ||
+                getState() == SELECT_POWERUP_POSITION) {
             handlePositionInput(input);
         } else if (getState() == SELECT_WEAPON || getState() == SWITCH_WEAPON || getState() == RECHARGE_WEAPON ||
                 getState() == USE_WEAPON) {
@@ -104,7 +107,7 @@ public class CLIView extends View {
             this.inputEnabled = false;
             return;
         }
-        showMessage("Invalid input, retry:");
+        showMessage(INVALID_INPUT_MESSAGE);
     }
 
     private void handleNicknameInput(String input) {
@@ -117,7 +120,7 @@ public class CLIView extends View {
         try {
             selection = Integer.parseInt(input);
         } catch (NumberFormatException e) {
-            showMessage("Invalid number, retry: ");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
         if (selection < 3 || selection > 8) {
@@ -142,7 +145,7 @@ public class CLIView extends View {
         try {
             selection = Integer.parseInt(input);
         } catch (NumberFormatException e) {
-            showMessage("Invalid number, retry: ");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
 
@@ -151,7 +154,7 @@ public class CLIView extends View {
             maxSize = getEnemyBoards().size();
         }
         if (selection > maxSize || selection <= 0) {
-            showMessage("Invalid input, retry: ");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
         selection--;
@@ -177,7 +180,7 @@ public class CLIView extends View {
             return;
         }
         if (input.split(",").length != 2) {
-            showMessage("Invalid input, retry:");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
         int x;
@@ -186,7 +189,7 @@ public class CLIView extends View {
             x = Integer.parseInt(input.split(",")[0]);
             y = Integer.parseInt(input.split(",")[1]);
         } catch (NumberFormatException e) {
-            showMessage("Invalid input, retry:");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
 
@@ -200,7 +203,7 @@ public class CLIView extends View {
         }
 
         if (toSend == null) {
-            showMessage("Invalid input, retry:");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
 
@@ -223,7 +226,7 @@ public class CLIView extends View {
         try {
             selection = Integer.parseInt(input);
         } catch (NumberFormatException e) {
-            showMessage("Invalid number, retry:");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
 
@@ -233,7 +236,7 @@ public class CLIView extends View {
         }
 
         if (0 >= selection || selection > maxNumber) {
-            showMessage("Invalid input, retry:");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
 
@@ -270,12 +273,12 @@ public class CLIView extends View {
                 if (!powerups.contains(getPowerupsSelection().get(index - 1))) {
                     powerups.add(getPowerupsSelection().get(index - 1));
                 } else {
-                    showMessage("Invalid input, retry: ");
+                    showMessage(INVALID_INPUT_MESSAGE);
                     return;
                 }
             }
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            showMessage("Invalid input, retry: ");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
         this.inputEnabled = false;
@@ -289,7 +292,7 @@ public class CLIView extends View {
         try {
             selection = Integer.parseInt(input);
         } catch (NumberFormatException e) {
-            showMessage("Invalid number, retry:");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
 
@@ -299,7 +302,7 @@ public class CLIView extends View {
         }
 
         if (0 >= selection || selection > maxNumber) {
-            showMessage("Invalid input, retry:");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
 
@@ -335,11 +338,11 @@ public class CLIView extends View {
         try {
             selection = Integer.parseInt(input);
         } catch (NumberFormatException e) {
-            showMessage("Invalid input, retry:");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
         if (0 >= selection || selection > getActionsSelection().size() + 3) {
-            showMessage("Invalid input, retry:");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
 
@@ -377,7 +380,7 @@ public class CLIView extends View {
         try {
             selection = Integer.parseInt(input);
         } catch (NumberFormatException e) {
-            showMessage("Invalid input, retry:");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
 
@@ -398,7 +401,7 @@ public class CLIView extends View {
         }
 
         if (0 >= selection || selection > payableAmmos.size() + payablePowerups.size()) {
-            showMessage("Invalid number, retry:");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
         selection--;
@@ -466,7 +469,7 @@ public class CLIView extends View {
         }
 
         if (!valid) {
-            showMessage("Invalid number, retry:");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
 
@@ -479,7 +482,7 @@ public class CLIView extends View {
     private void handleDecisionInput(String input) {
         input = input.toUpperCase();
         if (!input.equals("Y") && !input.equals("N")) {
-            showMessage("Invalid input, retry:");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
 
@@ -502,7 +505,7 @@ public class CLIView extends View {
             int index = Integer.parseInt(input);
             square.add(getEffectPossibility().getSquares().get(index - 1));
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            showMessage("Invalid input, retry: ");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
         super.setPossibilitySquares(square);
@@ -516,7 +519,7 @@ public class CLIView extends View {
             int index = Integer.parseInt(input);
             room.add(getEffectPossibility().getRooms().get(index - 1));
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            showMessage("Invalid input, retry: ");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
         super.setPossibilityRooms(room);
@@ -530,7 +533,7 @@ public class CLIView extends View {
             int index = Integer.parseInt(input);
             cardinal.add(getEffectPossibility().getCardinalPoints().get(index - 1));
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            showMessage("Invalid input, retry: ");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
         super.setPossibilityCardinal(cardinal);
@@ -547,19 +550,19 @@ public class CLIView extends View {
                 if (!characters.contains(getEffectPossibility().getCharacters().get(index - 1))) {
                     characters.add(getEffectPossibility().getCharacters().get(index - 1));
                 } else {
-                    showMessage("Invalid input, retry: ");
+                    showMessage(INVALID_INPUT_MESSAGE);
                     return;
                 }
             }
             List<String> targetsAmaunt = getEffectPossibility().getTargetsAmount();
             if (targetsAmaunt.size() == 1 && characters.size() != Integer.parseInt(targetsAmaunt.get(0)) ||
                     targetsAmaunt.size() > 1 && (characters.size() < Integer.parseInt(targetsAmaunt.get(0)) ||
-                            (targetsAmaunt.get(1) != "MAX" && characters.size() > Integer.parseInt(targetsAmaunt.get(1))))) {
-                showMessage("Invalid input, retry: ");
+                            (!targetsAmaunt.get(1).equals("MAX") && characters.size() > Integer.parseInt(targetsAmaunt.get(1))))) {
+                showMessage(INVALID_INPUT_MESSAGE);
                 return;
             }
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            showMessage("Invalid input, retry: ");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
         super.setPossibilityCharacters(characters);
@@ -582,7 +585,7 @@ public class CLIView extends View {
                 int squareIndex = Integer.parseInt(strings[0]) - 1;
                 int characterIndex = Integer.parseInt(strings[1]) - 1;
                 if (squareIndex < 0 || characterIndex < 0 || squareIndex >= availableCharacters.size()) {
-                    showMessage("Invalid input, retry: ");
+                    showMessage(INVALID_INPUT_MESSAGE);
                     return;
                 }
                 for (Map.Entry<Coordinates, List<GameCharacter>> characters : availableCharacters.entrySet()) {
@@ -591,7 +594,7 @@ public class CLIView extends View {
                         availableSquares.remove(characters.getKey());
                         break;
                     } else if (squareIndex < 0 || squareIndex == 0 && (!availableSquares.contains(characters.getKey()) || characterIndex >= characters.getValue().size())) {
-                        showMessage("Invalid input, retry: ");
+                        showMessage(INVALID_INPUT_MESSAGE);
                         return;
                     }
                     squareIndex--;
@@ -601,11 +604,11 @@ public class CLIView extends View {
             if (targetsAmount.size() == 1 && selectedCharacters.size() != Integer.parseInt(targetsAmount.get(0)) ||
                     targetsAmount.size() > 1 && (selectedCharacters.size() < Integer.parseInt(targetsAmount.get(0)) ||
                             (!targetsAmount.get(1).equals("MAX") && selectedCharacters.size() > Integer.parseInt(targetsAmount.get(1))))) {
-                showMessage("Invalid input, retry: ");
+                showMessage(INVALID_INPUT_MESSAGE);
                 return;
             }
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            showMessage("Invalid input, retry: ");
+            showMessage(INVALID_INPUT_MESSAGE);
             return;
         }
         this.inputEnabled = false;
@@ -642,6 +645,8 @@ public class CLIView extends View {
                     break;
                 case STOP:
                     showMessage("Need more players to start the game");
+                    break;
+                default:
                     break;
             }
         }
@@ -1058,7 +1063,8 @@ public class CLIView extends View {
         StringBuilder text = new StringBuilder("Game finished, ranking will be shown soon...");
         int index = 0;
         for(Map.Entry<GameCharacter, Integer> character : ranking.entrySet()) {
-            text.append("\n" + index + ": " + character.getKey() + " " + character.getValue());
+            String toAppend = "\n" + index + ": " + character.getKey() + " " + character.getValue();
+            text.append(toAppend);
             index++;
         }
         text.setLength(text.length() - 1);
@@ -1161,6 +1167,8 @@ public class CLIView extends View {
                 break;
             case NEWTON:
                 showMessage("You can move your target in the squares marked with '***'\nInsert [x,y]:");
+                break;
+            default:
                 break;
         }
         this.inputEnabled = true;
@@ -1428,23 +1436,30 @@ public class CLIView extends View {
         super.handleMultipleSquareRequest();
         List<String> targetsAmount = getEffectPossibility().getTargetsAmount();
         StringBuilder text = new StringBuilder();
+        String toAppend;
         if (targetsAmount.size() == 1) {
             int amount = Integer.parseInt(targetsAmount.get(0));
-            text.append("Choose " + amount + " players each in different squares\n");
-        } else if (targetsAmount.get(1) == "MAX") {
+            toAppend = "Choose " + amount + " players each in different squares\n";
+            text.append(toAppend);
+        } else if (targetsAmount.get(1).equals("MAX")) {
             int min = Integer.parseInt(targetsAmount.get(0));
-            text.append("Choose at least " + min + " players each in different squares\n");
+            toAppend = "Choose at least " + min + " players each in different squares\n";
+            text.append(toAppend);
         } else {
             int min = Integer.parseInt(targetsAmount.get(0));
             int max = Integer.parseInt(targetsAmount.get(1));
-            text.append("Choose from " + min + " to " + max + " players each in different squares\n");
+            toAppend = "Choose from " + min + " to " + max + " players each in different squares\n";
+            text.append(toAppend);
         }
         int squareIndex = 1;
-        for (Map.Entry<Coordinates, List<GameCharacter>> square : getEffectPossibility().getMultipleSquares().entrySet()) {
-            text.append("\nFrom [" + square.getKey().getX() + ", " + square.getKey().getY() + "]:\n");
+        for (Map.Entry<Coordinates, List<GameCharacter>> square :
+                getEffectPossibility().getMultipleSquares().entrySet()) {
+            toAppend = "\nFrom [" + square.getKey().getX() + ", " + square.getKey().getY() + "]:\n";
+            text.append(toAppend);
             int characterIndex = 1;
             for (GameCharacter character : square.getValue()) {
-                text.append("[" + squareIndex + "." + characterIndex + "] - " + character + "\n");
+                toAppend = "[" + squareIndex + "." + characterIndex + "] - " + character + "\n";
+                text.append(toAppend);
                 characterIndex++;
             }
             squareIndex++;
@@ -1510,6 +1525,8 @@ public class CLIView extends View {
                 case RELOAD:
                     toAppend = "[" + number + "] - Reload weapons\n";
                     text.append(toAppend);
+                    break;
+                default:
                     break;
             }
             number++;

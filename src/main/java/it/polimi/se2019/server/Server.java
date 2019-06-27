@@ -42,8 +42,7 @@ public class Server {
     private Server() {
         this.portRMI = DEFAULT_PORT_RMI;
         this.portSocket = DEFAULT_PORT_SOCKET;
-        try {
-            FileReader settings = new FileReader(PATH + SERVER_SETTINGS);
+        try(FileReader settings = new FileReader(PATH + SERVER_SETTINGS)) {
             Gson gson = new Gson();
             JsonParser parser = new JsonParser();
             JsonObject jsonElement = (JsonObject)parser.parse(settings);

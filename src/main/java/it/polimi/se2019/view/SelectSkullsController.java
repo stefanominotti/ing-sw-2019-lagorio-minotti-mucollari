@@ -3,8 +3,6 @@ package it.polimi.se2019.view;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 
-import java.rmi.RemoteException;
-
 public class SelectSkullsController extends AbstractSceneController {
 
     @FXML

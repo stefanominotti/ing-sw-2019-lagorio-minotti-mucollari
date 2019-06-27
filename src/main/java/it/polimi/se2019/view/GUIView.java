@@ -14,12 +14,12 @@ import static it.polimi.se2019.view.ClientState.*;
 
 public class GUIView extends View {
 
-    private GUIApp GUIApp;
+    private GUIApp guiApp;
     private AbstractSceneController controller;
 
-    public GUIView(int connection, String ip, int port,  GUIApp GUIApp) {
+    GUIView(int connection, String ip, int port,  GUIApp guiApp) {
         super();
-        this.GUIApp = GUIApp;
+        this.guiApp = guiApp;
         super.connect(connection, ip, port);
     }
 
@@ -29,13 +29,13 @@ public class GUIView extends View {
 
     private void setScene(SceneType scene) {
         this.controller = null;
-        this.GUIApp.setScene(scene);
+        this.guiApp.setScene(scene);
         synchronized (this) {
             while(this.controller == null) {
                 try {
                     this.wait();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Thread.currentThread().interrupt();
                 }
             }
         }
@@ -43,7 +43,7 @@ public class GUIView extends View {
 
     void handleNicknameInput(String input) {
         if (input.equalsIgnoreCase("")) {
-            this.GUIApp.showAlert("Invalid input!");
+            this.guiApp.showAlert("Invalid input!");
             return;
         }
         getClient().send(new NicknameMessage(NicknameMessageType.CONNECTED, input));
@@ -71,7 +71,7 @@ public class GUIView extends View {
 
     @Override
     public void handleConnectionError() {
-        this.GUIApp.setScene(SceneType.CONNECTION_ERROR);
+        this.guiApp.setScene(SceneType.CONNECTION_ERROR);
         (new Timer()).schedule(new TimerTask() {
             @Override
             public void run() {
@@ -82,7 +82,7 @@ public class GUIView extends View {
 
     @Override
     void handleInvalidToken() {
-        this.GUIApp.setScene(SceneType.INVALID_TOKEN);
+        this.guiApp.setScene(SceneType.INVALID_TOKEN);
     }
 
     @Override
@@ -98,14 +98,14 @@ public class GUIView extends View {
             super.resetSelections();
         }
         super.handleNicknameDuplicated();
-        this.GUIApp.showAlert("Nickname duplicated!");
+        this.guiApp.showAlert("Nickname duplicated!");
     }
 
     @Override
     void handleCharacterSelectionRequest(List<GameCharacter> availables) {
         super.handleCharacterSelectionRequest(availables);
         if(!getCharactersSelection().isEmpty()) {
-            this.GUIApp.showAlert("Character already choosen!");
+            this.guiApp.showAlert("Character already choosen!");
             ((SelectCharacterController) this.controller).enableCharacters(availables);
             return;
         }
@@ -165,6 +165,8 @@ public class GUIView extends View {
                     break;
                 case STOP:
                     ((LobbyController) this.controller).setMessage("loading.gif", "Waiting for players...");
+                    break;
+                default:
                     break;
             }
         }

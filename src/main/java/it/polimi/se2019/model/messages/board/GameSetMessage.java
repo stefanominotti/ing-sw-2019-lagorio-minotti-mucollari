@@ -3,7 +3,6 @@ package it.polimi.se2019.model.messages.board;
 import it.polimi.se2019.model.CardinalPoint;
 import it.polimi.se2019.model.Coordinates;
 import it.polimi.se2019.model.RoomColor;
-import it.polimi.se2019.model.messages.Message;
 
 import java.util.Map;
 

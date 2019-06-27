@@ -83,9 +83,9 @@ public abstract class View {
 
     void connect(int connectionType, String ip, int port) {
         if (connectionType == 0) {
-            Runnable r = new SocketClient(this, ip, port);
-            (new Thread(r)).start();
-            this.client = (SocketClient)r;
+            SocketClient s = new SocketClient(this, ip, port);
+            (new Thread(s)).start();
+            this.client = s;
         } else {
             try {
                 this.client = new RMIProtocolClient(this, ip);
@@ -159,15 +159,15 @@ public abstract class View {
         return this.currentWeapon;
     }
 
-    public void setCurrentWeapon(Weapon currentWeapon) {
+    void setCurrentWeapon(Weapon currentWeapon) {
         this.currentWeapon = currentWeapon;
     }
 
-    public boolean isWeaponActivated() {
+    boolean isWeaponActivated() {
         return this.weaponActivated;
     }
 
-    public void setWeaponActivated(boolean weaponActivated) {
+    void setWeaponActivated(boolean weaponActivated) {
         this.weaponActivated = weaponActivated;
     }
 
@@ -183,7 +183,7 @@ public abstract class View {
         return new ArrayList<>(this.paidPowerups);
     }
 
-    public EffectPossibilityPack getEffectPossibility() {
+    EffectPossibilityPack getEffectPossibility() {
         return this.effectPossibility;
     }
 
@@ -279,9 +279,9 @@ public abstract class View {
     }
 
     private PlayerBoard getBoardByCharacter(GameCharacter character) {
-        for (PlayerBoard board : this.enemyBoards) {
-            if (board.getCharacter() == character) {
-                return board;
+        for (PlayerBoard playerBoard : this.enemyBoards) {
+            if (playerBoard.getCharacter() == character) {
+                return playerBoard;
             }
         }
         return null;
@@ -294,6 +294,8 @@ public abstract class View {
                 break;
             case DUPLICATED:
                 handleNicknameDuplicated();
+                break;
+            default:
                 break;
         }
     }
@@ -313,6 +315,8 @@ public abstract class View {
                 break;
             case POWERUP:
                 handlePowerupTimer(message.getType());
+                break;
+            default:
                 break;
         }
     }
@@ -383,14 +387,14 @@ public abstract class View {
     }
 
     void handleBoardFlip(GameCharacter player) {
-        PlayerBoard board;
+        PlayerBoard playerBoard;
         if (player == this.character) {
-            board = this.selfPlayerBoard;
+            playerBoard = this.selfPlayerBoard;
         } else {
-            board = getBoardByCharacter(player);
+            playerBoard = getBoardByCharacter(player);
         }
-        if (board != null) {
-            board.flipBoard();
+        if (playerBoard != null) {
+            playerBoard.flipBoard();
         }
     }
 
@@ -401,14 +405,14 @@ public abstract class View {
     }
 
     void handleDeath(GameCharacter player) {
-        PlayerBoard board;
+        PlayerBoard playerBoard;
         if (player == this.character) {
-            board = this.selfPlayerBoard;
+            playerBoard = this.selfPlayerBoard;
         } else {
-            board = getBoardByCharacter(player);
+            playerBoard = getBoardByCharacter(player);
         }
-        if (board != null) {
-            board.resetDamages();
+        if (playerBoard != null) {
+            playerBoard.resetDamages();
         }
     }
 
@@ -553,6 +557,8 @@ public abstract class View {
                         ((LoadViewMessage) message).getOtherPlayers(), ((LoadViewMessage) message).isFrenzy(),
                         ((LoadViewMessage) message).isBeforeFirstPlayer());
                 break;
+            default:
+                break;
         }
     }
 
@@ -607,12 +613,10 @@ public abstract class View {
     }
 
     private void update(PowerupMessage message) {
-        switch (message.getType()) {
-            case ADD:
-                handlePowerupAdded(message.getCharacter(), message.getPowerup());
-                break;
-            default:
-                handlePowerupRemoved(message.getCharacter(), message.getPowerup(), message.getType());
+        if (message.getType() == PowerupMessageType.ADD) {
+            handlePowerupAdded(message.getCharacter(), message.getPowerup());
+        } else {
+            handlePowerupRemoved(message.getCharacter(), message.getPowerup(), message.getType());
         }
     }
 
@@ -645,6 +649,9 @@ public abstract class View {
                 break;
             case REMOVE:
                 handleRemoveAmmos(message.getCharacter(), message.getAmmos());
+                break;
+            default:
+                break;
         }
     }
 
@@ -805,6 +812,8 @@ public abstract class View {
                 break;
             case PERSISTENCE:
                 handlePersistenceFinish();
+            default:
+                break;
         }
     }
 
@@ -896,6 +905,8 @@ public abstract class View {
             case EFFECT:
                 handleEffectRequest((List<WeaponEffectOrderType>) message.getList());
                 break;
+            default:
+                break;
         }
     }
 
@@ -981,6 +992,8 @@ public abstract class View {
             case PERSISTENCE:
                 handlePersistenceRequest();
                 break;
+            default:
+                break;
         }
     }
 
@@ -992,7 +1005,7 @@ public abstract class View {
         this.state = EFFECT_REQUIRE_SELECTION;
     }
 
-    void handleEffectSelections() {
+    private void handleEffectSelections() {
         if (this.effectPossibility.getType() == EffectType.SELECT) {
             handleEffectSelectRequest();
         } else if (!this.effectPossibility.getMultipleSquares().isEmpty()) {
@@ -1055,10 +1068,6 @@ public abstract class View {
         handleEffectSelections();
     }
 
-    void setPossibilityMutipleSquares(Map<Coordinates, List<GameCharacter>> mutipleSquares) {
-        this.possibilitySelections.setMultipleSquares(mutipleSquares);
-    }
-
     void selectionEffectFinish() {
         this.client.send(new SingleSelectionMessage(SelectionMessageType.EFFECT_POSSIBILITY, this.character,
                 this.possibilitySelections));
@@ -1078,10 +1087,10 @@ public abstract class View {
             writer.write(message);
             writer.flush();
         } catch (NoSuchAlgorithmException e) {
-            LOGGER.log(Level.SEVERE, "Error SHA-256 algorithm", e);
+            LOGGER.log(Level.SEVERE, "Error SHA-256 algorithm");
         }
         catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error writing data", e);
+            LOGGER.log(Level.SEVERE, "Error writing data");
         }
         return hexString.toString();
     }
@@ -1101,10 +1110,8 @@ public abstract class View {
                 hexString.append(Integer.toHexString(0xFF & digest[i]));
             }
             return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.log(Level.SEVERE, "Error SHA-256 algorithm", e);
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error corrupt data", e);
+        } catch (NoSuchAlgorithmException | IOException e) {
+            handleConnectionError();
         }
         return null;
     }

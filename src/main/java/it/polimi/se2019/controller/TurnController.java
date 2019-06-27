@@ -16,7 +16,7 @@ import static java.util.stream.Collectors.toMap;
 /**
  * Class for handling turn controller
  */
-public class TurnController {
+class TurnController {
 
     private GameController controller;
     private Board board;
@@ -36,7 +36,7 @@ public class TurnController {
      * @param controller the game controller in which the turn controller has to be used
      * @param effectsController the effect controller
      */
-    public TurnController(Board board, GameController controller, EffectsController effectsController) {
+    TurnController(Board board, GameController controller, EffectsController effectsController) {
         this.state = TurnState.SELECTACTION;
         this.board = board;
         this.controller = controller;
@@ -357,7 +357,7 @@ public class TurnController {
         } else {
             if (this.finalFrenzy && this.beforeFirstPlayer) {
                 availableActions = new ArrayList<>(Arrays.asList(ActionType.MOVE, ActionType.PICKUP));
-            } else if (this.finalFrenzy && !this.beforeFirstPlayer) {
+            } else if (this.finalFrenzy) {
                 availableActions = new ArrayList<>(Arrays.asList(ActionType.PICKUP));
             } else {
                 availableActions = new ArrayList<>(Arrays.asList(ActionType.MOVE, ActionType.PICKUP));
@@ -365,7 +365,7 @@ public class TurnController {
 
             if (!this.finalFrenzy && this.activePlayer.getDamages().size() < 6) {
                 this.effectsController.setActivePlayer(this.activePlayer);
-                if (!this.effectsController.getAvailableWeapons().isEmpty() && !this.finalFrenzy) {
+                if (!this.effectsController.getAvailableWeapons().isEmpty()) {
                     availableActions.add(ActionType.SHOT);
                 }
             } else if (!getMoveReloadShootMovements().isEmpty()) {
@@ -408,7 +408,8 @@ public class TurnController {
      * @param coordinates chosen where the player wants to move
      */
     void movementAction(Coordinates coordinates) {
-        this.board.movePlayer(this.activePlayer, this.board.getArena().getSquareByCoordinate(coordinates.getX(), coordinates.getY()));
+        this.board.movePlayer(this.activePlayer, this.board.getArena().getSquareByCoordinate(coordinates.getX(),
+                coordinates.getY()));
         if (!this.moveShoot) {
             handleEndAction();
         } else {
@@ -585,7 +586,7 @@ public class TurnController {
             endTurn();
             return;
         }
-        if (toReload.isEmpty() && this.moveShoot) {
+        if (toReload.isEmpty()) {
             this.effectsController.setActivePlayer(this.activePlayer);
             if (this.effectsController.getAvailableWeapons().isEmpty()) {
                 handleEndAction();
@@ -608,7 +609,7 @@ public class TurnController {
             endTurn();
             return;
         }
-        if (weapon == null && this.moveShoot) {
+        if (weapon == null) {
             this.effectsController.setActivePlayer(this.activePlayer);
             if (this.effectsController.getAvailableWeapons().isEmpty()) {
                 handleEndAction();
@@ -674,8 +675,7 @@ public class TurnController {
      * Knows if the player can use Newton powerup
      * @return true if he can, else false
      */
-    public boolean canUseNewton() {
-        List<Player> targets = new ArrayList<>();
+    boolean canUseNewton() {
         for (Player target : this.board.getPlayers()) {
             if (!target.isConnected() || target.getPosition() == null || target == this.activePlayer) {
                 continue;
@@ -688,17 +688,14 @@ public class TurnController {
             }
             current = this.board.getArena().getSquareByCoordinate(x - 1, y);
             if (current != null && current.getNearbyAccessibility().get(CardinalPoint.EAST)) {
-                targets.add(target);
                 return true;
             }
             current = this.board.getArena().getSquareByCoordinate(x, y + 1);
             if (current != null && current.getNearbyAccessibility().get(CardinalPoint.SOUTH)) {
-                targets.add(target);
                 return true;
             }
             current = this.board.getArena().getSquareByCoordinate(x, y - 1);
             if (current != null && current.getNearbyAccessibility().get(CardinalPoint.NORTH)) {
-                targets.add(target);
                 return true;
             }
         }

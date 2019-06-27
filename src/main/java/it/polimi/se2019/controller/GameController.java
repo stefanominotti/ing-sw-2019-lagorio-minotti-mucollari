@@ -100,6 +100,9 @@ public class GameController implements Observer {
                 break;
             case DISCONNECTED:
                 handleClientDisconnected(message.getCharacter());
+                break;
+            default:
+                break;
         }
 
     }
@@ -172,6 +175,8 @@ public class GameController implements Observer {
             case SKULLS:
                 handleSkullsReceived(((SkullsMessage) message).getSkulls());
                 break;
+            default:
+                break;
         }
     }
 
@@ -206,8 +211,7 @@ public class GameController implements Observer {
      * @param message received
      */
     private void update(SelectionListMessage message) {
-        switch (message.getType()) {
-            case USE_POWERUP:
+        if (message.getType() == SelectionMessageType.USE_POWERUP) {
                 this.powerupRequests--;
                 if (this.powerupRequests == 0) {
                     this.powerupRequestsTimer.cancel();
@@ -251,7 +255,7 @@ public class GameController implements Observer {
                 handlePowerupDiscardSelection((Powerup) message.getSelection());
                 break;
             case USE_POWERUP:
-                if(this.powerupRequests == 1 && ((Powerup) message.getSelection()) == null) {
+                if(this.powerupRequests == 1 && message.getSelection() == null) {
                     this.powerupRequests--;
                     this.effectsController.handleEffectsQueue();
                 } else {
@@ -491,13 +495,10 @@ public class GameController implements Observer {
      * @return true if he can, else false
      */
     boolean canPayPowerup() {
-        if(this.turnController.getActivePlayer().getAvailableAmmos().get(AmmoType.YELLOW) == 0 &&
+        return !(this.turnController.getActivePlayer().getAvailableAmmos().get(AmmoType.YELLOW) == 0 &&
                 this.turnController.getActivePlayer().getAvailableAmmos().get(AmmoType.RED) == 0 &&
                 this.turnController.getActivePlayer().getAvailableAmmos().get(AmmoType.BLUE) == 0 &&
-                this.turnController.getActivePlayer().getPowerups().size() - 1 == 0) {
-            return false;
-        }
-        return true;
+                this.turnController.getActivePlayer().getPowerups().size() - 1 == 0);
     }
 
     /**
@@ -506,12 +507,14 @@ public class GameController implements Observer {
      */
     void askPowerup(List<GameCharacter> players) {
         this.effectTargets = players;
-        if(checkTagbackGrenadeCharacters(players).isEmpty() &&
-                (this.turnController.getActivePlayer().getPowerupsByType(PowerupType.TARGETING_SCOPE).isEmpty() || !canPayPowerup())) {
+        if (checkTagbackGrenadeCharacters(players).isEmpty() &&
+                (this.turnController.getActivePlayer().getPowerupsByType(PowerupType.TARGETING_SCOPE).isEmpty() ||
+                        !canPayPowerup())) {
             this.effectsController.handleEffectsQueue();
             return;
         } else if (checkTagbackGrenadeCharacters(players).isEmpty() &&
-                !this.turnController.getActivePlayer().getPowerupsByType(PowerupType.TARGETING_SCOPE).isEmpty() && canPayPowerup()) {
+                !this.turnController.getActivePlayer().getPowerupsByType(PowerupType.TARGETING_SCOPE).isEmpty() &&
+                canPayPowerup()) {
             checkTargetingScope();
             return;
         }

@@ -1,6 +1,5 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.model.Board;
 import it.polimi.se2019.model.GameCharacter;
 import it.polimi.se2019.model.messages.*;
 import it.polimi.se2019.model.messages.board.BoardMessage;
@@ -25,8 +24,6 @@ import java.util.logging.Logger;
 
 public class
         VirtualView extends Observable implements Observer {
-
-    private static final Logger LOGGER = Logger.getLogger(VirtualView.class.getName());
 
     private Server server;
 
@@ -121,6 +118,8 @@ public class
                 break;
             case LOAD_VIEW:
                 send(message);
+                break;
+            default:
                 break;
         }
     }

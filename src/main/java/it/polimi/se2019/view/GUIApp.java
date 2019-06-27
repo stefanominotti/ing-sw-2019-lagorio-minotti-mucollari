@@ -66,7 +66,7 @@ public class GUIApp extends Application {
             try {
                 this.stage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
             AbstractSceneController controller = loader.getController();
             controller.setView(this.view);

@@ -2,7 +2,6 @@ package it.polimi.se2019.model.messages.board;
 
 import it.polimi.se2019.model.Coordinates;
 import it.polimi.se2019.model.Weapon;
-import it.polimi.se2019.model.messages.Message;
 
 import java.util.Map;
 

@@ -10,7 +10,6 @@ import it.polimi.se2019.model.messages.selections.SelectionListMessage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Class for handling powerups
@@ -30,7 +29,7 @@ public class PowerupsController {
      * @param controller the game controller
      * @param turnController the turn controller
      */
-    public PowerupsController(Board board, GameController controller, TurnController turnController) {
+    PowerupsController(Board board, GameController controller, TurnController turnController) {
         this.board = board;
         this.controller = controller;
         this.turnController = turnController;
@@ -42,7 +41,7 @@ public class PowerupsController {
      * @param powerup which powerup is wanted to use
      * @param target of the powerup effect
      */
-    public void startEffect(GameCharacter player, Powerup powerup, Player target) {
+    void startEffect(GameCharacter player, Powerup powerup, Player target) {
         this.activePlayer = this.board.getPlayerByCharacter(player);
         this.board.removePowerup(this.board.getPlayerByCharacter(player), powerup);
         this.target = target;
@@ -65,7 +64,7 @@ public class PowerupsController {
      * @param player who is using the powerup
      * @param powerup which powerup is wanted to use
      */
-    public void startEffect(GameCharacter player, Powerup powerup) {
+    void startEffect(GameCharacter player, Powerup powerup) {
         startEffect(player, powerup, null);
     }
 
@@ -74,48 +73,45 @@ public class PowerupsController {
      */
     private void sendPositions() {
         List<Coordinates> positions = new ArrayList<>();
-        switch (this.activePowerup) {
-            case TELEPORTER:
-                for (Square s : this.board.getArena().getAllSquares()) {
-                    positions.add(new Coordinates(s.getX(), s.getY()));
-                }
-                break;
-            case NEWTON:
-                int x = this.target.getPosition().getX();
-                int y = this.target.getPosition().getY();
-                Square current = this.board.getArena().getSquareByCoordinate(x + 1, y);
+        if (this.activePowerup == PowerupType.TELEPORTER) {
+            for (Square s : this.board.getArena().getAllSquares()) {
+                positions.add(new Coordinates(s.getX(), s.getY()));
+            }
+        } else if (this.activePowerup == PowerupType.NEWTON) {
+            int x = this.target.getPosition().getX();
+            int y = this.target.getPosition().getY();
+            Square current = this.board.getArena().getSquareByCoordinate(x + 1, y);
+            if (current != null && current.getNearbyAccessibility().get(CardinalPoint.WEST)) {
+                positions.add(new Coordinates(x + 1, y));
+                current = this.board.getArena().getSquareByCoordinate(x + 2, y);
                 if (current != null && current.getNearbyAccessibility().get(CardinalPoint.WEST)) {
-                    positions.add(new Coordinates(x + 1, y));
-                    current = this.board.getArena().getSquareByCoordinate(x + 2, y);
-                    if (current != null && current.getNearbyAccessibility().get(CardinalPoint.WEST)) {
-                        positions.add(new Coordinates(x + 2, y));
-                    }
+                    positions.add(new Coordinates(x + 2, y));
                 }
-                current = this.board.getArena().getSquareByCoordinate(x - 1, y);
+            }
+            current = this.board.getArena().getSquareByCoordinate(x - 1, y);
+            if (current != null && current.getNearbyAccessibility().get(CardinalPoint.EAST)) {
+                positions.add(new Coordinates(x - 1, y));
+                current = this.board.getArena().getSquareByCoordinate(x - 2, y);
                 if (current != null && current.getNearbyAccessibility().get(CardinalPoint.EAST)) {
-                    positions.add(new Coordinates(x - 1, y));
-                    current = this.board.getArena().getSquareByCoordinate(x - 2, y);
-                    if (current != null && current.getNearbyAccessibility().get(CardinalPoint.EAST)) {
-                        positions.add(new Coordinates(x - 2, y));
-                    }
+                    positions.add(new Coordinates(x - 2, y));
                 }
-                current = this.board.getArena().getSquareByCoordinate(x, y - 1);
+            }
+            current = this.board.getArena().getSquareByCoordinate(x, y - 1);
+            if (current != null && current.getNearbyAccessibility().get(CardinalPoint.SOUTH)) {
+                positions.add(new Coordinates(x, y - 1));
+                current = this.board.getArena().getSquareByCoordinate(x, y - 2);
                 if (current != null && current.getNearbyAccessibility().get(CardinalPoint.SOUTH)) {
-                    positions.add(new Coordinates(x, y - 1));
-                    current = this.board.getArena().getSquareByCoordinate(x, y - 2);
-                    if (current != null && current.getNearbyAccessibility().get(CardinalPoint.SOUTH)) {
-                        positions.add(new Coordinates(x, y - 2));
-                    }
+                    positions.add(new Coordinates(x, y - 2));
                 }
-                current = this.board.getArena().getSquareByCoordinate(x, y + 1);
+            }
+            current = this.board.getArena().getSquareByCoordinate(x, y + 1);
+            if (current != null && current.getNearbyAccessibility().get(CardinalPoint.NORTH)) {
+                positions.add(new Coordinates(x, y + 1));
+                current = this.board.getArena().getSquareByCoordinate(x, y + 2);
                 if (current != null && current.getNearbyAccessibility().get(CardinalPoint.NORTH)) {
-                    positions.add(new Coordinates(x, y + 1));
-                    current = this.board.getArena().getSquareByCoordinate(x, y + 2);
-                    if (current != null && current.getNearbyAccessibility().get(CardinalPoint.NORTH)) {
-                        positions.add(new Coordinates(x, y + 2));
-                    }
+                    positions.add(new Coordinates(x, y + 2));
                 }
-                break;
+            }
         }
         this.controller.send(new SelectionListMessage<>(SelectionMessageType.POWERUP_POSITION,
                 this.activePlayer.getCharacter(), positions));
@@ -144,7 +140,7 @@ public class PowerupsController {
      * Handles target chosen
      * @param target chosen by the powerup holder
      */
-    public void receiveTarget(GameCharacter target) {
+    void receiveTarget(GameCharacter target) {
         this.target = this.board.getPlayerByCharacter(target);
         if (this.activePowerup == PowerupType.TARGETING_SCOPE) {
             this.board.attackPlayer(activePlayer.getCharacter(), this.target.getCharacter(), 1, EffectType.DAMAGE);
@@ -159,7 +155,7 @@ public class PowerupsController {
      * Handles the position chosen
      * @param position coordinates chosen by the powerup holder
      */
-    public void receivePosition(Coordinates position) {
+    void receivePosition(Coordinates position) {
         this.board.movePlayer(this.target, this.board.getArena().getSquareByCoordinate(position.getX(), position.getY()));
         this.turnController.handleEndPowerup();
     }
@@ -171,30 +167,30 @@ public class PowerupsController {
      */
     public List<Player> getNewtonTargets(Player p) {
         List<Player> targets = new ArrayList<>();
-        for (Player target : this.board.getPlayers()) {
-            if (target.getPosition() == null || target == p) {
+        for (Player possibleTarget : this.board.getPlayers()) {
+            if (possibleTarget.getPosition() == null || possibleTarget == p) {
                 continue;
             }
-            int x = target.getPosition().getX();
-            int y = target.getPosition().getY();
+            int x = possibleTarget.getPosition().getX();
+            int y = possibleTarget.getPosition().getY();
             Square current = this.board.getArena().getSquareByCoordinate(x + 1, y);
             if (current != null && current.getNearbyAccessibility().get(CardinalPoint.WEST)) {
-                targets.add(target);
+                targets.add(possibleTarget);
                 continue;
             }
             current = this.board.getArena().getSquareByCoordinate(x - 1, y);
             if (current != null && current.getNearbyAccessibility().get(CardinalPoint.EAST)) {
-                targets.add(target);
+                targets.add(possibleTarget);
                 continue;
             }
             current = this.board.getArena().getSquareByCoordinate(x, y + 1);
             if (current != null && current.getNearbyAccessibility().get(CardinalPoint.SOUTH)) {
-                targets.add(target);
+                targets.add(possibleTarget);
                 continue;
             }
             current = this.board.getArena().getSquareByCoordinate(x, y - 1);
             if (current != null && current.getNearbyAccessibility().get(CardinalPoint.NORTH)) {
-                targets.add(target);
+                targets.add(possibleTarget);
             }
         }
         return targets;

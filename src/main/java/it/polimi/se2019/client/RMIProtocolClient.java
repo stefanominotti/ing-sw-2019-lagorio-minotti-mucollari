@@ -47,7 +47,7 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
                 try {
                     this.server.ping();
                 } catch (RemoteException e) {
-                    getView().handleConnectionError();;
+                    getView().handleConnectionError();
                 }
 
                 try {
