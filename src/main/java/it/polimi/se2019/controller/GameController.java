@@ -22,10 +22,11 @@ import it.polimi.se2019.model.messages.timer.TimerType;
 import it.polimi.se2019.model.messages.turn.TurnContinuationMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 import it.polimi.se2019.view.VirtualView;
-
 import java.util.*;
-import java.util.logging.Logger;
 
+/**
+ * Class for handling game controller
+ */
 public class GameController implements Observer {
 
     private Board model;
@@ -39,6 +40,11 @@ public class GameController implements Observer {
     private WeaponEffectOrderType effectSelection;
     private List<GameCharacter> effectTargets;
 
+    /**
+     * Class constructor, it builds a game controller
+     * @param board the board to handle
+     * @param view the view used to send message to clients
+     */
     public GameController(Board board, VirtualView view) {
         this.model = board;
         this.effectsController = new EffectsController(this.model, this);
@@ -51,6 +57,12 @@ public class GameController implements Observer {
         this.powerupRequestsTimer = new Timer();
     }
 
+
+    /**
+     * Updates the view with a message
+     * @param view the view to notify
+     * @param message to be notified
+     */
     @Override
     public void update(Observable view, Object message) {
         switch (((Message) message).getMessageType()) {
@@ -72,6 +84,8 @@ public class GameController implements Observer {
             case SELECTION_LIST_MESSAGE:
                 update((SelectionListMessage) message);
                 break;
+            default:
+                break;
         }
     }
 
@@ -90,10 +104,20 @@ public class GameController implements Observer {
 
     }
 
+    /**
+     * Handles a ready client adding it to the model
+     * @param character chosen by the player
+     * @param nickname chosen by the player
+     * @param token of the client associated to the player
+     */
     private void handleClientReady(GameCharacter character, String nickname, String token) {
         this.model.addPlayer(character, nickname, token);
     }
 
+    /**
+     * Handles a reconnected client, sending him his view
+     * @param character who is reconnected
+     */
     private void handleClientReconnected(GameCharacter character) {
         int counter = 0;
         Player player = this.model.getPlayerByCharacter(character);
@@ -117,6 +141,10 @@ public class GameController implements Observer {
         }
     }
 
+    /**
+     * Handles a disconnected client, notify other clients
+     * @param character who is disconnected
+     */
     private void handleClientDisconnected(GameCharacter character) {
         this.model.handleDisconnection(character);
         if (this.model.getPlayerByCharacter(character) == this.turnController.getActivePlayer() && this.gameStarted) {
@@ -132,6 +160,10 @@ public class GameController implements Observer {
         }
     }
 
+    /**
+     * Updates board with a message
+     * @param message to be updated
+     */
     private void update(BoardMessage message) {
         switch(message.getType()) {
             case ARENA:
@@ -143,20 +175,36 @@ public class GameController implements Observer {
         }
     }
 
+    /**
+     * Handles chosen arena creating it and finalizing game setup
+     * @param arena ID chosen by the master player
+     */
     private void handleArenaReceived(String arena) {
         this.model.createArena(arena);
         this.model.finalizeGameSetup();
     }
 
+    /**
+     * Handles chosen skulls number setting it in the model and finalizing game setup
+     * @param skulls number chosen by the master player
+     */
     private void handleSkullsReceived(int skulls) {
         this.model.setSkulls(skulls);
     }
 
+    /**
+     * Handles a turn message receiving
+     * @param message received
+     */
     private void update(TurnMessage message) {
         this.turnController.startTurn(message.getTurnType(), message.getCharacter());
         this.gameStarted = true;
     }
 
+    /**
+     * Handles a selection list message receiving
+     * @param message received
+     */
     private void update(SelectionListMessage message) {
         switch (message.getType()) {
             case USE_POWERUP:
@@ -175,6 +223,10 @@ public class GameController implements Observer {
         }
     }
 
+    /**
+     * Handles a single selection message receiving
+     * @param message received
+     */
     private void update(SingleSelectionMessage message) {
         switch (message.getType()) {
             case SWITCH:
@@ -230,6 +282,10 @@ public class GameController implements Observer {
         }
     }
 
+    /**
+     * Handles persistence selection
+     * @param selection chosen by the player
+     */
     private void handlePersistenceSelection(String selection) {
         if (selection.equalsIgnoreCase("n")) {
             this.model.endGame();
@@ -238,34 +294,67 @@ public class GameController implements Observer {
         }
     }
 
+    /**
+     * Handles powerup discard selection
+     * @param powerup chosen to discard
+     */
     private void handlePowerupDiscardSelection(Powerup powerup) {
         this.turnController.handlePowerupDiscarded(powerup);
     }
 
+    /**
+     * Handles action selection
+     * @param action chosen
+     */
     private void handleActionSelection(ActionType action) {
         this.turnController.handleAction(action);
     }
 
+    /**
+     * Handles movement selection
+     * @param coordinates chosen where the player wants to move
+     */
     private void handleMovementSelection(Coordinates coordinates) {
         this.turnController.movementAction(coordinates);
     }
 
+    /**
+     * Handle pickup selection
+     * @param coordinates chosen where the player wants to move and pickup
+     */
     private void handlePickupSelection(Coordinates coordinates) {
         this.turnController.pickupAction(coordinates);
     }
 
+    /**
+     * Handles weapon pickup selection
+     * @param weapon chosen to pickup
+     */
     private void handleWeaponPickupSelection(Weapon weapon) {
         this.turnController.pickupWeapon(weapon);
     }
 
+    /**
+     * Handles weapon switch selection
+     * @param weapon the player wants to switch
+     */
     private void handleWeaponSwitchSelection(Weapon weapon) {
         this.turnController.switchWeapon(weapon);
     }
 
+    /**
+     * Handled weapon reload selection
+     * @param weapon chosen to be reloaded
+     */
     private void handleReloadSelection(Weapon weapon) {
         this.turnController.sendReloadPaymentRequest(weapon);
     }
 
+    /**
+     * Handles powerup use selection
+     * @param player who chose to use the powerup
+     * @param powerup chosen to use
+     */
     private void handleUsePowerupSelection(GameCharacter player, Powerup powerup) {
         if (powerup == null) {
             this.turnController.handleEndPowerup();
@@ -279,18 +368,36 @@ public class GameController implements Observer {
         }
     }
 
+    /**
+     * Handles powerup position selection
+     * @param player who chose to use the powerup
+     * @param coordinates chosen by the powerup holder
+     */
     private void handlePowerupPositionSelection(GameCharacter player, Coordinates coordinates) {
         this.powerupsControllers.get(player).receivePosition(coordinates);
     }
 
+    /**
+     * Handles powerup position selection
+     * @param player who chose to use the powerup
+     * @param character target chosen by the powerup holder
+     */
     private void handlePowerupTargetSelection(GameCharacter player, GameCharacter character) {
         this.powerupsControllers.get(player).receiveTarget(character);
     }
 
+    /**
+     * Handles weapon use selection
+     * @param weapon chosen to use
+     */
     private void handleWeaponUseSelection(Weapon weapon) {
         this.turnController.useWeapon(weapon);
     }
 
+    /**
+     * Handles effect selection
+     * @param effectSelection effect chosen to be apply
+     */
     private void handleEffectSelection(WeaponEffectOrderType effectSelection) {
         if (effectSelection == null) {
             this.turnController.handleEndAction();
@@ -308,6 +415,10 @@ public class GameController implements Observer {
         }
     }
 
+    /**
+     * Handles effect combo selection
+     * @param selection "y" if the player choose to use a combo, else "n"
+     */
     private void handleEffectComboSelection(String selection) {
         boolean active = false;
         if (selection.equals("Y")) {
@@ -317,6 +428,10 @@ public class GameController implements Observer {
 
     }
 
+    /**
+     * Handles effect possibility pack selection
+     * @param selection effect possibility pack chosen by the player
+     */
     private void handleEffectPossibilitySelection(EffectPossibilityPack selection) {
         this.effectsController.effectApplication(selection);
     }
@@ -327,8 +442,14 @@ public class GameController implements Observer {
 
     private void update(PaymentMessage message) {
         handlePayment(message.getAmmos(), ((PaymentSentMessage) message).getPowerups(), message.getPaymentType());
-    }
+}
 
+    /**
+     * Handles the player payment
+     * @param ammos paid
+     * @param powerups paid
+     * @param type of payment done
+     */
     private void handlePayment(Map<AmmoType, Integer> ammos, List<Powerup> powerups, PaymentType type) {
         this.model.useAmmos(this.turnController.getActivePlayer(), ammos);
         for (Powerup p : powerups) {
@@ -349,14 +470,26 @@ public class GameController implements Observer {
         }
     }
 
+    /**
+     * Send a message to the active player
+     * @param message to be sent
+     */
     void send(SingleReceiverMessage message) {
         this.view.send(message);
     }
 
+    /**
+     * Send a message on broadcast
+     * @param message to be sent
+     */
     void sendAll(Message message) {
         this.view.sendAll(message);
     }
 
+    /**
+     * Knows if the player can pay ammo discarding a powerup
+     * @return true if he can, else false
+     */
     boolean canPayPowerup() {
         if(this.turnController.getActivePlayer().getAvailableAmmos().get(AmmoType.YELLOW) == 0 &&
                 this.turnController.getActivePlayer().getAvailableAmmos().get(AmmoType.RED) == 0 &&
@@ -367,6 +500,10 @@ public class GameController implements Observer {
         return true;
     }
 
+    /**
+     * Asks a player if he wants to use a powerup
+     * @param players to be asked
+     */
     void askPowerup(List<GameCharacter> players) {
         this.effectTargets = players;
         if(checkTagbackGrenadeCharacters(players).isEmpty() &&
@@ -415,6 +552,11 @@ public class GameController implements Observer {
         }
     }
 
+    /**
+     * Gets the Tagback Grenade powerup holders
+     * @param players to verify if they got a Tagback Grenade
+     * @return List of game characters holders of a Tagback Grenade
+     */
     List<GameCharacter> checkTagbackGrenadeCharacters(List<GameCharacter> players) {
         List<GameCharacter> validPlayers = new ArrayList<>();
         for (GameCharacter player : players) {
@@ -427,15 +569,20 @@ public class GameController implements Observer {
         return validPlayers;
     }
 
+    /**
+     * Sets the effect chosen by the active player
+     * @param effectSelection effect chosen by the active player
+     */
     void setEffectSelection(WeaponEffectOrderType effectSelection) {
         this.effectSelection = effectSelection;
     }
 
+    /**
+     * Gets the effect targets
+     * @return List of the game character targets
+     */
     List<GameCharacter> getEffectTargets() {
         return this.effectTargets;
     }
 
-    void sendOthers(GameCharacter character, Message message) {
-        this.view.sendOthers(character, message);
-    }
 }

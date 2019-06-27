@@ -1,5 +1,8 @@
 package it.polimi.se2019.controller;
 
+/**
+ * Enumeration class for action type
+ */
 public enum ActionType {
 
     ENDTURN,

@@ -13,6 +13,9 @@ import java.util.List;
 import static it.polimi.se2019.controller.TurnState.*;
 import static java.util.stream.Collectors.toMap;
 
+/**
+ * Class for handling turn controller
+ */
 public class TurnController {
 
     private GameController controller;
@@ -27,6 +30,12 @@ public class TurnController {
     private EffectsController effectsController;
     private boolean moveShoot;
 
+    /**
+     * Class constructor, it builds a turn controller
+     * @param board of which the turn controller has to be used
+     * @param controller the game controller in which the turn controller has to be used
+     * @param effectsController the effect controller
+     */
     public TurnController(Board board, GameController controller, EffectsController effectsController) {
         this.state = TurnState.SELECTACTION;
         this.board = board;
@@ -35,10 +44,19 @@ public class TurnController {
         this.effectsController = effectsController;
     }
 
+    /**
+     * Gets the current active player
+     * @return the active player
+     */
     Player getActivePlayer() {
         return this.activePlayer;
     }
 
+    /**
+     * Starts a player turn
+     * @param type of the turn
+     * @param player you want him to start turn
+     */
     void startTurn(TurnType type, GameCharacter player) {
         this.activePlayer = this.board.getPlayerByCharacter(player);
         switch (type) {
@@ -81,6 +99,10 @@ public class TurnController {
         this.board.startTurnTimer(this.activePlayer.getCharacter());
     }
 
+    /**
+     * Handles a discarded powerup by the active player
+     * @param powerup discarded
+     */
     void handlePowerupDiscarded(Powerup powerup) {
         this.board.removePowerup(this.activePlayer, powerup);
         if(this.state == TurnState.FIRST_RESPAWNING || this.state == TurnState.DEATH_RESPAWNING) {
@@ -88,6 +110,10 @@ public class TurnController {
         }
     }
 
+    /**
+     * Spawns the active player
+     * @param color where you need to spawn the player
+     */
     void spawnPlayer(RoomColor color) {
         for(Room room : this.board.getArena().getRoomList()){
             if(room.getColor() == color){
@@ -101,6 +127,9 @@ public class TurnController {
         }
     }
 
+    /**
+     * Handles available movements for the active player
+     */
     void calculateMovementAction() {
         int maxDistance = 3;
         if (this.finalFrenzy) {
@@ -125,6 +154,9 @@ public class TurnController {
                 movements));
     }
 
+    /**
+     * Handles available movements for "move and pick up" for the active player
+     */
     void calculatePickupAction() {
         Square position = this.activePlayer.getPosition();
         int maxDistance = 1;
@@ -182,6 +214,10 @@ public class TurnController {
                 this.activePlayer.getCharacter(), movements));
     }
 
+    /**
+     * Handles player action selection
+     * @param action type of the action chosen
+     */
     void handleAction(ActionType action) {
         this.switchWeapon = null;
         this.weaponToGet = null;
@@ -213,6 +249,9 @@ public class TurnController {
         }
     }
 
+    /**
+     * Aborts player selected action
+     */
     void cancelAction() {
         if ((!this.finalFrenzy && this.movesLeft < 2) ||
                 (this.finalFrenzy && !this.beforeFirstPlayer && this.movesLeft < 1) ||
@@ -222,6 +261,10 @@ public class TurnController {
         sendActions();
     }
 
+    /**
+     * Gets the available squares coordinates for move-reload-shot action
+     * @return the coordinates of the available squares
+     */
     List<Coordinates> getMoveReloadShootMovements() {
         List<String> distance;
         boolean reload = false;
@@ -262,6 +305,9 @@ public class TurnController {
         return movements;
     }
 
+    /**
+     *
+     */
     void calculateShootAction() {
         if (!this.finalFrenzy && this.activePlayer.getDamages().size() < 6) {
             this.effectsController.setActivePlayer(this.activePlayer);
@@ -298,6 +344,9 @@ public class TurnController {
                 this.activePlayer.getCharacter(), availablePowerups));
     }
 
+    /**
+     *
+     */
     private void sendActions() {
         this.moveShoot = false;
         List<ActionType> availableActions = new ArrayList<>();
@@ -338,16 +387,26 @@ public class TurnController {
         this.state = SELECTACTION;
     }
 
+    /**
+     * Handles end action
+     */
     void handleEndAction() {
         this.moveShoot = false;
         sendActions();
         this.state = TurnState.SELECTACTION;
     }
 
+    /**
+     * Handles end powerup
+     */
     void handleEndPowerup() {
         sendActions();
     }
 
+    /**
+     * Handles movement action
+     * @param coordinates chosen where the player wants to move
+     */
     void movementAction(Coordinates coordinates) {
         this.board.movePlayer(this.activePlayer, this.board.getArena().getSquareByCoordinate(coordinates.getX(), coordinates.getY()));
         if (!this.moveShoot) {
@@ -357,6 +416,10 @@ public class TurnController {
         }
     }
 
+    /**
+     * Handles pickup action
+     * @param coordinates chosen where the player wants to pickup
+     */
     void pickupAction(Coordinates coordinates) {
         int x = coordinates.getX();
         int y = coordinates.getY();
@@ -396,6 +459,10 @@ public class TurnController {
         handleEndAction();
     }
 
+    /**
+     * Handles pickup weapon action
+     * @param weapon chosen to pickup by the player
+     */
     void pickupWeapon(Weapon weapon) {
         for (WeaponCard weaponCard : this.activePlayer.getPosition().getWeaponsStore()) {
             if (weaponCard.getWeaponType() == weapon) {
@@ -428,6 +495,9 @@ public class TurnController {
         }
     }
 
+    /**
+     * Handles weapon payment
+     */
     void paidWeapon() {
         if (this.switchWeapon == null) {
             this.board.giveWeapon(this.activePlayer, this.weaponToGet);
@@ -437,6 +507,10 @@ public class TurnController {
         handleEndAction();
     }
 
+    /**
+     * Handles weapons switching when a player got max weapons and wants to change with another one
+     * @param weapon to be changed
+     */
     void switchWeapon(Weapon weapon) {
         for (WeaponCard weaponCard : this.activePlayer.getWeapons()) {
             if (weaponCard.getWeaponType() == weapon) {
@@ -460,6 +534,10 @@ public class TurnController {
         }
     }
 
+    /**
+     * Gets the unloaded weapons
+     * @return List of the unloaded weapons
+     */
     List<Weapon> getRechargeableWeapons() {
         List<Weapon> unloadedWeapons = new ArrayList<>();
         for (WeaponCard weapon : this.activePlayer.getWeapons()) {
@@ -490,10 +568,17 @@ public class TurnController {
         return unloadedWeapons;
     }
 
+    /**
+     * Knows if there are any unloaded weapons
+     * @return true if there are, else false
+     */
     boolean canReload() {
         return !getRechargeableWeapons().isEmpty();
     }
 
+    /**
+     * Handles weapons reloading
+     */
     void handleReload() {
         List<Weapon> toReload = getRechargeableWeapons();
         if (toReload.isEmpty() && !this.moveShoot) {
@@ -514,6 +599,10 @@ public class TurnController {
                 this.activePlayer.getCharacter(), toReload));
     }
 
+    /**
+     * Sends to the player the payment request for reloading the weapon
+     * @param weapon which the player wants to reload
+     */
     void sendReloadPaymentRequest(Weapon weapon) {
         if (weapon == null && !this.moveShoot) {
             endTurn();
@@ -539,6 +628,9 @@ public class TurnController {
                 this.activePlayer.getCharacter(), requiredAmmo));
     }
 
+    /**
+     * Handles weapon reloading
+     */
     void reloadWeapon() {
         this.board.loadWeapon(this.activePlayer, this.weaponToGet);
         if (canReload()) {
@@ -560,6 +652,10 @@ public class TurnController {
 
     }
 
+    /**
+     * Handles weapon use
+     * @param weapon which the player wants to use
+     */
     void useWeapon(Weapon weapon) {
         this.effectsController.setWeapon(weapon);
         this.controller.send(new SelectionListMessage<>(SelectionMessageType.EFFECT,
@@ -567,10 +663,17 @@ public class TurnController {
                 new ArrayList<>(this.effectsController.getAvailableEffects().keySet())));
     }
 
+    /**
+     * Ends turn
+     */
     void endTurn() {
         this.board.endTurn(this.activePlayer.getCharacter());
     }
 
+    /**
+     * Knows if the player can use Newton powerup
+     * @return true if he can, else false
+     */
     public boolean canUseNewton() {
         List<Player> targets = new ArrayList<>();
         for (Player target : this.board.getPlayers()) {

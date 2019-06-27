@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * Class for handling effect possibility pack,
+ * Class for handling effect possibility pack, with all effect data
  */
 public class EffectPossibilityPack implements Serializable {
     private List<String> targetsAmount;
@@ -19,15 +19,15 @@ public class EffectPossibilityPack implements Serializable {
     private EffectType type;
 
     /**
-     * 
-     * @param targetsAmount
-     * @param characters
-     * @param squares
-     * @param rooms
-     * @param cardinalPoints
-     * @param multipleSquares
-     * @param require
-     * @param type
+     * Class constructor, it is used by the server to build an effect possibility pack
+     * @param targetsAmount available for this effect
+     * @param characters target available for this effect
+     * @param squares available for this effect
+     * @param rooms available for this effect
+     * @param cardinalPoints available for this effect
+     * @param multipleSquares map for this effect
+     * @param require true if the effect is mandatory to use, else false
+     * @param type of the effect
      */
     EffectPossibilityPack(List<String> targetsAmount, List<GameCharacter> characters,
                                  List<Coordinates> squares, List<RoomColor> rooms, List<CardinalPoint> cardinalPoints,
@@ -42,6 +42,11 @@ public class EffectPossibilityPack implements Serializable {
         this.type = type;
     }
 
+    /**
+     * Class constructor, it is used by clients to fill the possibility pack with their choices
+     * @param require true if the effect is mandatory to use, else false
+     * @param type of the effect
+     */
     public EffectPossibilityPack(boolean require, EffectType type) {
         this.characters = new ArrayList<>();
         this.squares = new ArrayList<>();
@@ -52,58 +57,114 @@ public class EffectPossibilityPack implements Serializable {
         this.type = type;
     }
 
+    /**
+     * Gets the effect targets
+     * @return List of the characters target
+     */
     public List<GameCharacter> getCharacters() {
         return this.characters;
     }
 
+    /**
+     * Gets the available squares for the effect
+     * @return list of coordinates of the available squares
+     */
     public List<Coordinates> getSquares() {
         return this.squares;
     }
 
+    /**
+     * Gets the available rooms for the effect
+     * @return List of colors of the available rooms
+     */
     public List<RoomColor> getRooms() {
         return this.rooms;
     }
 
+    /**
+     * Gets the available cardinal points for the effect
+     * @return List of the available cardinal points
+     */
     public List<CardinalPoint> getCardinalPoints() {
         return this.cardinalPoints;
     }
 
+    /**
+     * Gets a map for applying effects with "multiple squares" position constraint
+     * @return Map with coordinates and list of game characters for that coordinates
+     */
     public Map<Coordinates, List<GameCharacter>> getMultipleSquares() {
         return this.multipleSquares;
     }
 
+    /**
+     * Gets the target amount for the effect
+     * @return List of targets amount
+     */
     public List<String> getTargetsAmount() {
         return this.targetsAmount;
     }
 
+    /**
+     * Knows if the effect is mandatory
+     * @return true if it is, else false
+     */
     public boolean isRequire() {
         return this.require;
     }
 
+    /**
+     * Gets the effect type
+     * @return type of the effect
+     */
     public EffectType getType() {
         return this.type;
     }
 
+    /**
+     * Sets the target characters for the effect
+     * @param characters list you want to set as targets
+     */
     public void setCharacters(List<GameCharacter> characters) {
         this.characters = characters;
     }
 
+    /**
+     * Sets the available squares for the effect
+     * @param squares list of coordinates which you want to make available for the effect
+     */
     public void setSquares(List<Coordinates> squares) {
         this.squares = squares;
     }
 
+    /**
+     * Sets the available rooms color for the effect
+     * @param rooms color list available for the effect
+     */
     public void setRooms(List<RoomColor> rooms) {
         this.rooms = rooms;
     }
 
+    /**
+     * Sets the available cardinal points for the effect
+     * @param cardinalPoints list available for the effect
+     */
     public void setCardinalPoints(List<CardinalPoint> cardinalPoints) {
         this.cardinalPoints = cardinalPoints;
     }
 
+    /**
+     * Sets the map for applying effects with "multiple squares" position constraint
+     * @param multipleSquares Map with coordinates and list of game characters for that coordinates
+     */
     public void setMultipleSquares(Map<Coordinates, List<GameCharacter>> multipleSquares) {
         this.multipleSquares = multipleSquares;
     }
 
+    /**
+     * Sets the effect possibility as mandatory
+     * @param require true if you want to set mandatory, else false
+     */
     public void setRequire(boolean require) {
         this.require = require;
     }
