@@ -5,12 +5,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import java.io.File;
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class InvalidTokenController extends AbstractSceneController {
-    private static final String PATH = System.getProperty("user.home");
-    private static final String FILE_NAME = "/AdrenalinaClient.token";
 
     @FXML
     Button removeButton;
@@ -21,11 +20,11 @@ public class InvalidTokenController extends AbstractSceneController {
 
     public void removeToken() {
         Platform.runLater(() -> {
-            if (deleteFile(PATH + FILE_NAME)) {
+            try {
+                getView().removeToken();
                 removeButton.setVisible(false);
                 removeSuccessLabel.setText("Token was successfully removed");
-            }
-            else{
+            } catch (IOException e) {
                 removeButton.setVisible(false);
                 removeFailedLabel.setText("Can't remove file, it doesn't exist");
             }
@@ -36,11 +35,6 @@ public class InvalidTokenController extends AbstractSceneController {
                System.exit(0);
             }
         }, 3*1000L);
-    }
-
-    private boolean deleteFile(String filePath) {
-        File file = new File(filePath);
-        return (file.delete());
     }
 }
 

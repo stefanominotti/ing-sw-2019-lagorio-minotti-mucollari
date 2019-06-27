@@ -4,6 +4,8 @@ import com.google.gson.*;
 import it.polimi.se2019.model.*;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -13,23 +15,26 @@ import java.util.logging.Logger;
 public class GameLoader {
 
     private static final Logger LOGGER = Logger.getLogger(GameLoader.class.getName());
-
+    private static final String SERVER_SETTINGS = "/server_settings.json";
     private static final String CONFIG_PATH = System.getProperty("user.home");
+    private static final String DEFAULT_SAVE_FILE = "/game_data.json";
+
     private Board board;
     private String filePath;
     private JsonParser parser;
     private Gson gson;
 
     public GameLoader() {
-        try(FileReader configReader = new FileReader(CONFIG_PATH + "/" + "server_settings.json")) {
-            this.parser = new JsonParser();
-            this.gson = new Gson();
-            this.board = new Board();
-            this.filePath = CONFIG_PATH + "/" +
+        this.parser = new JsonParser();
+        this.gson = new Gson();
+        try(FileReader configReader = new FileReader(CONFIG_PATH + SERVER_SETTINGS)) {
+            this.filePath = CONFIG_PATH + '/' +
                     ((JsonObject)this.parser.parse(configReader)).get("savePath").getAsString();
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "No config file found", e);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Wrong config file, save file set to default game_data.json");
+            this.filePath = CONFIG_PATH + DEFAULT_SAVE_FILE;
         }
+        this.board = new Board();
     }
 
     public Board loadBoard() {
@@ -39,7 +44,8 @@ public class GameLoader {
         
         try {
             reader = new FileReader(this.filePath);
-        } catch (IOException E) {
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "No game data found, a new game will start");
             return this.board;
         }
         jsonElement = (JsonObject)this.parser.parse(reader);
@@ -132,16 +138,19 @@ public class GameLoader {
         try(FileWriter writer = new FileWriter(this.filePath)) {
             writer.write(jObject.toString());
             writer.flush();
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE,"Error writing data", e);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE,
+                    "Error writing game data, game won't be saved");
         }
 
 
     }
 
     void deleteGame() {
-        if ( !(new File(this.filePath)).delete() ) {
-            LOGGER.log(Level.WARNING, "Can't remove file");
+        try {
+            Files.delete(Paths.get(this.filePath));
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "No save file to delete");
         }
     }
 }

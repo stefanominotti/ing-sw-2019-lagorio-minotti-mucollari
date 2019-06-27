@@ -27,6 +27,8 @@ import it.polimi.se2019.model.messages.weapon.WeaponMessage;
 import it.polimi.se2019.model.messages.weapon.WeaponSwitchMessage;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -811,7 +813,11 @@ public abstract class View {
     }
 
     void handleGameFinished(Map<GameCharacter, Integer> ranking) {
-        removeToken();
+        try {
+            removeToken();
+        } catch (IOException e) {
+            // Ignore
+        }
         System.exit(0);
     }
 
@@ -1103,8 +1109,8 @@ public abstract class View {
         return null;
     }
 
-    public void removeToken() {
-        (new File(PATH + FILE_NAME)).delete();
+    void removeToken() throws IOException {
+        Files.delete(Paths.get(PATH + FILE_NAME));
     }
 
 }

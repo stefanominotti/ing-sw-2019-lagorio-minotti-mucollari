@@ -48,8 +48,8 @@ public class Server {
             Gson gson = new Gson();
             JsonParser parser = new JsonParser();
             JsonObject jsonElement = (JsonObject)parser.parse(settings);
-            portSocket = gson.fromJson(jsonElement.get("portSocket"), Integer.class);
-            portRMI = gson.fromJson(jsonElement.get("portRMI"), Integer.class);
+            this.portSocket = gson.fromJson(jsonElement.get("portSocket"), Integer.class);
+            this.portRMI = gson.fromJson(jsonElement.get("portRMI"), Integer.class);
             if(portRMI == portSocket) {
                 LOGGER.log(Level.SEVERE, "Invalid ports, ports set to default (RMI: " + DEFAULT_PORT_RMI +
                         ", Socket: " + DEFAULT_PORT_SOCKET + ")");

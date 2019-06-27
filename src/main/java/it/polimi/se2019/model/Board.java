@@ -24,6 +24,7 @@ import it.polimi.se2019.model.messages.turn.TurnMessageType;
 import it.polimi.se2019.model.messages.weapon.WeaponMessage;
 import it.polimi.se2019.model.messages.weapon.WeaponMessageType;
 import it.polimi.se2019.model.messages.weapon.WeaponSwitchMessage;
+import it.polimi.se2019.server.SocketVirtualClient;
 import it.polimi.se2019.view.PlayerBoard;
 import it.polimi.se2019.view.SquareView;
 
@@ -33,12 +34,15 @@ import java.io.InputStream;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static it.polimi.se2019.model.GameState.*;
 import static java.util.stream.Collectors.toMap;
 
 public class Board extends Observable {
 
+    private static final Logger LOGGER = Logger.getLogger(SocketVirtualClient.class.getName());
     private static final int MAX_WEAPONS_STORE = 3;
     private static final int MAX_POWERUPS = 3;
     private static final long DEFAULT_START_TIMER = 10L*1000L;
@@ -433,7 +437,8 @@ public class Board extends Observable {
         FileReader reader;
         try {
             reader = new FileReader(PATH + SERVER_SETTINGS);
-        } catch (IOException E) {
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Invalid config file, timers set to default");
             setDefaultTimers();
             return;
         }
@@ -448,6 +453,7 @@ public class Board extends Observable {
             this.respawnTimer = gson.fromJson(jsonElement.get("respawnTimer"), Long.class);
             this.powerupsTimer = gson.fromJson(jsonElement.get("powerupsTimer"), Long.class);
         } catch (ClassCastException | NullPointerException e) {
+            LOGGER.log(Level.SEVERE, "Invalid timers settings, timers set to default");
             setDefaultTimers();
         }
     }
