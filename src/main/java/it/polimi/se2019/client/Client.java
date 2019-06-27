@@ -38,7 +38,7 @@ public class Client {
             ip = gson.fromJson(jsonElement.get("serverIP"), String.class);
             port = gson.fromJson(jsonElement.get("port"), Integer.class);
         } catch (Exception e) {
-            System.out.println("Invalid IP, Port or Connection");
+            System.out.println("Can't read IP or Port");
             System.exit(0);
         }
         try {
