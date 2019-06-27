@@ -71,7 +71,7 @@ public class BoardView {
         return new ArrayList<>(this.squares);
     }
 
-    public SquareView getSquareByCoordinates(int x, int y) {
+    SquareView getSquareByCoordinates(int x, int y) {
         for(SquareView square : this.squares) {
             if(square.getX() == x && square.getY() == y) {
                 return square;
@@ -80,7 +80,7 @@ public class BoardView {
         return null;
     }
 
-    public void setPlayerPosition(GameCharacter player, SquareView square) {
+    void setPlayerPosition(GameCharacter player, SquareView square) {
         if (this.positions.get(player) != null) {
             this.positions.get(player).removeActivePlayer(player);
         }
@@ -90,7 +90,7 @@ public class BoardView {
         }
     }
 
-    public SquareView getPlayerPosition(GameCharacter character) {
+    SquareView getPlayerPosition(GameCharacter character) {
         return this.positions.get(character);
     }
 
