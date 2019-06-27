@@ -7,12 +7,13 @@ import it.polimi.se2019.model.messages.payment.PaymentType;
 import it.polimi.se2019.model.messages.selections.SelectionMessageType;
 import it.polimi.se2019.model.messages.selections.SelectionListMessage;
 import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
-
 import java.util.*;
-
 import static it.polimi.se2019.model.WeaponEffectOrderType.SECONDARYONE;
 import static it.polimi.se2019.model.WeaponEffectOrderType.SECONDARYTWO;
 
+/**
+ * Class for handling weapon effects controller
+ */
 public class EffectsController {
     private Board board;
     private GameController controller;
@@ -35,6 +36,11 @@ public class EffectsController {
     private Player activePlayer;
     private WeaponEffectOrderType activeCombo;
 
+    /**
+     * Class constructor, it builds an effect controller
+     * @param board in which the effect controller has to be built
+     * @param controller of the game in which the effect controller has to be built
+     */
     public EffectsController(Board board, GameController controller) {
         this.board = board;
         this.controller = controller;
@@ -47,6 +53,10 @@ public class EffectsController {
         this.effectsQueue = new ArrayList<>();
     }
 
+    /**
+     * Sets the active player, who is using the weapon
+     * @param player you want to make the active one
+     */
     public void setActivePlayer(Player player) {
         this.activePlayer = player;
         this.hitByMain = new ArrayList<>();
@@ -69,15 +79,12 @@ public class EffectsController {
         this.effectOrder = order;
     }
 
-    public void addHitbyMain(Player player) {
-        this.hitByMain.add(player);
-    }
-
-    public void addHitbySecondary(Player player) {
-        this.hitBySecondary.add(player);
-    }
-
-    public void setEnviroment(Square initialSquare, Square finalSquare) {
+    /**
+     * Sets the environment choices when is asked to a player to choose a direction or room
+     * @param initialSquare starting square
+     * @param finalSquare arrival square
+     */
+    private void setEnvironment(Square initialSquare, Square finalSquare) {
         if (!finalSquare.equals(initialSquare)) {
             this.chosenDirection = this.board.getCardinalFromSquares(initialSquare, finalSquare);
             this.chosenRoom = finalSquare.getRoom();
@@ -85,6 +92,10 @@ public class EffectsController {
         this.chosenSquare = finalSquare;
     }
 
+    /**
+     * @deprecated Builds the effects queue from a weapon
+     * @param weapon of which you want to build the effects queue
+     */
     @Deprecated
     private void buildWeaponEffects(Weapon weapon) {
         this.weapon = weapon;
@@ -104,6 +115,10 @@ public class EffectsController {
         }
     }
 
+    /**
+     * @deprecated Gets the weapon effects
+     * @return List of list of the weapon effects
+     */
     @Deprecated
     public List<List<WeaponEffect>> getWeaponEffects(Weapon weapon) {
         buildWeaponEffects(weapon);
@@ -115,6 +130,10 @@ public class EffectsController {
         this.weapon = weapon;
     }
 
+    /**
+     * Gets the available weapons, which ones you can use
+     * @return List of the available weapons
+     */
     List<Weapon> getAvailableWeapons() {
         List<Weapon> availableWeapons = new ArrayList<>();
         for (WeaponCard weaponCard : this.activePlayer.getWeapons()) {
@@ -127,18 +146,26 @@ public class EffectsController {
         return availableWeapons;
     }
 
+    /**
+     * Checks if a secondary effect of a weapon can be applied before the primary one
+     * @return true if it is, else false
+     */
     private boolean checkSecondaryFirst() {
         try {
-            WeaponEffectOrderType orderiginalOrder = this.effectOrder;
+            WeaponEffectOrderType originalOrder = this.effectOrder;
             this.effectOrder = SECONDARYONE;
             seeEffectPossibility(this.weapon.getSecondaryEffectOne().get(0));
-            this.effectOrder = orderiginalOrder;
+            this.effectOrder = originalOrder;
             return true;
         } catch (UnsupportedOperationException e) {
             return false;
         }
     }
 
+    /**
+     * Gets the available effects
+     * @return map with the effect macro and its list
+     */
     Map<WeaponEffectOrderType, List<WeaponEffect>> getAvailableEffects() {
         Map<WeaponEffectOrderType, List<WeaponEffect>> availableWeapons = new LinkedHashMap<>();
         if (!this.mainEffectApplied) {
@@ -187,8 +214,13 @@ public class EffectsController {
         return availableWeapons;
     }
 
-    boolean checkCost(List<WeaponEffect> effect) {
-        for (Map.Entry<AmmoType, Integer> cost : effect.get(0).getCost().entrySet()) {
+    /**
+     * Checks if a player has enough ammo to apply an effect macro
+     * @param effects list you want to be check
+     * @return true if he can, else false
+     */
+    boolean checkCost(List<WeaponEffect> effects) {
+        for (Map.Entry<AmmoType, Integer> cost : effects.get(0).getCost().entrySet()) {
             Integer powerupAmmo = 0;
             for (Powerup powerup : this.activePlayer.getPowerups()) {
                 if (powerup.getColor() == cost.getKey()) {
@@ -202,6 +234,11 @@ public class EffectsController {
         return true;
     }
 
+    /**
+     * Gets the macro effect cost
+     * @param effectType macro effect of which you want to get the cost
+     * @return Map with ammo and its quantity to be paid for using the effect
+     */
     public Map<AmmoType, Integer> getEffectCost(WeaponEffectOrderType effectType) {
         switch (effectType) {
             case SECONDARYONE:
@@ -215,6 +252,10 @@ public class EffectsController {
         return null;
     }
 
+    /**
+     * Handles player effect selection
+     * @param effectType choosen by the player
+     */
     public void effectSelected(WeaponEffectOrderType effectType) {
         this.board.unloadWeapon(this.activePlayer, this.activePlayer.getWeaponCardByWeapon(this.weapon));
         switch (effectType) {
@@ -241,18 +282,28 @@ public class EffectsController {
         handleEffectsQueue();
     }
 
+    /**
+     * Handles the position constraint case distance from a player, getting players that satisfy that constraint
+     * @param constraint to be satisfied
+     * @return List of the player that satisies the constraint
+     */
     private List<Player> distanceByPlayerCase(PositionConstraint constraint) {
         List<Player> players;
         if (constraint.getTarget() == TargetType.SQUARE) {
             players = this.board.getPlayersByDistance(
                     this.chosenSquare, constraint.getDistanceValues());
         } else {
-            players = this.board.getPlayersByDistance(getTargetPlayer(
-                    constraint.getTarget()), constraint.getDistanceValues());
+            players = this.board.getPlayersByDistance(getTargetPlayer(constraint.getTarget()),
+                    constraint.getDistanceValues());
         }
         return players;
     }
 
+    /**
+     * Handles the position constraint case distance from a square, getting squares that satisfy that constraint
+     * @param constraint to be satisfied
+     * @return List of the squares that satisfy the constraint
+     */
     private List<Square> distanceBySquareCase(PositionConstraint constraint) {
         List<Square> squares;
         switch (constraint.getTarget()) {
@@ -275,6 +326,11 @@ public class EffectsController {
         return squares;
     }
 
+    /**
+     * Filters the available targets by a list of position constraints
+     * @param constraints to be satisfied
+     * @return List of the players that satisfy the constraints
+     */
     private List<Player> filterByPositionConstraintPlayers(List<PositionConstraint> constraints) {
         List<Player> availablePlayers = this.board.getAvailablePlayers();
         List<Player> targetPlayers = new ArrayList<>();
@@ -299,6 +355,11 @@ public class EffectsController {
         return availablePlayers;
     }
 
+    /**
+     * Filters the available squares by a list of position constraints
+     * @param constraints to be satisfied
+     * @return List of the squares that satisfy the constraints
+     */
     private List<Square> filterByPositionConstraintSquares(List<PositionConstraint> constraints) {
         List<Square> availableSquares = this.board.getArena().getAllSquares();
         List<Square> targetSquares = new ArrayList<>();
@@ -307,12 +368,17 @@ public class EffectsController {
                 case VISIBLE:
                     targetSquares = this.board.getVisibleSquares(getTargetPlayer(constraint.getTarget()));
                     break;
+
                 case DISTANCE:
                     targetSquares = distanceBySquareCase(constraint);
                     break;
+
                 case SAMEDIRECTION:
                     targetSquares = this.board.getSquaresOnCardinalDirection(
                             this.chosenSquare, this.chosenDirection);
+                    break;
+
+                default:
                     break;
             }
             availableSquares = (List<Square>) filter(availableSquares, targetSquares);
@@ -320,19 +386,24 @@ public class EffectsController {
         return availableSquares;
     }
 
+    /**
+     * Filters the available rooms by a list of position constraints
+     * @param constraints to be satisfied
+     * @return List of the rooms that satisfy the constraints
+     */
     private List<Room> filterByPositionConstraintRooms(List<PositionConstraint> constraints) {
         List<Room> availableRooms = this.board.getArena().getRoomList();
         List<Room> targetRooms = new ArrayList<>();
         for (PositionConstraint constraint : constraints) {
             switch (constraint.getType()) {
                 case VISIBLE:
-                    targetRooms = this.board.getVisibleRooms(getTargetPlayer(
-                            constraint.getTarget()));
+                    targetRooms = this.board.getVisibleRooms(getTargetPlayer(constraint.getTarget()));
                     break;
+
                 case NOTCONTAINS:
-                    targetRooms.remove(getTargetPlayer(
-                            constraint.getTarget()).getPosition().getRoom());
+                    targetRooms.remove(getTargetPlayer(constraint.getTarget()).getPosition().getRoom());
                     break;
+
                 case DISTANCE:
                     for (Player player : this.board.getAvailablePlayers()) {
                         if (!player.equals(this.activePlayer) && player.getPosition() != null) {
@@ -340,12 +411,20 @@ public class EffectsController {
                         }
                     }
                     break;
+
+                default:
+                    break;
             }
             availableRooms = (List<Room>) filter(availableRooms, targetRooms);
         }
         return availableRooms;
     }
 
+    /**
+     * Filters the available cardinal points by a list of position constraints
+     * @param constraints to be satisfied
+     * @return List of the cardinal points that satisfy the constraints
+     */
     private List<CardinalPoint> filterByPositionConstraintCardinals(List<PositionConstraint> constraints) {
         List<CardinalPoint> availableCardinal = new ArrayList<>();
         for (CardinalPoint cardinal : CardinalPoint.values()) {
@@ -363,6 +442,11 @@ public class EffectsController {
         return availableCardinal;
     }
 
+    /**
+     * Handles damage and mark effect
+     * @param effect the damage or mark effect
+     * @return List of players that can be damaged or marked
+     */
     private List<Player> damageMarkCase(WeaponEffect effect) {
         EffectTarget target = effect.getTarget();
         TargetPositionType positionType = target.getPositionType();
@@ -382,6 +466,11 @@ public class EffectsController {
         return availablePlayers;
     }
 
+    /**
+     * Handles move other players effect
+     * @param effect the movement effect
+     * @return List of players that can be moved
+     */
     private List<Player> moveOthersPlayersCase(WeaponEffect effect) {
         EffectTarget target = effect.getTarget();
         List<PositionConstraint> constraints = target.getPositionConstraints();
@@ -393,6 +482,12 @@ public class EffectsController {
         return availablePlayers;
     }
 
+    /**
+     * Handles movement of players
+     * @param effect the movement effect
+     * @param player you want to move
+     * @return List of available squares where you can perform the movement
+     */
     private List<Square> moveSquaresCase(WeaponEffect effect, Player player) {
         EffectTarget target = effect.getTarget();
         List<Square> availableSquares;
@@ -404,12 +499,17 @@ public class EffectsController {
         return availableSquares;
     }
 
+    /**
+     * Calculates the possible application for the effect
+     * @param effect of which you want to calculate the possible application
+     * @return an effect possibility pack containing the application way
+     */
     EffectPossibilityPack seeEffectPossibility(WeaponEffect effect) {
         EffectTarget target = effect.getTarget();
         TargetPositionType positionType = target.getPositionType();
         List<PositionConstraint> constraints = target.getPositionConstraints();
-        Boolean noHitByMain = false;
-        Boolean noHitBySecondary = false;
+        boolean noHitByMain = false;
+        boolean noHitBySecondary = false;
         List<Player> availablePlayers = new ArrayList<>();
         List<Square> availableSquares = new ArrayList<>();
         List<Room> availableRooms = new ArrayList<>();
@@ -433,15 +533,11 @@ public class EffectsController {
         }
         switch (effect.getType()) {
             case MOVE:
-                switch (target.getType()) {
-                    case SELF:
-                        availablePlayers.add(this.activePlayer);
-                        break;
-                    case OTHERS:
-                        if (availablePlayers.isEmpty()) {
-                            availablePlayers = moveOthersPlayersCase(effect);
-                        }
-                        break;
+                if (target.getType() == TargetType.SELF) {
+                    availablePlayers.add(this.activePlayer);
+                }
+                else if (target.getType() == TargetType.OTHERS  && availablePlayers.isEmpty()) {
+                    availablePlayers = moveOthersPlayersCase(effect);
                 }
                 if (noHitByMain) {
                     availablePlayers.removeAll(hitByMain);
@@ -454,7 +550,7 @@ public class EffectsController {
                 }
                 availableSquares = moveSquaresCase(effect, availablePlayers.get(0));
                 if (this.effectOrder == SECONDARYONE && !this.mainEffectApplied) {
-                    Square origilaPosition = this.activePlayer.getPosition();
+                    Square originalPosition = this.activePlayer.getPosition();
                     List<Square> toRemove = new ArrayList<>();
 
                     for (Square square : availableSquares) {
@@ -465,7 +561,7 @@ public class EffectsController {
                             toRemove.add(square);
                         }
                     }
-                    this.activePlayer.setPosition(origilaPosition);
+                    this.activePlayer.setPosition(originalPosition);
                     availableSquares.removeAll(toRemove);
                 }
                 if (availableSquares.isEmpty()) {
@@ -491,6 +587,8 @@ public class EffectsController {
                         if (availableCardinal.isEmpty()) {
                             throw new UnsupportedOperationException();
                         }
+                        break;
+                    default:
                         break;
                 }
                 break;
@@ -547,6 +645,10 @@ public class EffectsController {
                 availableCardinal, multipleSquares, effect.isRequired(), effect.getType()));
     }
 
+    /**
+     * Handles effect pack application
+     * @param pack which you want to apply
+     */
     void effectApplication(EffectPossibilityPack pack) {
         Square square = this.activePlayer.getPosition();
         try {
@@ -572,11 +674,11 @@ public class EffectsController {
                     break;
                 case MOVE:
                     if (pack.getCharacters().isEmpty()) {
-                        setEnviroment(this.activePlayer.getPosition(), square);
+                        setEnvironment(this.activePlayer.getPosition(), square);
                         this.board.movePlayer(this.activePlayer, square);
                     } else {
                         for (GameCharacter character : pack.getCharacters()) {
-                            setEnviroment(this.board.getPlayerByCharacter(character).getPosition(), square);
+                            setEnvironment(this.board.getPlayerByCharacter(character).getPosition(), square);
                             this.board.movePlayer(this.board.getPlayerByCharacter(character), square);
                             setHitByCases(character);
                         }
@@ -587,7 +689,7 @@ public class EffectsController {
                         int damage = Integer.parseInt(this.currentEffect.getAmount().get(0));
                         this.board.attackPlayer(this.activePlayer.getCharacter(),
                                 character, damage, this.currentEffect.getType());
-                        setEnviroment(square, this.board.getPlayerByCharacter(character).getPosition());
+                        setEnvironment(square, this.board.getPlayerByCharacter(character).getPosition());
                         setHitByCases(character);
                     }
 
@@ -610,6 +712,10 @@ public class EffectsController {
 
     }
 
+    /**
+     * Handles an effect combo activation
+     * @param active true if you want to active, else false
+     */
     void activateCombo(boolean active) {
         if (active) {
             Map<AmmoType, Integer> effectCost = null;
@@ -632,6 +738,9 @@ public class EffectsController {
         }
     }
 
+    /**
+     * Handles the effects queue to apply
+     */
     void handleEffectsQueue() {
         try {
             this.currentEffect = this.effectsQueue.get(0);
@@ -702,6 +811,9 @@ public class EffectsController {
         }
     }
 
+    /**
+     * Resets the effect controller after an application or aborting
+     */
     private void resetController() {
         this.hitByMain = new ArrayList<>();
         this.hitBySecondary = new ArrayList<>();
@@ -713,6 +825,10 @@ public class EffectsController {
         this.activeCombo = null;
     }
 
+    /**
+     * Sets a character as hit by an effect
+     * @param character you want to set hit
+     */
     private void setHitByCases(GameCharacter character) {
         if (this.effectOrder == WeaponEffectOrderType.PRIMARY ||
                 this.effectOrder == WeaponEffectOrderType.ALTERNATIVE) {
@@ -722,6 +838,11 @@ public class EffectsController {
         }
     }
 
+    /**
+     * Gets the target player, based on the target type
+     * @param target type
+     * @return the target player
+     */
     private Player getTargetPlayer(TargetType target) {
         switch (target) {
             case SELF:
@@ -737,6 +858,12 @@ public class EffectsController {
         }
     }
 
+    /**
+     * Service method to filter things
+     * @param ob1 first object
+     * @param ob2 second object
+     * @return List filtered
+     */
     private List<?> filter(List<?> ob1, List<?> ob2) {
         Iterator<?> e = ob1.iterator();
         while (e.hasNext()) {
