@@ -378,7 +378,7 @@ public abstract class View {
     }
 
     void handleFinalFrenzy(boolean beforeFirst) {
-        this.board.setFrenzy(true);
+        this.board.startFrenzy();
         this.board.setBeforeFirstPlayer(beforeFirst);
     }
 

@@ -13,7 +13,6 @@ import it.polimi.se2019.model.messages.nickname.NicknameMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessageType;
 import it.polimi.se2019.view.VirtualView;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -25,8 +24,8 @@ public class Server {
     private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
     private static final String PATH = System.getProperty("user.home");
     private static final String SERVER_SETTINGS = "/server_settings.json";
-    private static final int DEFAULT_PORT_SOCKET = 1099;
-    private static final int DEFAULT_PORT_RMI = 12345;
+    private static final int DEFAULT_PORT_SOCKET = 12345;
+    private static final int DEFAULT_PORT_RMI = 1099;
 
     private Map<GameCharacter, VirtualClientInterface> clients;
     private Map<VirtualClientInterface, String> clientNicknames;
@@ -50,7 +49,7 @@ public class Server {
             JsonObject jsonElement = (JsonObject)parser.parse(settings);
             this.portSocket = gson.fromJson(jsonElement.get("portSocket"), Integer.class);
             this.portRMI = gson.fromJson(jsonElement.get("portRMI"), Integer.class);
-            if(portRMI == portSocket) {
+            if(this.portRMI == this.portSocket) {
                 LOGGER.log(Level.SEVERE, "Invalid ports, ports set to default (RMI: " + DEFAULT_PORT_RMI +
                         ", Socket: " + DEFAULT_PORT_SOCKET + ")");
             }

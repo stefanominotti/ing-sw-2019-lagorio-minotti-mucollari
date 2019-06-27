@@ -247,7 +247,7 @@ public class Square {
 
     /** Calculates all the paths to a square
      * @param square to which you want to calculate paths
-     * @return
+     * @return List of possible paths
      */
     public List<List<Square>> pathsTo(Square square) {
         return new SquaresGraph(this.arena).findPaths(this, square);

@@ -3,6 +3,7 @@ package it.polimi.se2019.model;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.stream.MalformedJsonException;
 import it.polimi.se2019.model.messages.player.MarksToDamagesMessage;
 import it.polimi.se2019.model.messages.ammos.AmmosMessage;
 import it.polimi.se2019.model.messages.ammos.AmmosMessageType;
@@ -435,17 +436,17 @@ public class Board extends Observable {
      */
     public void loadTimers() {
         FileReader reader;
+        Gson gson = new Gson();
+        JsonParser parser = new JsonParser();
+        JsonObject jsonElement;
         try {
             reader = new FileReader(PATH + SERVER_SETTINGS);
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Invalid config file, timers set to default");
+            jsonElement = (JsonObject)parser.parse(reader);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Invalid settings file, timers set to default");
             setDefaultTimers();
             return;
         }
-
-        Gson gson = new Gson();
-        JsonParser parser = new JsonParser();
-        JsonObject jsonElement = (JsonObject)parser.parse(reader);
 
         try {
             this.startTimer = gson.fromJson(jsonElement.get("startTimer"), Long.class);

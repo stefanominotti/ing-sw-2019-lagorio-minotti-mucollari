@@ -31,7 +31,7 @@ public class GameLoader {
             this.filePath = CONFIG_PATH + '/' +
                     ((JsonObject)this.parser.parse(configReader)).get("savePath").getAsString();
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Wrong config file, save file set to default game_data.json");
+            LOGGER.log(Level.SEVERE, "Invalid settings file, save file set to default game_data.json");
             this.filePath = CONFIG_PATH + DEFAULT_SAVE_FILE;
         }
         this.board = new Board();
@@ -45,7 +45,7 @@ public class GameLoader {
         try {
             reader = new FileReader(this.filePath);
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "No game data found, a new game will start");
+            LOGGER.log(Level.INFO, "No game data found, a new game will start");
             return this.board;
         }
         jsonElement = (JsonObject)this.parser.parse(reader);
@@ -72,7 +72,7 @@ public class GameLoader {
                 Square square = this.board.getArena().getSquareByCoordinate(posX, posY);
                 this.board.movePlayer(player, square);
             } catch (NullPointerException e) {
-
+                // Ignore
             }
             players.add(player);
         }
@@ -101,28 +101,36 @@ public class GameLoader {
 
     void saveBoard() {
         StringBuilder jObject = new StringBuilder("{");
-        jObject.append("\"board\":" + this.board.toJson() + ",");
+        String toAppend = "\"board\":" + this.board.toJson() + ",";
+        jObject.append(toAppend);
         jObject.append(("\"players\":["));
         for(Player player : this.board.getPlayers()){
-            jObject.append("{\"player\":" + player.toJson() + ",");
+            toAppend = "{\"player\":" + player.toJson() + ",";
+            jObject.append(toAppend);
             jObject.append("\"player_position\":{");
             try {
-                jObject.append("\"x\":" + player.getPosition().getX() + ",");
-                jObject.append("\"y\":" + player.getPosition().getY() + "}},");
+                toAppend = "\"x\":" + player.getPosition().getX() + ",";
+                jObject.append(toAppend);
+                toAppend = "\"y\":" + player.getPosition().getY() + "}},";
+                jObject.append(toAppend);
             } catch (NullPointerException e) {
                 jObject.append("}},");
             }
         }
         jObject.deleteCharAt(jObject.length() - 1);
         jObject.append("],");
-        jObject.append("\"arena\":" + "\"" + this.board.getArena().toJson() + "\"" + ",");
+        toAppend = "\"arena\":" + "\"" + this.board.getArena().toJson() + "\"" + ",";
+        jObject.append(toAppend);
         jObject.append("\"others\":{");
         jObject.append("\"ammos_square\":[");
         for(Square square : this.board.getArena().getAllSquares()) {
             if(!square.isSpawn()) {
-                jObject.append("{\"x\":" + square.getX() + ",");
-                jObject.append("\"y\":" + square.getY() + ",");
-                jObject.append("\"tile\":" + this.gson.toJson(square.getAvailableAmmoTile()) + "},");
+                toAppend = "{\"x\":" + square.getX() + ",";
+                jObject.append(toAppend);
+                toAppend = "\"y\":" + square.getY() + ",";
+                jObject.append(toAppend);
+                toAppend = "\"tile\":" + this.gson.toJson(square.getAvailableAmmoTile()) + "},";
+                jObject.append(toAppend);
             }
         }
         jObject.deleteCharAt(jObject.length() - 1);
@@ -130,7 +138,8 @@ public class GameLoader {
         jObject.append("\"weapon_square\":{");
         for(Room room : this.board.getArena().getRoomList()) {
             if(room.hasSpawn()) {
-                jObject.append("\"" + room.getColor() + "\":" + this.gson.toJson(room.getSpawn().getWeaponsStore()) + ",");
+                toAppend = "\"" + room.getColor() + "\":" + this.gson.toJson(room.getSpawn().getWeaponsStore()) + ",";
+                jObject.append(toAppend);
             }
         }
         jObject.deleteCharAt(jObject.length() - 1);

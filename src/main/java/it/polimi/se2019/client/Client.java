@@ -8,7 +8,6 @@ import it.polimi.se2019.view.GUIApp;
 import javafx.application.Application;
 
 import java.io.FileReader;
-import java.io.IOException;
 
 public class Client {
 
@@ -20,20 +19,22 @@ public class Client {
     public static void main(String[] args) {
 
         int connection;
-        int UI;
+        int ui;
         String ip = null;
         int port = 0;
-        FileReader configReader = null;
+        FileReader configReader;
 
-        try {
-            configReader = new FileReader(CONFIG_PATH + CLIENT_SETTINGS);
-        } catch (Exception e) {
-            System.out.println("Invalid config file");
-            System.exit(0);
-        }
         Gson gson = new Gson();
         JsonParser parser = new JsonParser();
-        JsonObject jsonElement = (JsonObject) parser.parse(configReader);
+        JsonObject jsonElement = null;
+        try {
+            configReader = new FileReader(CONFIG_PATH + CLIENT_SETTINGS);
+            jsonElement = (JsonObject) parser.parse(configReader);
+        } catch (Exception e) {
+            System.out.println("Invalid settings file");
+            System.exit(0);
+        }
+
         try {
             ip = gson.fromJson(jsonElement.get("serverIP"), String.class);
             port = gson.fromJson(jsonElement.get("port"), Integer.class);
@@ -49,18 +50,18 @@ public class Client {
                     " (Socket)");
         }
         try {
-            UI = gson.fromJson(jsonElement.get("UI"), Integer.class);
+            ui = gson.fromJson(jsonElement.get("UI"), Integer.class);
         } catch (Exception e) {
-            UI = DEFAULT_UI;
+            ui = DEFAULT_UI;
             System.out.println("Invalid UI, UI set to default " + DEFAULT_UI + " (CLI)");
         }
-        if (UI != DEFAULT_UI && UI != DEFAULT_UI + 1) {
-            UI = DEFAULT_UI;
+        if (ui != DEFAULT_UI && ui != DEFAULT_UI + 1) {
+            ui = DEFAULT_UI;
         }
         if (connection != DEFAULT_CONNECTION && connection != DEFAULT_CONNECTION + 1) {
             connection = DEFAULT_CONNECTION;
         }
-        if (UI == 0) {
+        if (ui == 0) {
             new CLIView(connection, ip, port);
         } else {
             String[] arguments = {String.valueOf(connection), ip, String.valueOf(port)};

@@ -43,19 +43,19 @@ public class BoardView {
         }
     }
 
-    public void setBeforeFirstPlayer(boolean beforeFirstPlayer) {
+    void setBeforeFirstPlayer(boolean beforeFirstPlayer) {
         this.beforeFirstPlayer = beforeFirstPlayer;
     }
 
-    public boolean isBeforeFirstPlayer() {
+    boolean isBeforeFirstPlayer() {
         return this.beforeFirstPlayer;
     }
 
-    void setFrenzy(boolean frenzy) {
-        this.frenzy = frenzy;
+    void startFrenzy() {
+        this.frenzy = true;
     }
 
-    public boolean isFrenzy() {
+    boolean isFrenzy() {
         return this.frenzy;
     }
 
