@@ -8,5 +8,5 @@ public enum SceneType {
     LOBBY,
     CONNECTION_ERROR,
     RELOAD_GAME,
-    INVALID_TOKEN;
+    INVALID_TOKEN
 }

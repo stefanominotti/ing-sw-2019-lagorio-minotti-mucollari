@@ -299,11 +299,11 @@ public abstract class View {
     }
 
     void handleNicknameRequest() {
-        this.state = TYPINGNICKNAME;
+        this.state = TYPING_NICKNAME;
     }
 
     void handleNicknameDuplicated() {
-        this.state = TYPINGNICKNAME;
+        this.state = TYPING_NICKNAME;
     }
 
     private void update(TimerMessage message) {
@@ -320,8 +320,8 @@ public abstract class View {
     abstract void handleGameSetupTimer(TimerMessageType action, long duration);
 
     void handlePowerupTimer(TimerMessageType action) {
-        if (this.state == USEMULTIPLEPOWERUPS) {
-            this.state = OTHERTURN;
+        if (this.state == MULTIPLE_POWERUPS_SELECTION) {
+            this.state = OTHER_PLAYER_TURN;
         }
     }
 
@@ -471,7 +471,7 @@ public abstract class View {
 
     void handlePlayerCreated(GameCharacter character, String nickname, Map<GameCharacter,
             String> otherPlayers) {
-        this.state = WAITINGSTART;
+        this.state = WAITING_START;
         this.character = character;
         this.selfPlayerBoard = new SelfPlayerBoard(character, nickname);
         for (Map.Entry<GameCharacter, String> player : otherPlayers.entrySet()) {
@@ -490,7 +490,7 @@ public abstract class View {
     }
 
     void handleReadyPlayer(GameCharacter character, String nickname) {
-        if (this.state == WAITINGSTART) {
+        if (this.state == WAITING_START) {
             this.enemyBoards.add(new PlayerBoard(character, nickname));
         }
     }
@@ -502,20 +502,20 @@ public abstract class View {
     }
 
     void handleSkullsSet() {
-        this.state = SETTINGARENA;
+        this.state = SETTING_ARENA;
     }
 
     void handleMasterChanged(GameCharacter character) {
         if (character == this.character) {
-            this.state = SETTINGSKULLS;
+            this.state = SETTING_SKULLS;
         }
     }
 
     void handleStartSetup(GameCharacter character) {
         if (character == this.character) {
-            this.state = SETTINGSKULLS;
+            this.state = SETTING_SKULLS;
         } else {
-            this.state = WAITINGSETUP;
+            this.state = WAITING_SETUP;
         }
     }
 
@@ -570,12 +570,12 @@ public abstract class View {
     }
 
     void handleCharacterSelectionRequest(List<GameCharacter> availables) {
-        this.state = CHOOSINGCHARACTER;
+        this.state = CHOOSING_CHARACTER;
     }
 
     void handleClientDisconnected(GameCharacter character) {
-        if (this.state == TYPINGNICKNAME || this.state == WAITINGSTART || this.state == WAITINGSETUP ||
-                this.state == SETTINGSKULLS || this.state == SETTINGARENA) {
+        if (this.state == TYPING_NICKNAME || this.state == WAITING_START || this.state == WAITING_SETUP ||
+                this.state == SETTING_SKULLS || this.state == SETTING_ARENA) {
             for (PlayerBoard playerBoard : this.enemyBoards) {
                 if (playerBoard.getCharacter() == character) {
                     this.enemyBoards.remove(playerBoard);
@@ -594,7 +594,7 @@ public abstract class View {
                   List<Weapon> weapons, List<Powerup> powerups, int score, Map<GameCharacter, String> others,
                   boolean isFrenzy, boolean isBeforeFirstPlayer) {
         this.character = character;
-        this.state = WAITINGSETUP;
+        this.state = WAITING_SETUP;
         this.enemyBoards = new ArrayList<>();
         this.board = new BoardView(skulls, squares, killshotTrack, isFrenzy, isBeforeFirstPlayer);
         for (PlayerBoard playerBoard : playerBoards) {
@@ -767,9 +767,9 @@ public abstract class View {
 
     void handleStartTurn(TurnMessage message, GameCharacter character) {
         if (character != this.character) {
-            this.state = OTHERTURN;
+            this.state = OTHER_PLAYER_TURN;
         } else {
-            this.state = YOURTURN;
+            this.state = YOUR_TURN;
             this.client.send(message);
         }
     }
@@ -777,7 +777,7 @@ public abstract class View {
     abstract void handleEndTurn(GameCharacter character);
 
     void handleTurnContinuation(GameCharacter player) {
-        this.state = OTHERTURN;
+        this.state = OTHER_PLAYER_TURN;
     }
 
     private void update(BoardMessage message) {
@@ -827,7 +827,7 @@ public abstract class View {
     }
 
     void handleSetupInterrupted() {
-        this.state = WAITINGSTART;
+        this.state = WAITING_START;
     }
 
     void handleGameSet(Map<Coordinates, RoomColor> colors, Map<Coordinates, Boolean> spawns,
@@ -901,67 +901,67 @@ public abstract class View {
 
     void handleWeaponSwitchRequest(List<Weapon> weapons) {
         this.weaponsSelection = weapons;
-        this.state = SWITCHWEAPON;
+        this.state = SWITCH_WEAPON;
     }
 
     void handlePickupActionRequest(List<Coordinates> coordinates) {
         this.coordinatesSelection = coordinates;
-        this.state = SELECTPICKUP;
+        this.state = SELECT_PICKUP;
     }
 
     void handleMovementActionRequest(List<Coordinates> coordinates) {
         this.coordinatesSelection = coordinates;
-        this.state = SELECTMOVEMENT;
+        this.state = SELECT_MOVEMENT;
     }
 
     void handlePowerupTargetRequest(List<GameCharacter> targets) {
         this.charactersSelection = targets;
-        this.state = SELECTPOWERUPTARGET;
+        this.state = SELECT_POWERUP_TARGET;
     }
 
     void handlePowerupPositionRequest(List<Coordinates> coordinates) {
         this.coordinatesSelection = coordinates;
-        this.state = SELECTPOWERUPPOSITION;
+        this.state = SELECT_POWERUP_POSITION;
     }
 
     void handleReloadRequest(List<Weapon> weapons) {
         this.weaponsSelection = new ArrayList<>(weapons);
-        this.state = RECHARGEWEAPON;
+        this.state = RECHARGE_WEAPON;
     }
 
     void handleDiscardPowerupRequest(List<Powerup> powerups) {
         this.powerupsSelection = powerups;
-        this.state = DISCARDSPAWN;
+        this.state = DISCARD_SPAWN;
     }
 
     void handleUsePowerupRequest(List<Powerup> powerups) {
         this.powerupsSelection = powerups;
         if (powerups.get(0).getType() == PowerupType.TAGBACK_GRENADE) {
-            this.state = USEMULTIPLEPOWERUPS;
+            this.state = MULTIPLE_POWERUPS_SELECTION;
         } else {
-            this.state = USEPOWERUP;
+            this.state = USE_POWERUP;
         }
     }
 
     void handleWeaponPickupRequest(List<Weapon> weapons) {
         this.weaponsSelection = new ArrayList<>(weapons);
-        this.state = SELECTWEAPON;
+        this.state = SELECT_WEAPON;
     }
 
     void handleActionSelectionRequest(List<ActionType> actions) {
         this.actionsSelection = new ArrayList<>(actions);
         this.actionsSelection.add(ActionType.ENDTURN);
-        this.state = SELECTACTION;
+        this.state = SELECT_ACTION;
     }
 
     void handleWeaponUseRequest(List<Weapon> weapons) {
         this.weaponsSelection = new ArrayList<>(weapons);
-        this.state = USEWEAPON;
+        this.state = USE_WEAPON;
     }
 
     void handleEffectRequest(List<WeaponEffectOrderType> effects) {
         this.effectsSelection = new ArrayList<>(effects);
-        this.state = USEEFFECT;
+        this.state = USE_EFFECT;
     }
 
     private void update(SingleSelectionMessage message) {
@@ -985,11 +985,11 @@ public abstract class View {
     }
 
     void handlePersistenceRequest() {
-        this.state = PERSISTENCESELECTION;
+        this.state = PERSISTENCE_SELECTION;
     }
 
     void handleEffectRequireRequest() {
-        this.state = EFFECTREQUIRE;
+        this.state = EFFECT_REQUIRE_SELECTION;
     }
 
     void handleEffectSelections() {
@@ -1003,29 +1003,29 @@ public abstract class View {
     }
 
     void handleEffectComboRequest(WeaponEffectOrderType effect) {
-        this.state = EFFECTCOMBO;
+        this.state = EFFECT_COMBO_SELECTION;
     }
 
     void handleEffectSelectRequest() {
         if(!this.effectPossibility.getSquares().isEmpty()) {
-            this.state = EFFECTSELECT_SQUARE;
+            this.state = EFFECT_SELECT_SQUARE;
         } else if(!this.effectPossibility.getRooms().isEmpty()) {
-            this.state = EFFECTSELECT_ROOM;
+            this.state = EFFECT_SELECT_ROOM;
         } else if(!this.effectPossibility.getCardinalPoints().isEmpty()) {
-            this.state = EFFECTSELECT_CARDINAL;
+            this.state = EFFECT_SELECT_CARDINAL;
         }
     }
 
     void handleEffectMoveRequest() {
-        this.state = EFFECTMOVE;
+        this.state = EFFECT_MOVE_SELECTION;
     }
 
     void handleEffectTargetRequest() {
-        this.state = EFFECTTARGET;
+        this.state = EFFECT_TARGET_SELECTION;
     }
 
     void handleMultipleSquareRequest() {
-        this.state = MULTIPLESQUARE;
+        this.state = MULTIPLE_SQUARES_SELECTION;
     }
 
     abstract void requirePayment();

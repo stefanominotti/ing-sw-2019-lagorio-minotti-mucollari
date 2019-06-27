@@ -20,7 +20,7 @@ public class SelfPlayerBoard extends PlayerBoard {
         this.score = 0;
     }
 
-    public SelfPlayerBoard(PlayerBoard playerBoard,  List<Weapon> readyWeapons, List<Powerup> powerups, int score) {
+    SelfPlayerBoard(PlayerBoard playerBoard,  List<Weapon> readyWeapons, List<Powerup> powerups, int score) {
         super(playerBoard.getCharacter(), playerBoard.getNickname(), playerBoard.getAvailableAmmos(),
                 playerBoard.getRevengeMarks(), playerBoard.getDamages(), playerBoard.getKillshotPoints(),
                 playerBoard.getUnloadedWeapons(), playerBoard.getWeaponsNumber(), playerBoard.getPowerupsNumber());
@@ -42,6 +42,10 @@ public class SelfPlayerBoard extends PlayerBoard {
         this.score += amount;
     }
 
+    int getScore() {
+        return this.score;
+    }
+
     void removePowerup(PowerupType type, AmmoType color) {
         super.removePowerup();
         for (Powerup powerup : this.powerups) {
@@ -60,9 +64,7 @@ public class SelfPlayerBoard extends PlayerBoard {
     @Override
     void removeWeapon(Weapon weapon) {
         super.removeWeapon(weapon);
-        if (this.readyWeapons.contains(weapon)) {
-            this.readyWeapons.remove(weapon);
-        }
+        this.readyWeapons.remove(weapon);
     }
 
     List<Weapon> getReadyWeapons() {
@@ -90,35 +92,41 @@ public class SelfPlayerBoard extends PlayerBoard {
         builder.append("\n\n");
 
         builder.append("Available ammos:    ");
+        String toAppend;
         for(Map.Entry<AmmoType, Integer> ammo : super.getAvailableAmmos().entrySet()) {
             for(int i=0; i<ammo.getValue(); i++) {
-                builder.append(ammo.getKey().getIdentifier() + " ");
+                toAppend = ammo.getKey().getIdentifier() + " ";
+                builder.append(toAppend);
             }
         }
         builder.append("\n");
 
         builder.append("Available powerups: ");
         for(Powerup p : this.powerups) {
-            builder.append(p.getType() + " " + p.getColor().getIdentifier() + ", ");
+            toAppend = p.getType() + " " + p.getColor().getIdentifier() + ", ";
+            builder.append(toAppend);
         }
         builder.setLength(builder.length() - 2);
         builder.append("\n");
 
         builder.append("Ready weapons:      ");
         for(Weapon w : this.readyWeapons) {
-            builder.append(w + ", ");
+            toAppend = w + ", ";
+            builder.append(toAppend);
         }
         builder.setLength(builder.length() - 2);
         builder.append("\n");
 
         builder.append("Unloaded weapons:   ");
         for(Weapon w : super.getUnloadedWeapons()) {
-            builder.append(w + ", ");
+            toAppend = w + ", ";
+            builder.append(toAppend);
         }
         builder.setLength(builder.length() - 2);
         builder.append("\n\n");
 
-        builder.append("Score: " + this.score);
+        toAppend = "Score: " + this.score;
+        builder.append(toAppend);
         builder.append("\n");
 
         return builder.toString();

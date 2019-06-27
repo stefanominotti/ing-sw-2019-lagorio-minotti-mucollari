@@ -2,7 +2,6 @@ package it.polimi.se2019.view;
 
 import it.polimi.se2019.model.AmmoType;
 import it.polimi.se2019.model.GameCharacter;
-import it.polimi.se2019.model.Powerup;
 import it.polimi.se2019.model.Weapon;
 
 import java.io.Serializable;
@@ -22,7 +21,7 @@ public class PlayerBoard implements Serializable {
     private List<Weapon> unloadedWeapons;
     private int weaponsNumber;
     private int powerupsNumber;
-    boolean frenzyBoard;
+    private boolean frenzyBoard;
 
     PlayerBoard(GameCharacter character, String nickname) {
         this.nickname = nickname;
@@ -68,7 +67,7 @@ public class PlayerBoard implements Serializable {
     }
 
     Map<AmmoType, Integer> getAvailableAmmos() {
-        return new HashMap<>(this.availableAmmos);
+        return new EnumMap<>(this.availableAmmos);
     }
 
     int getWeaponsNumber() {
@@ -131,9 +130,7 @@ public class PlayerBoard implements Serializable {
 
     void removeWeapon(Weapon weapon) {
         this.weaponsNumber--;
-        if (this.unloadedWeapons.contains(weapon)) {
-            this.unloadedWeapons.remove(weapon);
-        }
+        this.unloadedWeapons.remove(weapon);
     }
 
     void removePowerup() {
@@ -158,7 +155,7 @@ public class PlayerBoard implements Serializable {
         }
     }
 
-    public void reduceKillshotPoints() {
+    void reduceKillshotPoints() {
         this.killshotPoints.remove(0);
     }
 
@@ -166,13 +163,16 @@ public class PlayerBoard implements Serializable {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("Nickname:  " + this.nickname + "\n");
+        String toAppend = "Nickname:  " + this.nickname + "\n";
+        builder.append(toAppend);
 
-        builder.append("Character: " + this.character + " (" + this.character.getIdentifier() + ")\n\n");
+        toAppend = "Character: " + this.character + " (" + this.character.getIdentifier() + ")\n\n";
+        builder.append(toAppend);
 
         builder.append("Revenge marks: ");
         for (GameCharacter c : this.revengeMarks) {
-            builder.append(c.getIdentifier() + " ");
+            toAppend = c.getIdentifier() + " ";
+            builder.append(toAppend);
         }
         if(!this.revengeMarks.isEmpty()) {
             builder.setLength(builder.length() - 1);
@@ -183,9 +183,11 @@ public class PlayerBoard implements Serializable {
         int i = 0;
         for (GameCharacter c : this.damages) {
             if (i == 2 || i == 5 || i == 10) {
-                builder.append("| " + c.getIdentifier() + " ");
+                toAppend = "| " + c.getIdentifier() + " ";
+                builder.append(toAppend);
             } else {
-                builder.append(c.getIdentifier() + " ");
+                toAppend = c.getIdentifier() + " ";
+                builder.append(toAppend);
             }
             i++;
         }
@@ -208,24 +210,29 @@ public class PlayerBoard implements Serializable {
             builder.append("x ");
         }
         for (Integer p : this.killshotPoints) {
-            builder.append(p + " ");
+            toAppend = p + " ";
+            builder.append(toAppend);
         }
         builder.append("\n\n");
 
         builder.append("Available ammos:    ");
         for(Map.Entry<AmmoType, Integer> ammo : this.availableAmmos.entrySet()) {
             for(i=0; i<ammo.getValue(); i++) {
-                builder.append(ammo.getKey().getIdentifier() + " ");
+                toAppend = ammo.getKey().getIdentifier() + " ";
+                builder.append(toAppend);
             }
         }
         builder.append("\n");
 
-        builder.append("Available powerups: " + this.powerupsNumber + "\n");
-        builder.append("Ready weapons:      " + (this.weaponsNumber - this.unloadedWeapons.size()) + "\n");
+        toAppend = "Available powerups: " + this.powerupsNumber + "\n";
+        builder.append(toAppend);
+        toAppend = "Ready weapons:      " + (this.weaponsNumber - this.unloadedWeapons.size()) + "\n";
+        builder.append(toAppend);
 
         builder.append("Unloaded weapons:   ");
         for(Weapon w : this.unloadedWeapons) {
-            builder.append(w + ", ");
+            toAppend = w + ", ";
+            builder.append(toAppend);
         }
         builder.setLength(builder.length() - 2);
         builder.append("\n");

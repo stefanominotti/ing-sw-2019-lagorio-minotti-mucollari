@@ -1,8 +1,6 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.model.GameCharacter;
-import it.polimi.se2019.model.Powerup;
-import it.polimi.se2019.model.Weapon;
 import it.polimi.se2019.model.messages.board.ArenaMessage;
 import it.polimi.se2019.model.messages.board.SkullsMessage;
 import it.polimi.se2019.model.messages.client.CharacterMessage;
@@ -52,7 +50,7 @@ public class GUIView extends View {
     }
 
     void handleCharacterInput(GameCharacter character) {
-        if (getState() == CHOOSINGCHARACTER) {
+        if (getState() == CHOOSING_CHARACTER) {
             getClient().send(new CharacterMessage(character, generateToken()));
         }
     }
@@ -95,7 +93,7 @@ public class GUIView extends View {
 
     @Override
     void handleNicknameDuplicated() {
-        if (getState() == CHOOSINGCHARACTER) {
+        if (getState() == CHOOSING_CHARACTER) {
             setScene(SceneType.SELECT_NICKNAME);
             super.resetSelections();
         }
@@ -119,7 +117,7 @@ public class GUIView extends View {
     @Override
     void handleClientDisconnected(GameCharacter character) {
         super.handleClientDisconnected(character);
-        if (getState() == WAITINGSTART || getState() == WAITINGSETUP) {
+        if (getState() == WAITING_START || getState() == WAITING_SETUP) {
             ((LobbyController) this.controller).removePlayer(character);
         }
     }
@@ -138,14 +136,14 @@ public class GUIView extends View {
     @Override
     void handleReadyPlayer(GameCharacter character, String nickname) {
         super.handleReadyPlayer(character, nickname);
-        if (getState() == WAITINGSTART) {
+        if (getState() == WAITING_START) {
             ((LobbyController) this.controller).addPlayer(character, nickname);
         }
     }
 
     @Override
     void handleSetupInterrupted() {
-        if(getState() == SETTINGSKULLS || getState() == SETTINGARENA) {
+        if(getState() == SETTING_SKULLS || getState() == SETTING_ARENA) {
             setScene(SceneType.LOBBY);
             Map<GameCharacter, String> players = new LinkedHashMap<>();
             players.put(getCharacter(), getSelfPlayerBoard().getNickname());
@@ -160,7 +158,7 @@ public class GUIView extends View {
 
     @Override
     void handleGameSetupTimer(TimerMessageType action, long duration) {
-        if (getState() == WAITINGSTART) {
+        if (getState() == WAITING_START) {
             switch (action) {
                 case START:
                     ((LobbyController) this.controller).setMessage("loading.gif", "Setup will start soon...");

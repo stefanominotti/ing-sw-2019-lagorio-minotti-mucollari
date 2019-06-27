@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import static junit.framework.TestCase.assertEquals;
@@ -70,5 +71,24 @@ public class BoardViewTest {
         assertEquals(0, square1.getActivePlayers().size());
         assertEquals(1, square2.getActivePlayers().size());
         assertEquals(GameCharacter.D_STRUCT_OR, square2.getActivePlayers().get(0));
+    }
+
+    @Test
+    public void killshotTrackTest() {
+        List<GameCharacter> players = Arrays.asList(GameCharacter.D_STRUCT_OR, GameCharacter.BANSHEE);
+        this.board.addKillshotPoints(players, 3);
+        assertEquals(players, this.board.getKillshotTrack().get(3));
+    }
+
+    @Test
+    public void alternativeConstructorTest() {
+        List<SquareView> squares = this.board.getSquares();
+        killshotTrackTest();
+        Map<Integer, List<GameCharacter>> killshotTrack = this.board.getKillshotTrack();
+        BoardView alternativeBoard = new BoardView(3, squares, killshotTrack, true, true);
+        assertTrue(alternativeBoard.isFrenzy());
+        assertTrue(alternativeBoard.isBeforeFirstPlayer());
+        assertEquals(squares, alternativeBoard.getSquares());
+        assertEquals(killshotTrack, alternativeBoard.getKillshotTrack());
     }
 }

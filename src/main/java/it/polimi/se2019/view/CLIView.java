@@ -53,47 +53,47 @@ public class CLIView extends View {
             return;
         }
 
-        if (getState() == TYPINGNICKNAME) {
+        if (getState() == TYPING_NICKNAME) {
             handleNicknameInput(input);
-        } else if (getState() == CHOOSINGCHARACTER || getState() == SELECTBOARDTOSHOW
-                || getState() == SELECTPOWERUPTARGET) {
+        } else if (getState() == CHOOSING_CHARACTER || getState() == SELECT_BOARD_TO_SHOW
+                || getState() == SELECT_POWERUP_TARGET) {
             handleCharacterInput(input);
-        } else if (getState() == SETTINGSKULLS) {
+        } else if (getState() == SETTING_SKULLS) {
             handleSkullsInput(input);
-        } else if (getState() == SETTINGARENA) {
+        } else if (getState() == SETTING_ARENA) {
             handleArenaInput(input);
-        } else if (getState() == DISCARDSPAWN || getState() == USEPOWERUP) {
+        } else if (getState() == DISCARD_SPAWN || getState() == USE_POWERUP) {
             handlePowerupInput(input);
-        } else if (getState() == SELECTACTION) {
+        } else if (getState() == SELECT_ACTION) {
             handleActionInput(input);
-        } else if (getState() == SELECTMOVEMENT || getState() == SELECTPICKUP || getState() == SELECTPOWERUPPOSITION) {
+        } else if (getState() == SELECT_MOVEMENT || getState() == SELECT_PICKUP || getState() == SELECT_POWERUP_POSITION) {
             handlePositionInput(input);
-        } else if (getState() == SELECTWEAPON || getState() == SWITCHWEAPON || getState() == RECHARGEWEAPON ||
-                getState() == USEWEAPON) {
+        } else if (getState() == SELECT_WEAPON || getState() == SWITCH_WEAPON || getState() == RECHARGE_WEAPON ||
+                getState() == USE_WEAPON) {
             handleWeaponInput(input);
         } else if (getState() == PAYMENT) {
             handlePaymentInput(input);
-        } else if (getState() == USEEFFECT) {
+        } else if (getState() == USE_EFFECT) {
             handleEffectInput(input);
-        } else if (getState() == EFFECTCOMBO) {
+        } else if (getState() == EFFECT_COMBO_SELECTION) {
             handleDecisionInput(input);
-        } else if (getState() == EFFECTSELECT_SQUARE) {
+        } else if (getState() == EFFECT_SELECT_SQUARE) {
             handleSelectSquareInput(input);
-        } else if (getState() == EFFECTSELECT_ROOM) {
+        } else if (getState() == EFFECT_SELECT_ROOM) {
             handleSelectRoomInput(input);
-        } else if (getState() == EFFECTSELECT_CARDINAL) {
+        } else if (getState() == EFFECT_SELECT_CARDINAL) {
             handleSelectCardinalInput(input);
-        } else if (getState() == EFFECTTARGET) {
+        } else if (getState() == EFFECT_TARGET_SELECTION) {
             handleEffectTargetInput(input);
-        } else if (getState() == EFFECTMOVE) {
+        } else if (getState() == EFFECT_MOVE_SELECTION) {
             handleSelectSquareInput(input);
-        } else if (getState() == EFFECTREQUIRE) {
+        } else if (getState() == EFFECT_REQUIRE_SELECTION) {
             handleDecisionInput(input);
-        } else if (getState() == MULTIPLESQUARE) {
+        } else if (getState() == MULTIPLE_SQUARES_SELECTION) {
             handleEffectMultipleSquaresInput(input);
-        } else if (getState() == USEMULTIPLEPOWERUPS) {
+        } else if (getState() == MULTIPLE_POWERUPS_SELECTION) {
             handleMultiplePowerupsInput(input);
-        } else if (getState() == PERSISTENCESELECTION) {
+        } else if (getState() == PERSISTENCE_SELECTION) {
             handlePersistenceInput(input);
         }
     }
@@ -147,7 +147,7 @@ public class CLIView extends View {
         }
 
         int maxSize = getCharactersSelection().size();
-        if (getState() == SELECTBOARDTOSHOW) {
+        if (getState() == SELECT_BOARD_TO_SHOW) {
             maxSize = getEnemyBoards().size();
         }
         if (selection > maxSize || selection <= 0) {
@@ -156,21 +156,21 @@ public class CLIView extends View {
         }
         selection--;
         this.inputEnabled = false;
-        if (getState() == CHOOSINGCHARACTER) {
+        if (getState() == CHOOSING_CHARACTER) {
             getClient().send(new CharacterMessage(getCharactersSelection().get(selection), generateToken()));
-        } else if (getState() == SELECTPOWERUPTARGET) {
+        } else if (getState() == SELECT_POWERUP_TARGET) {
             getClient().send(new SingleSelectionMessage(SelectionMessageType.POWERUP_TARGET, getCharacter(),
                     getCharactersSelection().get(selection)));
-        } else if (getState() == SELECTBOARDTOSHOW) {
+        } else if (getState() == SELECT_BOARD_TO_SHOW) {
             showMessage(getEnemyBoards().get(selection).toString());
             showActions();
-            setState(SELECTACTION);
+            setState(SELECT_ACTION);
             this.inputEnabled = true;
         }
     }
 
     private void handlePositionInput(String input) {
-        if (input.equalsIgnoreCase("c") && getState() != SELECTPOWERUPPOSITION) {
+        if (input.equalsIgnoreCase("c") && getState() != SELECT_POWERUP_POSITION) {
             this.inputEnabled = false;
             getClient().send(new SingleSelectionMessage(SelectionMessageType.ACTION, getCharacter(),
                     ActionType.CANCEL));
@@ -205,13 +205,13 @@ public class CLIView extends View {
         }
 
         this.inputEnabled = false;
-        if (getState() == SELECTMOVEMENT) {
+        if (getState() == SELECT_MOVEMENT) {
             getClient().send(new SingleSelectionMessage(SelectionMessageType.MOVE, getCharacter(),
                     new Coordinates(x, y)));
-        } else if (getState() == SELECTPICKUP) {
+        } else if (getState() == SELECT_PICKUP) {
             getClient().send(new SingleSelectionMessage(SelectionMessageType.PICKUP, getCharacter(),
                     new Coordinates(x, y)));
-        } else if (getState() == SELECTPOWERUPPOSITION) {
+        } else if (getState() == SELECT_POWERUP_POSITION) {
             getClient().send(new SingleSelectionMessage(SelectionMessageType.POWERUP_POSITION, getCharacter(),
                     new Coordinates(x, y)));
         }
@@ -228,7 +228,7 @@ public class CLIView extends View {
         }
 
         int maxNumber = getPowerupsSelection().size();
-        if (getState() == USEPOWERUP) {
+        if (getState() == USE_POWERUP) {
             maxNumber++;
         }
 
@@ -238,7 +238,7 @@ public class CLIView extends View {
         }
 
         Powerup toSend;
-        if (getState() == USEPOWERUP && selection == getPowerupsSelection().size() + 1) {
+        if (getState() == USE_POWERUP && selection == getPowerupsSelection().size() + 1) {
             toSend = null;
         } else {
             toSend = getPowerupsSelection().get(selection - 1);
@@ -247,9 +247,9 @@ public class CLIView extends View {
         }
 
         this.inputEnabled = false;
-        if (getState() == USEPOWERUP) {
+        if (getState() == USE_POWERUP) {
             getClient().send(new SingleSelectionMessage(SelectionMessageType.USE_POWERUP, getCharacter(), toSend));
-        } else if (getState() == DISCARDSPAWN) {
+        } else if (getState() == DISCARD_SPAWN) {
             getClient().send(new SingleSelectionMessage(SelectionMessageType.DISCARD_POWERUP, getCharacter(),
                     toSend));
         }
@@ -263,7 +263,7 @@ public class CLIView extends View {
                 int index = Integer.parseInt(i);
                 if (index == getPowerupsSelection().size() + 1 && inputList.length == 1) {
                     this.inputEnabled = false;
-                    setState(OTHERTURN);
+                    setState(OTHER_PLAYER_TURN);
                     getClient().send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP, getCharacter(), null));
                     return;
                 }
@@ -279,7 +279,7 @@ public class CLIView extends View {
             return;
         }
         this.inputEnabled = false;
-        setState(OTHERTURN);
+        setState(OTHER_PLAYER_TURN);
         getClient().send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP, getCharacter(), powerups));
     }
 
@@ -294,7 +294,7 @@ public class CLIView extends View {
         }
 
         int maxNumber = getWeaponsSelection().size();
-        if (getState() == RECHARGEWEAPON || getState() == USEWEAPON) {
+        if (getState() == RECHARGE_WEAPON || getState() == USE_WEAPON) {
             maxNumber++;
         }
 
@@ -304,12 +304,12 @@ public class CLIView extends View {
         }
 
         Weapon toSend;
-        if (getState() == USEWEAPON && selection == maxNumber) {
+        if (getState() == USE_WEAPON && selection == maxNumber) {
             this.inputEnabled = false;
             getClient().send(new SingleSelectionMessage(SelectionMessageType.ACTION, getCharacter(),
                     ActionType.CANCEL));
             return;
-        } else if (getState() == RECHARGEWEAPON && selection == maxNumber) {
+        } else if (getState() == RECHARGE_WEAPON && selection == maxNumber) {
             toSend = null;
         } else {
             toSend = getWeaponsSelection().get(selection - 1);
@@ -317,13 +317,13 @@ public class CLIView extends View {
         }
 
         this.inputEnabled = false;
-        if (getState() == SELECTWEAPON) {
+        if (getState() == SELECT_WEAPON) {
             getClient().send(new SingleSelectionMessage(SelectionMessageType.PICKUP_WEAPON, getCharacter(), toSend));
-        } else if (getState() == SWITCHWEAPON) {
+        } else if (getState() == SWITCH_WEAPON) {
             getClient().send(new SingleSelectionMessage(SelectionMessageType.SWITCH, getCharacter(), toSend));
-        } else if (getState() == RECHARGEWEAPON) {
+        } else if (getState() == RECHARGE_WEAPON) {
             getClient().send(new SingleSelectionMessage(SelectionMessageType.RELOAD, getCharacter(), toSend));
-        } else if (getState() == USEWEAPON) {
+        } else if (getState() == USE_WEAPON) {
             getClient().send(new SingleSelectionMessage(SelectionMessageType.USE_WEAPON, getCharacter(), toSend));
             setCurrentWeapon(toSend);
             setWeaponActivated(false);
@@ -363,7 +363,7 @@ public class CLIView extends View {
                 }
                 text.setLength(text.length() - 1);
                 showMessage(text.toString());
-                setState(SELECTBOARDTOSHOW);
+                setState(SELECT_BOARD_TO_SHOW);
                 break;
             default:
                 this.inputEnabled = false;
@@ -483,10 +483,10 @@ public class CLIView extends View {
             return;
         }
 
-        if (getState() == EFFECTCOMBO) {
+        if (getState() == EFFECT_COMBO_SELECTION) {
             this.inputEnabled = false;
             getClient().send(new SingleSelectionMessage(SelectionMessageType.EFFECT_COMBO, getCharacter(), input));
-        } else if (getState() == EFFECTREQUIRE) {
+        } else if (getState() == EFFECT_REQUIRE_SELECTION) {
             if (input.equals("Y")) {
                 super.setPossibilityRequire(true);
                 return;
@@ -635,7 +635,7 @@ public class CLIView extends View {
 
     @Override
     void handleGameSetupTimer(TimerMessageType action, long duration) {
-        if (getState() == WAITINGSTART) {
+        if (getState() == WAITING_START) {
             switch (action) {
                 case START:
                     showMessage("Game setup will start in " + duration + " seconds...");
@@ -649,7 +649,7 @@ public class CLIView extends View {
 
     @Override
     void handlePowerupTimer(TimerMessageType action) {
-        if (getState() == USEMULTIPLEPOWERUPS) {
+        if (getState() == MULTIPLE_POWERUPS_SELECTION) {
             showMessage("Time out, sorry");
             this.inputEnabled = false;
         }
@@ -762,7 +762,7 @@ public class CLIView extends View {
 
         showMessage(text.toString());
 
-        if (getState() == USEMULTIPLEPOWERUPS && attacker != getCharacter()) {
+        if (getState() == MULTIPLE_POWERUPS_SELECTION && attacker != getCharacter()) {
             handleUsePowerupRequest(getPowerupsSelection());
         }
     }
@@ -874,16 +874,16 @@ public class CLIView extends View {
             }
         }
         super.handleClientDisconnected(character);
-        if (getState() == TYPINGNICKNAME || getState() == WAITINGSTART || getState() == WAITINGSETUP ||
-                getState() == SETTINGSKULLS || getState() == SETTINGARENA) {
-            if (getState() == WAITINGSTART || getState() == WAITINGSETUP || getState() == SETTINGSKULLS ||
-                    getState() == SETTINGARENA) {
+        if (getState() == TYPING_NICKNAME || getState() == WAITING_START || getState() == WAITING_SETUP ||
+                getState() == SETTING_SKULLS || getState() == SETTING_ARENA) {
+            if (getState() == WAITING_START || getState() == WAITING_SETUP || getState() == SETTING_SKULLS ||
+                    getState() == SETTING_ARENA) {
                 showMessage(nickname + " - " + character + " disconnected");
             }
-            if (getState() == SETTINGSKULLS) {
+            if (getState() == SETTING_SKULLS) {
                 showMessage("Set Skulls number for the game:");
             }
-            if (getState() == SETTINGARENA) {
+            if (getState() == SETTING_ARENA) {
                 showMessage("Select the Arena [1, 2, 3, 4]:");
             }
         } else {
@@ -1203,7 +1203,7 @@ public class CLIView extends View {
     void handleUsePowerupRequest(List<Powerup> powerups) {
         super.handleUsePowerupRequest(powerups);
         StringBuilder text = new StringBuilder();
-        if (getState() == USEMULTIPLEPOWERUPS) {
+        if (getState() == MULTIPLE_POWERUPS_SELECTION) {
             text.append("Select powerups to use or skip:\n");
         } else {
             text.append("Select a powerup to use or skip:\n");
@@ -1381,14 +1381,14 @@ public class CLIView extends View {
         showMessage(getBoard().arenaToString());
         StringBuilder text = new StringBuilder("Select a ");
         int index = 1;
-        if (getState() == EFFECTSELECT_SQUARE) {
+        if (getState() == EFFECT_SELECT_SQUARE) {
             text.append("square:\n");
             for (Coordinates s : getEffectPossibility().getSquares()) {
                 String toAppend = "[" + index + "] - [" + s.getX() + ", " + s.getY() + "]\n";
                 text.append(toAppend);
                 index++;
             }
-        } else if (getState() == EFFECTSELECT_CARDINAL) {
+        } else if (getState() == EFFECT_SELECT_CARDINAL) {
             text.append("cardinal direction:\n");
             for (CardinalPoint p : getEffectPossibility().getCardinalPoints()) {
                 String toAppend = "[" + index + "] - " + p + "\n";
