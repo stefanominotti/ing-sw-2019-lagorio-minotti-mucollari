@@ -508,10 +508,10 @@ class EffectsController {
                 noHitBySecondary = true;
             }
             if (targetConstraints.contains(TargetConstraint.ONLYHITBYMAIN)) {
-                availablePlayers = new ArrayList<>(this.hitByMain);
+                availablePlayers = (List<Player>)filter(this.board.getAvailablePlayers(), this.hitByMain);
             }
             if (targetConstraints.contains(TargetConstraint.ONLYHITBYSECONDARY)) {
-                availablePlayers = new ArrayList<>(this.hitBySecondary);
+                availablePlayers = (List<Player>)filter(this.board.getAvailablePlayers(), this.hitBySecondary);
             }
         }
         switch (effect.getType()) {
@@ -690,7 +690,13 @@ class EffectsController {
         }
         this.effectsQueue.remove(0);
         if (this.currentEffect.getType() == EffectType.DAMAGE) {
-            this.controller.askPowerup(pack.getCharacters());
+            List<GameCharacter> characters = new ArrayList<>();
+            for (GameCharacter character : pack.getCharacters()) {
+                if(!this.board.getPlayerByCharacter(character).isDead()) {
+                    characters.add(character);
+                }
+            }
+            this.controller.askPowerup(characters);
             return;
         }
         handleEffectsQueue();
