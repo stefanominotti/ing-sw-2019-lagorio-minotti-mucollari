@@ -220,7 +220,9 @@ class EffectsController {
      * @param effectType choosen by the player
      */
     void effectSelected(WeaponEffectOrderType effectType) {
-        this.board.unloadWeapon(this.activePlayer, this.activePlayer.getWeaponCardByWeapon(this.weapon));
+        if (this.activePlayer.getWeaponCardByWeapon(this.weapon).isReady()) {
+            this.board.unloadWeapon(this.activePlayer, this.activePlayer.getWeaponCardByWeapon(this.weapon));
+        }
         switch (effectType) {
             case PRIMARY:
                 this.effectsQueue.addAll(0, this.weapon.getPrimaryEffect());
@@ -527,6 +529,7 @@ class EffectsController {
                 }
                 availableSquares = moveSquaresCase(effect, availablePlayers.get(0));
                 if (this.effectOrder == SECONDARYONE && !this.mainEffectApplied) {
+                    this.board.pauseTurnTimer();
                     Square originalPosition = this.activePlayer.getPosition();
                     List<Square> toRemove = new ArrayList<>();
 
@@ -539,6 +542,7 @@ class EffectsController {
                         }
                     }
                     this.activePlayer.setPosition(originalPosition);
+                    this.board.resumeTurnTimer();
                     availableSquares.removeAll(toRemove);
                 }
                 if (availableSquares.isEmpty()) {
@@ -751,10 +755,14 @@ class EffectsController {
                 this.currentEffect.getEffectName() == null) {
             switch (this.currentEffect.getEffectDependency().get(0)) {
                 case SECONDARYTWO:
-                    this.activeCombo = SECONDARYTWO;
+                    if (checkCost(this.weapon.getSecondaryEffectTwo())) {
+                        this.activeCombo = SECONDARYTWO;
+                    }
                     break;
                 case SECONDARYONE:
-                    this.activeCombo = SECONDARYONE;
+                    if (checkCost(this.weapon.getSecondaryEffectOne())) {
+                        this.activeCombo = SECONDARYONE;
+                    }
                     break;
                 default:
                     this.activeCombo = null;

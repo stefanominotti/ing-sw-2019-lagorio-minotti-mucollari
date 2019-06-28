@@ -1293,7 +1293,17 @@ public class Board extends Observable {
      */
     void marksToDamages(GameCharacter player, GameCharacter attacker) {
         Player p = getPlayerByCharacter(player);
-        for(GameCharacter c : p.getRevengeMarks()) {
+        boolean available = false;
+        for (GameCharacter mark : p.getRevengeMarks()) {
+            if (mark == attacker) {
+                available = true;
+                break;
+            }
+        }
+        if (!available) {
+            return;
+        }
+        for (GameCharacter c : p.getRevengeMarks()) {
             if(p.getDamages().size() < Player.MAX_DAMAGES && c == attacker) {
                 p.addDamages(player, 1);
             }

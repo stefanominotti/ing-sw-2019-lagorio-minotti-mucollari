@@ -432,7 +432,7 @@ public abstract class View {
      * @param character of which you want to get the player board
      * @return player board of that character
      */
-    private PlayerBoard getBoardByCharacter(GameCharacter character) {
+    PlayerBoard getBoardByCharacter(GameCharacter character) {
         for (PlayerBoard playerBoard : this.enemyBoards) {
             if (playerBoard.getCharacter() == character) {
                 return playerBoard;
@@ -1261,14 +1261,14 @@ public abstract class View {
                 }
                 break;
             case PERSISTENCE:
-                handlePersistenceRequest();
+                handlePersistenceRequest(message.getCharacter());
                 break;
             default:
                 break;
         }
     }
 
-    void handlePersistenceRequest() {
+    void handlePersistenceRequest(GameCharacter character) {
         this.state = PERSISTENCE_SELECTION;
     }
 

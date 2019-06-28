@@ -859,6 +859,7 @@ public class CLIView extends View {
         super.handleMovement(character, coordinates);
         int x = coordinates.getX();
         int y = coordinates.getY();
+        showMessage(getBoard().arenaToString());
         if (getCharacter() == character) {
             showMessage("You moved in [" + x + ", " + y + "]");
         } else {
@@ -876,6 +877,11 @@ public class CLIView extends View {
     @Override
     void handleAttack(GameCharacter character, GameCharacter attacker, int amount, EffectType attackType) {
         super.handleAttack(character, attacker, amount, attackType);
+        if (character == getCharacter()) {
+            showMessage(getSelfPlayerBoard().toString());
+        } else {
+            showMessage(getBoardByCharacter(character).toString());
+        }
         StringBuilder text = new StringBuilder();
         if (attacker == getCharacter()) {
             String toAppend = "You dealt " + amount + " ";
@@ -922,6 +928,11 @@ public class CLIView extends View {
     void handleMarksToDamages(GameCharacter player, GameCharacter attacker) {
         super.handleMarksToDamages(player, attacker);
         if (player == getCharacter()) {
+            showMessage(getSelfPlayerBoard().toString());
+        } else {
+            showMessage(getBoardByCharacter(player).toString());
+        }
+        if (player == getCharacter()) {
             showMessage(attacker + "'s marks on you have been converted into damages");
         } else if (attacker == getCharacter()) {
             showMessage("Your marks on " + player + " have been converted into damages");
@@ -930,7 +941,6 @@ public class CLIView extends View {
         }
     }
 
-
     /**
      * Shows board flipped message
      * @param player active player
@@ -938,6 +948,11 @@ public class CLIView extends View {
     @Override
     void handleBoardFlip(GameCharacter player) {
         super.handleBoardFlip(player);
+        if (player == getCharacter()) {
+            showMessage(getSelfPlayerBoard().toString());
+        } else {
+            showMessage(getBoardByCharacter(player).toString());
+        }
         if (player == getCharacter()) {
             showMessage("Your board flipped");
         } else {
@@ -953,6 +968,7 @@ public class CLIView extends View {
     @Override
     void handleScoreChange(GameCharacter player, int score) {
         if (player == getCharacter()) {
+            showMessage(getSelfPlayerBoard().toString());
             showMessage("You got " + score + " points");
         } else {
             showMessage(player + " got " + score + " points");
@@ -980,6 +996,11 @@ public class CLIView extends View {
     @Override
     void handleKillshotPointsChange(GameCharacter player) {
         super.handleKillshotPointsChange(player);
+        if (player == getCharacter()) {
+            showMessage(getSelfPlayerBoard().toString());
+        } else {
+            showMessage(getBoardByCharacter(player).toString());
+        }
         if (getCharacter() == player) {
             showMessage("Your killshot points have been reduced");
         } else {
@@ -995,6 +1016,7 @@ public class CLIView extends View {
     void handleFirstBlood(GameCharacter player) {
         super.handleFirstBlood(player);
         if (getCharacter() == player) {
+            showMessage(getSelfPlayerBoard().toString());
             showMessage("You got 1 point for first blood");
         } else {
             showMessage(player + " got 1 point for first blood");
@@ -1126,6 +1148,11 @@ public class CLIView extends View {
     @Override
     void handlePowerupAdded(GameCharacter character, Powerup powerup) {
         super.handlePowerupAdded(character, powerup);
+        if (character == getCharacter()) {
+            showMessage(getSelfPlayerBoard().toString());
+        } else {
+            showMessage(getBoardByCharacter(character).toString());
+        }
         if (character != getCharacter()) {
             showMessage(character + " has drawn a Powerup");
         } else {
@@ -1142,6 +1169,11 @@ public class CLIView extends View {
     @Override
     void handlePowerupRemoved(GameCharacter character, Powerup powerup, PowerupMessageType type) {
         super.handlePowerupRemoved(character, powerup, type);
+        if (character == getCharacter()) {
+            showMessage(getSelfPlayerBoard().toString());
+        } else {
+            showMessage(getBoardByCharacter(character).toString());
+        }
         if (getCharacter() == character) {
             showMessage("You have discarded " + powerup.getType() + " " + powerup.getColor());
         } else {
@@ -1157,6 +1189,12 @@ public class CLIView extends View {
     @Override
     void handleAddAmmos(GameCharacter character, Map<AmmoType, Integer> ammos) {
         super.handleAddAmmos(character, ammos);
+        showMessage(getBoard().arenaToString());
+        if (character == getCharacter()) {
+            showMessage(getSelfPlayerBoard().toString());
+        } else {
+            showMessage(getBoardByCharacter(character).toString());
+        }
         for (Map.Entry<AmmoType, Integer> ammo : ammos.entrySet()) {
             if (ammo.getValue() == 0) {
                 continue;
@@ -1177,6 +1215,11 @@ public class CLIView extends View {
     @Override
     void handleRemoveAmmos(GameCharacter character, Map<AmmoType, Integer> ammos) {
         super.handleRemoveAmmos(character, ammos);
+        if (character == getCharacter()) {
+            showMessage(getSelfPlayerBoard().toString());
+        } else {
+            showMessage(getBoardByCharacter(character).toString());
+        }
         for (Map.Entry<AmmoType, Integer> ammo : ammos.entrySet()) {
             if (ammo.getValue() == 0) {
                 continue;
@@ -1197,6 +1240,12 @@ public class CLIView extends View {
     @Override
     void handleWeaponPickup(GameCharacter character, Weapon weapon) {
         super.handleWeaponPickup(character, weapon);
+        showMessage(getBoard().arenaToString());
+        if (character == getCharacter()) {
+            showMessage(getSelfPlayerBoard().toString());
+        } else {
+            showMessage(getBoardByCharacter(character).toString());
+        }
         if (getCharacter() == character) {
             showMessage("You got " + weapon);
         } else {
@@ -1213,6 +1262,12 @@ public class CLIView extends View {
     @Override
     void handleWeaponSwitch(GameCharacter character, Weapon oldWeapon, Weapon newWeapon) {
         super.handleWeaponSwitch(character, oldWeapon, newWeapon);
+        showMessage(getBoard().arenaToString());
+        if (character == getCharacter()) {
+            showMessage(getSelfPlayerBoard().toString());
+        } else {
+            showMessage(getBoardByCharacter(character).toString());
+        }
         if (character == getCharacter()) {
             showMessage("You dropped your " + oldWeapon + " to get a " + newWeapon);
         } else {
@@ -1229,6 +1284,11 @@ public class CLIView extends View {
     void handleWeaponReload(GameCharacter character, Weapon weapon) {
         super.handleWeaponReload(character, weapon);
         if (character == getCharacter()) {
+            showMessage(getSelfPlayerBoard().toString());
+        } else {
+            showMessage(getBoardByCharacter(character).toString());
+        }
+        if (character == getCharacter()) {
             showMessage("Your " + weapon + " is now ready to fire");
         } else {
             showMessage(character + " realoaded " + weapon);
@@ -1244,6 +1304,11 @@ public class CLIView extends View {
     void handleWeaponUnload(GameCharacter character, Weapon weapon) {
         super.handleWeaponUnload(character, weapon);
         if (character == getCharacter()) {
+            showMessage(getSelfPlayerBoard().toString());
+        } else {
+            showMessage(getBoardByCharacter(character).toString());
+        }
+        if (character == getCharacter()) {
             showMessage("Your used " + weapon);
         } else {
             showMessage(character + " used " + weapon);
@@ -1257,6 +1322,12 @@ public class CLIView extends View {
      */
     @Override
     void handleStartTurn(TurnMessage message, GameCharacter character) {
+        if (character == getCharacter()) {
+            showMessage(getSelfPlayerBoard().toString());
+        } else {
+            showMessage(getBoardByCharacter(character).toString());
+        }
+        showMessage(getBoard().killshotTrackToString());
         if (character != getCharacter()) {
             showMessage(character + " is playing");
         } else {
@@ -1271,6 +1342,12 @@ public class CLIView extends View {
      */
     @Override
     void handleEndTurn(GameCharacter character) {
+        if (character == getCharacter()) {
+            showMessage(getSelfPlayerBoard().toString());
+        } else {
+            showMessage(getBoardByCharacter(character).toString());
+        }
+        showMessage(getBoard().killshotTrackToString());
         if (character == getCharacter()) {
             showMessage("Turn finished");
             this.inputEnabled = false;
@@ -1297,6 +1374,7 @@ public class CLIView extends View {
     @Override
     void handleKillshotTrackChange(int skulls, List<GameCharacter> players) {
         super.handleKillshotTrackChange(skulls, players);
+        showMessage(getBoard().killshotTrackToString());
         showMessage((skulls - 1) + " skulls left");
         String player1;
         if (players.contains(getCharacter())) {
@@ -1324,13 +1402,13 @@ public class CLIView extends View {
     }
 
     /**
-     * Shows game finished message and the ranking
+     * Shows game finished message
      * @param ranking map with game characters and total points raised
      */
     @Override
     void handleGameFinished(Map<GameCharacter, Integer> ranking) {
         StringBuilder text = new StringBuilder("Game finished, ranking will be shown soon...");
-        int index = 0;
+        int index = 1;
         for(Map.Entry<GameCharacter, Integer> character : ranking.entrySet()) {
             String toAppend = "\n" + index + ": " + character.getKey() + " " + character.getValue();
             text.append(toAppend);
@@ -1393,6 +1471,7 @@ public class CLIView extends View {
     @Override
     void handleTilesRefilled(Map<Coordinates, AmmoTile> tiles) {
         super.handleTilesRefilled(tiles);
+        showMessage(getBoard().arenaToString());
         showMessage("Ammo tiles filled");
     }
 
@@ -1608,10 +1687,14 @@ public class CLIView extends View {
      * Shows persistence request message
      */
     @Override
-    void handlePersistenceRequest() {
-        super.handlePersistenceRequest();
-        showMessage("Do you want to save game state? [Y/N]");
-        this.inputEnabled = true;
+    void handlePersistenceRequest(GameCharacter character) {
+        super.handlePersistenceRequest(character);
+        if (character == getCharacter()) {
+            showMessage("Do you want to save game state? [Y/N]");
+            this.inputEnabled = true;
+        } else {
+            this.inputEnabled = false;
+        }
     }
 
     /**
@@ -1656,9 +1739,7 @@ public class CLIView extends View {
     @Override
     void handleEffectRequireRequest() {
         super.handleEffectRequireRequest();
-        String description = "";
-        description = getEffectPossibility().getDescription();
-        showMessage("Do you want to perform \"" + description + "\"? [Y / N]");
+        showMessage("Do you want to perform \"" + getEffectPossibility().getDescription() + "\"? [Y / N]");
         this.inputEnabled = true;
     }
 

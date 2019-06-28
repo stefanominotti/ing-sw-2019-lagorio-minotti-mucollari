@@ -29,6 +29,7 @@ class TurnController {
     private WeaponCard switchWeapon;
     private EffectsController effectsController;
     private boolean moveShoot;
+    private Square originalPosition;
 
     /**
      * Class constructor, it builds a turn controller
@@ -279,6 +280,9 @@ class TurnController {
                 (this.finalFrenzy && !this.beforeFirstPlayer && this.movesLeft < 1) ||
                 (this.finalFrenzy && this.beforeFirstPlayer && this.movesLeft < 2)) {
             this.movesLeft++;
+            if (this.moveShoot) {
+                this.board.movePlayer(this.activePlayer, this.originalPosition);
+            }
         }
         sendActions();
     }
@@ -288,6 +292,7 @@ class TurnController {
      * @return the coordinates of the available squares
      */
     List<Coordinates> getMoveReloadShootMovements() {
+        this.board.pauseTurnTimer();
         List<String> distance;
         boolean reload = false;
         if ((this.finalFrenzy && this.beforeFirstPlayer) ||
@@ -324,6 +329,7 @@ class TurnController {
             }
         }
         this.activePlayer.setPosition(originalPosition);
+        this.board.resumeTurnTimer();
         return movements;
     }
 
@@ -371,7 +377,7 @@ class TurnController {
 
     /**
      * Calculates available actions
-     * @return List of the available actions
+     * @return list of the available actions
      */
     List<ActionType> calculateActions() {
         this.moveShoot = false;
@@ -450,6 +456,7 @@ class TurnController {
     }
 
     void handleMovementAction(Coordinates coordinates) {
+        this.originalPosition = this.activePlayer.getPosition();
         this.board.movePlayer(this.activePlayer, this.board.getArena().getSquareByCoordinate(coordinates.getX(),
                 coordinates.getY()));
     }

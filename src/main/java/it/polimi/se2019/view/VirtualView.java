@@ -14,6 +14,8 @@ import it.polimi.se2019.model.messages.player.PlayerMessageType;
 import it.polimi.se2019.model.messages.player.PlayerReadyMessage;
 import it.polimi.se2019.model.messages.powerups.PowerupMessage;
 import it.polimi.se2019.model.messages.powerups.PowerupMessageType;
+import it.polimi.se2019.model.messages.selections.SelectionMessageType;
+import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessageType;
 import it.polimi.se2019.server.Server;
@@ -68,7 +70,7 @@ public class VirtualView extends Observable implements Observer {
                 send((SingleReceiverMessage) message);
                 break;
             case SINGLE_SELECTION_MESSAGE:
-                send((SingleReceiverMessage) message);
+                update((SingleSelectionMessage) message);
                 break;
             case TURN_MESSAGE:
                 update((TurnMessage) message);
@@ -79,6 +81,18 @@ public class VirtualView extends Observable implements Observer {
             default:
                 sendAll((Message) message);
                 break;
+        }
+    }
+
+    /**
+     * Uses to forward a single selection message to clients
+     * @param message to be forwarded
+     */
+    private void update(SingleSelectionMessage message) {
+        if (message.getType() == SelectionMessageType.PERSISTENCE) {
+            sendAll(message);
+        } else {
+            send(message);
         }
     }
 
