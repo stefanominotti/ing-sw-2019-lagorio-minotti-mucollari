@@ -49,9 +49,10 @@ public class BoardTest {
         this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
         this.board.addPlayer(GameCharacter.DOZER, "playerTest2", "token");
         this.board.addPlayer(GameCharacter.D_STRUCT_OR, "playerTest3", "token");
+        this.board.loadArena("1");
         this.board.finalizeGameSetup();
         assertNotNull(this.board.getPlayers());
-        assertEquals(1, this.board.getPlayers().size());
+        assertEquals(3, this.board.getPlayers().size());
     }
 
     @Test
