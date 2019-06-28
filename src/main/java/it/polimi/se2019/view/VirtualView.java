@@ -90,6 +90,7 @@ public class VirtualView extends Observable implements Observer {
      */
     private void update(SingleSelectionMessage message) {
         if (message.getType() == SelectionMessageType.PERSISTENCE) {
+            this.server.setConnectionAllowed(false);
             sendAll(message);
         } else {
             send(message);
