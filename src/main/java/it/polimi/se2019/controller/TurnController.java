@@ -37,7 +37,7 @@ class TurnController {
      * @param effectsController the effect controller
      */
     TurnController(Board board, GameController controller, EffectsController effectsController) {
-        this.state = TurnState.SELECTACTION;
+        setState(TurnState.SELECTACTION);
         this.board = board;
         this.controller = controller;
         this.movesLeft = 2;
@@ -78,7 +78,7 @@ class TurnController {
         switch (type) {
             case FIRST_TURN:
                 this.movesLeft = 2;
-                this.state = FIRST_RESPAWNING;
+                setState(FIRST_RESPAWNING);
                 if (this.activePlayer.getPowerups().size() != 2) {
                     this.board.drawPowerup(this.activePlayer);
                     this.board.drawPowerup(this.activePlayer);
@@ -88,7 +88,7 @@ class TurnController {
                 break;
             case AFTER_DEATH:
                 this.movesLeft = 0;
-                this.state = DEATH_RESPAWNING;
+                setState(DEATH_RESPAWNING);
                 if (this.activePlayer.getPowerups().size() < 3) {
                     this.board.drawPowerup(this.activePlayer);
                 }
@@ -130,7 +130,7 @@ class TurnController {
      * Spawns the active player
      * @param color where you need to spawn the player
      */
-    void spawnPlayer(RoomColor color) {
+    private void spawnPlayer(RoomColor color) {
         for(Room room : this.board.getArena().getRoomList()){
             if(room.getColor() == color){
                 this.board.respawnPlayer(this.activePlayer, room);
@@ -168,7 +168,7 @@ class TurnController {
         return movements;
     }
 
-    void sendMovementAction() {
+    private void sendMovementAction() {
         this.controller.send(new SelectionListMessage<>(SelectionMessageType.MOVE, this.activePlayer.getCharacter(),
                 calculateMovementAction()));
     }
@@ -231,7 +231,7 @@ class TurnController {
         return movements;
     }
 
-    void sendPickupAction() {
+    private void sendPickupAction() {
         this.controller.send(new SelectionListMessage<>(SelectionMessageType.PICKUP,
                 this.activePlayer.getCharacter(), calculatePickupAction()));
     }
@@ -274,7 +274,7 @@ class TurnController {
     /**
      * Aborts player selected action
      */
-    void cancelAction() {
+    private void cancelAction() {
         if ((!this.finalFrenzy && this.movesLeft < 2) ||
                 (this.finalFrenzy && !this.beforeFirstPlayer && this.movesLeft < 1) ||
                 (this.finalFrenzy && this.beforeFirstPlayer && this.movesLeft < 2)) {
@@ -330,7 +330,7 @@ class TurnController {
     /**
      *
      */
-    void calculateShootAction() {
+    private void calculateShootAction() {
         if (!this.finalFrenzy && this.activePlayer.getDamages().size() < 6) {
             this.effectsController.setActivePlayer(this.activePlayer);
             this.controller.send(new SelectionListMessage<>(SelectionMessageType.USE_WEAPON,
@@ -364,7 +364,7 @@ class TurnController {
         return availablePowerups;
     }
 
-    void sendPowerupAction() {
+    private void sendPowerupAction() {
         this.controller.send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP,
                 this.activePlayer.getCharacter(), calculatePowerupAction()));
     }
@@ -405,15 +405,15 @@ class TurnController {
         }
         if(availableActions.isEmpty()) {
             endTurn();
-            return null;
+            return new ArrayList<>();
         }
         return availableActions;
     }
 
-    void sendActions() {
+    private void sendActions() {
         List<ActionType> avialableActions = calculateActions();
-        if(avialableActions != null) {
-            this.state = SELECTACTION;
+        if(!avialableActions.isEmpty()) {
+            setState(SELECTACTION);
             this.controller.send(new SelectionListMessage<>(SelectionMessageType.ACTION, this.activePlayer.getCharacter(),
                     calculateActions()));
         }
@@ -425,7 +425,7 @@ class TurnController {
     void handleEndAction() {
         this.moveShoot = false;
         sendActions();
-        this.state = TurnState.SELECTACTION;
+        setState(TurnState.SELECTACTION);
     }
 
     /**
@@ -591,7 +591,7 @@ class TurnController {
      * Gets the unloaded weapons
      * @return List of the unloaded weapons
      */
-    List<Weapon> getRechargeableWeapons() {
+    private List<Weapon> getRechargeableWeapons() {
         List<Weapon> unloadedWeapons = new ArrayList<>();
         for (WeaponCard weapon : this.activePlayer.getWeapons()) {
             if (weapon.isReady()) {
@@ -632,7 +632,7 @@ class TurnController {
     /**
      * Handles weapons reloading
      */
-    void handleReload() {
+    private void handleReload() {
         List<Weapon> toReload = getRechargeableWeapons();
         if (toReload.isEmpty() && !this.moveShoot) {
             endTurn();

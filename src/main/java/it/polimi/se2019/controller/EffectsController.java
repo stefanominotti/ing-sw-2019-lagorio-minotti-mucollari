@@ -14,19 +14,21 @@ import static it.polimi.se2019.model.WeaponEffectOrderType.SECONDARYTWO;
 /**
  * Class for handling weapon effects controller
  */
-public class EffectsController {
+class EffectsController {
     private Board board;
     private GameController controller;
     private WeaponEffect currentEffect;
     private WeaponEffectOrderType effectOrder;
+
     //da impostare ogni volta che viene scelto un'arma
     private Weapon weapon;
-    private List<List<WeaponEffect>> weaponEffects;
+
     //da impostare ogni volta che viene eseguito un effetto
     private boolean mainEffectApplied;
     private boolean secondaryEffectOneApplied;
     private boolean secondaryEffectTwoApplied;
     private List<WeaponEffect> effectsQueue;
+
     //da impostare ogni volta che viene eseguito parte di un effetto
     private List<Player> hitByMain;
     private List<Player> hitBySecondary;
@@ -41,7 +43,7 @@ public class EffectsController {
      * @param board in which the effect controller has to be built
      * @param controller of the game in which the effect controller has to be built
      */
-    public EffectsController(Board board, GameController controller) {
+    EffectsController(Board board, GameController controller) {
         this.board = board;
         this.controller = controller;
         this.hitByMain = new ArrayList<>();
@@ -49,7 +51,6 @@ public class EffectsController {
         this.mainEffectApplied = false;
         this.secondaryEffectOneApplied = false;
         this.secondaryEffectTwoApplied = false;
-        this.weaponEffects = new ArrayList<>();
         this.effectsQueue = new ArrayList<>();
     }
 
@@ -57,14 +58,13 @@ public class EffectsController {
      * Sets the active player, who is using the weapon
      * @param player you want to make the active one
      */
-    public void setActivePlayer(Player player) {
+    void setActivePlayer(Player player) {
         this.activePlayer = player;
         this.hitByMain = new ArrayList<>();
         this.hitBySecondary = new ArrayList<>();
         this.mainEffectApplied = false;
         this.secondaryEffectOneApplied = false;
         this.secondaryEffectTwoApplied = false;
-        this.weaponEffects = new ArrayList<>();
         this.effectsQueue = new ArrayList<>();
     }
 
@@ -132,9 +132,9 @@ public class EffectsController {
         }
         if (!this.secondaryEffectOneApplied && !this.weapon.getSecondaryEffectOne().isEmpty()
                 && checkCost(weapon.getSecondaryEffectOne()) && !this.weapon.getSecondaryEffectOne().get(0).isCombo()
-                && (!this.mainEffectApplied &&
+                && (this.mainEffectApplied ||
                 this.weapon.getPrimaryEffect().get(0).getEffectDependency().contains(SECONDARYONE) &&
-                checkSecondaryFirst() || this.mainEffectApplied)) {
+                checkSecondaryFirst())) {
             availableWeapons.put(SECONDARYONE, this.weapon.getSecondaryEffectOne());
         }
         if (!this.secondaryEffectTwoApplied && !this.weapon.getSecondaryEffectTwo().isEmpty()
@@ -203,6 +203,8 @@ public class EffectsController {
                 return this.weapon.getSecondaryEffectTwo().get(0).getCost();
             case ALTERNATIVE:
                 return this.weapon.getAlternativeMode().get(0).getCost();
+            default:
+                break;
 
         }
         return null;
@@ -248,13 +250,15 @@ public class EffectsController {
      * @return List of the player that satisies the constraint
      */
     private List<Player> distanceByPlayerCase(PositionConstraint constraint) {
-        List<Player> players;
+        List<Player> players = new ArrayList<>();
         if (constraint.getTarget() == TargetType.SQUARE) {
             players = this.board.getPlayersByDistance(
                     this.chosenSquare, constraint.getDistanceValues());
         } else {
-            players = this.board.getPlayersByDistance(getTargetPlayer(constraint.getTarget()),
-                    constraint.getDistanceValues());
+            Player target = getTargetPlayer(constraint.getTarget());
+            if (target != null) {
+                players = this.board.getPlayersByDistance(target, constraint.getDistanceValues());
+            }
         }
         return players;
     }
@@ -265,7 +269,7 @@ public class EffectsController {
      * @return List of the squares that satisfy the constraint
      */
     private List<Square> distanceBySquareCase(PositionConstraint constraint) {
-        List<Square> squares;
+        List<Square> squares = new ArrayList<>();
         switch (constraint.getTarget()) {
             case OTHERS:
                 Set<Square> targetSquares = new HashSet<>();
@@ -280,8 +284,11 @@ public class EffectsController {
                 squares = this.board.getSquaresByDistance(this.chosenSquare, constraint.getDistanceValues());
                 break;
             default:
-                squares = this.board.getSquaresByDistance(getTargetPlayer(constraint.getTarget()).getPosition(),
-                        constraint.getDistanceValues());
+                Player target = getTargetPlayer(constraint.getTarget());
+                if (target != null) {
+                    squares = this.board.getSquaresByDistance(target.getPosition(),
+                            constraint.getDistanceValues());
+                }
         }
         return squares;
     }
@@ -309,6 +316,9 @@ public class EffectsController {
                 case SAMEDIRECTION:
                     targetPlayers = this.board.getPlayersOnCardinalDirection(
                             this.chosenSquare, this.chosenDirection);
+                    break;
+                default:
+                    break;
             }
             availablePlayers = (List<Player>) filter(availablePlayers, targetPlayers);
         }
@@ -326,18 +336,18 @@ public class EffectsController {
         for (PositionConstraint constraint : constraints) {
             switch (constraint.getType()) {
                 case VISIBLE:
-                    targetSquares = this.board.getVisibleSquares(getTargetPlayer(constraint.getTarget()));
+                    Player target = getTargetPlayer(constraint.getTarget());
+                    if (target != null) {
+                        targetSquares = this.board.getVisibleSquares(target);
+                    }
                     break;
-
                 case DISTANCE:
                     targetSquares = distanceBySquareCase(constraint);
                     break;
-
                 case SAMEDIRECTION:
                     targetSquares = this.board.getSquaresOnCardinalDirection(
                             this.chosenSquare, this.chosenDirection);
                     break;
-
                 default:
                     break;
             }
@@ -355,13 +365,20 @@ public class EffectsController {
         List<Room> availableRooms = this.board.getArena().getRoomList();
         List<Room> targetRooms = new ArrayList<>();
         for (PositionConstraint constraint : constraints) {
+            Player target;
             switch (constraint.getType()) {
                 case VISIBLE:
-                    targetRooms = this.board.getVisibleRooms(getTargetPlayer(constraint.getTarget()));
+                    target = getTargetPlayer(constraint.getTarget());
+                    if (target != null) {
+                        targetRooms = this.board.getVisibleRooms(target);
+                    }
                     break;
 
                 case NOTCONTAINS:
-                    targetRooms.remove(getTargetPlayer(constraint.getTarget()).getPosition().getRoom());
+                    target = getTargetPlayer(constraint.getTarget());
+                    if (target != null) {
+                        targetRooms.remove(target.getPosition().getRoom());
+                    }
                     break;
 
                 case DISTANCE:
@@ -388,15 +405,13 @@ public class EffectsController {
     private List<CardinalPoint> filterByPositionConstraintCardinals(List<PositionConstraint> constraints) {
         List<CardinalPoint> availableCardinal = new ArrayList<>();
         for (CardinalPoint cardinal : CardinalPoint.values()) {
-            if (constraints.get(0).getType() == PositionConstraintType.DISTANCE) {
-                if (!this.board.getPlayersOnCardinalDirection(this.activePlayer, cardinal).isEmpty()) {
-                    availableCardinal.add(cardinal);
-                }
+            if (constraints.get(0).getType() == PositionConstraintType.DISTANCE &&
+                    !this.board.getPlayersOnCardinalDirection(this.activePlayer, cardinal).isEmpty()) {
+                availableCardinal.add(cardinal);
             }
-            if (constraints.get(0).getType() == PositionConstraintType.VISIBLE) {
-                if (!this.board.getVisibleSquaresOnCardinalDirection(this.activePlayer, cardinal).isEmpty()) {
-                    availableCardinal.add(cardinal);
-                }
+            if (constraints.get(0).getType() == PositionConstraintType.VISIBLE &&
+                    !this.board.getVisibleSquaresOnCardinalDirection(this.activePlayer, cardinal).isEmpty()) {
+                availableCardinal.add(cardinal);
             }
         }
         return availableCardinal;
@@ -421,6 +436,8 @@ public class EffectsController {
                 break;
             case ROOM:
                 availablePlayers = this.chosenRoom.getPlayers();
+                break;
+            default:
                 break;
         }
         return availablePlayers;
@@ -780,7 +797,6 @@ public class EffectsController {
         this.mainEffectApplied = false;
         this.secondaryEffectOneApplied = false;
         this.secondaryEffectTwoApplied = false;
-        this.weaponEffects = new ArrayList<>();
         this.effectsQueue = new ArrayList<>();
         this.activeCombo = null;
     }
@@ -831,6 +847,6 @@ public class EffectsController {
                 e.remove();
             }
         }
-        return ob1;
+        return new ArrayList<>(ob1);
     }
 }

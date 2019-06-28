@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Class for handling powerups
  */
-public class PowerupsController {
+class PowerupsController {
 
     private PowerupType activePowerup;
     private Player activePlayer;

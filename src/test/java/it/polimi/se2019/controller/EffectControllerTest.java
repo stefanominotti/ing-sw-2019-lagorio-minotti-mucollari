@@ -14,19 +14,20 @@ import static junit.framework.TestCase.assertTrue;
 
 
 public class EffectControllerTest {
-    Weapon weapon;
-    Board board;
-    Player player;
-    Player p1;
-    Player p2;
-    TurnController turnController;
-    EffectsController controller;
-    //for pack
-    List<GameCharacter> characters;
-    List<Coordinates> squares;
-    List<RoomColor> rooms;
-    List<CardinalPoint> cardinalPoints;
-    Map<Coordinates, List<GameCharacter>> multipleSquares;
+    private Weapon weapon;
+    private Board board;
+    private Player player;
+    private Player p1;
+    private Player p2;
+    private TurnController turnController;
+    private EffectsController controller;
+
+    // For pack
+    private List<GameCharacter> characters;
+    private List<Coordinates> squares;
+    private List<RoomColor> rooms;
+    private List<CardinalPoint> cardinalPoints;
+    private Map<Coordinates, List<GameCharacter>> multipleSquares;
 
     @Before
     public void setUp() {
@@ -123,7 +124,7 @@ public class EffectControllerTest {
     }
 
     @Test
-    public void mooveHitByMainCaseTest() {
+    public void moveHitByMainCaseTest() {
         this.weapon = Weapon.ROCKET_LAUNCHER;
         this.controller.setWeapon(weapon);
         this.controller.effectSelected(PRIMARY);
@@ -191,8 +192,11 @@ public class EffectControllerTest {
         characters.add(p2.getCharacter());
         this.multipleSquares.put(new Coordinates(1,1), characters);
         assertTrue(assertMultipleSquare(this.multipleSquares, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(0)).getMultipleSquares()));
+    }
 
-
+    @Test
+    public void checkCostTest() {
+        assertTrue(this.controller.checkCost(this.player.getWeapons().get(0).getWeaponType().getSecondaryEffectOne()));
     }
 
     private boolean assertCoordinates(List<Coordinates> coordinates1, List<Coordinates> coordinates2) {
