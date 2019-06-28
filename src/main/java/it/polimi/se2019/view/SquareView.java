@@ -10,6 +10,9 @@ import java.util.Map;
 import static it.polimi.se2019.model.CardinalPoint.*;
 import static it.polimi.se2019.view.SquareStringUtils.center;
 
+/**
+ * Class for handling square view
+ */
 public class SquareView implements Serializable {
 
     private int x;
@@ -52,6 +55,14 @@ public class SquareView implements Serializable {
     private static final String FREE_WALL = SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE +
             SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE + SPACE;
 
+    /**
+     * Class constructor, it builds a square view to show the arena
+     * @param x coordinate of the square
+     * @param y coordinate of the square
+     * @param color of the room where the square is placed
+     * @param spawn true if the square is a spawn point, else false
+     * @param map with cardinal points and true if the direction is accessible from the square, else false
+     */
     SquareView(int x, int y, RoomColor color, boolean spawn, Map<CardinalPoint, Boolean> map) {
         this.x = x;
         this.y = y;
@@ -66,6 +77,16 @@ public class SquareView implements Serializable {
         }
     }
 
+    /**
+     * Class constructor, it builds a square view when the game is resumed after a save
+     * @param x coordinate of the square
+     * @param y coordinate of the square
+     * @param color of the room where the square is placed
+     * @param spawn true if the square is a spawn point, else false
+     * @param activePlayers List of the active game characters on the square
+     * @param availableAmmoTile Ammo tile on the square
+     * @param map with cardinal points and true if the direction is accessible from the square, else false
+     */
     public SquareView(int x, int y, RoomColor color, boolean spawn, List<GameCharacter> activePlayers,
                       AmmoTile availableAmmoTile, List<Weapon> store, Map<CardinalPoint, Boolean> map) {
         this.x = x;
@@ -78,42 +99,82 @@ public class SquareView implements Serializable {
         this.nearbyAccessibility = map;
     }
 
+    /**
+     * Sets the board view for the square view
+     * @param board view to be set
+     */
     public void setBoard(BoardView board) {
         this.board = board;
     }
 
+    /**
+     * Gets the x coordinate of the square view
+     * @return x coordinate
+     */
     int getX() {
         return this.x;
     }
 
+    /**
+     * Gets the y coordinate of the square view
+     * @return y coordinate
+     */
     int getY() {
         return this.y;
     }
 
+    /**
+     * Knows if the square is a spawn point
+     * @return true if it is, else false
+     */
     boolean isSpawn() {
         return this.spawn;
     }
 
+    /**
+     * Gets the ammo tile of the square
+     * @return the ammo tile of the square
+     */
     AmmoTile getAvailableAmmoTile() {
         return this.availableAmmoTile;
     }
 
+    /**
+     * Gets players in the square
+     * @return List of players in the square
+     */
     List<GameCharacter> getActivePlayers() {
         return new ArrayList<>(this.activePlayers);
     }
 
+    /**
+     * Adds a weapon to the weapons store of the square
+     * @param weapon to add to the square store
+     */
     void addStoreWeapon(Weapon weapon) {
         this.store.add(weapon);
     }
 
+    /**
+     * Removes a weapon from the weapons store of the square
+     * @param weapon to remove from the square store
+     */
     void removeStoreWeapon(Weapon weapon) {
         this.store.remove(weapon);
     }
 
+    /**
+     * Gets the weapons store of the square
+     * @return List of weapons of the square
+     */
     List<Weapon> getStore() {
         return new ArrayList<>(this.store);
     }
 
+    /**
+     *
+     * @return
+     */
     RoomColor getColor() {
         return this.color;
     }

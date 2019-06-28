@@ -4,7 +4,7 @@ import it.polimi.se2019.model.messages.Message;
 import it.polimi.se2019.view.View;
 
 /**
- * Class for handling abstract client
+ * Abstract class for handling abstract client
  */
 public abstract class AbstractClient {
 

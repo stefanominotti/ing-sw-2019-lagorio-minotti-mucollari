@@ -12,21 +12,39 @@ import java.util.*;
 
 import static it.polimi.se2019.view.ClientState.*;
 
+/**
+ * Class for handling GUI view
+ */
 public class GUIView extends View {
 
     private GUIApp guiApp;
     private AbstractSceneController controller;
 
+    /**
+     * Class constructor, it builds a CLI view
+     * @param connection "0" for socket, "1" for RMI
+     * @param ip of the server
+     * @param port of the server
+     * @param guiApp the gui app
+     */
     GUIView(int connection, String ip, int port,  GUIApp guiApp) {
         super();
         this.guiApp = guiApp;
         super.connect(connection, ip, port);
     }
 
+    /**
+     * Sets the controller for GUI scene
+     * @param controller to be set
+     */
     void setActiveController(AbstractSceneController controller) {
         this.controller = controller;
     }
 
+    /**
+     * Sets the scene to be shown
+     * @param scene to bne shown
+     */
     private void setScene(SceneType scene) {
         this.controller = null;
         this.guiApp.setScene(scene);
@@ -41,6 +59,10 @@ public class GUIView extends View {
         }
     }
 
+    /**
+     * Handles client nickname input
+     * @param input nickname of the client
+     */
     void handleNicknameInput(String input) {
         if (input.equalsIgnoreCase("")) {
             this.guiApp.showAlert("Invalid input!");
@@ -49,26 +71,44 @@ public class GUIView extends View {
         getClient().send(new NicknameMessage(NicknameMessageType.CONNECTED, input));
     }
 
+    /**
+     * Handles client character choice
+     * @param character chosen
+     */
     void handleCharacterInput(GameCharacter character) {
         if (getState() == CHOOSING_CHARACTER) {
             getClient().send(new CharacterMessage(character, generateToken()));
         }
     }
 
+    /**
+     * Handles client skulls number input
+     * @param skullsNumber skulls number chosen
+     */
     void handleSkullsInput(int skullsNumber) {
         getClient().send(new SkullsMessage(skullsNumber));
     }
 
+    /**
+     * Handles client arena choice
+     * @param arenaNumber arena chosen
+     */
     void handleArenaInput(String arenaNumber) {
         getClient().send(new ArenaMessage(arenaNumber));
     }
 
+    /**
+     * Sets the scene for reconnection attempt
+     */
     @Override
     void handleReconnectionRequest() {
         super.handleReconnectionRequest();
         setScene(SceneType.RELOAD_GAME);
     }
 
+    /**
+     * Sets the scene for connection error
+     */
     @Override
     public void handleConnectionError() {
         this.guiApp.setScene(SceneType.CONNECTION_ERROR);
@@ -80,17 +120,27 @@ public class GUIView extends View {
         }, 7*1000L);
     }
 
+    /**
+     * Sets the scene for invalid token
+     */
     @Override
     void handleInvalidToken() {
         this.guiApp.setScene(SceneType.INVALID_TOKEN);
     }
 
+    /**
+     * Sets the scene for nickname request
+     */
     @Override
     void handleNicknameRequest() {
         super.handleNicknameRequest();
         setScene(SceneType.SELECT_NICKNAME);
     }
 
+
+    /**
+     * Handles case of nickname duplicated, resetting the scene
+     */
     @Override
     void handleNicknameDuplicated() {
         if (getState() == CHOOSING_CHARACTER) {
@@ -101,6 +151,9 @@ public class GUIView extends View {
         this.guiApp.showAlert("Nickname duplicated!");
     }
 
+    /**
+     * Sets the scene for character selection request
+     */
     @Override
     void handleCharacterSelectionRequest(List<GameCharacter> availables) {
         super.handleCharacterSelectionRequest(availables);
@@ -114,6 +167,10 @@ public class GUIView extends View {
         ((SelectCharacterController) this.controller).enableCharacters(availables);
     }
 
+    /**
+     * Handles a player disconnection fromt the lobby when a game is not yet started
+     * @param character
+     */
     @Override
     void handleClientDisconnected(GameCharacter character) {
         super.handleClientDisconnected(character);
@@ -122,9 +179,14 @@ public class GUIView extends View {
         }
     }
 
+    /**
+     * Sets lobby scene when a player setup is finished
+     * @param character chosen
+     * @param nickname chosen
+     * @param otherPlayers Map with game characters and their nicknames
+     */
     @Override
-    void handlePlayerCreated(GameCharacter character, String nickname, Map<GameCharacter,
-            String> otherPlayers) {
+    void handlePlayerCreated(GameCharacter character, String nickname, Map<GameCharacter, String> otherPlayers) {
         super.handlePlayerCreated(character, nickname, otherPlayers);
         Map<GameCharacter, String> players = new LinkedHashMap<>(otherPlayers);
         players.put(character, nickname);
@@ -133,6 +195,11 @@ public class GUIView extends View {
         ((LobbyController) this.controller).setPlayers(players);
     }
 
+    /**
+     * Handles player ready, adding it to the the controller
+     * @param character chosen
+     * @param nickname chosen
+     */
     @Override
     void handleReadyPlayer(GameCharacter character, String nickname) {
         super.handleReadyPlayer(character, nickname);
@@ -141,6 +208,9 @@ public class GUIView extends View {
         }
     }
 
+    /**
+     * Handles case of game setup aborting, resetting the scene to "lobby" and "waiting for players" state
+     */
     @Override
     void handleSetupInterrupted() {
         if(getState() == SETTING_SKULLS || getState() == SETTING_ARENA) {
@@ -156,6 +226,11 @@ public class GUIView extends View {
         ((LobbyController) this.controller).setMessage("loading.gif", "Waiting for players...");
     }
 
+    /**
+     * Handles game setup timer
+     * @param action type of timer message
+     * @param duration
+     */
     @Override
     void handleGameSetupTimer(TimerMessageType action, long duration) {
         if (getState() == WAITING_START) {
@@ -172,6 +247,10 @@ public class GUIView extends View {
         }
     }
 
+    /**
+     * Handles start setup, setting the scene
+     * @param character
+     */
     @Override
     void handleStartSetup(GameCharacter character) {
         super.handleStartSetup(character);
@@ -182,12 +261,19 @@ public class GUIView extends View {
         }
     }
 
+    /**
+     * Sets select arena scene when skulls number is set
+     */
     @Override
     void handleSkullsSet() {
         super.handleSkullsSet();
         setScene(SceneType.SELECT_ARENA);
     }
 
+    /**
+     * Handles case of master changed resetting the scene to select skulls
+     * @param character new master
+     */
     @Override
     void handleMasterChanged(GameCharacter character) {
         super.handleMasterChanged(character);
@@ -197,21 +283,35 @@ public class GUIView extends View {
         }
     }
 
+    /**
+     * Handles end turn of a player
+     * @param character who ends the turn
+     */
     @Override
     void handleEndTurn(GameCharacter character) {
 
     }
 
+    /**
+     * Handles game finish setting the ranking scene
+     * @param ranking map with game characters and total points raised
+     */
     @Override
     void handleGameFinished(Map<GameCharacter, Integer> ranking) {
 
     }
 
+    /**
+     * Handles persistence finish
+     */
     @Override
     void handlePersistenceFinish() {
 
     }
 
+    /**
+     * Handles require payment
+     */
     @Override
     public void requirePayment() {
 

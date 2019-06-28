@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * Class for handling invalid token controller
+ */
 public class InvalidTokenController extends AbstractSceneController {
 
     @FXML
@@ -17,6 +20,10 @@ public class InvalidTokenController extends AbstractSceneController {
     @FXML
     Label removeFailedLabel;
 
+    /**
+     * Tries to remove an invalid user token saved, on click event
+     * After timer, it closes the scene and exit from the app
+     */
     public void removeToken() {
         Platform.runLater(() -> {
             try {

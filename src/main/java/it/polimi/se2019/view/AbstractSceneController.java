@@ -1,7 +1,7 @@
 package it.polimi.se2019.view;
 
 /**
- * Class for handling abstract scene controller
+ * Abstract class for handling abstract scene controller
  */
 public abstract class AbstractSceneController {
 

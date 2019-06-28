@@ -12,7 +12,9 @@ import javafx.scene.layout.VBox;
 import java.util.EnumMap;
 import java.util.Map;
 
-
+/**
+ * Class for handling lobby cotroller
+ */
 public class LobbyController extends AbstractSceneController {
 
     private int lastIndex;
@@ -25,11 +27,18 @@ public class LobbyController extends AbstractSceneController {
     @FXML
     private ImageView messageImg;
 
+    /**
+     * Class constructor, it builds a lobby controller
+     */
     public LobbyController() {
         this.lastIndex = 0;
         this.playerBoxes = new EnumMap<>(GameCharacter.class);
     }
 
+    /**
+     * Sets players on lobby
+     * @param players map with characters and their nicknames to be set on the lobby
+     */
     void setPlayers(Map<GameCharacter, String> players) {
        int index = 0;
        for(Map.Entry<GameCharacter, String> player : players.entrySet()) {
@@ -48,6 +57,11 @@ public class LobbyController extends AbstractSceneController {
        this.lastIndex = index;
     }
 
+    /**
+     * Add a player to the lobby at runtime
+     * @param character to be added
+     * @param nickname to be added
+     */
     void addPlayer(GameCharacter character, String nickname) {
 
         HBox playerBox = (HBox) this.playersList.getChildren().get(this.lastIndex);
@@ -62,6 +76,10 @@ public class LobbyController extends AbstractSceneController {
         this.lastIndex++;
     }
 
+    /**
+     * Removes a player from the lobby at runtime
+     * @param character to be removed
+     */
     void removePlayer(GameCharacter character) {
         HBox playerBox = this.playerBoxes.get(character);
         Label label = (Label) playerBox.getChildren().get(1);
@@ -107,6 +125,11 @@ public class LobbyController extends AbstractSceneController {
         });
     }
 
+    /**
+     * Sets a message to the lobby
+     * @param img name to be set with the message
+     * @param text of the message
+     */
     void setMessage(String img, String text) {
         Platform.runLater(() -> {
             this.messageName.setText(text);

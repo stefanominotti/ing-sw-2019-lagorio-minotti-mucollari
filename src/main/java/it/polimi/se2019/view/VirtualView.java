@@ -17,25 +17,38 @@ import it.polimi.se2019.model.messages.powerups.PowerupMessageType;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessageType;
 import it.polimi.se2019.server.Server;
-
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Logger;
 
-public class
-        VirtualView extends Observable implements Observer {
+/**
+ * Class for handling virtual view
+ */
+public class VirtualView extends Observable implements Observer {
 
     private Server server;
 
+    /**
+     * Class constructor, it builds a virtual view
+     * @param server where the virtual view has to be hosted
+     */
     public VirtualView(Server server) {
         this.server = server;
     }
 
+    /**
+     * Forwards a message, notifying the observers
+     * @param message to be forwarded
+     */
     public void forwardMessage(Message message) {
         setChanged();
         notifyObservers(message);
     }
 
+    /**
+     * Update the virtual view from the model
+     * @param model to be observed
+     * @param message updated
+     */
     @Override
     public void update(Observable model, Object message) {
         switch (((Message) message).getMessageType()) {
@@ -69,6 +82,10 @@ public class
         }
     }
 
+    /**
+     * Uses to forward a board message to clients
+     * @param message to be forwarded
+     */
     private void update(BoardMessage message) {
         if (message.getType() == BoardMessageType.SETUP_INTERRUPTED) {
             this.server.setConnectionAllowed(true);
@@ -82,6 +99,10 @@ public class
         }
     }
 
+    /**
+     * Uses to forward a payment message to clients
+     * @param message to be forwarded
+     */
     private void update(PaymentMessage message) {
         if (message.getType() == PaymentMessageType.REQUEST) {
             send(message);
@@ -90,6 +111,10 @@ public class
         }
     }
 
+    /**
+     * Uses to forward a player message to clients
+     * @param message to be forwarded
+     */
     private void update(PlayerMessage message) {
         if (message.getType() == PlayerMessageType.CREATED) {
             send(message);
@@ -106,6 +131,10 @@ public class
         }
     }
 
+    /**
+     * Uses to forward a client message to clients
+     * @param message to be forwarded
+     */
     private void update(ClientMessage message) {
         switch (message.getType()) {
             case DISCONNECTED:
@@ -124,18 +153,26 @@ public class
         }
     }
 
+    /**
+     * Uses to forward a powerup message to clients
+     * @param message to be forwarded
+     */
     private void update(PowerupMessage message) {
         if (message.getType() == PowerupMessageType.DISCARD) {
             sendAll(message);
             return;
         }
-        if(message.getPowerup() == null) {
+        if (message.getPowerup() == null) {
             sendOthers(message.getCharacter(), message);
         } else {
             send(message);
         }
     }
 
+    /**
+     * Uses to forward a turn message to clients
+     * @param message to be forwarded
+     */
     private void update(TurnMessage message) {
         if (message.getType() == TurnMessageType.START) {
             this.server.saveGame();
@@ -145,14 +182,27 @@ public class
         sendAll(message);
     }
 
+    /**
+     * Send a message to a single player
+     * @param message to be sent
+     */
     public void send(SingleReceiverMessage message) {
         this.server.send(message.getCharacter(), (Message) message);
     }
 
+    /**
+     * Send a message on broadcast
+     * @param message to be sent
+     */
     public void sendAll(Message message) {
         this.server.sendAll(message);
     }
 
+    /**
+     * Send a message to other characters
+     * @param character which the message has not be sent to
+     * @param message to be sent
+     */
     public void sendOthers(GameCharacter character, Message message) {
         this.server.sendOthers(character, message);
     }

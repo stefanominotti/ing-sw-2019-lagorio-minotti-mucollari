@@ -7,6 +7,9 @@ import it.polimi.se2019.model.Weapon;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * Class for handling player board
+ */
 public class PlayerBoard implements Serializable {
 
     private static final int KILLSHOT_POINTS_SIZE = 6;
@@ -23,6 +26,11 @@ public class PlayerBoard implements Serializable {
     private int powerupsNumber;
     private boolean frenzyBoard;
 
+    /**
+     * Class constructor, it builds a player board
+     * @param character of which the player board has to be built
+     * @param nickname of which the player board has to be built
+     */
     PlayerBoard(GameCharacter character, String nickname) {
         this.nickname = nickname;
         this.character = character;
@@ -38,6 +46,18 @@ public class PlayerBoard implements Serializable {
         this.unloadedWeapons = new ArrayList<>();
     }
 
+    /**
+     * Class constructor, it builds a player board when the game is resumed after a save
+     * @param character of which the player board has to be built
+     * @param nickname of which the player board has to be built
+     * @param availableAmmos Map with ammo type and its quantity
+     * @param revengeMarks List of the game characters which has marked the player
+     * @param damages List of the game characters which has damaged the player
+     * @param killshotPoints List of the kill shot points
+     * @param unloadedWeapons List of the unloaded weapons
+     * @param weaponsNumber amount of weapons
+     * @param powerupsNumber amount of powerups
+     */
     public PlayerBoard(GameCharacter character, String nickname, Map<AmmoType, Integer> availableAmmos,
                        List<GameCharacter> revengeMarks, List<GameCharacter> damages,
                        List<Integer> killshotPoints, List<Weapon> unloadedWeapons, int weaponsNumber,
@@ -53,63 +73,117 @@ public class PlayerBoard implements Serializable {
         this.unloadedWeapons = new ArrayList<>(unloadedWeapons);
     }
 
+    /**
+     * Flips the player board into Final Frenzy mode
+     */
     void flipBoard() {
         this.frenzyBoard = true;
         this.killshotPoints = new ArrayList<>(Arrays.asList(2, 1, 1, 1));
     }
 
+    /**
+     * Gets the kill shot points of the player
+     * @return List of kill shot points of the player
+     */
     List<Integer> getKillshotPoints() {
         return new ArrayList<>(this.killshotPoints);
     }
 
+    /**
+     * Gets revenge marks given to the player
+     * @return List of game characters that marked the player
+     */
     List<GameCharacter> getRevengeMarks(){
         return new ArrayList<>(this.revengeMarks);
     }
 
+    /**
+     * Gets available ammos of the player
+     * @return Map with ammo type and its available quantity
+     */
     Map<AmmoType, Integer> getAvailableAmmos() {
         return new EnumMap<>(this.availableAmmos);
     }
 
+    /**
+     * Gets the weapon number
+     * @return the weapon amount held by the player
+     */
     int getWeaponsNumber() {
         return this.weaponsNumber;
     }
 
+    /**
+     * Gets the the powerups number
+     * @return the powerups amount held by the player
+     */
     int getPowerupsNumber() {
         return this.powerupsNumber;
     }
 
+    /**
+     * Raises powerup amount
+     */
     void addPowerup() {
         this.powerupsNumber++;
     }
 
+    /**
+     * Gets the player character
+     * @return the game character of the player
+     */
     GameCharacter getCharacter() {
         return this.character;
     }
 
+    /**
+     * Gets the player nickname
+     * @return the nickname of the player
+     */
     String getNickname() {
         return this.nickname;
     }
 
+    /**
+     * Gets the player damages
+     * @return List of the the characters which has dealt the player
+     */
     List<GameCharacter> getDamages() {
         return new ArrayList<>(this.damages);
     }
 
+    /**
+     * Adds a damages to a player
+     * @param target that has to be dealt
+     * @param amount of damages that has to be dealt
+     */
     void addDamages(GameCharacter target, int amount) {
         for (int i=0; i<amount; i++) {
             this.damages.add(target);
         }
     }
 
+    /**
+     * Adds a marks to a player
+     * @param target that has to be dealt
+     * @param amount of marks that has to be dealt
+     */
     void addMarks(GameCharacter target, int amount) {
-        for (int i=0; i<amount; i++) {
+        for (int i = 0; i < amount; i++) {
             this.revengeMarks.add(target);
         }
     }
 
+    /**
+     * Reset damages of the player
+     */
     void resetDamages() {
         this.damages = new ArrayList<>();
     }
-
+    /**
+     * Add ammo to the player
+     * @param ammos Map with ammo type and its quantity to add
+     */
     void addAmmos(Map<AmmoType, Integer> ammos) {
         for (Map.Entry<AmmoType, Integer> ammo : ammos.entrySet()) {
             int newAmmos = this.availableAmmos.get(ammo.getKey()) + ammo.getValue();
@@ -117,6 +191,10 @@ public class PlayerBoard implements Serializable {
         }
     }
 
+    /**
+     * Uses ammo
+     * @param usedAmmos Map with ammo and quantity to be used
+     */
     void useAmmos(Map<AmmoType, Integer> usedAmmos) {
         for (Map.Entry<AmmoType, Integer> ammo : usedAmmos.entrySet()) {
             int newAmmos = this.availableAmmos.get(ammo.getKey()) - ammo.getValue();
@@ -124,41 +202,74 @@ public class PlayerBoard implements Serializable {
         }
     }
 
+    /**
+     * Raises weapons amount
+     */
     void addWeapon() {
         this.weaponsNumber++;
     }
 
+    /**
+     * Removes a weapon from the player
+     * @param weapon to remove
+     */
     void removeWeapon(Weapon weapon) {
         this.weaponsNumber--;
         this.unloadedWeapons.remove(weapon);
     }
 
+    /**
+     * Reduces powerups amount
+     */
     void removePowerup() {
         this.powerupsNumber--;
     }
 
+    /**
+     * Gets the unloaded weapons
+     * @return List of the unloaded weapons of the player
+     */
     List<Weapon> getUnloadedWeapons() {
         return new ArrayList<>(this.unloadedWeapons);
     }
 
+    /**
+     * Reloads a weapon
+     * @param weapon to be reloaded
+     */
     void reloadWeapon(Weapon weapon) {
         this.unloadedWeapons.remove(weapon);
     }
 
+    /**
+     * Unloads a weapon
+     * @param weapon to be unloaded
+     */
     void unloadWeapon(Weapon weapon) {
         this.unloadedWeapons.add(weapon);
     }
 
+    /**
+     * Reset marks given by a player
+     * @param player of which the marks has to be removed
+     */
     void resetMarks(GameCharacter player) {
         while (this.revengeMarks.contains(player)) {
             this.revengeMarks.remove(player);
         }
     }
 
+    /**
+     * Reduces the killshot points
+     */
     void reduceKillshotPoints() {
         this.killshotPoints.remove(0);
     }
 
+    /**
+     * Writes the player board as a string
+     * @return the player board as string
+     */
     public String toString() {
 
         StringBuilder builder = new StringBuilder();

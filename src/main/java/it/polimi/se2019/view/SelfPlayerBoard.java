@@ -7,12 +7,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class for handling self player board
+ */
 public class SelfPlayerBoard extends PlayerBoard {
 
     private List<Weapon> readyWeapons;
     private List<Powerup> powerups;
     private int score;
 
+    /**
+     * Class constructor, it builds a self player board
+     * @param character of which the self player board has to be built
+     * @param name of which the self player board has to be built
+     */
     SelfPlayerBoard(GameCharacter character, String name) {
         super(character, name);
         this.readyWeapons = new ArrayList<>();
@@ -20,6 +28,13 @@ public class SelfPlayerBoard extends PlayerBoard {
         this.score = 0;
     }
 
+    /**
+     * Class constructor, it builds a self player board when the game is resumed after a save
+     * @param playerBoard corresponding the player of which the self player board has to be built
+     * @param readyWeapons List of the ready weapons
+     * @param powerups List of the powerups held
+     * @param score amount of points raised
+     */
     SelfPlayerBoard(PlayerBoard playerBoard,  List<Weapon> readyWeapons, List<Powerup> powerups, int score) {
         super(playerBoard.getCharacter(), playerBoard.getNickname(), playerBoard.getAvailableAmmos(),
                 playerBoard.getRevengeMarks(), playerBoard.getDamages(), playerBoard.getKillshotPoints(),
@@ -29,15 +44,27 @@ public class SelfPlayerBoard extends PlayerBoard {
         this.score = score;
     }
 
+    /**
+     * Gets the powerups from the self player board
+     * @return List of the powerups
+     */
     List<Powerup> getPowerups() {
         return new ArrayList<>(this.powerups);
     }
 
+    /**
+     * Adds a powerup to the self player board
+     * @param powerup to be added
+     */
     void addPowerup(Powerup powerup) {
         super.addPowerup();
         this.powerups.add(powerup);
     }
 
+    /**
+     * Raises the score on the self player board
+     * @param amount to be raised
+     */
     void raiseScore(int amount) {
         this.score += amount;
     }
@@ -56,33 +83,57 @@ public class SelfPlayerBoard extends PlayerBoard {
         }
     }
 
+    /**
+     * Adds a weapon to the self player board
+     * @param weapon to be added
+     */
     void addWeapon(Weapon weapon) {
         super.addWeapon();
         this.readyWeapons.add(weapon);
     }
 
+    /**
+     * Removes a weapon from the self player board
+     * @param weapon to be removed
+     */
     @Override
     void removeWeapon(Weapon weapon) {
         super.removeWeapon(weapon);
         this.readyWeapons.remove(weapon);
     }
 
+    /**
+     * Gets the ready weapons from the self player board
+     * @return List of the ready weapons
+     */
     List<Weapon> getReadyWeapons() {
         return new ArrayList<>(this.readyWeapons);
     }
 
+    /**
+     * Realoads a weapon on the self player board
+     * @param weapon to be reloaded
+     */
     @Override
     void reloadWeapon(Weapon weapon) {
         super.reloadWeapon(weapon);
         this.readyWeapons.add(weapon);
     }
 
+    /**
+     * Unloads a weapon on the self player board
+     * @param weapon to be unloaded
+     */
     @Override
     void unloadWeapon(Weapon weapon) {
         super.unloadWeapon(weapon);
         this.readyWeapons.remove(weapon);
     }
 
+    /**
+     * Writes the self player board to string
+     * @return self player board as string
+     */
     @Override
     public String toString() {
         String[] rows = super.toString().split("\n");

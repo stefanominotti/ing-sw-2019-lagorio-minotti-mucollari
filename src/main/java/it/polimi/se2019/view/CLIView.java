@@ -1324,7 +1324,7 @@ public class CLIView extends View {
     }
 
     /**
-     * Shows game finished message
+     * Shows game finished message and the ranking
      * @param ranking map with game characters and total points raised
      */
     @Override

@@ -4,7 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 
-
+/**
+ * Class for handling select arena controller
+ */
 public class SelectArenaController extends AbstractSceneController {
 
     @FXML

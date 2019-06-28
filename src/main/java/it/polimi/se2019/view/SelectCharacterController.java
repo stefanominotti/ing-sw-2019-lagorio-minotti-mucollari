@@ -7,7 +7,9 @@ import javafx.scene.control.ToggleGroup;
 
 import java.util.List;
 
-
+/**
+ * Class for handling select arena controller
+ */
 public class SelectCharacterController extends AbstractSceneController {
 
     @FXML
@@ -23,6 +25,9 @@ public class SelectCharacterController extends AbstractSceneController {
     @FXML
     private RadioButton violetta;
 
+    /**
+     * Forwards a character choice
+     */
     public void forwardCharacter() {
         String value;
         try {
@@ -33,6 +38,10 @@ public class SelectCharacterController extends AbstractSceneController {
         getView().handleCharacterInput(GameCharacter.valueOf(value.toUpperCase()));
     }
 
+    /**
+     * Enables available character to choice
+     * @param characters List of game characters that can be chosen
+     */
     void enableCharacters(List<GameCharacter> characters) {
         if(!characters.contains(GameCharacter.BANSHEE)) {
             this.banshee.setDisable(true);

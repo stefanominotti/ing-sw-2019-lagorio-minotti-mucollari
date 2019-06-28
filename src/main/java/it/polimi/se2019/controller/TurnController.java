@@ -370,7 +370,8 @@ class TurnController {
     }
 
     /**
-     *
+     * Calculates available actions
+     * @return List of the available actions
      */
     List<ActionType> calculateActions() {
         this.moveShoot = false;

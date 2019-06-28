@@ -1,5 +1,8 @@
 package it.polimi.se2019.model.messages;
 
+/**
+ * Enumeration class for handling message type
+ */
 public enum MessageType {
     TURN_MESSAGE,
     WEAPON_MESSAGE,

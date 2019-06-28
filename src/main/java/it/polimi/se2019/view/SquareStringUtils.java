@@ -4,12 +4,22 @@ import it.polimi.se2019.model.GameCharacter;
 
 import java.util.List;
 
+/**
+ * Class for handling square string utils
+ */
 class SquareStringUtils {
 
     private static final String BLANK_ROW = "                       \n";
 
+    /**
+     * Class constructor
+     */
     private SquareStringUtils() {}
 
+    /**
+     * Draws an empty square as a string
+     * @return empty square drawn
+     */
     static String emptySquare() {
         StringBuilder builder = new StringBuilder();
         for (int i=0; i<10; i++) {
@@ -18,6 +28,11 @@ class SquareStringUtils {
         return builder.toString();
     }
 
+    /**
+     * Draws the legend of the game characters playing the game
+     * @param characters playing
+     * @return legend drawn
+     */
     static String legendSquare(List<GameCharacter> characters) {
         StringBuilder builder = new StringBuilder();
         int i;
@@ -36,6 +51,12 @@ class SquareStringUtils {
         return builder.toString();
     }
 
+    /**
+     * Centers a text on a line
+     * @param text to be centered
+     * @param len of the line
+     * @return test centered
+     */
     static String center(String text, int len){
         if (len <= text.length())
             return text.substring(0, len);

@@ -38,7 +38,7 @@ public class PowerupMessage extends Message implements SingleReceiverMessage {
 
     /**
      * Gets the character who is handling the powerup
-     * @return
+     * @return the powerup holder
      */
     public GameCharacter getCharacter() {
         return this.character;

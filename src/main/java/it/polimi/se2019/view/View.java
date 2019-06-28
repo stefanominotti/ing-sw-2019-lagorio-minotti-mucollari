@@ -37,6 +37,9 @@ import java.util.logging.Logger;
 
 import static it.polimi.se2019.view.ClientState.*;
 
+/**
+ * Abstract class for handling view
+ */
 public abstract class View {
 
     private static final Logger LOGGER = Logger.getLogger(View.class.getName());
@@ -71,6 +74,9 @@ public abstract class View {
 
     private PowerupType activePowerup;
 
+    /**
+     * Class constructor, it builds a view
+     */
     View() {
         this.enemyBoards = new ArrayList<>();
         this.paidAmmos = new EnumMap<>(AmmoType.class);
@@ -81,6 +87,12 @@ public abstract class View {
         this.charactersSelection = new ArrayList<>();
     }
 
+    /**
+     * Connects the view to the server
+     * @param connectionType "0" for socket, "1" for RMI
+     * @param ip of the server
+     * @param port of the server
+     */
     void connect(int connectionType, String ip, int port) {
         if (connectionType == 0) {
             SocketClient s = new SocketClient(this, ip, port);
@@ -95,130 +107,260 @@ public abstract class View {
         }
     }
 
+    /**
+     * Gets the client associated to the view
+     * @return the abstract associated
+     */
     public AbstractClient getClient() {
         return this.client;
     }
 
+    /**
+     * Gets the client state
+     * @return client state
+     */
     ClientState getState() {
         return this.state;
     }
 
-    GameCharacter getCharacter() {
-        return this.character;
-    }
+    /**
+     * Get the client character
+     * @return the character
+     */
+    GameCharacter getCharacter() { return this.character; }
 
+    /**
+     * Gets the enemy boards
+     * @return List of the enemy player boards
+     */
     List<PlayerBoard> getEnemyBoards() {
         return new ArrayList<>(this.enemyBoards);
     }
 
+    /**
+     * Gets the player board
+     * @return player board
+     */
     SelfPlayerBoard getSelfPlayerBoard() {
         return this.selfPlayerBoard;
     }
 
+    /**
+     * Gets the board view
+     * @return the board view
+     */
     BoardView getBoard() {
         return this.board;
     }
 
+    /**
+     * Gets selected characters
+     * @return List of the selected characters
+     */
     List<GameCharacter> getCharactersSelection() {
         return new ArrayList<>(this.charactersSelection);
     }
 
+    /**
+     * Gets selected actions
+     * @return List of the selected actions
+     */
     List<ActionType> getActionsSelection() {
         return new ArrayList<>(this.actionsSelection);
     }
 
+    /**
+     * Gets selected actions
+     * @return Map with ammo type and its quantity selected
+     */
     Map<AmmoType, Integer> getAmmosSelection() {
         return new EnumMap<>(this.ammosSelection);
     }
 
+    /**
+     * Gets selected powerups
+     * @return List of the selected powerups
+     */
     List<Powerup> getPowerupsSelection() {
         return new ArrayList<>(this.powerupsSelection);
     }
 
+    /**
+     * Gets selected effects
+     * @return List of the selected effects
+     */
     List<WeaponEffectOrderType> getEffectsSelection() {
         return new ArrayList<>(this.effectsSelection);
     }
 
+    /**
+     * Gets selected coordinates
+     * @return List of the selected coordinates
+     */
     List<Coordinates> getCoordinatesSelection() {
         return this.coordinatesSelection;
     }
 
+    /**
+     * Gets selected weapon
+     * @return List of the selected weapons
+     */
     List<Weapon> getWeaponsSelection() {
         return new ArrayList<>(this.weaponsSelection);
     }
 
+    /**
+     * Gets a ammo of a required payment
+     * @return Map with ammo type and its quantity to be paid
+     */
     Map<AmmoType, Integer> getRequiredPayment() {
         return this.requiredPayment;
     }
 
+    /**
+     * Gets the active powerup
+     * @return the active powerup
+     */
     PowerupType getActivePowerup() {
         return this.activePowerup;
     }
 
+    /**
+     * Gets the current weapon in use
+     * @return the weapon in use
+     */
     Weapon getCurrentWeapon() {
         return this.currentWeapon;
     }
 
+    /**
+     * Sets a weapon as current
+     * @param currentWeapon the weaopon you want to set on use
+     */
     void setCurrentWeapon(Weapon currentWeapon) {
         this.currentWeapon = currentWeapon;
     }
 
+    /**
+     * Knows if a weapon is activated
+     * @return true if it is, else false
+     */
     boolean isWeaponActivated() {
         return this.weaponActivated;
     }
 
+    /**
+     * Sets a weapon as activated
+     * @param weaponActivated true if you want to set as activated, else false
+     */
     void setWeaponActivated(boolean weaponActivated) {
         this.weaponActivated = weaponActivated;
     }
 
+    /**
+     * Gets the payment type
+     * @return type of the payment
+     */
     PaymentType getCurrentPayment() {
         return this.currentPayment;
     }
 
+    /**
+     * Gets paid ammo
+     * @return Map with ammo type and its quantity paid
+     */
     Map<AmmoType, Integer> getPaidAmmos() {
         return new EnumMap<>(this.paidAmmos);
     }
 
+    /**
+     * Gets the powerups paid
+     * @return List of the powerups paid
+     */
     List<Powerup> getPaidPowerups() {
         return new ArrayList<>(this.paidPowerups);
     }
 
+    /**
+     * Gets effect possibilities
+     * @return an effect possibility pack
+     */
     EffectPossibilityPack getEffectPossibility() {
         return this.effectPossibility;
     }
 
+    /**
+     * Sets client state
+     * @param state which you want to set to the client
+     */
     void setState(ClientState state) {
         this.state = state;
     }
 
+    /**
+     * Sets a powerup active
+     * @param powerup you want to set active
+     */
     void setActivePowerup(PowerupType powerup) {
         this.activePowerup = powerup;
     }
 
+    /**
+     * Sets the character selection
+     * @param characters to be set
+     */
     void setCharactersSelection(List<GameCharacter> characters) {
         this.charactersSelection = new ArrayList<>(characters);
     }
 
+    /**
+     * Adds paid ammo to paid ammo list
+     * @param type of the ammo paid
+     * @param amount of the ammo paid
+     */
     void putPaidAmmos(AmmoType type, int amount) {
         this.paidAmmos.put(type, amount);
     }
 
+
+    /**
+     * Add a paid powerup to the powerup paid list
+     * @param powerup paid
+     */
     void addPaidPowerup(Powerup powerup) {
         this.paidPowerups.add(powerup);
     }
 
+    /**
+     * Puts ammo into ammo selection list
+     * @param type of the ammo
+     * @param amount of the ammo
+     */
     void putAmmosSelection(AmmoType type, int amount) {
         this.ammosSelection.put(type, amount);
     }
 
+    /**
+     * Removes a powerup from the powerup selection list
+     * @param powerup you want to remove
+     */
     void removePowerupSelection(Powerup powerup) {
         this.powerupsSelection.remove(powerup);
     }
 
+
+    /**
+     * //TODO
+     * @param type
+     * @param amount
+     */
     void putRequiredPayment(AmmoType type, int amount) {
         this.requiredPayment.put(type, amount);
     }
 
+    /**
+     * Resets all possible selections
+     */
     void resetSelections() {
         this.charactersSelection = new ArrayList<>();
         this.actionsSelection = new ArrayList<>();
@@ -233,6 +375,10 @@ public abstract class View {
         }
     }
 
+    /**
+     * //TODO
+     * @param message
+     */
     public void manageUpdate(Message message) {
         switch (message.getMessageType()) {
             case NICKNAME_MESSAGE:
@@ -274,10 +420,18 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles connection error. Ends the app
+     */
     public void handleConnectionError() {
         System.exit(0);
     }
 
+    /**
+     * Gets a character player board
+     * @param character of which you want to get the player board
+     * @return player board of that character
+     */
     private PlayerBoard getBoardByCharacter(GameCharacter character) {
         for (PlayerBoard playerBoard : this.enemyBoards) {
             if (playerBoard.getCharacter() == character) {
@@ -300,14 +454,25 @@ public abstract class View {
         }
     }
 
+    /**
+     * Sets the client state on typing nickname
+     */
     void handleNicknameRequest() {
         this.state = TYPING_NICKNAME;
     }
 
+    /**
+     * //TODO
+     * Sets the client state on typing nickname in case of nickname duplicated
+     */
     void handleNicknameDuplicated() {
         this.state = TYPING_NICKNAME;
     }
 
+    /**
+     * Uses to forward a timer message to client
+     * @param message to be forwarded
+     */
     private void update(TimerMessage message) {
         switch (message.getTimerType()) {
             case SETUP:
@@ -321,14 +486,26 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles game setup timer
+     * @param action type of the timer message
+     * @param duration setup timer
+     */
     abstract void handleGameSetupTimer(TimerMessageType action, long duration);
 
+    /**
+     * Handles powerup timer
+     * @param action type of the timer message
+     */
     void handlePowerupTimer(TimerMessageType action) {
         if (this.state == MULTIPLE_POWERUPS_SELECTION) {
             this.state = OTHER_PLAYER_TURN;
         }
     }
-
+    /**
+     * Uses to forward a player message to client
+     * @param message to be forwarded
+     */
     private void update(PlayerMessage message) {
         switch (message.getType()) {
             case CREATED:
@@ -381,11 +558,19 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles Final Frenzy mode start
+     * @param beforeFirst if the player is playing before the first player during this turn, else false
+     */
     void handleFinalFrenzy(boolean beforeFirst) {
         this.board.startFrenzy();
         this.board.setBeforeFirstPlayer(beforeFirst);
     }
 
+    /**
+     * Handles board flipping to Final Frenzy mode
+     * @param player to check if flipping
+     */
     void handleBoardFlip(GameCharacter player) {
         PlayerBoard playerBoard;
         if (player == this.character) {
@@ -398,12 +583,21 @@ public abstract class View {
         }
     }
 
+    /**
+     * Shows score changed message
+     * @param player of which the score has changed
+     * @param score amount of change
+     */
     void handleScoreChange(GameCharacter player, int score) {
         if (player == this.character) {
             this.selfPlayerBoard.raiseScore(score);
         }
     }
 
+    /**
+     * Handles a player death
+     * @param player character of which you want to handle the death
+     */
     void handleDeath(GameCharacter player) {
         PlayerBoard playerBoard;
         if (player == this.character) {
@@ -416,6 +610,10 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles kill shot points change message
+     * @param player of which the kill shot points has changed
+     */
     void handleKillshotPointsChange(GameCharacter player) {
         PlayerBoard board;
         if (player == this.character) {
@@ -428,12 +626,22 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles first blood shot
+     * @param player who dealt the first blood shot
+     */
     void handleFirstBlood(GameCharacter player) {
         if (this.character == player) {
             this.selfPlayerBoard.raiseScore(1);
         }
     }
 
+
+    /**
+     * Handles marks to damages conversion
+     * @param player of which the marks has to be converted
+     * @param attacker player of which marks need to be converted
+     */
     void handleMarksToDamages(GameCharacter player, GameCharacter attacker) {
         PlayerBoard playerBoard;
         if (player == this.character) {
@@ -454,6 +662,13 @@ public abstract class View {
         playerBoard.resetMarks(attacker);
     }
 
+    /**
+     * Handles an attack
+     * @param character who received the attack
+     * @param attacker who performed the attack
+     * @param amount of damage or marks give
+     * @param attackType type of the attack
+     */
     void handleAttack(GameCharacter character, GameCharacter attacker, int amount, EffectType attackType) {
         PlayerBoard playerBoard;
         if (character == this.character) {
@@ -473,8 +688,13 @@ public abstract class View {
         }
     }
 
-    void handlePlayerCreated(GameCharacter character, String nickname, Map<GameCharacter,
-            String> otherPlayers) {
+    /**
+     * Handles player created, changing state to waiting start
+     * @param character chosen
+     * @param nickname chosen
+     * @param otherPlayers Map with game characters and their nicknames
+     */
+    void handlePlayerCreated(GameCharacter character, String nickname, Map<GameCharacter, String> otherPlayers) {
         this.state = WAITING_START;
         this.character = character;
         this.selfPlayerBoard = new SelfPlayerBoard(character, nickname);
@@ -493,28 +713,49 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles ready player, adding player board
+     * @param character of the ready player
+     * @param nickname of the ready player
+     */
     void handleReadyPlayer(GameCharacter character, String nickname) {
         if (this.state == WAITING_START) {
             this.enemyBoards.add(new PlayerBoard(character, nickname));
         }
     }
 
+    /**
+     * Handles a player spawn
+     * @param character who has spawn
+     * @param coordinates where he has spawn
+     */
     void handleSpawnedPlayer(GameCharacter character, Coordinates coordinates) {
         int x = coordinates.getX();
         int y = coordinates.getY();
         this.board.setPlayerPosition(character, this.board.getSquareByCoordinates(x, y));
     }
 
+    /**
+     * Handles skulls set complete, changing state to setting arena
+     */
     void handleSkullsSet() {
         this.state = SETTING_ARENA;
     }
 
+    /**
+     * Handles master changed, changing state to setting skulls
+     * @param character active character
+     */
     void handleMasterChanged(GameCharacter character) {
         if (character == this.character) {
             this.state = SETTING_SKULLS;
         }
     }
 
+    /**
+     * Handles start setup, changing state
+     * @param character who is starting setup
+     */
     void handleStartSetup(GameCharacter character) {
         if (character == this.character) {
             this.state = SETTING_SKULLS;
@@ -523,12 +764,21 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles movement action
+     * @param character who has to move
+     * @param coordinates chosen where the player wants to move
+     */
     void handleMovement(GameCharacter character, Coordinates coordinates) {
         int x = coordinates.getX();
         int y = coordinates.getY();
         this.board.setPlayerPosition(character, this.board.getSquareByCoordinates(x, y));
     }
 
+    /**
+     * Uses to forward a client message to client
+     * @param message to be forwarded
+     */
     private void update(ClientMessage message) {
         switch (message.getType()) {
             case INVALID_TOKEN:
@@ -562,23 +812,40 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles invalid token, after the app is closed
+     */
     void handleInvalidToken() {
         System.exit(0);
     }
 
+    /**
+     * Handles full lobby, after the app is closed
+     */
     void handleFullLobby() {
         System.exit(0);
     }
 
+    /**
+     * Handles a reconnection request, changing state to reconnecting
+     */
     void handleReconnectionRequest() {
         this.state = RECONNECTING;
         this.client.send(new ReconnectionMessage(getToken()));
     }
 
+    /**
+     * Handles characters selection, changing state to choosing characters
+     * @param availables List of the available game characters
+     */
     void handleCharacterSelectionRequest(List<GameCharacter> availables) {
         this.state = CHOOSING_CHARACTER;
     }
 
+    /**
+     * Hanfles client disconnection
+     * @param character who has disconnected
+     */
     void handleClientDisconnected(GameCharacter character) {
         if (this.state == TYPING_NICKNAME || this.state == WAITING_START || this.state == WAITING_SETUP ||
                 this.state == SETTING_SKULLS || this.state == SETTING_ARENA) {
@@ -591,6 +858,10 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles game already start, in case an another player try to join when the game is already started
+     * after the app is closed
+     */
     void handleGameAlreadyStarted() {
         System.exit(0);
     }
@@ -1059,20 +1330,27 @@ public abstract class View {
         this.possibilitySelections.setCardinalPoints(cardinal);
     }
 
-    void setPossibilityRequire(boolean isRequire) {
-        this.possibilitySelections.setRequire(isRequire);
-        if(!isRequire) {
+    void setPossibilityRequire(boolean isRequired) {
+        this.possibilitySelections.setRequire(isRequired);
+        if(!isRequired) {
             selectionEffectFinish();
             return;
         }
         handleEffectSelections();
     }
 
+    /**
+     * Sends the effect selected
+     */
     void selectionEffectFinish() {
         this.client.send(new SingleSelectionMessage(SelectionMessageType.EFFECT_POSSIBILITY, this.character,
                 this.possibilitySelections));
     }
 
+    /**
+     * Generates the client token
+     * @return sha-256 digest of the token
+     */
     String generateToken() {
         String message = UUID.randomUUID().toString();
         StringBuffer hexString = new StringBuffer();
@@ -1095,6 +1373,10 @@ public abstract class View {
         return hexString.toString();
     }
 
+    /**
+     * Gets the token of the client
+     * @return the token of the client
+     */
     private String getToken() {
         try (BufferedReader reader = new BufferedReader(new FileReader(PATH + FILE_NAME))) {
             String message = reader.readLine();
@@ -1116,6 +1398,10 @@ public abstract class View {
         return null;
     }
 
+    /**
+     * Removes the token of the client
+     * @throws IOException if the file could not be removed
+     */
     void removeToken() throws IOException {
         Files.delete(Paths.get(PATH + FILE_NAME));
     }
