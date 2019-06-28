@@ -32,7 +32,7 @@ public class EffectTarget {
         this.positionType = positionType;
         this.positionConstraints = positionConstraints;
         this.afterPositionConstraints = afterPositionConstraints;
-        this.targetConstraints = EnumSet.copyOf(targetConstraints);
+        this.targetConstraints = targetConstraints;
     }
 
     /**

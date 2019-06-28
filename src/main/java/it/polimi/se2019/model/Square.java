@@ -22,17 +22,15 @@ public class Square {
 
     /**
      * Class constructor, it builds a square
-     * @param room which the square has to be part of
      * @param spawn true if the square is spawn, else false
      * @param nearbyAccessibility Map with the cardinal point and its accessibility from the square
      * @param x coordinate X of the square
      * @param y coordinate Y of the square
      * @param arena which the square has to be related to
      */
-    public Square(Room room, boolean spawn, Map<CardinalPoint, Boolean> nearbyAccessibility, int x, int y, Arena arena) {
+    public Square(boolean spawn, Map<CardinalPoint, Boolean> nearbyAccessibility, int x, int y, Arena arena) {
         this.x = x;
         this.y = y;
-        this.room = room;
         this.spawn = spawn;
         this.arena = arena;
         this.nearbySquares = new EnumMap<>(CardinalPoint.class);

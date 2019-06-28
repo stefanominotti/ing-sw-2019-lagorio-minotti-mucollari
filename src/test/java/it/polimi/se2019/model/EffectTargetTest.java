@@ -3,6 +3,8 @@ package it.polimi.se2019.model;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -10,6 +12,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class EffectTargetTest {
+
+    @Test
+    public void constructorTest() {
+        EffectTarget target = new EffectTarget(TargetType.OTHERS, Arrays.asList("1", "2"),
+                TargetPositionType.EVERYWHERE, new ArrayList<>(), new ArrayList<>(), new HashSet<>());
+        assertEquals(TargetType.OTHERS, target.getType());
+        assertEquals(TargetPositionType.EVERYWHERE, target.getPositionType());
+        assertEquals(Arrays.asList("1", "2"), target.getAmount());
+    }
 
     @Test
     public void getEffectTypeTest() {

@@ -210,6 +210,22 @@ public class Board extends Observable {
     }
 
     /**
+     * Set the state of the game
+     * @param state you want to be set
+     */
+    void setGameState(GameState state) {
+        this.gameState = state;
+    }
+
+    /**
+     * Gets the state of the game
+     * @return game state of the game
+     */
+    public GameState getGameState() {
+        return this.gameState;
+    }
+
+    /**
      * Gets powerups timer duration
      * @return Powerups timer duration
      */
@@ -271,7 +287,7 @@ public class Board extends Observable {
         this.players.add(new Player(character, nickname, token));
         Map<GameCharacter, String> others = new LinkedHashMap<>();
         for (Player p : this.players) {
-            if (p.getNickname() != null && p.getCharacter() != character) {
+            if (p.getCharacter() != character) {
                 others.put(p.getCharacter(), p.getNickname());
             }
         }
@@ -306,7 +322,7 @@ public class Board extends Observable {
     /**
      * Finalizes players creation sending messages to notify game status
      */
-    private void finalizePlayersCreation() {
+    void finalizePlayersCreation() {
         this.gameState = SETTING_UP_GAME;
         List<Player> toRemove = new ArrayList<>();
         for (Player p : this.players) {
@@ -346,9 +362,7 @@ public class Board extends Observable {
      * @param player of which you want to handle disconnection
      */
     private void handleAcceptingPlayersDisconnection(GameCharacter player) {
-        if (getPlayerByCharacter(player).getNickname() != null) {
-            notifyChanges(new ClientDisconnectedMessage(player, true));
-        }
+        notifyChanges(new ClientDisconnectedMessage(player, true));
         this.players.remove(getPlayerByCharacter(player));
         if (this.gameTimerStartDate != null && this.players.size() == 2) {
             this.timer.cancel();

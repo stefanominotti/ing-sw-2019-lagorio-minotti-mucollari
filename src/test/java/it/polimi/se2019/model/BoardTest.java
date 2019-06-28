@@ -45,8 +45,11 @@ public class BoardTest {
     }
 
     @Test
-    public void getPlayersTest() {
+    public void playersTest() {
         this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
+        this.board.addPlayer(GameCharacter.DOZER, "playerTest2", "token");
+        this.board.addPlayer(GameCharacter.D_STRUCT_OR, "playerTest3", "token");
+        this.board.finalizeGameSetup();
         assertNotNull(this.board.getPlayers());
         assertEquals(1, this.board.getPlayers().size());
     }
@@ -524,4 +527,26 @@ public class BoardTest {
         assertEquals(players, board.getPlayersOnCardinalDirection(p1.getPosition(), CardinalPoint.EAST));
     }
 
+    @Test
+    public void disconnectionTest() {
+        this.board.addPlayer(GameCharacter.BANSHEE, "1", "token");
+        this.board.setGameState(GameState.ACCEPTING_PLAYERS);
+        this.board.handleDisconnection(GameCharacter.BANSHEE);
+        assertEquals(0, this.board.getPlayers().size());
+        this.board.addPlayer(GameCharacter.BANSHEE, "1", "token");
+        this.board.addPlayer(GameCharacter.DOZER, "2", "token");
+        this.board.addPlayer(GameCharacter.VIOLET, "2", "token");
+        this.board.setGameState(GameState.SETTING_UP_GAME);
+        this.board.handleDisconnection(GameCharacter.BANSHEE);
+        assertEquals(2, this.board.getPlayers().size());
+        assertEquals(GameState.ACCEPTING_PLAYERS, this.board.getGameState());
+        assertEquals(GameCharacter.DOZER, this.board.getPlayers().get(0).getCharacter());
+        this.board.handleDisconnection(GameCharacter.DOZER);
+        assertEquals(1, this.board.getPlayers().size());
+        this.board.addPlayer(GameCharacter.BANSHEE, "1", "token");
+        this.board.addPlayer(GameCharacter.DOZER, "2", "token");
+        this.board.setGameState(GameState.IN_GAME);
+        this.board.handleDisconnection(GameCharacter.BANSHEE);
+        assertEquals(3, this.board.getPlayers().size());
+    }
 }

@@ -11,6 +11,17 @@ import static org.junit.Assert.*;
 public class WeaponEffectTest {
 
     @Test
+    public void constructorTest() {
+        WeaponEffect loaded = Weapon.LOCK_RIFLE.getPrimaryEffect().get(0);
+        WeaponEffect effect = new WeaponEffect(loaded.getEffectName(), loaded.getDescription(), loaded.getCost(),
+                loaded.isRequired(), loaded.isCombo(), loaded.getEffectDependency(), loaded.getType(),
+                loaded.getAmount(), loaded.getTarget(), loaded.getRequiredDependency());
+        assertEquals(loaded.getEffectName(), effect.getEffectName());
+        assertEquals(loaded.isRequired(), effect.isRequired());
+        assertEquals(loaded.getAmount(), effect.getAmount());
+    }
+
+    @Test
     public void getEffectNameTest() {
         WeaponEffect effect = Weapon.ZX_2.getAlternativeMode().get(0);
         assertEquals("modalita scanner", effect.getEffectName());

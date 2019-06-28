@@ -3,6 +3,7 @@ package it.polimi.se2019.model;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.EnumMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -19,6 +20,14 @@ public class SquareTest {
         Arena arena = this.board.getArena();
         this.squareNotSpawn = arena.getSquareByCoordinate(0,0);
         this.squareSpawn = arena.getSquareByCoordinate(2,0);
+    }
+
+    @Test
+    public void constructorTest() {
+        Square square = new Square(true, new EnumMap<>(CardinalPoint.class), 0, 0, this.board.getArena());
+        assertTrue(square.isSpawn());
+        assertEquals(0, square.getX());
+        assertEquals(0, square.getY());
     }
 
     @Test

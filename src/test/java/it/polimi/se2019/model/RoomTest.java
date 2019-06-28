@@ -23,6 +23,14 @@ public class RoomTest {
     }
 
     @Test
+    public void constructorTest() {
+        List<Square> squares = this.board.getArena().getRoomByColor(RoomColor.RED).getSquares();
+        Room room = new Room(RoomColor.RED, squares);
+        assertEquals(RoomColor.RED, room.getColor());
+        assertEquals(this.board.getArena().getRoomByColor(RoomColor.RED).getSquares(), room.getSquares());
+    }
+
+    @Test
     public void spawnTest() {
         assertTrue(this.roomSpawn.hasSpawn());
         assertFalse(this.roomNotSpawn.hasSpawn());
