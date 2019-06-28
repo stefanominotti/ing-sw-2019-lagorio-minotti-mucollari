@@ -302,7 +302,7 @@ public class PlayerBoard implements Serializable {
             }
             i++;
         }
-        while (i<12-this.damages.size()) {
+        while (i < 12) {
             if (i == 2 || i == 5 || i == 10) {
                 builder.append("| _ ");
             } else {
@@ -346,7 +346,6 @@ public class PlayerBoard implements Serializable {
             builder.append(toAppend);
         }
         builder.setLength(builder.length() - 2);
-        builder.append("\n");
 
         return builder.toString();
     }
