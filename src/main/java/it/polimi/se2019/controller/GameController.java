@@ -415,7 +415,7 @@ public class GameController implements Observer {
             send(new PaymentMessage(PaymentMessageType.REQUEST, PaymentType.EFFECT,
                     this.turnController.getActivePlayer().getCharacter(), effectCost));
         } else {
-            this.effectsController.effectSelected(effectSelection);
+            this.effectsController.selectEffect(effectSelection);
         }
     }
 
@@ -464,7 +464,7 @@ public class GameController implements Observer {
                 this.turnController.paidWeapon();
                 break;
             case EFFECT:
-                this.effectsController.effectSelected(effectSelection);
+                this.effectsController.selectEffect(effectSelection);
                 break;
             case RELOAD:
                 this.turnController.reloadWeapon();
@@ -501,12 +501,16 @@ public class GameController implements Observer {
                 this.turnController.getActivePlayer().getPowerups().size() - 1 == 0);
     }
 
+    void setEffectTargets(List<GameCharacter> players) {
+        this.effectTargets = players;
+    }
+
     /**
      * Asks a player if he wants to use a powerup
      * @param players to be asked
      */
     void askPowerup(List<GameCharacter> players) {
-        this.effectTargets = players;
+        setEffectTargets(players);
         if (checkTagbackGrenadeCharacters(players).isEmpty() &&
                 (this.turnController.getActivePlayer().getPowerupsByType(PowerupType.TARGETING_SCOPE).isEmpty() ||
                         !canPayPowerup())) {

@@ -1,243 +1,235 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.server.GameLoader;
+import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static it.polimi.se2019.model.WeaponEffectOrderType.ALTERNATIVE;
+import static it.polimi.se2019.model.WeaponEffectOrderType.PRIMARY;
+import static it.polimi.se2019.model.WeaponEffectOrderType.SECONDARYONE;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 
 
 public class EffectControllerTest {
     Weapon weapon;
     Board board;
     Player player;
+    Player p1;
+    Player p2;
     TurnController turnController;
     EffectsController controller;
-    String configPath = System.getProperty("user.home");
+    //for pack
+    List<GameCharacter> characters;
+    List<Coordinates> squares;
+    List<RoomColor> rooms;
+    List<CardinalPoint> cardinalPoints;
+    Map<Coordinates, List<GameCharacter>> multipleSquares;
 
-    @Test
-    public void weaponTest() {
-        String filePath;
-        for(Weapon weapon : Weapon.values()) {
-            filePath = configPath.replace('\\', '/') + "/WeaponsTest/" + weapon + "Test.json" ;
-            try {
-                FileWriter writer = new FileWriter(configPath + "/" + "config.json");
-                writer.write("{" + "\"path\": \"" + filePath + "\"" + "}");
-                writer.flush();
-            } catch (IOException e) {
-            }
-            this.weapon = weapon;
-            System.out.println(weapon.getName());
-            weaponPrimaryTest();
-            weaponAlternativeTest();
-        }
-    }
+    @Before
+    public void setUp() {
+        this.characters = new ArrayList<>();
+        this.squares = new ArrayList<>();
+        this.rooms = new ArrayList<>();
+        this.cardinalPoints = new ArrayList<>();
+        this.multipleSquares = new LinkedHashMap<>();
 
-   /* @Test
-    public void weaponChoosenTest() {
-       this.weapon = Weapon.VORTEX_CANNON;
-       String filePath = configPath.replace('\\', '/') + "/WeaponsTest/" + weapon + "Test.json" ;
-        try {
-            FileWriter writer = new FileWriter(configPath + "/" + "config.json");
-            writer.write("{" + "\"path\": \"" + filePath + "\"" + "}");
-            writer.flush();
-        } catch (IOException e) {
-        }
-       weaponPrimaryTest();
-       weaponAlternativeTest();
-
-    }*/
-
-    private List<GameCharacter> chooseCharacters(EffectPossibilityPack pack) {
-        List<GameCharacter> targets = new ArrayList<>();
-        List<String> targetAmaount = pack.getTargetsAmount();
-        if(pack.getCharacters().get(0) == this.player.getCharacter()){
-            targets.add(this.player.getCharacter());
-            return targets;
-        }
-        if(targetAmaount.size() == 1) {
-            if (targetAmaount.get(0).equals("MAX")) {
-                targets = new ArrayList<>(pack.getCharacters());
-            } else {
-                int amount = Integer.parseInt(targetAmaount.get(0));
-                int i = 0;
-                while (i < amount) {
-                    targets.add(pack.getCharacters().get(i));
-                    i++;
-                }
-            }
-        } else {
-            int min = Integer.parseInt(targetAmaount.get(0));
-            int max;
-            if (targetAmaount.get(1).equals("MAX")) {
-                max = pack.getCharacters().size();
-            } else {
-                max = Integer.parseInt(targetAmaount.get(1));
-            }
-            for(int i = min; i <= max; i++) {
-                targets.add(pack.getCharacters().get(i-min));
-            }
-
-        }
-        return targets;
-    }
-
-    private Coordinates chooseSquare (EffectPossibilityPack pack) {
-        return pack.getSquares().get(0);
-    }
-
-    private RoomColor chooseRoom (EffectPossibilityPack pack) {
-        return  pack.getRooms().get(0);
-    }
-
-    private CardinalPoint chooseCardinalPoint (EffectPossibilityPack pack) {
-        return pack.getCardinalPoints().get(0);
-    }
-
-    private Map<Coordinates, List<GameCharacter>> chooseMultipleSquares(EffectPossibilityPack pack) {
-        Map<Coordinates, List<GameCharacter>> multiSquare = new HashMap<>();
-        for (Coordinates square : multiSquare.keySet()) {
-            multiSquare.put(square, chooseCharacters(pack));
-        }
-        return multiSquare;
-    }
-
-    private void apply (EffectPossibilityPack pack) {
-        List<GameCharacter> targets = new ArrayList<>();
-        List<Coordinates> coordinates = new ArrayList<>();
-        List<RoomColor> rooms = new ArrayList<>();
-        List<CardinalPoint> cardinalPoints = new ArrayList<>();
-        Map<Coordinates, List<GameCharacter>> multipleSquares = new HashMap<>();
-        switch (pack.getType()) {
-            case MOVE:
-                coordinates.add(chooseSquare(pack));
-                targets = chooseCharacters(pack);
-                break;
-            case SELECT:
-                if(!pack.getSquares().isEmpty()) {
-                    coordinates.add(chooseSquare(pack));
-                }
-                if(!pack.getRooms().isEmpty()) {
-                    rooms.add(chooseRoom(pack));
-                }
-                if(!pack.getCardinalPoints().isEmpty()) {
-                    cardinalPoints.add(chooseCardinalPoint(pack));
-                }
-                break;
-            case MARK:
-                targets = chooseCharacters(pack);
-                break;
-            case DAMAGE:
-                if(pack.getMultipleSquares().isEmpty()) {
-                    targets = chooseCharacters(pack);
-                } else {
-                    multipleSquares = chooseMultipleSquares(pack);
-                }
-        }
-        controller.effectApplication(new EffectPossibilityPack(pack.getTargetsAmount(),
-                targets, coordinates, rooms, cardinalPoints, multipleSquares, true, pack.getType()));
-    }
-
-    private void scanEffects(List<WeaponEffect> effectsList) throws UnsupportedOperationException {
-        List<WeaponEffect> effects = new ArrayList<>();
-        for(WeaponEffect effect : effectsList) {
-            effects.add(weapon.getPrimaryEffect().get(0));
-            controller.setEffectsQueue(effects);
-            EffectPossibilityPack pack;
-            try {
-                pack = controller.seeEffectPossibility(effect);
-                printPack(pack);
-                apply(pack);
-            } catch (UnsupportedOperationException e) {
-                if(effect.getEffectName() == null && !effect.isRequired()) {
-                    System.out.println("not targets available");
-                } else {
-                    throw new UnsupportedOperationException();
-                }
-            }
-        }
-    }
-
-    private void printPack(EffectPossibilityPack pack) {
-        System.out.println("-----------\n" + pack.getType());
-        for(GameCharacter el : pack.getCharacters()) {
-            System.out.println(el);
-        }
-        for(Coordinates el : pack.getSquares()) {
-            System.out.println(el.getX() + "," + el.getY());
-        }
-        for(RoomColor el : pack.getRooms()) {
-            System.out.println(el);
-        }
-        for(CardinalPoint el : pack.getCardinalPoints()) {
-            System.out.println(el);
-        }
-        for(Map.Entry<Coordinates, List<GameCharacter>> el : pack.getMultipleSquares().entrySet()) {
-            System.out.println("{\n["+ el.getKey().getX() + "," + el.getKey().getY() + "]");
-            for(GameCharacter ca : el.getValue()) {
-                System.out.println(ca);
-            }
-            System.out.println("}");
-        }
-        System.out.println("-----------");
-    }
-
-    public void weaponPrimaryTest() {
-        this.board = (new GameLoader()).loadBoard();
-        this.player = this.board.getPlayers().get(this.board.getCurrentPlayer());
-        this.weapon = player.getWeapons().get(0).getWeaponType();
-        this.turnController = new TurnController(this.board, null, null);
-        this.controller = new EffectsController(this.board,null);
-        this.controller.setActivePlayer(this.board.getPlayers().get(this.board.getCurrentPlayer()));
-        try {
-            this.controller.setEffectOrder(WeaponEffectOrderType.PRIMARY);
-            scanEffects(weapon.getPrimaryEffect());
-            System.out.println("*************");
-        }
-        catch (UnsupportedOperationException e) {
-            System.out.println("effects not available");
-        }
-        try {
-            this.controller.setEffectOrder(WeaponEffectOrderType.SECONDARYONE);
-            scanEffects(weapon.getSecondaryEffectOne());
-            System.out.println("*************");
-        }
-        catch (IllegalStateException ignore) {}
-        catch (UnsupportedOperationException e) {
-            System.out.println("effects not available");
-        }
-        try {
-            this.controller.setEffectOrder(WeaponEffectOrderType.SECONDARYTWO);
-            scanEffects(weapon.getSecondaryEffectTwo());
-            System.out.println("*************");
-        }
-        catch (IllegalStateException ignore) {}
-        catch (UnsupportedOperationException e) {
-            System.out.println("effects not available");
-        }
-
-    }
-
-    public void weaponAlternativeTest() {
-        this.board = (new GameLoader()).loadBoard();
-        this.player = this.board.getPlayers().get(this.board.getCurrentPlayer());
-        this.weapon = player.getWeapons().get(0).getWeaponType();
+        this.board = new Board();
+        this.board.createArena("4");
+        this.board.addPlayer(GameCharacter.DOZER, "a", "123");
+        this.board.addPlayer(GameCharacter.VIOLET, "b", "234");
+        this.board.addPlayer(GameCharacter.BANSHEE, "c", "345");
+        this.player = this.board.getPlayers().get(0);
+        this.p1 = this.board.getPlayers().get(1);
+        this.p2 = this.board.getPlayers().get(2);
+        this.board.movePlayer(this.player, this.board.getArena().getSquareByCoordinate(1, 0));
+        this.board.movePlayer(p1, this.board.getArena().getSquareByCoordinate(2, 0));
+        this.board.movePlayer(p2, this.board.getArena().getSquareByCoordinate(1, 1));
+        this.player.addWeapon(new WeaponCard(Weapon.LOCK_RIFLE));
+        this.player.addWeapon(new WeaponCard(Weapon.TRACTOR_BEAM));
+        this.player.addWeapon(new WeaponCard(Weapon.CYBERBLADE));
+        this.player.addWeapon(new WeaponCard(Weapon.ROCKET_LAUNCHER));
+        this.player.addWeapon(new WeaponCard(Weapon.FURNACE));
+        this.player.addWeapon(new WeaponCard(Weapon.VORTEX_CANNON));
+        this.player.addWeapon(new WeaponCard(Weapon.RAILGUN));
+        this.player.addWeapon(new WeaponCard(Weapon.SHOCKWAVE));
         this.turnController = new TurnController(this.board, null, null);
         this.controller = new EffectsController(this.board, null);
-        this.controller.setActivePlayer(this.board.getPlayers().get(this.board.getCurrentPlayer()));
-        try {
-            this.controller.setEffectOrder(WeaponEffectOrderType.PRIMARY);
-            scanEffects(weapon.getAlternativeMode());
-            System.out.println("*************");
+        this.controller.setActivePlayer(this.player);
+        List<Weapon> weapons = new ArrayList<>();
+        weapons.add(Weapon.LOCK_RIFLE);
+        weapons.add(Weapon.TRACTOR_BEAM);
+        weapons.add(Weapon.CYBERBLADE);
+        weapons.add(Weapon.ROCKET_LAUNCHER);
+        weapons.add(Weapon.FURNACE);
+        weapons.add(Weapon.VORTEX_CANNON);
+        weapons.add(Weapon.RAILGUN);
+        weapons.add(Weapon.SHOCKWAVE);
+        assertEquals(weapons, this.controller.getAvailableWeapons());
+    }
+
+    @Test
+    public void getAvailableEffectsTest() {
+        List<WeaponEffectOrderType> availableEffects;
+        availableEffects = new ArrayList<>();
+        this.controller.setWeapon(Weapon.MACHINE_GUN);
+        availableEffects.add(PRIMARY);
+        assertTrue(availableEffects.containsAll(this.controller.getAvailableEffects().keySet()));
+        availableEffects = new ArrayList<>();
+        this.controller.setWeapon(Weapon.TRACTOR_BEAM);
+        availableEffects.add(PRIMARY);
+        availableEffects.add(ALTERNATIVE);
+        assertTrue(availableEffects.containsAll(this.controller.getAvailableEffects().keySet()));
+        availableEffects = new ArrayList<>();
+        this.controller.setWeapon(Weapon.CYBERBLADE);
+        availableEffects.add(PRIMARY);
+        availableEffects.add(SECONDARYONE);
+        assertTrue(availableEffects.containsAll(this.controller.getAvailableEffects().keySet()));
+    }
+
+    @Test
+    public void damageCaseTest() {
+        this.weapon = Weapon.LOCK_RIFLE;
+        this.controller.setWeapon(weapon);
+        this.controller.effectSelected(PRIMARY);
+        this.characters.add(this.p1.getCharacter());
+        this.characters.add(this.p2.getCharacter());
+        assertEquals(this.characters, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(0)).getCharacters());
+    }
+
+    @Test
+    public void markCaseTest() {
+        this.weapon = Weapon.LOCK_RIFLE;
+        this.controller.setWeapon(weapon);
+        this.controller.effectSelected(PRIMARY);
+        this.controller.setHitByCases(p1.getCharacter());
+        this.characters.add(this.p1.getCharacter());
+        assertEquals(this.characters, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(1)).getCharacters());
+    }
+
+    @Test
+    public void moveSelfCaseTest() {
+        this.weapon = Weapon.CYBERBLADE;
+        this.controller.setWeapon(weapon);
+        this.controller.effectSelected(SECONDARYONE);
+        this.characters.add(this.player.getCharacter());
+        this.squares.add(new Coordinates(2,0));
+        this.squares.add(new Coordinates(1,1));
+        assertEquals(this.characters, this.controller.seeEffectPossibility(weapon.getSecondaryEffectOne().get(0)).getCharacters());
+        assertTrue(assertCoordinates(this.squares, this.controller.seeEffectPossibility(weapon.getSecondaryEffectOne().get(0)).getSquares()));
+
+    }
+
+    @Test
+    public void mooveHitByMainCaseTest() {
+        this.weapon = Weapon.ROCKET_LAUNCHER;
+        this.controller.setWeapon(weapon);
+        this.controller.effectSelected(PRIMARY);
+        this.controller.setHitByCases(p1.getCharacter());
+        this.characters.add(this.p1.getCharacter());
+        this.squares.add(new Coordinates(1,0));
+        this.squares.add(new Coordinates(2,1));
+        assertEquals(this.characters, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(1)).getCharacters());
+        assertTrue(assertCoordinates(this.squares, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(1)).getSquares()));
+
+    }
+
+    @Test
+    public void mooveOtherCaseTest() {
+        this.weapon = Weapon.TRACTOR_BEAM;
+        this.controller.setWeapon(weapon);
+        this.controller.effectSelected(ALTERNATIVE);
+        this.characters.add(this.p1.getCharacter());
+        this.characters.add(this.p2.getCharacter());
+        this.squares.add(new Coordinates(1,0));
+        assertEquals(this.characters, this.controller.seeEffectPossibility(weapon.getAlternativeMode().get(0)).getCharacters());
+        assertTrue(assertCoordinates(this.squares, this.controller.seeEffectPossibility(weapon.getAlternativeMode().get(0)).getSquares()));
+    }
+
+    @Test
+    public void selectSquareCaseTest() {
+        this.weapon = Weapon.VORTEX_CANNON;
+        this.controller.setWeapon(weapon);
+        this.controller.effectSelected(PRIMARY);
+        this.squares.add(new Coordinates(2,0));
+        this.squares.add(new Coordinates(2,1));
+        this.squares.add(new Coordinates(1,1));
+        assertTrue(assertCoordinates(this.squares, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(0)).getSquares()));
+    }
+
+    @Test
+    public void selectRoomCaseTest() {
+        this.weapon = Weapon.FURNACE;
+        this.controller.setWeapon(weapon);
+        this.controller.effectSelected(PRIMARY);
+        this.rooms.add(RoomColor.PURPLE);
+        assertEquals(this.rooms, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(0)).getRooms());
+    }
+
+    @Test
+    public void selectCardinalCaseTest() {
+        this.weapon = Weapon.RAILGUN;
+        this.controller.setWeapon(weapon);
+        this.controller.effectSelected(PRIMARY);
+        this.cardinalPoints.add(CardinalPoint.EAST);
+        this.cardinalPoints.add(CardinalPoint.SOUTH);
+        assertEquals(this.cardinalPoints, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(0)).getCardinalPoints());
+    }
+
+    @Test
+    public void selectMultipleSquareCaseTest() {
+        this.weapon = Weapon.SHOCKWAVE;
+        this.controller.setWeapon(weapon);
+        this.controller.effectSelected(PRIMARY);
+        List<GameCharacter> characters;
+        characters = new ArrayList<>();
+        characters.add(p1.getCharacter());
+        this.multipleSquares.put(new Coordinates(2,0), characters);
+        characters = new ArrayList<>();
+        characters.add(p2.getCharacter());
+        this.multipleSquares.put(new Coordinates(1,1), characters);
+        assertTrue(assertMultipleSquare(this.multipleSquares, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(0)).getMultipleSquares()));
+
+
+    }
+
+    private boolean assertCoordinates(List<Coordinates> coordinates1, List<Coordinates> coordinates2) {
+        if(coordinates1.size() != coordinates2.size()) {
+            return false;
         }
-        catch (IllegalStateException ignore) {}
-        catch (UnsupportedOperationException e) {
-            System.out.println("effects not available");
+        for(Coordinates c1 : coordinates1) {
+            boolean isEqual = false;
+            for(Coordinates c2 : coordinates2) {
+                if(c1.getX() == c2.getX() && c1.getY() == c2.getY()) {
+                    isEqual = true;
+                    break;
+                }
+            }
+            if(!isEqual) {
+                return false;
+            }
         }
+        return true;
+    }
+
+    private boolean assertMultipleSquare(Map<Coordinates, List<GameCharacter>> multi1, Map<Coordinates, List<GameCharacter>> multi2) {
+        if(multi1.size() != multi2.size()) {
+            return false;
+        }
+        for(Coordinates c1 : multi1.keySet()) {
+            boolean isEqual = false;
+            for(Coordinates c2 : multi2.keySet()) {
+                if(c1.getX() == c2.getX() && c1.getY() == c2.getY() && multi1.get(c1).equals(multi2.get(c2))) {
+                    isEqual = true;
+                    break;
+                }
+            }
+            if(!isEqual) {
+                return false;
+            }
+        }
+        return true;
     }
 }

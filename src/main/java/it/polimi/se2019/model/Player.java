@@ -239,7 +239,7 @@ public class Player {
      * Adds a weapon card to the player
      * @param weapon card to give
      */
-    void addWeapon(WeaponCard weapon) {
+    public void addWeapon(WeaponCard weapon) {
         this.weapons.add(weapon);
     }
 
@@ -301,7 +301,7 @@ public class Player {
      * Adds a powerup to the player
      * @param powerup you want to add
      */
-    void addPowerup(Powerup powerup) {
+    public void addPowerup(Powerup powerup) {
         this.powerups.add(powerup);
     }
 

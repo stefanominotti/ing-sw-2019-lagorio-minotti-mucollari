@@ -439,20 +439,14 @@ public class Board extends Observable {
         try {
             reader = new FileReader(PATH + SERVER_SETTINGS);
             jsonElement = (JsonObject)parser.parse(reader);
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Invalid settings file, timers set to default");
-            setDefaultTimers();
-            return;
-        }
-
-        try {
             this.startTimer = gson.fromJson(jsonElement.get("startTimer"), Long.class);
             this.turnTimer = gson.fromJson(jsonElement.get("turnTimer"), Long.class);
             this.respawnTimer = gson.fromJson(jsonElement.get("respawnTimer"), Long.class);
             this.powerupsTimer = gson.fromJson(jsonElement.get("powerupsTimer"), Long.class);
-        } catch (ClassCastException | NullPointerException e) {
-            LOGGER.log(Level.SEVERE, "Invalid timers settings, timers set to default");
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Invalid settings file, timers set to default");
             setDefaultTimers();
+            return;
         }
     }
 

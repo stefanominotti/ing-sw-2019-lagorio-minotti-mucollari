@@ -68,17 +68,6 @@ public class EffectsController {
         this.effectsQueue = new ArrayList<>();
     }
 
-    //for test only
-    public void setEffectsQueue(List<WeaponEffect> effects) {
-        this.effectsQueue = effects;
-        this.currentEffect = effects.get(0);
-    }
-
-    //for test only
-    public void setEffectOrder(WeaponEffectOrderType order) {
-        this.effectOrder = order;
-    }
-
     /**
      * Sets the environment choices when is asked to a player to choose a direction or room
      * @param initialSquare starting square
@@ -90,39 +79,6 @@ public class EffectsController {
             this.chosenRoom = finalSquare.getRoom();
         }
         this.chosenSquare = finalSquare;
-    }
-
-    /**
-     * @deprecated Builds the effects queue from a weapon
-     * @param weapon of which you want to build the effects queue
-     */
-    @Deprecated
-    private void buildWeaponEffects(Weapon weapon) {
-        this.weapon = weapon;
-        this.effectsQueue = new ArrayList<>();
-        if (!weapon.getPrimaryEffect().isEmpty()) {
-            weaponEffects.add(weapon.getPrimaryEffect());
-        }
-        if (!weapon.getAlternativeMode().isEmpty()) {
-            this.weaponEffects.add(weapon.getAlternativeMode());
-        } else {
-            if (!weapon.getSecondaryEffectOne().isEmpty()) {
-                this.weaponEffects.add(weapon.getSecondaryEffectOne());
-                if (!weapon.getSecondaryEffectTwo().isEmpty()) {
-                    this.weaponEffects.add(weapon.getSecondaryEffectTwo());
-                }
-            }
-        }
-    }
-
-    /**
-     * @deprecated Gets the weapon effects
-     * @return List of list of the weapon effects
-     */
-    @Deprecated
-    public List<List<WeaponEffect>> getWeaponEffects(Weapon weapon) {
-        buildWeaponEffects(weapon);
-        return this.weaponEffects;
     }
 
     void setWeapon(Weapon weapon) {
@@ -239,7 +195,7 @@ public class EffectsController {
      * @param effectType macro effect of which you want to get the cost
      * @return Map with ammo and its quantity to be paid for using the effect
      */
-    public Map<AmmoType, Integer> getEffectCost(WeaponEffectOrderType effectType) {
+    Map<AmmoType, Integer> getEffectCost(WeaponEffectOrderType effectType) {
         switch (effectType) {
             case SECONDARYONE:
                 return this.weapon.getSecondaryEffectOne().get(0).getCost();
@@ -252,11 +208,16 @@ public class EffectsController {
         return null;
     }
 
+    void selectEffect(WeaponEffectOrderType effectType) {
+        effectSelected(effectType);
+        handleEffectsQueue();
+    }
+
     /**
      * Handles player effect selection
      * @param effectType choosen by the player
      */
-    public void effectSelected(WeaponEffectOrderType effectType) {
+    void effectSelected(WeaponEffectOrderType effectType) {
         this.board.unloadWeapon(this.activePlayer, this.activePlayer.getWeaponCardByWeapon(this.weapon));
         switch (effectType) {
             case PRIMARY:
@@ -279,7 +240,6 @@ public class EffectsController {
                 this.effectOrder = SECONDARYTWO;
                 break;
         }
-        handleEffectsQueue();
     }
 
     /**
@@ -731,7 +691,7 @@ public class EffectsController {
                         this.activePlayer.getCharacter(), effectCost));
 
             } else {
-                effectSelected(this.activeCombo);
+                selectEffect(this.activeCombo);
             }
         } else {
             handleEffectsQueue();
@@ -829,7 +789,7 @@ public class EffectsController {
      * Sets a character as hit by an effect
      * @param character you want to set hit
      */
-    private void setHitByCases(GameCharacter character) {
+    void setHitByCases(GameCharacter character) {
         if (this.effectOrder == WeaponEffectOrderType.PRIMARY ||
                 this.effectOrder == WeaponEffectOrderType.ALTERNATIVE) {
             this.hitByMain.add(this.board.getPlayerByCharacter(character));
