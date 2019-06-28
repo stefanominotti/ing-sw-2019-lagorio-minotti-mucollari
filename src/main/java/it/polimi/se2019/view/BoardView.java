@@ -241,6 +241,7 @@ public class BoardView {
         String toAppend = "Skulls left: " + this.skulls + "\n";
         builder.append(toAppend);
         builder.append("Kill points: ");
+        int j = 0;
         for (Map.Entry<Integer, List<GameCharacter>> kill : this.killshotTrack.entrySet()) {
             int i = 0;
             for (GameCharacter c : kill.getValue()) {
@@ -252,10 +253,14 @@ public class BoardView {
                 builder.append("_ ");
                 i++;
             }
-            builder.append("|");
+            builder.append("| ");
+            j++;
         }
-        builder.setLength(builder.length() - 1);
-        builder.append("\n");
+        while (j < this.skulls) {
+            builder.append("_ _ | ");
+            j++;
+        }
+        builder.setLength(builder.length() - 2);
         return builder.toString();
     }
 }

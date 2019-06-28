@@ -412,6 +412,7 @@ public class Board extends Observable {
             }
         }
         if (validPlayers < MIN_PLAYERS) {
+            this.timer.cancel();
             for (Player p : this.players) {
                 if (p.isConnected()) {
                     notifyChanges(new SingleSelectionMessage(SelectionMessageType.PERSISTENCE, p.getCharacter(),
@@ -1305,7 +1306,7 @@ public class Board extends Observable {
         }
         for (GameCharacter c : p.getRevengeMarks()) {
             if(p.getDamages().size() < Player.MAX_DAMAGES && c == attacker) {
-                p.addDamages(player, 1);
+                p.addDamages(attacker, 1);
             }
         }
         p.resetMarks(attacker);

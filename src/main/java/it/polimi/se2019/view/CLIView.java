@@ -967,6 +967,7 @@ public class CLIView extends View {
      */
     @Override
     void handleScoreChange(GameCharacter player, int score) {
+        super.handleScoreChange(player, score);
         if (player == getCharacter()) {
             showMessage(getSelfPlayerBoard().toString());
             showMessage("You got " + score + " points");

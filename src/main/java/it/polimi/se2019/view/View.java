@@ -656,7 +656,7 @@ public abstract class View {
 
         for(GameCharacter c : playerBoard.getRevengeMarks()) {
             if(playerBoard.getDamages().size() < Player.MAX_DAMAGES && c == attacker) {
-                playerBoard.addDamages(player, 1);
+                playerBoard.addDamages(attacker, 1);
             }
         }
         playerBoard.resetMarks(attacker);
