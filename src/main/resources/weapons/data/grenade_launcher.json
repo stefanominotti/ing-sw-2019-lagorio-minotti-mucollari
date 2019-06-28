@@ -35,7 +35,8 @@
         ]
       }
     },
-    {
+    { 
+      "description": "Puoi muovere il bersaglio di 1 quadrato",
       "effectRequired": false,
       "requiredDependency": 0,
       "effectCombo": false,

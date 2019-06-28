@@ -17,6 +17,7 @@ public class EffectPossibilityPack implements Serializable {
     private Map<Coordinates, List<GameCharacter>> multipleSquares;
     private boolean require;
     private EffectType type;
+    private String description;
 
     /**
      * Class constructor, it is used by the server to build an effect possibility pack
@@ -31,7 +32,8 @@ public class EffectPossibilityPack implements Serializable {
      */
     EffectPossibilityPack(List<String> targetsAmount, List<GameCharacter> characters,
                                  List<Coordinates> squares, List<RoomColor> rooms, List<CardinalPoint> cardinalPoints,
-                                 Map<Coordinates, List<GameCharacter>> multipleSquares, boolean require, EffectType type) {
+                                 Map<Coordinates, List<GameCharacter>> multipleSquares, boolean require, EffectType type,
+                                 String description) {
         this.targetsAmount = targetsAmount;
         this.characters = characters;
         this.squares = squares;
@@ -40,6 +42,7 @@ public class EffectPossibilityPack implements Serializable {
         this.multipleSquares = multipleSquares;
         this.require = require;
         this.type = type;
+        this.description = description;
     }
 
     /**
@@ -168,4 +171,7 @@ public class EffectPossibilityPack implements Serializable {
     public void setRequire(boolean require) {
         this.require = require;
     }
+
+    public String getDescription() { return this.description; }
 }
+

@@ -162,7 +162,8 @@
         ]
       }
     },
-    {
+    { 
+      "description": "Puoi dare 2 danni a 1 bersaglio in quel quadrato",
       "type": "DAMAGE",
       "effectRequired": false,
       "requiredDependency": 0,
@@ -188,6 +189,7 @@
       }
     },
     {
+      "description": "Puoi muovere ancora di 1 quadrato nella stessa direzione (ma solo se è un movimento valido)",
       "type": "SELECT",
       "effectRequired": false,
       "requiredDependency": 2,
@@ -242,6 +244,7 @@
       }
     },
     {
+      "description": "Puoi dare 2 danni a un bersaglio anche in quel quadrato",
       "type": "DAMAGE",
       "effectRequired": false,
       "requiredDependency": 0,

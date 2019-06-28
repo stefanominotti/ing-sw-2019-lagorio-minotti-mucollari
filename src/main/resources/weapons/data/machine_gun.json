@@ -90,7 +90,8 @@
         ]
       }
     },
-    {
+    { 
+      "description": "Dai 1 danno aggiuntivo a un bersaglio differente che puoi vedere",
       "effectRequired": false,
       "requiredDependency": 0,
       "effectCombo": false,

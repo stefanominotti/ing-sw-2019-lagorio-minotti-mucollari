@@ -42,7 +42,7 @@
   "alternativeMode": [
     {
       "effectName": "modalita polverizzatore",
-      "description": "Dai 3 danni 1 bersaglio nel quadrato in cui ti trovi, poi muovi quel bersaglio di 0, 1, 2 quadrati in una direzione",
+      "description": "Dai 3 danni 1 bersaglio nel quadrato in cui ti trovi, poi puoi muovere quel bersaglio di 1 o 2 quadrati in una direzione",
       "cost": {
         "BLUE": 0,
         "RED": 1,
@@ -72,6 +72,7 @@
       }
     },
     {
+      "description": "Poi muovere quel bersaglio di 1 o 2 quadrati in una direzione",
       "effectRequired": false,
       "requiredDependency": 1,
       "effectCombo": false,

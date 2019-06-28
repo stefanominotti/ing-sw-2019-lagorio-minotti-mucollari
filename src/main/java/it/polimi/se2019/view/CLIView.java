@@ -1657,15 +1657,7 @@ public class CLIView extends View {
     void handleEffectRequireRequest() {
         super.handleEffectRequireRequest();
         String description = "";
-        if (getEffectPossibility().getType() == EffectType.MOVE) {
-            description = "move";
-        } else if (getEffectPossibility().getType() == EffectType.SELECT) {
-            description = "select";
-        } else if (getEffectPossibility().getType() == EffectType.DAMAGE) {
-            description = "damage";
-        } else if (getEffectPossibility().getType() == EffectType.MARK) {
-            description = "mark";
-        }
+        description = getEffectPossibility().getDescription();
         showMessage("Do you want to perform \"" + description + "\"? [Y / N]");
         this.inputEnabled = true;
     }

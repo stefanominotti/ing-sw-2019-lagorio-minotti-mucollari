@@ -619,7 +619,7 @@ class EffectsController {
         }
         return (new EffectPossibilityPack(
                 amountTargets, characters, coordinates, roomColors,
-                availableCardinal, multipleSquares, effect.isRequired(), effect.getType()));
+                availableCardinal, multipleSquares, effect.isRequired(), effect.getType(), effect.getDescription()));
     }
 
     /**
