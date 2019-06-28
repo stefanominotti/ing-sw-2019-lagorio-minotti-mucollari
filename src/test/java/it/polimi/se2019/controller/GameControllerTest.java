@@ -70,6 +70,11 @@ public class GameControllerTest {
     }
 
 
+    //clientreconnected
+    //disconecteed if
+    //cecktagbackgranadecharacter
+    //effectselections
+
     @Test
     public void paymentTest() {
         Powerup powerup = new Powerup(PowerupType.NEWTON, AmmoType.BLUE);

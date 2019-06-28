@@ -90,6 +90,16 @@ public class EffectControllerTest {
         assertTrue(availableEffects.containsAll(this.controller.getAvailableEffects().keySet()));
     }
 
+    //secondarytwo
+    //distance square case
+    //filter play: not visible, samedirections
+    //filter cardinal: visible
+    //damagemark: samesquare, room
+    //seeeffect: nohitbymain, nohitbysecondary, onlyhitbsecondary
+        //move: nohitbymain, nohitbysecondary,
+        //default: nohitbymain, nohitbysecondary,
+    //sethit: else if
+    //getTargetPlayer
     @Test
     public void damageCaseTest() {
         this.weapon = Weapon.LOCK_RIFLE;
@@ -197,6 +207,21 @@ public class EffectControllerTest {
     @Test
     public void checkCostTest() {
         assertTrue(this.controller.checkCost(this.player.getWeapons().get(0).getWeaponType().getSecondaryEffectOne()));
+    }
+
+    @Test
+    public void cecksecondaryExeption() {
+
+    }
+
+    @Test
+    public void setEnvironmentTest() {
+
+    }
+
+    @Test
+    public void getEffectCostTest() {
+
     }
 
     private boolean assertCoordinates(List<Coordinates> coordinates1, List<Coordinates> coordinates2) {

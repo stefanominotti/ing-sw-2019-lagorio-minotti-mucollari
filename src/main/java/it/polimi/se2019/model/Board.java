@@ -240,7 +240,7 @@ public class Board extends Observable {
     public List<Player> getAvailablePlayers() {
         List<Player> availablePlayers = new ArrayList<>();
         for (Player p : this.players) {
-            if(p.getPosition() != null) {
+            if(p.getPosition() != null && !p.isDead()) {
                 availablePlayers.add(p);
             }
         }

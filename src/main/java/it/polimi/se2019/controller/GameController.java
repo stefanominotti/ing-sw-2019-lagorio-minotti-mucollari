@@ -639,6 +639,10 @@ public class GameController implements Observer {
         this.effectSelection = effectSelection;
     }
 
+    WeaponEffectOrderType getEffectSelection() {
+        return this.effectSelection;
+    }
+
     /**
      * Gets the effect targets
      *

@@ -57,6 +57,7 @@ public class PowerupsControllerTest {
         assertEquals(characters, this.controller.avialableTargets());
     }
 
+    //case newton ewst south
     @Test
     public void avialablePositionsTest() {
         this.controller.setTarget(p1);

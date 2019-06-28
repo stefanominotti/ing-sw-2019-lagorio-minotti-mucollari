@@ -148,26 +148,30 @@ class EffectsController {
         }
         List<WeaponEffectOrderType> toRemove = new ArrayList<>();
         for (Map.Entry<WeaponEffectOrderType, List<WeaponEffect>> effect : availableWeapons.entrySet()) {
-            boolean valid = false;
-            int index = 0;
-            while (!valid) {
-                try {
-                    seeEffectPossibility(effect.getValue().get(index));
-                    valid = true;
-                } catch (UnsupportedOperationException e) {
-                    if (!effect.getValue().get(0).isRequired()) {
-                        index = effect.getValue().get(0).getRequiredDependency() + 1;
-                    } else {
-                        toRemove.add(effect.getKey());
-                        valid = true;
-                    }
-                }
+            if(!canApply(effect.getValue())) {
+                toRemove.add(effect.getKey());
             }
         }
         for (WeaponEffectOrderType w : toRemove) {
             availableWeapons.remove(w);
         }
         return availableWeapons;
+    }
+
+    boolean canApply(List<WeaponEffect> effect) {
+        int index = 0;
+        while (true) {
+            try {
+                seeEffectPossibility(effect.get(index));
+                return true;
+            } catch (UnsupportedOperationException e) {
+                if (!effect.get(0).isRequired()) {
+                    index = effect.get(0).getRequiredDependency() + 1;
+                } else {
+                    return false;
+                }
+            }
+        }
     }
 
     /**
@@ -755,12 +759,14 @@ class EffectsController {
                 this.currentEffect.getEffectName() == null) {
             switch (this.currentEffect.getEffectDependency().get(0)) {
                 case SECONDARYTWO:
-                    if (checkCost(this.weapon.getSecondaryEffectTwo())) {
+                    if (checkCost(this.weapon.getSecondaryEffectTwo()) &&
+                            canApply(this.weapon.getSecondaryEffectTwo())) {
                         this.activeCombo = SECONDARYTWO;
                     }
                     break;
                 case SECONDARYONE:
-                    if (checkCost(this.weapon.getSecondaryEffectOne())) {
+                    if (checkCost(this.weapon.getSecondaryEffectOne()) &&
+                            canApply(this.weapon.getSecondaryEffectOne())) {
                         this.activeCombo = SECONDARYONE;
                     }
                     break;
