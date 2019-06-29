@@ -40,6 +40,8 @@ public class GameController implements Observer {
     private int powerupRequests;
     private WeaponEffectOrderType effectSelection;
     private List<GameCharacter> effectTargets;
+    private List<Powerup> powerupsUsed;
+    private Map<AmmoType, Integer> ammoUsed;
 
     /**
      * Class constructor, it builds a game controller
@@ -57,6 +59,7 @@ public class GameController implements Observer {
         }
         this.view = view;
         this.powerupRequestsTimer = new Timer();
+        this.powerupsUsed = new ArrayList<>();
     }
 
     TurnController getTurnController() {
@@ -479,7 +482,7 @@ public class GameController implements Observer {
      * @param selection effect possibility pack chosen by the player
      */
     private void handleEffectPossibilitySelection(EffectPossibilityPack selection) {
-        this.effectsController.effectApplication(selection);
+        this.effectsController.handleApplication(selection);
     }
 
     void endEffects() {
@@ -517,9 +520,23 @@ public class GameController implements Observer {
 
     void payment(Map<AmmoType, Integer> ammos, List<Powerup> powerups) {
         this.model.useAmmos(this.turnController.getActivePlayer(), ammos);
+        this.ammoUsed = ammos;
         for (Powerup p : powerups) {
             this.model.removePowerup(this.turnController.getActivePlayer(), p);
+            this.powerupsUsed.add(p);
         }
+    }
+
+    void payBack() {
+        this.turnController.getActivePlayer().addAmmos(this.ammoUsed);
+        for(Powerup p : this.powerupsUsed) {
+            this.turnController.getActivePlayer().addPowerup(p);
+        }
+    }
+
+    void resetPayment() {
+        this.powerupsUsed = new ArrayList<>();
+        this.ammoUsed = null;
     }
 
     /**

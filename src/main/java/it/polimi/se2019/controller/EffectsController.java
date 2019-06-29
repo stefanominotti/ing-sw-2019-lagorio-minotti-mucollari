@@ -73,7 +73,7 @@ class EffectsController {
      * @param initialSquare starting square
      * @param finalSquare arrival square
      */
-    private void setEnvironment(Square initialSquare, Square finalSquare) {
+    void setEnvironment(Square initialSquare, Square finalSquare) {
         if (!finalSquare.equals(initialSquare)) {
             this.chosenDirection = this.board.getCardinalFromSquares(initialSquare, finalSquare);
             this.chosenRoom = finalSquare.getRoom();
@@ -84,6 +84,10 @@ class EffectsController {
     void setWeapon(Weapon weapon) {
         resetController();
         this.weapon = weapon;
+    }
+
+    void setCurrentEffect(WeaponEffect effect) {
+        this.currentEffect = effect;
     }
 
     /**
@@ -165,11 +169,11 @@ class EffectsController {
                 seeEffectPossibility(effect.get(index));
                 return true;
             } catch (UnsupportedOperationException e) {
-                if (!effect.get(0).isRequired()) {
-                    index = effect.get(0).getRequiredDependency() + 1;
-                } else {
+                if (effect.get(index).isRequired() ||
+                        (index + effect.get(index).getRequiredDependency() + 1) >= effect.size()) {
                     return false;
                 }
+                index = index + effect.get(index).getRequiredDependency() + 1;
             }
         }
     }
@@ -321,7 +325,7 @@ class EffectsController {
                     break;
                 case SAMEDIRECTION:
                     targetPlayers = this.board.getPlayersOnCardinalDirection(
-                            this.chosenSquare, this.chosenDirection);
+                            this.activePlayer.getPosition(), this.chosenDirection);
                     break;
                 default:
                     break;
@@ -352,7 +356,7 @@ class EffectsController {
                     break;
                 case SAMEDIRECTION:
                     targetSquares = this.board.getSquaresOnCardinalDirection(
-                            this.chosenSquare, this.chosenDirection);
+                            this.activePlayer.getPosition(), this.chosenDirection);
                     break;
                 default:
                     break;
@@ -640,7 +644,24 @@ class EffectsController {
      * Handles effect pack application
      * @param pack which you want to apply
      */
-    void effectApplication(EffectPossibilityPack pack) {
+    void handleApplication(EffectPossibilityPack pack) {
+        application(pack);
+        if (this.currentEffect.getType() == EffectType.DAMAGE) {
+            List<GameCharacter> characters = new ArrayList<>();
+            for (GameCharacter character : pack.getCharacters()) {
+                if(!this.board.getPlayerByCharacter(character).isDead()) {
+                    characters.add(character);
+                }
+            }
+            if(!characters.isEmpty()) {
+                this.controller.askPowerup(characters);
+                return;
+            }
+        }
+        handleEffectsQueue();
+    }
+
+    void application(EffectPossibilityPack pack) {
         Square square = this.activePlayer.getPosition();
         try {
             Coordinates coordinates = pack.getSquares().get(0);
@@ -695,20 +716,6 @@ class EffectsController {
             this.effectOrder = WeaponEffectOrderType.PRIMARY;
         }
         this.effectsQueue.remove(0);
-        if (this.currentEffect.getType() == EffectType.DAMAGE) {
-            List<GameCharacter> characters = new ArrayList<>();
-            for (GameCharacter character : pack.getCharacters()) {
-                if(!this.board.getPlayerByCharacter(character).isDead()) {
-                    characters.add(character);
-                }
-            }
-            if(!characters.isEmpty()) {
-                this.controller.askPowerup(characters);
-                return;
-            }
-        }
-        handleEffectsQueue();
-
     }
 
     /**
@@ -809,7 +816,7 @@ class EffectsController {
         }
         this.currentEffect = this.effectsQueue.get(0);
         if (pack.getTargetsAmount().size() == 1 && pack.getTargetsAmount().get(0).equals("MAX")) {
-            effectApplication(pack);
+            handleApplication(pack);
         } else {
             this.controller.send(new SingleSelectionMessage(SelectionMessageType.EFFECT_POSSIBILITY,
                     this.activePlayer.getCharacter(), pack));

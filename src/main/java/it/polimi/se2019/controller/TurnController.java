@@ -29,6 +29,7 @@ class TurnController {
     private WeaponCard switchWeapon;
     private EffectsController effectsController;
     private boolean moveShoot;
+    private List<WeaponCard> moveReloadedWeapons;
     private Square originalPosition;
 
     /**
@@ -43,6 +44,7 @@ class TurnController {
         this.controller = controller;
         this.movesLeft = 2;
         this.effectsController = effectsController;
+        this.moveReloadedWeapons = new ArrayList<>();
     }
 
     void setState(TurnState state) {
@@ -280,8 +282,14 @@ class TurnController {
                 (this.finalFrenzy && !this.beforeFirstPlayer && this.movesLeft < 1) ||
                 (this.finalFrenzy && this.beforeFirstPlayer && this.movesLeft < 2)) {
             this.movesLeft++;
+            if(!this.moveReloadedWeapons.isEmpty()) {
+                for(WeaponCard weapon : this.moveReloadedWeapons) {
+                    weapon.setReady(false);
+                }
+                this.controller.payBack();
+            }
             if (this.moveShoot) {
-                this.board.movePlayer(this.activePlayer, this.originalPosition);
+                this.activePlayer.setPosition(this.originalPosition);
             }
         }
         sendActions();
@@ -430,6 +438,8 @@ class TurnController {
      * Handles end action
      */
     void handleEndAction() {
+        this.moveReloadedWeapons = new ArrayList<>();
+        this.controller.resetPayment();
         this.moveShoot = false;
         sendActions();
         setState(TurnState.SELECTACTION);
@@ -700,13 +710,15 @@ class TurnController {
             return;
         }
         if (this.moveShoot) {
+            this.moveReloadedWeapons.add(this.weaponToGet);
             this.effectsController.setActivePlayer(this.activePlayer);
-            if (this.effectsController.getAvailableWeapons().isEmpty()) {
+            List<Weapon> weapons = this.effectsController.getAvailableWeapons();
+            if (weapons.isEmpty()) {
                 handleEndAction();
                 return;
             }
             this.controller.send(new SelectionListMessage<>(SelectionMessageType.USE_WEAPON,
-                    this.activePlayer.getCharacter(), this.effectsController.getAvailableWeapons()));
+                    this.activePlayer.getCharacter(), weapons));
         } else {
             endTurn();
         }

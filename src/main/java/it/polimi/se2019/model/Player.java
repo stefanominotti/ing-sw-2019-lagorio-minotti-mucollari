@@ -273,7 +273,7 @@ public class Player {
      * @param ammos Map with ammo type and its quantity to add
      * @return Map with the added ammo and its quantity
      */
-    Map<AmmoType, Integer> addAmmos(Map<AmmoType, Integer> ammos) {
+    public Map<AmmoType, Integer> addAmmos(Map<AmmoType, Integer> ammos) {
         Map<AmmoType, Integer> addedAmmos = new EnumMap<>(AmmoType.class);
         for(Map.Entry<AmmoType, Integer> ammo : ammos.entrySet()) {
             int newAmmos = this.availableAmmos.get(ammo.getKey()) + ammo.getValue();
