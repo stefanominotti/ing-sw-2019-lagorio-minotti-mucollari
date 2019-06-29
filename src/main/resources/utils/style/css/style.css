@@ -9,6 +9,7 @@
 	-fx-background-color: #292c2f;
 }
 
+
 .backgroud-dark-tiny{
 	-fx-background-color: #333639;
 }
@@ -49,4 +50,9 @@
 
 .square-disabled {
 	-fx-background-color: rgba(219,219,219,0.6);
+}
+
+.background-text-area .content {
+      -fx-background-color: #333639;
+      -fx-text-fill: #ffffff;
 }
