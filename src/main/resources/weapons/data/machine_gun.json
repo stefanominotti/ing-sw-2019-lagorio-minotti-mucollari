@@ -19,7 +19,7 @@
       "effectCombo": false,
       "type": "DAMAGE",
       "amount": [
-        "11"
+        "1"
       ],
       "target": {
         "type": "OTHERS",
