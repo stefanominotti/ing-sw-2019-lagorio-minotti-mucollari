@@ -509,9 +509,15 @@ class EffectsController {
             }
             if (targetConstraints.contains(TargetConstraint.ONLYHITBYMAIN)) {
                 availablePlayers = (List<Player>)filter(this.board.getAvailablePlayers(), this.hitByMain);
+                if (availablePlayers.isEmpty()) {
+                    throw new UnsupportedOperationException();
+                }
             }
             if (targetConstraints.contains(TargetConstraint.ONLYHITBYSECONDARY)) {
                 availablePlayers = (List<Player>)filter(this.board.getAvailablePlayers(), this.hitBySecondary);
+                if (availablePlayers.isEmpty()) {
+                    throw new UnsupportedOperationException();
+                }
             }
         }
         switch (effect.getType()) {
@@ -696,8 +702,10 @@ class EffectsController {
                     characters.add(character);
                 }
             }
-            this.controller.askPowerup(characters);
-            return;
+            if(!characters.isEmpty()) {
+                this.controller.askPowerup(characters);
+                return;
+            }
         }
         handleEffectsQueue();
 
@@ -751,10 +759,10 @@ class EffectsController {
             }
 
         } catch (IndexOutOfBoundsException e) {
-            if (!getAvailableEffects().isEmpty()) {
+            List<WeaponEffectOrderType> availableEffects = new ArrayList<>(getAvailableEffects().keySet());
+            if (!availableEffects.isEmpty()) {
                 this.controller.send(new SelectionListMessage<>(SelectionMessageType.EFFECT,
-                        this.activePlayer.getCharacter(),
-                        new ArrayList<>(getAvailableEffects().keySet())));
+                        this.activePlayer.getCharacter(), availableEffects));
             } else {
                 resetController();
                 this.controller.endEffects();

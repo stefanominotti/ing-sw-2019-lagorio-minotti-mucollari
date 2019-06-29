@@ -59,7 +59,6 @@ public class GameLoader {
         }
         jsonElement = (JsonObject)this.parser.parse(reader);
         players = new ArrayList<>();
-        JsonArray frenzyOrder = jsonElement.getAsJsonArray("finalFrenzyOrder");
         JsonArray jsonPlayers = jsonElement.getAsJsonArray("players");
         JsonObject weaponSquares = jsonElement.getAsJsonObject("others").getAsJsonObject("weapon_square");
         JsonArray ammoSquares = jsonElement.getAsJsonObject("others").getAsJsonArray("ammos_square");
@@ -86,12 +85,6 @@ public class GameLoader {
             players.add(player);
         }
         this.board.setPlayers(players);
-        if (frenzyOrder != null) {
-            for (JsonElement frenzyElement : frenzyOrder) {
-                this.board.addFrenzyOrderPlayer(this.board.getPlayerByCharacter(
-                        this.gson.fromJson(frenzyElement.getAsJsonObject(), GameCharacter.class)));
-            }
-        }
         for (JsonElement ammoSquare : ammoSquares) {
             int posX = gson.fromJson(ammoSquare.getAsJsonObject().getAsJsonObject().get("x"), int.class);
             int posY = gson.fromJson(ammoSquare.getAsJsonObject().getAsJsonObject().get("y"), int.class);
