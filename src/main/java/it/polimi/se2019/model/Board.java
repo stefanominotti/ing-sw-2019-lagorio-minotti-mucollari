@@ -119,13 +119,13 @@ public class Board extends Observable {
         jObject.append(toAppend);
         toAppend = "\"ammosDiscardPile\": " + gson.toJson(this.ammosDiscardPile) + ',';
         jObject.append(toAppend);
-        toAppend = "\"killshotTrack\": " + gson.toJson(this.killshotTrack);
+        toAppend = "\"killshotTrack\": " + gson.toJson(this.killshotTrack) + ',';
         jObject.append(toAppend);
-        jObject.append("},");
         toAppend = "\"finalFrenzyOrder\":" + gson.toJson(this.finalFrenzyOrder) + ',';
         jObject.append(toAppend);
         toAppend = "\"deadPlayers\":" + gson.toJson(this.deadPlayers);
         jObject.append(toAppend);
+        jObject.append("}");
         return jObject.toString();
     }
 
@@ -436,7 +436,8 @@ public class Board extends Observable {
      * @param skulls number to set
      */
     public void setSkulls(int skulls){
-        this.skulls = skulls;
+        //this.skulls = skulls; TODO
+        this.skulls = 1;
         for (int i=0; i<this.skulls; i++) {
             this.killshotTrack.put(i + 1, new ArrayList<>());
         }
@@ -804,7 +805,8 @@ public class Board extends Observable {
                         return;
                     }
                     Weapon toAdd = this.weaponsDeck.get(0).getWeaponType();
-                    square.addWeapon(this.weaponsDeck.get(0));
+                    //square.addWeapon(this.weaponsDeck.get(0)); TODO
+                    square.addWeapon(new WeaponCard(Weapon.MACHINE_GUN));
                     added.put(new Coordinates(square.getX(), square.getY()), toAdd);
                     this.weaponsDeck.remove(0);
                 }
@@ -1262,9 +1264,6 @@ public class Board extends Observable {
             case DAMAGE:
                 getPlayerByCharacter(target).addDamages(player, damage);
                 marksToDamages(target, player);
-                if (getPlayerByCharacter(target).getDamages().size() >= 11) {
-                    handleDeadPlayer(target);
-                }
                 break;
             case MARK:
                 if (getPlayerByCharacter(target).getMarksNumber(player) == 3) {
@@ -1284,6 +1283,9 @@ public class Board extends Observable {
         }
         if (notify) {
             notifyChanges(new AttackMessage(target, player, damage, type));
+        }
+        if (getPlayerByCharacter(target).getDamages().size() >= 11) {
+            handleDeadPlayer(target);
         }
     }
 
