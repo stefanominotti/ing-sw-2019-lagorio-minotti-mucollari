@@ -27,7 +27,7 @@ public class SquareViewTest {
         visibility.put(CardinalPoint.EAST, true);
         visibility.put(CardinalPoint.WEST, false);
         this.squareSpawn = new SquareView(1, 0, RoomColor.YELLOW, true, visibility);
-        new BoardView(3, Arrays.asList(this.squareSpawn, this.squareNotSpawn));
+        new BoardView(3, Arrays.asList(this.squareSpawn, this.squareNotSpawn), 1);
     }
 
     @Test
@@ -95,7 +95,7 @@ public class SquareViewTest {
         SquareView north = new SquareView(1, 0, RoomColor.YELLOW, false, visibility);
         SquareView south = new SquareView(1, 2, RoomColor.YELLOW, false, visibility);
         SquareView east = new SquareView(2, 1, RoomColor.YELLOW, false, visibility);
-        new BoardView(3, Arrays.asList(south, north, west, east, square));
+        new BoardView(3, Arrays.asList(south, north, west, east, square), 1);
         assertEquals(west, square.getSquareAtDirection(CardinalPoint.WEST));
         assertEquals(east, square.getSquareAtDirection(CardinalPoint.EAST));
         assertEquals(south, square.getSquareAtDirection(CardinalPoint.SOUTH));

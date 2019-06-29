@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.BoardController">
    <children>
       <HBox alignment="TOP_RIGHT" prefHeight="400.0" prefWidth="610.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -59,46 +59,14 @@
                               <RowConstraints maxHeight="502.0" minHeight="10.0" prefHeight="481.0" vgrow="NEVER" />
                            </rowConstraints>
                            <children>
-                              <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
-                                 <image>
-                                    <Image url="@../../../drops/drop_blue_blue.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
-                                 <image>
-                                    <Image url="@../../../drops/drop_yellow_yellow.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
-                                 <image>
-                                    <Image url="@../../../drops/drop_purple_blue.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
-                                 <image>
-                                    <Image url="@../../icons/skull.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
-                                 <image>
-                                    <Image url="@../../../drops/drop_purple.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
-                                 <image>
-                                    <Image url="@../../icons/skull.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
-                                 <image>
-                                    <Image url="@../../icons/skull.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
-                                 <image>
-                                    <Image url="@../../icons/skull.png" />
-                                 </image>
-                              </ImageView>
+                              <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER" />
+                              <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER" />
+                              <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER" />
+                              <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER" />
+                              <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER" />
+                              <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER" />
+                              <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER" />
+                              <ImageView fitHeight="51.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="NEVER" />
                            </children>
                         </GridPane>
                         <GridPane fx:id="redWeaponsGrid" layoutX="-75.0" layoutY="321.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="130.0" prefWidth="288.0" rotate="-90.0">
@@ -109,7 +77,7 @@
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="806.4194488525391" minWidth="0.0" prefWidth="164.06324005126953" />
                            </columnConstraints>
                            <rowConstraints>
-                              <RowConstraints maxHeight="481.0" minHeight="10.0" prefHeight="481.0" valignment="TOP" vgrow="NEVER" />
+                              <RowConstraints fx:id="redWeaponsGrid" maxHeight="481.0" minHeight="10.0" prefHeight="481.0" valignment="TOP" vgrow="NEVER" />
                            </rowConstraints>
                            <children>
                               <ImageView fx:id="redWeapon1Image" fitHeight="129.0" fitWidth="92.0" pickOnBounds="true" preserveRatio="true" />
@@ -182,22 +150,15 @@
                            <children>
                               <HBox alignment="TOP_CENTER" prefHeight="57.0" prefWidth="121.0">
                                  <children>
-                                    <ImageView fx:id="characterBoardImage" fitHeight="55.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../../icons/characters_icon/banshee.png" />
-                                       </image>
-                                    </ImageView>
+                                    <ImageView fx:id="characterBoardImage" fitHeight="55.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true" />
                                     <ImageView fx:id="masterImage" fitHeight="22.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
                                        <HBox.margin>
                                           <Insets left="-20.0" top="-5.0" />
                                        </HBox.margin>
-                                       <image>
-                                          <Image url="@../../icons/master.png" />
-                                       </image>
                                     </ImageView>
                                  </children>
                               </HBox>
-                              <Label fx:id="characterBoardLabel" text="Your Board" textFill="WHITE">
+                              <Label fx:id="characterBoardLabel" textFill="WHITE">
                                  <VBox.margin>
                                     <Insets top="10.0" />
                                  </VBox.margin>
@@ -211,11 +172,7 @@
                            <children>
                               <Pane prefHeight="123.0" prefWidth="517.0">
                                  <children>
-                                    <ImageView fx:id="playerBoardImage" fitHeight="122.0" fitWidth="590.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../../../player_boards/player_board_banshee.png" />
-                                       </image>
-                                    </ImageView>
+                                    <ImageView fx:id="playerBoardImage" fitHeight="122.0" fitWidth="590.0" pickOnBounds="true" preserveRatio="true" />
                                     <GridPane fx:id="damagesGrid" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="338.0" translateX="43.0" translateY="40.0">
                                        <columnConstraints>
                                           <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
@@ -235,11 +192,7 @@
                                           <RowConstraints maxHeight="502.7734069824219" minHeight="10.0" prefHeight="481.0" vgrow="SOMETIMES" />
                                        </rowConstraints>
                                        <children>
-                                          <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" x="20.0" y="30.0" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
-                                             <image>
-                                                <Image url="@../../../drops/drop_yellow.png" />
-                                             </image>
-                                          </ImageView>
+                                          <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" x="20.0" y="30.0" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
                                           <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
                                           <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
                                           <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
@@ -250,10 +203,7 @@
                                           <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="8" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
                                           <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="9" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
                                           <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="10" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
-                                          <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="11" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
-                                             <image>
-                                                <Image url="@../../../drops/drop_blue.png" />
-                                             </image></ImageView>
+                                          <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="11" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
                                        </children>
                                     </GridPane>
                                     <GridPane fx:id="deathsGrid" maxHeight="30.0" maxWidth="158.0" minHeight="30.0" minWidth="157.0" prefHeight="30.0" prefWidth="157.0" translateX="105.0" translateY="88.0">
@@ -269,11 +219,7 @@
                                           <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                        </rowConstraints>
                                        <children>
-                                          <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
-                                             <image>
-                                                <Image url="@../../icons/skull.png" />
-                                             </image>
-                                          </ImageView>
+                                          <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
                                           <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" />
                                           <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" />
                                           <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" />
@@ -300,16 +246,8 @@
                                         <RowConstraints />
                                       </rowConstraints>
                                        <children>
-                                          <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../../../drops/drop_green.png" />
-                                             </image>
-                                          </ImageView>
-                                          <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
-                                             <image>
-                                                <Image url="@../../../drops/drop_purple.png" />
-                                             </image>
-                                          </ImageView>
+                                          <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" />
+                                          <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" />
                                           <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" />
                                           <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" />
                                           <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4" />
@@ -327,7 +265,7 @@
                         </StackPane>
                         <VBox alignment="TOP_CENTER" maxHeight="-Infinity" prefHeight="122.0" prefWidth="100.0" styleClass="backgroud-dark-tiny">
                            <children>
-                              <Label alignment="CENTER" prefHeight="17.0" prefWidth="113.0" text="Your Ammo" textAlignment="CENTER" textFill="WHITE">
+                              <Label fx:id="ammoLabel" alignment="CENTER" prefHeight="17.0" prefWidth="113.0" textAlignment="CENTER" textFill="WHITE">
                                  <VBox.margin>
                                     <Insets top="5.0" />
                                  </VBox.margin>
@@ -339,7 +277,7 @@
                                           <Image url="@../../../ammos/ammo_red.png" />
                                        </image>
                                     </ImageView>
-                                    <Label fx:id="redAmmosQty" alignment="CENTER" prefHeight="10.0" prefWidth="34.0" text="x5" textFill="WHITE" />
+                                    <Label fx:id="redAmmoQty" alignment="CENTER" prefHeight="10.0" prefWidth="34.0" textFill="WHITE" />
                                  </children>
                                  <VBox.margin>
                                     <Insets top="5.0" />
@@ -352,7 +290,7 @@
                                           <Image url="@../../../ammos/ammo_yellow.png" />
                                        </image>
                                     </ImageView>
-                                    <Label fx:id="yellowAmmosQty" alignment="CENTER" prefHeight="10.0" prefWidth="34.0" text="x4" textFill="WHITE" />
+                                    <Label fx:id="yellowAmmoQty" alignment="CENTER" prefHeight="10.0" prefWidth="34.0" textFill="WHITE" />
                                  </children>
                                  <VBox.margin>
                                     <Insets top="5.0" />
@@ -365,7 +303,7 @@
                                           <Image url="@../../../ammos/ammo_blue.png" />
                                        </image>
                                     </ImageView>
-                                    <Label fx:id="blueAmmosQty" alignment="CENTER" prefHeight="10.0" prefWidth="34.0" text="x3" textFill="WHITE" />
+                                    <Label fx:id="blueAmmoQty" alignment="CENTER" prefHeight="10.0" prefWidth="34.0" textFill="WHITE" />
                                  </children>
                                  <VBox.margin>
                                     <Insets top="5.0" />
@@ -376,7 +314,7 @@
                               <Insets left="30.0" />
                            </HBox.margin>
                         </VBox>
-                        <VBox maxHeight="-Infinity" prefHeight="122.0" prefWidth="100.0" styleClass="backgroud-dark-tiny">
+                        <VBox fx:id="pointsVBox" maxHeight="-Infinity" prefHeight="122.0" prefWidth="100.0" styleClass="backgroud-dark-tiny">
                            <children>
                               <Label alignment="CENTER" prefHeight="17.0" prefWidth="121.0" text="Your Points" textFill="WHITE">
                                  <VBox.margin>
@@ -390,7 +328,7 @@
                                           <Image url="@../../../scores/score_1.png" />
                                        </image>
                                     </ImageView>
-                                    <Label fx:id="onePointQty" alignment="CENTER" prefHeight="10.0" prefWidth="34.0" text="x10" textFill="WHITE" />
+                                    <Label fx:id="onePointQty" alignment="CENTER" prefHeight="10.0" prefWidth="34.0" textFill="WHITE" />
                                  </children>
                                  <VBox.margin>
                                     <Insets top="5.0" />
@@ -403,7 +341,7 @@
                                           <Image url="@../../../scores/score_2.png" />
                                        </image>
                                     </ImageView>
-                                    <Label fx:id="twoPointQty" alignment="CENTER" prefHeight="10.0" prefWidth="34.0" text="x1" textFill="WHITE" />
+                                    <Label fx:id="twoPointQty" alignment="CENTER" prefHeight="10.0" prefWidth="34.0" textFill="WHITE" />
                                  </children>
                                  <VBox.margin>
                                     <Insets top="5.0" />
@@ -416,7 +354,7 @@
                                           <Image url="@../../../scores/score_4.png" />
                                        </image>
                                     </ImageView>
-                                    <Label fx:id="fourPointQty" alignment="CENTER" prefHeight="10.0" prefWidth="34.0" text="x5" textFill="WHITE" />
+                                    <Label fx:id="fourPointQty" alignment="CENTER" prefHeight="10.0" prefWidth="34.0" textFill="WHITE" />
                                  </children>
                                  <VBox.margin>
                                     <Insets top="5.0" />

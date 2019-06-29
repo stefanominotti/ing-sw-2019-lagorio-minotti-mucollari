@@ -77,6 +77,9 @@ public class GUIApp extends Application {
                 case INVALID_TOKEN:
                     loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "InvalidToken.fxml"));
                     break;
+                case BOARD:
+                    loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "Board.fxml"));
+                    break;
             }
             try {
                 this.stage.setScene(new Scene(loader.load()));

@@ -82,6 +82,14 @@ public class PlayerBoard implements Serializable {
     }
 
     /**
+     * Knows if board is in frenzy mode
+     * @return true if it is, else false
+     */
+    boolean isFrenzyBoard() {
+        return this.frenzyBoard;
+    }
+
+    /**
      * Gets the kill shot points of the player
      * @return List of kill shot points of the player
      */

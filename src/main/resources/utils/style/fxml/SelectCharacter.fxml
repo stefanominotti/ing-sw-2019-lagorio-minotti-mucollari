@@ -90,10 +90,10 @@
                      <children>
                         <ImageView fitHeight="89.0" fitWidth="87.0" pickOnBounds="true" preserveRatio="true" styleClass="img-shadow">
                            <image>
-                              <Image url="@../../icons/characters_icon/violetta.png" />
+                              <Image url="@../../icons/characters_icon/violet.png" />
                            </image>
                         </ImageView>
-                        <RadioButton fx:id="violetta" mnemonicParsing="false" text="VIOLETTA" toggleGroup="$characterChoiceGroup" translateY="10.0">
+                        <RadioButton fx:id="violet" mnemonicParsing="false" text="VIOLET" toggleGroup="$characterChoiceGroup" translateY="10.0">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>

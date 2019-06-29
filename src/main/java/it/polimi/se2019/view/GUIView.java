@@ -1,6 +1,6 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.model.GameCharacter;
+import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.messages.board.ArenaMessage;
 import it.polimi.se2019.model.messages.board.SkullsMessage;
 import it.polimi.se2019.model.messages.client.CharacterMessage;
@@ -279,8 +279,30 @@ public class GUIView extends View {
         super.handleMasterChanged(character);
         if (character == getCharacter()) {
             setScene(SceneType.SELECT_SKULLS);
-        } else {
         }
+    }
+
+    /**
+     * Shows game settings message
+     * @param colors Map with room colors and their coordinates
+     * @param spawns Map with coordinates and true if they are a spawn point, else false
+     * @param nearbyAccessibility Map with coordinates  and map with cardinal points and their accessibility
+     * @param skulls set for the game
+     * @param arena chosen for the game
+     */
+    @Override
+    void handleGameSet(Map<Coordinates, RoomColor> colors, Map<Coordinates, Boolean> spawns,
+                       Map<Coordinates, Map<CardinalPoint, Boolean>> nearbyAccessibility, int skulls, int arena) {
+        super.handleGameSet(colors, spawns, nearbyAccessibility, skulls, arena);
+        setScene(SceneType.BOARD);
+        ((BoardController) this.controller).updateKillshotTrack();
+        ((BoardController) this.controller).setPlayerBoard(getCharacter());
+    }
+
+    @Override
+    void handleStoresRefilled(Map<Coordinates, Weapon> weapons) {
+        super.handleStoresRefilled(weapons);
+        ((BoardController) this.controller).updateStores();
     }
 
     /**

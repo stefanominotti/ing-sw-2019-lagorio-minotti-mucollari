@@ -31,7 +31,7 @@ public class BoardViewTest {
         visibility.put(CardinalPoint.EAST, true);
         visibility.put(CardinalPoint.WEST, false);
         SquareView square2 = new SquareView(1, 0, RoomColor.YELLOW, true, visibility);
-        this.board = new BoardView(3, Arrays.asList(square1, square2));
+        this.board = new BoardView(3, Arrays.asList(square1, square2), 1);
     }
 
     @Test

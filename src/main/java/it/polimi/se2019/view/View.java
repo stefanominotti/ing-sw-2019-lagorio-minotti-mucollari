@@ -1119,7 +1119,7 @@ public abstract class View {
             Map<CardinalPoint, Boolean> accessibilityMap = nearbyAccessibility.get(square.getKey());
             squares.add(new SquareView(square.getKey().getX(), square.getKey().getY(), color, spawn, accessibilityMap));
         }
-        this.board = new BoardView(skulls, squares);
+        this.board = new BoardView(skulls, squares, arena);
     }
 
     void handleStoresRefilled(Map<Coordinates, Weapon> weapons) {

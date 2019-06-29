@@ -17,14 +17,19 @@ public class BoardView {
     private Map<GameCharacter, SquareView> positions;
     private boolean frenzy;
     private boolean beforeFirstPlayer;
+    private int arena;
 
     /**
      * Class constructor, it builds a board view
      * @param skulls number set for the board
      * @param squares square view which compose the arena
      */
-    BoardView(int skulls, List<SquareView> squares) {
+    BoardView(int skulls, List<SquareView> squares, int arena) {
+        this.arena = arena;
         this.killshotTrack = new HashMap<>();
+        for (int i = 0; i < skulls; i++) {
+            this.killshotTrack.put(skulls - i, new ArrayList<>());
+        }
         this.skulls = skulls;
         this.squares = squares;
         this.beforeFirstPlayer = false;
@@ -58,6 +63,14 @@ public class BoardView {
             }
             square.setBoard(this);
         }
+    }
+
+    /**
+     * Gets the arena number
+     * @return Number of the arena
+     */
+    public int getArena() {
+        return this.arena;
     }
 
     /**

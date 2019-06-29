@@ -23,7 +23,7 @@ public class SelectCharacterController extends AbstractSceneController {
     @FXML
     private RadioButton sprog;
     @FXML
-    private RadioButton violetta;
+    private RadioButton violet;
 
     /**
      * Forwards a character choice
@@ -50,7 +50,7 @@ public class SelectCharacterController extends AbstractSceneController {
             this.d_struct_or.setDisable(true);
         }
         if(!characters.contains(GameCharacter.VIOLET)) {
-            this.violetta.setDisable(true);
+            this.violet.setDisable(true);
         }
         if(!characters.contains(GameCharacter.SPROG)) {
             this.sprog.setDisable(true);
