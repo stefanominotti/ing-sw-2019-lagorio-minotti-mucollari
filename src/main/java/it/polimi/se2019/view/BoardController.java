@@ -2,6 +2,7 @@ package it.polimi.se2019.view;
 
 import it.polimi.se2019.model.AmmoType;
 import it.polimi.se2019.model.GameCharacter;
+import it.polimi.se2019.model.Powerup;
 import it.polimi.se2019.model.Weapon;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -25,60 +26,52 @@ public class BoardController extends AbstractSceneController {
     private static final String CHARACTERS_ICONS_PATH = "utils/icons/characters_icon/";
     private static final String PLAYER_BOARDS_PATH = "player_boards/";
     private static final String WEAPONS_PATH = "weapons/img/";
+    private static final String POWERUPS_PATH = "powerups/img/";
+
+    private GameCharacter activeBoard;
 
     @FXML
     private GridPane skullsGrid;
-
     @FXML
     private ImageView playerBoardImage;
-
     @FXML
     private ImageView characterBoardImage;
-
     @FXML
     private GridPane marksGrid;
-
     @FXML
     private GridPane damagesGrid;
-
     @FXML
     private GridPane deathsGrid;
-
     @FXML
     private Label characterBoardLabel;
-
     @FXML
     private Label redAmmoQty;
-
     @FXML
     private Label blueAmmoQty;
-
     @FXML
     private Label yellowAmmoQty;
-
     @FXML
     private Label ammoLabel;
-
     @FXML
     private VBox pointsVBox;
-
     @FXML
     private Label onePointQty;
-
     @FXML
     private Label twoPointQty;
-
     @FXML
     private Label fourPointQty;
-
     @FXML
     private GridPane blueWeaponsGrid;
-
     @FXML
     private GridPane redWeaponsGrid;
-
     @FXML
     private GridPane yellowWeaponsGrid;
+    @FXML
+    private GridPane playerAssetsGrid;
+
+    public GameCharacter getActiveBoard() {
+        return this.activeBoard;
+    }
 
     void updateKillshotTrack() {
         Map<Integer, List<GameCharacter>> killshotTrack = getView().getBoard().getKillshotTrack();
@@ -97,7 +90,13 @@ public class BoardController extends AbstractSceneController {
         }
     }
 
+    @FXML
+    private void setPlayerBoard() {
+        setPlayerBoard(GameCharacter.VIOLET);
+    }
+
     void setPlayerBoard(GameCharacter player) {
+        this.activeBoard = player;
         PlayerBoard board;
         String labelText;
         if (player == getView().getCharacter()) {
@@ -119,23 +118,25 @@ public class BoardController extends AbstractSceneController {
             this.characterBoardImage.setImage(new Image(CHARACTERS_ICONS_PATH + player.toString().toLowerCase() +
                     ".png"));
         });
-        updateBoardMarks(player);
-        updateBoardDamages(player);
-        updateKillshotPoints(player);
-        updateAmmo(player);
+        updateBoardMarks();
+        updateBoardDamages();
+        updateKillshotPoints();
+        updateAmmo();
         if (player != getView().getCharacter()) {
             this.pointsVBox.setVisible(false);
         } else {
             updatePoints();
         }
+        updateWeapons();
+        updatePowerups();
     }
 
-    void updateBoardMarks(GameCharacter player) {
+    void updateBoardMarks() {
         PlayerBoard board;
-        if (player == getView().getCharacter()) {
+        if (this.activeBoard == getView().getCharacter()) {
             board = getView().getSelfPlayerBoard();
         } else {
-            board = getView().getBoardByCharacter(player);
+            board = getView().getBoardByCharacter(this.activeBoard);
         }
         int i = 0;
         for (GameCharacter c : board.getRevengeMarks()) {
@@ -147,12 +148,12 @@ public class BoardController extends AbstractSceneController {
         }
     }
 
-    void updateBoardDamages(GameCharacter player) {
+    void updateBoardDamages() {
         PlayerBoard board;
-        if (player == getView().getCharacter()) {
+        if (this.activeBoard == getView().getCharacter()) {
             board = getView().getSelfPlayerBoard();
         } else {
-            board = getView().getBoardByCharacter(player);
+            board = getView().getBoardByCharacter(this.activeBoard);
         }
         int i = 0;
         for (GameCharacter c : board.getDamages()) {
@@ -164,12 +165,12 @@ public class BoardController extends AbstractSceneController {
         }
     }
 
-    void updateKillshotPoints(GameCharacter player) {
+    void updateKillshotPoints() {
         PlayerBoard board;
-        if (player == getView().getCharacter()) {
+        if (this.activeBoard == getView().getCharacter()) {
             board = getView().getSelfPlayerBoard();
         } else {
-            board = getView().getBoardByCharacter(player);
+            board = getView().getBoardByCharacter(this.activeBoard);
         }
         for (int i = 0; i < KILLSHOT_POINTS_SIZE - board.getKillshotPoints().size(); i++) {
             ImageView img = (ImageView) this.deathsGrid.getChildren().get(i);
@@ -179,15 +180,15 @@ public class BoardController extends AbstractSceneController {
         }
     }
 
-    void updateAmmo(GameCharacter player) {
+    void updateAmmo() {
         PlayerBoard board;
         String labelText;
-        if (player == getView().getCharacter()) {
+        if (this.activeBoard == getView().getCharacter()) {
             board = getView().getSelfPlayerBoard();
             labelText = "Your ammo";
         } else {
-            board = getView().getBoardByCharacter(player);
-            labelText = player + "'s ammo";
+            board = getView().getBoardByCharacter(this.activeBoard);
+            labelText = this.activeBoard + "'s ammo";
         }
         Platform.runLater(() -> {
             this.ammoLabel.setText(labelText);
@@ -250,10 +251,89 @@ public class BoardController extends AbstractSceneController {
             for (Weapon w : s.getStore()) {
                 ImageView img = (ImageView) grid.getChildren().get(i);
                 Platform.runLater(() -> {
-                    img.setImage(new Image(WEAPONS_PATH + w.toString().toLowerCase()));
+                    img.setImage(new Image(WEAPONS_PATH + w.toString().toLowerCase() + ".png"));
                 });
                 i++;
             }
+        }
+    }
+
+    void updateWeapons() {
+        int i = 3;
+        PlayerBoard board;
+        if (this.activeBoard == getView().getCharacter()) {
+            board = getView().getSelfPlayerBoard();
+        } else {
+            board = getView().getBoardByCharacter(this.activeBoard);
+        }
+        for (Weapon w : board.getUnloadedWeapons()) {
+            ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
+            ImageView stateImg = (ImageView) this.playerAssetsGrid.getChildren().get(i + 6);
+            Platform.runLater(() -> {
+                img.setImage(new Image(WEAPONS_PATH + w.toString().toLowerCase()));
+                stateImg.setImage(new Image(UTILS_PATH + "unloaded_weapon.png"));
+            });
+            i++;
+        }
+        if (this.activeBoard != getView().getCharacter()) {
+            while (i < board.getWeaponsNumber() + 3) {
+                ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
+                ImageView stateImg = (ImageView) this.playerAssetsGrid.getChildren().get(i + 6);
+                Platform.runLater(() -> {
+                    img.setImage(new Image(WEAPONS_PATH + "weapon_back.png"));
+                    stateImg.setImage(null);
+                });
+                i++;
+            }
+        } else {
+            for (Weapon w : getView().getSelfPlayerBoard().getReadyWeapons()) {
+                ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
+                ImageView stateImg = (ImageView) this.playerAssetsGrid.getChildren().get(i + 6);
+                Platform.runLater(() -> {
+                    img.setImage(new Image(WEAPONS_PATH + w.toString().toLowerCase()));
+                    stateImg.setImage(new Image(UTILS_PATH + "weapon_ready.png"));
+                });
+                i++;
+            }
+        }
+        while (i < 6) {
+            ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
+            ImageView stateImg = (ImageView) this.playerAssetsGrid.getChildren().get(i + 6);
+            Platform.runLater(() -> {
+                img.setImage(null);
+                stateImg.setImage(null);
+            });
+            i++;
+        }
+    }
+
+    void updatePowerups() {
+        int i = 6;
+        if (this.activeBoard != getView().getCharacter()) {
+            PlayerBoard board = getView().getBoardByCharacter(this.activeBoard);
+            while (i < board.getPowerupsNumber() + 6) {
+                ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
+                Platform.runLater(() -> {
+                    img.setImage(new Image(POWERUPS_PATH + "powerup_back.png"));
+                });
+                i++;
+            }
+        } else {
+            for (Powerup p : getView().getSelfPlayerBoard().getPowerups()) {
+                ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
+                Platform.runLater(() -> {
+                    img.setImage(new Image(POWERUPS_PATH + p.getType().toString().toLowerCase() +
+                            p.getColor().toString().toLowerCase()));
+                });
+                i++;
+            }
+        }
+        while (i < 9) {
+            ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
+            Platform.runLater(() -> {
+                img.setImage(null);
+            });
+            i++;
         }
     }
 }
