@@ -55,6 +55,18 @@ class TurnController {
         this.weaponToGet = weapon;
     }
 
+    void setMovesLeft(int moves) {
+        this.movesLeft = moves;
+    }
+
+    void setMoveShoot(boolean moveShoot) {
+        this.moveShoot = moveShoot;
+    }
+
+    int getMovesLeft() {
+        return this.movesLeft;
+    }
+
     /**
      * Gets the current active player
      * @return the active player
@@ -278,6 +290,11 @@ class TurnController {
      * Aborts player selected action
      */
     private void cancelAction() {
+        cancel();
+        sendActions();
+    }
+
+    void cancel() {
         if ((!this.finalFrenzy && this.movesLeft < 2) ||
                 (this.finalFrenzy && !this.beforeFirstPlayer && this.movesLeft < 1) ||
                 (this.finalFrenzy && this.beforeFirstPlayer && this.movesLeft < 2)) {
@@ -286,13 +303,13 @@ class TurnController {
                 for(WeaponCard weapon : this.moveReloadedWeapons) {
                     weapon.setReady(false);
                 }
+                this.moveReloadedWeapons = new ArrayList<>();
                 this.controller.payBack();
             }
             if (this.moveShoot) {
                 this.activePlayer.setPosition(this.originalPosition);
             }
         }
-        sendActions();
     }
 
     /**
@@ -748,8 +765,8 @@ class TurnController {
      * @return true if he can, else false
      */
     boolean canUseNewton() {
-        for (Player target : this.board.getPlayers()) {
-            if (!target.isConnected() || target.getPosition() == null || target == this.activePlayer) {
+        for (Player target : this.board.getAvailablePlayers()) {
+            if (target == this.activePlayer) {
                 continue;
             }
             int x = target.getPosition().getX();

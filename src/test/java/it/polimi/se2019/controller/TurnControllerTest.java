@@ -130,6 +130,13 @@ public class TurnControllerTest {
     @Test
     public void canUseNewtonTest() {
         this.player.addPowerup(new Powerup(PowerupType.NEWTON, AmmoType.BLUE));
+        this.p1.setPosition(this.board.getArena().getSquareByCoordinate(1,0));
+        assertTrue(this.controller.canUseNewton());
+        this.p1.setPosition(this.board.getArena().getSquareByCoordinate(2,0));
+        assertTrue(this.controller.canUseNewton());
+        this.p1.setDead(true);
+        assertTrue(this.controller.canUseNewton());
+        this.p2.setPosition(this.board.getArena().getSquareByCoordinate(1,2));
         assertTrue(this.controller.canUseNewton());
     }
 
@@ -170,6 +177,13 @@ public class TurnControllerTest {
         this.player.addWeapon(new WeaponCard(Weapon.MACHINE_GUN));
         this.controller.setWeaponToGet(new WeaponCard(Weapon.LOCK_RIFLE));
         assertFalse(this.controller.handleSwitchWeapon(Weapon.MACHINE_GUN));
+    }
+    @Test
+    public void cancelTest() {
+        this.controller.setMovesLeft(1);
+        this.controller.setMoveShoot(true);
+        this.controller.cancel();
+        assertEquals(2, this.controller.getMovesLeft());
     }
 
     private boolean assertCoordinates(List<Coordinates> coordinates1, List<Coordinates> coordinates2) {

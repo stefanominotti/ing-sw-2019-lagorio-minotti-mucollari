@@ -972,6 +972,11 @@ public class Board extends Observable {
      */
     public void endGame() {
         this.gameState = ENDED;
+        for (Player player : this.players) {
+            if(player.getDamages().size() > 0) {
+                calculateBoardScore(player);
+            }
+        }
         List<Integer> points = new ArrayList<>(Arrays.asList(8, 6, 4, 2, 1));
 
         List<GameCharacter> trackReworked = new ArrayList<>();
@@ -1018,6 +1023,51 @@ public class Board extends Observable {
         }
 
         notifyChanges(new EndGameMessage(calculateRanking()));
+    }
+
+    void calculateBoardScore(Player player) {
+        Map<GameCharacter, Integer> damagesByPlayer = new LinkedHashMap<>();
+        for (GameCharacter p : player.getDamages()) {
+            if (damagesByPlayer.containsKey(p)) {
+                continue;
+            }
+            int damages = 0;
+            for (GameCharacter c : player.getDamages()) {
+                if (c == p) {
+                    damages++;
+                }
+            }
+            damagesByPlayer.put(p, damages);
+        }
+
+        Map<GameCharacter, Integer> sorted = damagesByPlayer
+                .entrySet()
+                .stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue(new Comparator<Integer>() {
+                    @Override
+                    public int compare(Integer o1, Integer o2) {
+                        if (o1 >= o2) {
+                            return 1;
+                        } else {
+                            return -1;
+                        }
+                    }
+                })))
+                .collect(
+                        toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                                LinkedHashMap::new));
+
+        int index = 0;
+        for (GameCharacter p : sorted.keySet()) {
+            int amount;
+            try {
+                amount = player.getKillshotPoints().get(index);
+            } catch (IndexOutOfBoundsException e) {
+                amount = 1;
+            }
+            raisePlayerScore(getPlayerByCharacter(p), amount);
+            index++;
+        }
     }
 
     /**
@@ -1350,48 +1400,7 @@ public class Board extends Observable {
 
         getPlayerByCharacter(player.getDamages().get(0)).raiseScore(1);
 
-        Map<GameCharacter, Integer> damagesByPlayer = new LinkedHashMap<>();
-        for (GameCharacter p : player.getDamages()) {
-            if (damagesByPlayer.containsKey(p)) {
-                continue;
-            }
-            int damages = 0;
-            for (GameCharacter c : player.getDamages()) {
-                if (c == p) {
-                    damages++;
-                }
-            }
-            damagesByPlayer.put(p, damages);
-        }
-
-        Map<GameCharacter, Integer> sorted = damagesByPlayer
-                .entrySet()
-                .stream()
-                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue(new Comparator<Integer>() {
-                    @Override
-                    public int compare(Integer o1, Integer o2) {
-                        if (o1 >= o2) {
-                            return 1;
-                        } else {
-                            return -1;
-                        }
-                    }
-                })))
-                .collect(
-                        toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-                                LinkedHashMap::new));
-
-        int index = 0;
-        for (GameCharacter p : sorted.keySet()) {
-            int amount;
-            try {
-                amount = player.getKillshotPoints().get(index);
-            } catch (IndexOutOfBoundsException e) {
-                amount = 1;
-            }
-            raisePlayerScore(getPlayerByCharacter(p), amount);
-            index++;
-        }
+        calculateBoardScore(player);
 
         player.resetDamages();
 

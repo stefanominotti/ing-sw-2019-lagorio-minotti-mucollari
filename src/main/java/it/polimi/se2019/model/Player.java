@@ -405,7 +405,7 @@ public class Player {
      * Sets the player dead or alive
      * @param dead true if you want to make him dead, false for alive
      */
-    void setDead(boolean dead) {
+    public void setDead(boolean dead) {
         this.dead = dead;
     }
 }

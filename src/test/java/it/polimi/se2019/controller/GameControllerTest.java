@@ -69,12 +69,6 @@ public class GameControllerTest {
         this.turnController.setActivePlayer(this.player);
     }
 
-
-    //clientreconnected
-    //disconecteed if
-    //cecktagbackgranadecharacter
-    //effectselections
-
     @Test
     public void paymentTest() {
         Powerup powerup = new Powerup(PowerupType.NEWTON, AmmoType.BLUE);
@@ -84,6 +78,22 @@ public class GameControllerTest {
         this.controller.payment(ammo, new ArrayList<>(Arrays.asList(powerup)));
         assertEquals((Integer) 0, this.player.getAvailableAmmos().get(AmmoType.RED));
         assertTrue(this.player.getPowerups().isEmpty());
+    }
+
+    @Test
+    public void payBackTest() {
+        Powerup powerup = new Powerup(PowerupType.NEWTON, AmmoType.BLUE);
+        Map<AmmoType, Integer> ammo = new HashMap<>();
+        ammo.put(AmmoType.BLUE, 0);
+        ammo.put(AmmoType.RED, 1);
+        ammo.put(AmmoType.YELLOW, 1);
+        this.controller.setPowerupsUsed(new ArrayList<>(Arrays.asList(powerup)));
+        this.controller.setAmmoUsed(ammo);
+        this.controller.payBack();
+        assertEquals(new ArrayList<>(Arrays.asList(powerup)), this.player.getPowerups());
+        assertEquals((Integer) 1, this.player.getAvailableAmmos().get(AmmoType.BLUE));
+        assertEquals((Integer) 2, this.player.getAvailableAmmos().get(AmmoType.RED));
+        assertEquals((Integer) 2, this.player.getAvailableAmmos().get(AmmoType.YELLOW));
     }
 
     @Test
@@ -119,5 +129,18 @@ public class GameControllerTest {
     public void notPersistence() {
         this.controller.update(null, new SingleSelectionMessage(SelectionMessageType.PERSISTENCE, this.player.getCharacter(), "n"));
         assertEquals(ENDED, this.board.getGameState());
+    }
+
+    @Test
+    public void activePlayerDeisconected() {
+        this.controller.update(null, new ClientDisconnectedMessage(this.player.getCharacter()));
+        assertFalse(this.player.isConnected());
+    }
+
+    @Test
+    public void checkTagbackGrenadeCharacters() {
+        this.p1.addPowerup(new Powerup(PowerupType.TAGBACK_GRENADE, AmmoType.RED));
+        this.controller.setEffectTargets(new ArrayList<>(Arrays.asList(p1.getCharacter(), p2.getCharacter())));
+        assertEquals(new ArrayList<>(Arrays.asList(p1.getCharacter())), this.controller.checkTagbackGrenadeCharacters());
     }
 }
