@@ -1202,7 +1202,7 @@
                               </Pane>
                            </children>
                         </StackPane>
-                        <VBox alignment="TOP_CENTER" maxHeight="-Infinity" prefHeight="122.0" prefWidth="100.0" styleClass="backgroud-dark-tiny">
+                        <VBox alignment="TOP_CENTER" maxHeight="-Infinity" prefHeight="122.0" prefWidth="100.0" styleClass="backgroud-dark-tiny" HBox.hgrow="NEVER">
                            <children>
                               <Label fx:id="ammoLabel" alignment="CENTER" prefHeight="17.0" prefWidth="113.0" textAlignment="CENTER" textFill="WHITE">
                                  <VBox.margin>
@@ -1253,7 +1253,7 @@
                               <Insets left="30.0" />
                            </HBox.margin>
                         </VBox>
-                        <VBox fx:id="pointsVBox" maxHeight="-Infinity" prefHeight="122.0" prefWidth="100.0" styleClass="backgroud-dark-tiny">
+                        <VBox fx:id="pointsVBox" maxHeight="-Infinity" prefHeight="122.0" prefWidth="100.0" styleClass="backgroud-dark-tiny" HBox.hgrow="NEVER">
                            <children>
                               <Label alignment="CENTER" prefHeight="17.0" prefWidth="121.0" text="Your Points" textFill="WHITE">
                                  <VBox.margin>
@@ -1385,7 +1385,7 @@
                            <children>
                               <Pane prefHeight="82.0" prefWidth="376.0">
                                  <children>
-                                    <Text fx:id="messagesText" fill="WHITE" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="376.00000381469727" />
+                                    <Text fx:id="messagesText" fill="WHITE" layoutX="14.0" layoutY="6.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="362.00000381469727" />
                                  </children>
                               </Pane>
                               <HBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="55.0" prefWidth="376.0" />
