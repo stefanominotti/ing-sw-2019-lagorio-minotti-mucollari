@@ -24,7 +24,10 @@
                <children>
                   <Pane fx:id="arenaContainer" VBox.vgrow="ALWAYS">
                      <children>
-                        <ImageView fx:id="arenaImage" fitHeight="678.0" fitWidth="985.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="arenaImage" fitHeight="678.0" fitWidth="985.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../arenas/img/arena_3.png" />
+                           </image></ImageView>
                         <GridPane fx:id="blueWeaponsGrid" layoutX="477.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="130.0" prefWidth="288.0">
                           <columnConstraints>
                               <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="740.0" minWidth="10.0" prefWidth="740.0" />
@@ -609,11 +612,11 @@
                                     <ImageView fitHeight="38.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                                     <ImageView fitHeight="38.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                     <ImageView fitHeight="38.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <ImageView fitHeight="41.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="CENTER" GridPane.vgrow="NEVER" />
                                     <ImageView fitHeight="38.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                    <ImageView fitHeight="41.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.vgrow="NEVER" />
                                  </children>
                               </GridPane>
-                              <GridPane fx:id="arena310" layoutX="165.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="157.0">
+                              <GridPane fx:id="arena310" layoutX="165.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="154.0" prefWidth="157.0">
                                  <columnConstraints>
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="113.0" minWidth="10.0" prefWidth="16.0" />
                                     <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="65.0" minWidth="-Infinity" prefWidth="44.0" />
@@ -623,8 +626,8 @@
                                  <rowConstraints>
                                     <RowConstraints maxHeight="72.0" minHeight="10.0" prefHeight="16.408370971679688" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="92.0" minHeight="10.0" prefHeight="52.66667175292969" valignment="BOTTOM" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="33.33332824707031" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="58.0" valignment="TOP" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="48.0" valignment="TOP" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
                                     <ImageView fitHeight="38.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
@@ -790,7 +793,7 @@
                                  </columnConstraints>
                                  <rowConstraints>
                                     <RowConstraints maxHeight="92.0" minHeight="10.0" prefHeight="55.0" valignment="BOTTOM" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="50.0" valignment="TOP" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="50.0" valignment="CENTER" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="38.54315185546875" valignment="TOP" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
@@ -811,8 +814,8 @@
                                  </columnConstraints>
                                  <rowConstraints>
                                     <RowConstraints maxHeight="92.0" minHeight="10.0" prefHeight="36.333343505859375" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="37.666656494140625" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="65.66665649414062" valignment="TOP" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="46.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="66.0" valignment="TOP" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
                                     <ImageView fitHeight="38.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" />
@@ -823,10 +826,10 @@
                                     <ImageView fitHeight="41.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                                  </children>
                               </GridPane>
-                              <GridPane fx:id="arena303" layoutX="25.0" layoutY="328.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="142.0" prefWidth="149.0">
+                              <GridPane fx:id="arena302" layoutX="25.0" layoutY="328.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="142.0" prefWidth="149.0">
                                  <columnConstraints>
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="113.0" minWidth="7.27410888671875" prefWidth="7.728424072265625" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="65.0" minWidth="-Infinity" prefWidth="55.666656494140625" />
+                                    <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="65.0" minWidth="-Infinity" prefWidth="55.666656494140625" />
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="121.0" minWidth="10.0" prefWidth="40.333343505859375" />
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="121.0" minWidth="10.0" prefWidth="48.634521484375" />
                                  </columnConstraints>
@@ -879,8 +882,8 @@
                                  <rowConstraints>
                                     <RowConstraints maxHeight="72.0" minHeight="10.0" prefHeight="16.408370971679688" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="92.0" minHeight="10.0" prefHeight="52.66667175292969" valignment="BOTTOM" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="33.33332824707031" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="58.0" valignment="TOP" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="51.0" valignment="TOP" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
                                     <ImageView fitHeight="38.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
@@ -1202,7 +1205,7 @@
                               </Pane>
                            </children>
                         </StackPane>
-                        <VBox alignment="TOP_CENTER" maxHeight="-Infinity" prefHeight="122.0" prefWidth="100.0" styleClass="backgroud-dark-tiny">
+                        <VBox alignment="TOP_CENTER" maxHeight="-Infinity" prefHeight="122.0" prefWidth="100.0" styleClass="backgroud-dark-tiny" HBox.hgrow="NEVER">
                            <children>
                               <Label fx:id="ammoLabel" alignment="CENTER" prefHeight="17.0" prefWidth="113.0" textAlignment="CENTER" textFill="WHITE">
                                  <VBox.margin>
@@ -1253,7 +1256,7 @@
                               <Insets left="30.0" />
                            </HBox.margin>
                         </VBox>
-                        <VBox fx:id="pointsVBox" maxHeight="-Infinity" prefHeight="122.0" prefWidth="100.0" styleClass="backgroud-dark-tiny">
+                        <VBox fx:id="pointsVBox" maxHeight="-Infinity" prefHeight="122.0" prefWidth="100.0" styleClass="backgroud-dark-tiny" HBox.hgrow="NEVER">
                            <children>
                               <Label alignment="CENTER" prefHeight="17.0" prefWidth="121.0" text="Your Points" textFill="WHITE">
                                  <VBox.margin>
@@ -1318,32 +1321,43 @@
                         <Insets top="20.0" />
                      </VBox.margin>
                   </ImageView>
-                  <GridPane alignment="CENTER" prefHeight="127.0" prefWidth="321.0" styleClass="backgroud-dark-tiny">
+                  <GridPane alignment="CENTER" prefHeight="143.0" prefWidth="377.0" styleClass="backgroud-dark-tiny">
                     <columnConstraints>
                       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Button fx:id="endTurnButton" mnemonicParsing="false" prefHeight="42.0" prefWidth="132.0" styleClass="button-std" text="End Turn" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Button fx:id="ENDTURN" mnemonicParsing="false" prefHeight="35.0" prefWidth="130.0" styleClass="button-std" text="End Turn" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Button>
-                        <Button fx:id="moveButton" mnemonicParsing="false" prefHeight="42.0" prefWidth="132.0" styleClass="button-active" text="Move" textFill="WHITE">
+                        <Button fx:id="MOVE" mnemonicParsing="false" prefHeight="35.0" prefWidth="130.0" styleClass="button-active" text="Move" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Button>
-                        <Button fx:id="moveAndPickButton" mnemonicParsing="false" prefHeight="42.0" prefWidth="132.0" styleClass="button-active" text="Move &amp; Pick up" textFill="WHITE" GridPane.columnIndex="1">
+                        <Button fx:id="PICKUP" mnemonicParsing="false" prefHeight="35.0" prefWidth="130.0" styleClass="button-active" text="Move &amp; Pick up" textFill="WHITE" GridPane.columnIndex="1">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Button>
-                        <Button fx:id="shootButton" mnemonicParsing="false" prefHeight="42.0" prefWidth="132.0" styleClass="button-active" text="Shoot" textFill="WHITE" GridPane.rowIndex="1">
+                        <Button fx:id="SHOOT" mnemonicParsing="false" prefHeight="35.0" prefWidth="130.0" styleClass="button-active" text="Shoot" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="RELOAD" mnemonicParsing="false" prefHeight="35.0" prefWidth="130.0" styleClass="button-active" text="Reload" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="POWERUP" mnemonicParsing="false" prefHeight="35.0" prefWidth="130.0" styleClass="button-active" text="Use a Powerup" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -1353,14 +1367,14 @@
                         <Insets top="20.0" />
                      </VBox.margin>
                   </GridPane>
-                  <HBox alignment="CENTER" maxHeight="-Infinity" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="NEVER">
+                  <HBox alignment="CENTER" maxHeight="-Infinity" prefHeight="58.0" prefWidth="376.0" VBox.vgrow="NEVER">
                      <children>
                         <ImageView fx:id="currentActionImage" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../icons/loading.gif" />
                            </image>
                         </ImageView>
-                        <VBox alignment="CENTER" prefHeight="93.0" prefWidth="246.0">
+                        <VBox alignment="CENTER" prefHeight="77.0" prefWidth="246.0">
                            <children>
                               <Label fx:id="currentStatusLabel" textFill="WHITE">
                                  <font>
@@ -1385,7 +1399,7 @@
                            <children>
                               <Pane prefHeight="82.0" prefWidth="376.0">
                                  <children>
-                                    <Text fx:id="messagesText" fill="WHITE" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="376.00000381469727" />
+                                    <Text fx:id="messagesText" fill="WHITE" layoutX="14.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="362.00000381469727" />
                                  </children>
                               </Pane>
                               <HBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="55.0" prefWidth="376.0" />

@@ -26,7 +26,7 @@ public class GUIApp extends Application {
     @Override
     public void start(Stage window) {
         this.stage = window;
-        this.stage.setTitle("Adrenaline - Sign up");
+        this.stage.setTitle("Adrenaline");
         this.view = new GUIView(Integer.parseInt(getParameters().getRaw().get(0)), getParameters().getRaw().get(1),
                 Integer.parseInt(getParameters().getRaw().get(2)),this);
         this.stage.setOnCloseRequest(e -> System.exit(0));
@@ -80,6 +80,9 @@ public class GUIApp extends Application {
                 case BOARD:
                     loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "Board.fxml"));
                     break;
+                case WEAPON_INFO:
+                    loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "CardDetail.fxml"));
+                    break;
             }
             try {
                 this.stage.setScene(new Scene(loader.load()));
@@ -88,6 +91,7 @@ public class GUIApp extends Application {
             }
             AbstractSceneController controller = loader.getController();
             controller.setView(this.view);
+            this.stage.centerOnScreen();
             this.stage.show();
             synchronized (this.view) {
                 this.view.setActiveController(controller);

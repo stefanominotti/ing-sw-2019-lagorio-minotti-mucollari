@@ -129,7 +129,7 @@ public class LobbyController extends AbstractSceneController {
      * Sets a message to the lobby
      * @param img name to be set with the message
      * @param text of the message
-     */
+     */ 
     void setMessage(String img, String text) {
         Platform.runLater(() -> {
             this.messageName.setText(text);

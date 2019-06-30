@@ -52,7 +52,15 @@
 	-fx-background-color: rgba(219,219,219,0.6);
 }
 
-.background-text-area .content {
-      -fx-background-color: #333639;
-      -fx-text-fill: #ffffff;
+.background-text-area {
+	-fx-border-color: #292c2f;	
+}
+
+.background-text-area:focused .content {
+	-fx-background-color: #292c2f;
+	-fx-text-inner-color: white;
+}
+
+.font-ammo-small {
+	-fx-font-size: 10pt;
 }

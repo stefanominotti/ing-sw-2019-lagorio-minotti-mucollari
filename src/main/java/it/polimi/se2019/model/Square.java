@@ -137,7 +137,7 @@ public class Square {
     }
 
     /**
-     * Gets the ammo tile of the square
+     * Gets ammo tile of the square
      * @return the ammo tile of the square
      */
     public AmmoTile getAvailableAmmoTile() {
@@ -145,7 +145,7 @@ public class Square {
     }
 
     /**
-     * Gets the players in the square
+     * Gets players in the square
      * @return List of players in the square
      */
     public List<Player> getActivePlayers() {
@@ -161,7 +161,7 @@ public class Square {
     }
 
     /**
-     * Gets the nearby squares and its direction from the square
+     * Gets nearby squares and its direction from the square
      * @return Map with nearby squares and its direction
      */
     Map<CardinalPoint, Square> getNearbySquares() {
@@ -169,7 +169,7 @@ public class Square {
     }
 
     /**
-     * Gets the room where the square is placed
+     * Gets the oom where the square is placed
      * @return the room of the square
      */
     public Room getRoom() {
