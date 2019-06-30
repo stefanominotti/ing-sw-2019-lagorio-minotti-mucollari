@@ -91,7 +91,6 @@ public class GUIApp extends Application {
             }
             AbstractSceneController controller = loader.getController();
             controller.setView(this.view);
-            this.stage.centerOnScreen();
             this.stage.show();
             synchronized (this.view) {
                 this.view.setActiveController(controller);

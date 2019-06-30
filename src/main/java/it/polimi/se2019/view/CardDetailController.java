@@ -9,9 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -30,15 +28,15 @@ public class CardDetailController extends AbstractSceneController {
     @FXML
     private Label primaryName;
     @FXML
-    private Text primaryDescription;
+    private Label primaryDescription;
     @FXML
     private Label secondaryOneName;
     @FXML
-    private Text secondaryOneDescription;
+    private Label secondaryOneDescription;
     @FXML
     private Label secondaryTwoName;
     @FXML
-    private Text secondaryTwoDescription;
+    private Label secondaryTwoDescription;
     @FXML
     private VBox secondaryOnePanel;
     @FXML
@@ -75,14 +73,14 @@ public class CardDetailController extends AbstractSceneController {
             this.primaryDescription.setText(weapon.getPrimaryEffect().get(0).getDescription());
         });
 
-        Map<AmmoType, Integer> cost = new HashMap<>();
+        Map<AmmoType, Integer> cost;
         if (!weapon.getAlternativeMode().isEmpty()) {
             cost = weapon.getAlternativeMode().get(0).getCost();
             Platform.runLater(() -> {
                 this.secondaryOneName.setText(weapon.getAlternativeMode().get(0).getEffectName() + ":");
                 this.secondaryOneDescription.setText(weapon.getAlternativeMode().get(0).getDescription());
             });
-        } else if (!weapon.getSecondaryEffectOne().isEmpty()) {
+        } else {
             cost = weapon.getSecondaryEffectOne().get(0).getCost();
             Platform.runLater(() -> {
                 this.secondaryOneName.setText(weapon.getSecondaryEffectOne().get(0).getEffectName() + ":");
