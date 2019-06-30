@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.text.Text?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.BoardController">
    <children>
@@ -22,12 +22,9 @@
          <children>
             <VBox prefHeight="744.0" prefWidth="904.0" styleClass="backgroud-dark-heavy" stylesheets="@../css/style.css" HBox.hgrow="NEVER">
                <children>
-                  <Pane VBox.vgrow="ALWAYS">
+                  <Pane fx:id="arenaContainer" VBox.vgrow="ALWAYS">
                      <children>
-                        <ImageView fx:id="arenaImage" fitHeight="678.0" fitWidth="985.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../arenas/img/arena_4.png" />
-                           </image></ImageView>
+                        <ImageView fx:id="arenaImage" fitHeight="678.0" fitWidth="985.0" pickOnBounds="true" preserveRatio="true" />
                         <GridPane fx:id="blueWeaponsGrid" layoutX="477.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="130.0" prefWidth="288.0">
                           <columnConstraints>
                               <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="740.0" minWidth="10.0" prefWidth="740.0" />
@@ -1313,7 +1310,7 @@
             </VBox>
             <VBox alignment="TOP_CENTER" prefHeight="801.0" prefWidth="382.0" styleClass="backgroud-dark-heavy" stylesheets="@../css/style.css" HBox.hgrow="ALWAYS">
                <children>
-                  <ImageView fitHeight="78.0" fitWidth="342.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="78.0" fitWidth="342.0" onMousePressed="#setPlayerBoard" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../icons/logo.png" />
                      </image>
@@ -1365,12 +1362,12 @@
                         </ImageView>
                         <VBox alignment="CENTER" prefHeight="93.0" prefWidth="246.0">
                            <children>
-                              <Label fx:id="currentStatusLabel" text="Waiting for other players..." textFill="WHITE">
+                              <Label fx:id="currentStatusLabel" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="currentActionLabel" alignment="CENTER" prefHeight="17.0" prefWidth="165.0" text="Jack (Banshee) is playing" textFill="WHITE">
+                              <Label fx:id="currentActionLabel" alignment="CENTER" textFill="WHITE">
                                  <font>
                                     <Font size="12.0" />
                                  </font>
@@ -1386,7 +1383,11 @@
                      <children>
                         <VBox prefHeight="200.0" prefWidth="100.0">
                            <children>
-                              <TextFlow fx:id="messagesText" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="96.0" prefWidth="376.0" />
+                              <Pane prefHeight="82.0" prefWidth="376.0">
+                                 <children>
+                                    <Text fx:id="messagesText" fill="WHITE" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="376.00000381469727" />
+                                 </children>
+                              </Pane>
                               <HBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="55.0" prefWidth="376.0" />
                            </children>
                         </VBox>

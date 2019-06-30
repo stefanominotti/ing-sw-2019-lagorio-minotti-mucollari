@@ -933,7 +933,7 @@ public class CLIView extends View {
             showMessage(getBoardByCharacter(player).toString());
         }
         if (player == getCharacter()) {
-            showMessage(attacker + "'s marks on you have been converted into damages");
+            showMessage(attacker + "'s marks on you converted into damages");
         } else if (attacker == getCharacter()) {
             showMessage("Your marks on " + player + " have been converted into damages");
         } else {
@@ -1155,7 +1155,7 @@ public class CLIView extends View {
             showMessage(getBoardByCharacter(character).toString());
         }
         if (character != getCharacter()) {
-            showMessage(character + " has drawn a Powerup");
+            showMessage(character + " has drawn a powerup");
         } else {
             showMessage("You have drawn " + powerup.getType() + " " + powerup.getColor());
         }
@@ -1297,7 +1297,7 @@ public class CLIView extends View {
     }
 
     /**
-     * Shows weaon used message
+     * Shows weapon used message
      * @param character who uses weapon
      * @param weapon used
      */
@@ -1415,7 +1415,6 @@ public class CLIView extends View {
             text.append(toAppend);
             index++;
         }
-        text.setLength(text.length() - 1);
         showMessage(text.toString());
         super.handleGameFinished(ranking);
     }

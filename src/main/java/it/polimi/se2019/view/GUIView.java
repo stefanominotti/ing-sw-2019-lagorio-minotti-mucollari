@@ -6,7 +6,9 @@ import it.polimi.se2019.model.messages.board.SkullsMessage;
 import it.polimi.se2019.model.messages.client.CharacterMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessageType;
+import it.polimi.se2019.model.messages.powerups.PowerupMessageType;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
+import it.polimi.se2019.model.messages.turn.TurnMessage;
 
 import java.util.*;
 
@@ -295,14 +297,299 @@ public class GUIView extends View {
                        Map<Coordinates, Map<CardinalPoint, Boolean>> nearbyAccessibility, int skulls, int arena) {
         super.handleGameSet(colors, spawns, nearbyAccessibility, skulls, arena);
         setScene(SceneType.BOARD);
-        ((BoardController) this.controller).updateKillshotTrack();
+        ((BoardController) this.controller).setArena();
         ((BoardController) this.controller).setPlayerBoard(getCharacter());
     }
 
+    /**
+     * Shows store refilled
+     * @param weapons Map with weapon and coordinates of the square where the weapon has to be placed
+     */
     @Override
     void handleStoresRefilled(Map<Coordinates, Weapon> weapons) {
         super.handleStoresRefilled(weapons);
         ((BoardController) this.controller).updateStores();
+    }
+
+    /**
+     * Shows ammo tiles refilled
+     * @param tiles Map with coordinates and tiles refilled
+     */
+    @Override
+    void handleTilesRefilled(Map<Coordinates, AmmoTile> tiles) {
+        super.handleTilesRefilled(tiles);
+        ((BoardController) this.controller).updateTiles();
+    }
+
+    /**
+     * Shows player spawned message
+     * @param character who has spawned
+     * @param coordinates where the character has spawned
+     */
+    @Override
+    void handleSpawnedPlayer(GameCharacter character, Coordinates coordinates) {
+        super.handleSpawnedPlayer(character, coordinates);
+        if (getCharacter() != character) {
+            showMessage(character + " spawned");
+        }
+        ((BoardController) this.controller).updatePlayersPositions();
+    }
+
+    /**
+     * Shows movement
+     * @param character who has moved
+     * @param coordinates where the character has moved
+     */
+    @Override
+    void handleMovement(GameCharacter character, Coordinates coordinates) {
+        super.handleMovement(character, coordinates);
+        if (getCharacter() != character) {
+            showMessage(character + " moved");
+        }
+        ((BoardController) this.controller).updatePlayersPositions();
+    }
+
+    /**
+     * Shows attack
+     * @param character who received the attack
+     * @param attacker who performed the attack
+     * @param amount of damage or marks give
+     * @param attackType type of the attack
+     */
+    @Override
+    void handleAttack(GameCharacter character, GameCharacter attacker, int amount, EffectType attackType) {
+        super.handleAttack(character, attacker, amount, attackType);
+        if (character == getCharacter()) {
+            showMessage(getSelfPlayerBoard().toString());
+        } else {
+            showMessage(getBoardByCharacter(character).toString());
+        }
+        StringBuilder text = new StringBuilder();
+        if (attacker == getCharacter()) {
+            String toAppend = "You dealt " + amount + " ";
+            text.append(toAppend);
+        } else if (character == getCharacter()) {
+            String toAppend = "You received " + amount + " ";
+            text.append(toAppend);
+        } else {
+            String toAppend = attacker + " dealt " + amount + " ";
+            text.append(toAppend);
+        }
+
+        if (attackType == EffectType.DAMAGE) {
+            text.append("damage");
+        } else {
+            text.append("mark");
+        }
+
+        if (amount != 1) {
+            text.append("s");
+        }
+
+        if (character == getCharacter()) {
+            String toAppend = " from " + attacker;
+            text.append(toAppend);
+        } else {
+            String toAppend = " to " + character;
+            text.append(toAppend);
+        }
+
+        showMessage(text.toString());
+        if (((BoardController) this.controller).getActiveBoard() == character && attackType == EffectType.DAMAGE) {
+            ((BoardController) this.controller).updateBoardDamages();
+        } else if (((BoardController) this.controller).getActiveBoard() == character && attackType == EffectType.MARK) {
+            ((BoardController) this.controller).updateBoardMarks();
+        }
+
+        if (getState() == MULTIPLE_POWERUPS_SELECTION && attacker != getCharacter()) {
+            handleUsePowerupRequest(getPowerupsSelection());
+        }
+    }
+
+    /**
+     * Shows marks to damages
+     * @param player which the marks has to be converted
+     * @param attacker holder of the marks converted
+     */
+    @Override
+    void handleMarksToDamages(GameCharacter player, GameCharacter attacker) {
+        super.handleMarksToDamages(player, attacker);
+        if (player == getCharacter()) {
+            showMessage(getSelfPlayerBoard().toString());
+        } else {
+            showMessage(getBoardByCharacter(player).toString());
+        }
+        if (player == getCharacter()) {
+            showMessage(attacker + "'s marks on you converted");
+        } else if (attacker == getCharacter()) {
+            showMessage("Your marks on " + player + " have been converted into damages");
+        } else {
+            showMessage(attacker + "'s marks on " + player + " converted");
+        }
+        if (((BoardController) this.controller).getActiveBoard() == player) {
+            ((BoardController) this.controller).updateBoardMarks();
+            ((BoardController) this.controller).updateBoardDamages();
+        }
+    }
+
+    /**
+     * Shows ammo obtained
+     * @param character who got ammo
+     * @param ammos obtained
+     */
+    @Override
+    void handleAddAmmos(GameCharacter character, Map<AmmoType, Integer> ammos) {
+        super.handleAddAmmos(character, ammos);
+        if (character != getCharacter()) {
+            showMessage(character + " picked up an ammo tile");
+        }
+        ((BoardController) this.controller).updateTiles();
+        if (((BoardController) this.controller).getActiveBoard() == character) {
+            ((BoardController) this.controller).updateAmmo();
+            ((BoardController) this.controller).updatePowerups();
+        }
+    }
+
+    /**
+     * Shows ammo removed message
+     * @param character of which the ammo has to be removed
+     * @param ammos to be removed
+     */
+    @Override
+    void handleRemoveAmmos(GameCharacter character, Map<AmmoType, Integer> ammos) {
+        super.handleRemoveAmmos(character, ammos);
+        for (Map.Entry<AmmoType, Integer> ammo : ammos.entrySet()) {
+            if (ammo.getValue() == 0) {
+                continue;
+            }
+            if (getCharacter() != character) {
+                showMessage(character + " used " + ammo.getValue() + "x" + ammo.getKey());
+            }
+        }
+        if (((BoardController) this.controller).getActiveBoard() == character) {
+            ((BoardController) this.controller).updateAmmo();
+        }
+    }
+
+    /**
+     * Shows powerup drawn
+     * @param character who has drawn a powerup
+     * @param powerup drawn
+     */
+    @Override
+    void handlePowerupAdded(GameCharacter character, Powerup powerup) {
+        super.handlePowerupAdded(character, powerup);
+        if (character != getCharacter()) {
+            showMessage(character + " has drawn a powerup");
+        }
+        if (((BoardController) this.controller).getActiveBoard() == character) {
+            ((BoardController) this.controller).updatePowerups();
+        }
+    }
+
+    /**
+     * Shows powerup removed
+     * @param character who has removed a powerup
+     * @param powerup removed
+     * @param type of the powerup message
+     */
+    @Override
+    void handlePowerupRemoved(GameCharacter character, Powerup powerup, PowerupMessageType type) {
+        super.handlePowerupRemoved(character, powerup, type);
+        if (getCharacter() != character) {
+            showMessage(character + " has discarded " + powerup.getType() + " " + powerup.getColor());
+        }
+        if (((BoardController) this.controller).getActiveBoard() == character) {
+            ((BoardController) this.controller).updatePowerups();
+        }
+    }
+
+    /**
+     * Shows weapon pickup
+     * @param character who pickups the weapon
+     * @param weapon picked up
+     */
+    @Override
+    void handleWeaponPickup(GameCharacter character, Weapon weapon) {
+        super.handleWeaponPickup(character, weapon);
+        if (character != getCharacter()) {
+            showMessage(character + " got " + weapon);
+        }
+        ((BoardController) this.controller).updateStores();
+        if (((BoardController) this.controller).getActiveBoard() == character) {
+            ((BoardController) this.controller).updateWeapons();
+        }
+    }
+
+    /**
+     * Shows weapon switched
+     * @param character who switchs weapons
+     * @param oldWeapon to be switched
+     * @param newWeapon switched
+     */
+    @Override
+    void handleWeaponSwitch(GameCharacter character, Weapon oldWeapon, Weapon newWeapon) {
+        super.handleWeaponSwitch(character, oldWeapon, newWeapon);
+        if (character == getCharacter()) {
+            showMessage(character + " dropped a " + oldWeapon + " to get a " + newWeapon);
+        }
+        ((BoardController) this.controller).updateStores();
+        if (((BoardController) this.controller).getActiveBoard() == character) {
+            ((BoardController) this.controller).updateWeapons();
+        }
+    }
+
+    /**
+     * Shows weapon reloaded
+     * @param character who reloaded a weapon
+     * @param weapon reloaded
+     */
+    @Override
+    void handleWeaponReload(GameCharacter character, Weapon weapon) {
+        super.handleWeaponReload(character, weapon);
+        if (character == getCharacter()) {
+            showMessage(getSelfPlayerBoard().toString());
+        } else {
+            showMessage(getBoardByCharacter(character).toString());
+        }
+        if (character == getCharacter()) {
+            showMessage(character + " realoaded " + weapon);
+        }
+        if (((BoardController) this.controller).getActiveBoard() == character) {
+            ((BoardController) this.controller).updateWeapons();
+        }
+    }
+
+    /**
+     * Shows weapon used
+     * @param character who uses weapon
+     * @param weapon used
+     */
+    @Override
+    void handleWeaponUnload(GameCharacter character, Weapon weapon) {
+        super.handleWeaponUnload(character, weapon);
+        if (character == getCharacter()) {
+            showMessage(character + " used " + weapon);
+        }
+        if (((BoardController) this.controller).getActiveBoard() == character) {
+            ((BoardController) this.controller).updateWeapons();
+        }
+    }
+
+    /**
+     * Displays active player message
+     * @param message type of turn
+     * @param character who is playing
+     */
+    @Override
+    void handleStartTurn(TurnMessage message, GameCharacter character) {
+        if (character != getCharacter()) {
+            setBanner("Waiting for other players...", getBoardByCharacter(character).getNickname() + " ("
+                    + character + ") is playing");
+        } else {
+            setBanner("It's your turn!", null);
+        }
+        super.handleStartTurn(message, character);
     }
 
     /**
@@ -311,7 +598,17 @@ public class GUIView extends View {
      */
     @Override
     void handleEndTurn(GameCharacter character) {
-
+        if (character == getCharacter()) {
+            showMessage("Turn finished");
+        } else {
+            showMessage(character + "'s turn finished");
+        }
+        if (character != getCharacter()) {
+            setBanner("Waiting for other players...", getBoardByCharacter(character).getNickname() + " ("
+                    + character + ") finished his turn");
+        } else {
+            setBanner("Turn finished", null);
+        }
     }
 
     /**
@@ -337,5 +634,17 @@ public class GUIView extends View {
     @Override
     public void requirePayment() {
 
+    }
+
+    /**+
+     * Shows a message
+     * @param text to be shown
+     */
+    void showMessage(String text) {
+        ((BoardController) this.controller).showMessage(text);
+    }
+
+    void setBanner(String status, String action) {
+        ((BoardController) this.controller).setBanner(status, action);
     }
 }

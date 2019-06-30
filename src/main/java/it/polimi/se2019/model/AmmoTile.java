@@ -11,6 +11,7 @@ public class AmmoTile implements Serializable {
 
     private final boolean powerup;
     private final Map<AmmoType, Integer> ammos;
+    private int number;
 
     /**
      * Class constructor, it builds an ammo tile
@@ -31,6 +32,14 @@ public class AmmoTile implements Serializable {
         Map<AmmoType, Integer> returnMap = new EnumMap<>(AmmoType.class);
         returnMap.putAll(this.ammos);
         return returnMap;
+    }
+
+    /**
+     * Gets the number of the ammo tile
+     * @return Number of the ammo tile
+     */
+    public int getNumber() {
+        return this.number;
     }
 
     /**

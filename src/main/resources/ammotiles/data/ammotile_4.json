@@ -1,6 +1,7 @@
 {
 	"qty": 4,
 	"ammo":{
+		"number": 4,
 		"powerup": true,
 		"ammos": {
 			"BLUE": 0,
