@@ -31,9 +31,6 @@
                </BorderPane.margin>
                <children>
                   <ImageView fx:id="cardImage" fitHeight="286.0" fitWidth="190.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../weapons/img/electroscythe.png" />
-                     </image>
                      <HBox.margin>
                         <Insets left="40.0" />
                      </HBox.margin>
@@ -48,14 +45,11 @@
                                  </font>
                               </Label>
                               <ImageView fx:id="statusImage" fitHeight="33.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../icons/unloaded_weapon.png" />
-                                 </image>
                                  <HBox.margin>
                                     <Insets left="5.0" />
                                  </HBox.margin>
                               </ImageView>
-                              <Label fx:id="statusDescription" prefHeight="17.0" prefWidth="66.0" text="unloaded" textFill="WHITE">
+                              <Label fx:id="statusDescription" prefHeight="17.0" prefWidth="66.0" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -79,9 +73,6 @@
                                  <HBox.margin>
                                     <Insets left="5.0" />
                                  </HBox.margin>
-                                 <image>
-                                    <Image url="@../../../ammos/ammo_blue.png" />
-                                 </image>
                               </ImageView>
                               <ImageView fx:id="cost2Image" fitHeight="33.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                  <HBox.margin>
@@ -101,11 +92,11 @@
                               <Insets left="10.0" />
                            </VBox.margin>
                         </HBox>
-                        <VBox fx:id="primaryPanel" prefHeight="2.0" prefWidth="332.0">
+                        <VBox fx:id="primaryPanel" VBox.vgrow="ALWAYS">
                            <children>
                               <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="322.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Label fx:id="primaryName" prefHeight="25.0" prefWidth="90.0" text="effetto base:" textFill="WHITE" HBox.hgrow="SOMETIMES">
+                                    <Label fx:id="primaryName" prefHeight="25.0" prefWidth="90.0" textFill="WHITE" HBox.hgrow="SOMETIMES">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
@@ -136,7 +127,7 @@
                                     <Insets top="20.0" />
                                  </padding>
                               </HBox>
-                              <Label fx:id="primaryDescription" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" VBox.vgrow="ALWAYS">
+                              <Label fx:id="primaryDescription" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" textFill="WHITE" VBox.vgrow="ALWAYS">
                                  <padding>
                                     <Insets left="10.0" />
                                  </padding>
@@ -149,11 +140,11 @@
                               </Label>
                            </children>
                         </VBox>
-                        <VBox fx:id="secondaryOnePanel" prefHeight="38.0" prefWidth="317.0">
+                        <VBox fx:id="secondaryOnePanel" VBox.vgrow="ALWAYS">
                            <children>
                               <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="322.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Label fx:id="secondaryOneName" prefHeight="25.0" prefWidth="141.0" text="modalità alternativa:" textFill="WHITE" HBox.hgrow="SOMETIMES">
+                                    <Label fx:id="secondaryOneName" prefHeight="25.0" prefWidth="141.0" textFill="WHITE" HBox.hgrow="SOMETIMES">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
@@ -162,17 +153,11 @@
                                        <HBox.margin>
                                           <Insets left="5.0" />
                                        </HBox.margin>
-                                       <image>
-                                          <Image url="@../../../ammos/ammo_blue.png" />
-                                       </image>
                                     </ImageView>
                                     <ImageView fx:id="secondaryOneCost2Image" fitHeight="33.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                        <HBox.margin>
                                           <Insets left="5.0" />
                                        </HBox.margin>
-                                       <image>
-                                          <Image url="@../../../ammos/ammo_red.png" />
-                                       </image>
                                     </ImageView>
                                     <ImageView fx:id="secondaryOneCost3Image" fitHeight="33.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -187,7 +172,7 @@
                                     <Insets left="10.0" />
                                  </VBox.margin>
                               </HBox>
-                              <Label fx:id="secondaryOneDescription" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" VBox.vgrow="ALWAYS">
+                              <Label fx:id="secondaryOneDescription" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" textFill="WHITE" VBox.vgrow="ALWAYS">
                                  <padding>
                                     <Insets left="10.0" />
                                  </padding>
@@ -200,11 +185,11 @@
                               </Label>
                            </children>
                         </VBox>
-                        <VBox fx:id="secondaryTwoPanel" prefHeight="38.0" prefWidth="317.0">
+                        <VBox fx:id="secondaryTwoPanel" VBox.vgrow="ALWAYS">
                            <children>
                               <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="322.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Label fx:id="secondaryTwoName" prefHeight="25.0" prefWidth="141.0" text="modalità alternativa:" textFill="WHITE" HBox.hgrow="SOMETIMES">
+                                    <Label fx:id="secondaryTwoName" prefHeight="25.0" prefWidth="141.0" textFill="WHITE" HBox.hgrow="SOMETIMES">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
@@ -213,19 +198,13 @@
                                        <HBox.margin>
                                           <Insets left="5.0" />
                                        </HBox.margin>
-                                       <image>
-                                          <Image url="@../../../ammos/ammo_blue.png" />
-                                       </image>
                                     </ImageView>
                                     <ImageView fx:id="secondaryTwoCost2Image" fitHeight="33.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                        <HBox.margin>
                                           <Insets left="5.0" />
                                        </HBox.margin>
-                                       <image>
-                                          <Image url="@../../../ammos/ammo_red.png" />
-                                       </image>
                                     </ImageView>
-                                    <ImageView fx:id="secondaryOneCost3Image" fitHeight="33.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fx:id="secondaryTwoCost3Image" fitHeight="33.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../../icons" />
                                        </image>
@@ -238,7 +217,7 @@
                                     <Insets left="10.0" />
                                  </VBox.margin>
                               </HBox>
-                              <Label fx:id="secondaryOneDescription1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" VBox.vgrow="ALWAYS">
+                              <Label fx:id="secondaryTwoDescription" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" textFill="WHITE" VBox.vgrow="ALWAYS">
                                  <padding>
                                     <Insets left="10.0" />
                                  </padding>
@@ -253,7 +232,7 @@
                         </VBox>
                         <VBox fx:id="reloadPanel" alignment="BOTTOM_RIGHT" prefHeight="53.0" prefWidth="317.0" VBox.vgrow="NEVER">
                            <children>
-                              <Button fx:id="reloadButton" mnemonicParsing="false" prefHeight="31.0" prefWidth="89.0" styleClass="button-std" text="Reload" textFill="WHITE">
+                              <Button fx:id="reloadButton" mnemonicParsing="false" onAction="#close" prefHeight="31.0" prefWidth="89.0" styleClass="button-std" text="Back" textFill="WHITE">
                                  <VBox.margin>
                                     <Insets right="20.0" top="10.0" />
                                  </VBox.margin>

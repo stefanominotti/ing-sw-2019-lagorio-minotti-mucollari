@@ -26,7 +26,7 @@ public class GUIApp extends Application {
     @Override
     public void start(Stage window) {
         this.stage = window;
-        this.stage.setTitle("Adrenaline - Sign up");
+        this.stage.setTitle("Adrenaline");
         this.view = new GUIView(Integer.parseInt(getParameters().getRaw().get(0)), getParameters().getRaw().get(1),
                 Integer.parseInt(getParameters().getRaw().get(2)),this);
         this.stage.setOnCloseRequest(e -> System.exit(0));
@@ -79,6 +79,9 @@ public class GUIApp extends Application {
                     break;
                 case BOARD:
                     loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "Board.fxml"));
+                    break;
+                case WEAPON_INFO:
+                    loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "CardDetail.fxml"));
                     break;
             }
             try {

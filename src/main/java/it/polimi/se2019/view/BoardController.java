@@ -14,7 +14,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,7 +35,6 @@ public class BoardController extends AbstractSceneController {
     private static final String AMMO_TILES_PATH = "ammotiles/img/";
 
     private GameCharacter activeBoard;
-    private LinkedList<String> messages;
     private Pane arenaPane;
 
     @FXML
@@ -97,13 +95,20 @@ public class BoardController extends AbstractSceneController {
     private Label currentActionLabel;
 
     private EventHandler<MouseEvent> setPlayerBoardHandler;
+    private EventHandler<MouseEvent> weaponInfoHandler;
 
     public BoardController() {
-        this.messages = new LinkedList<>();
         this.setPlayerBoardHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 setPlayerBoard(GameCharacter.valueOf(((ImageView)event.getSource()).getId().toUpperCase()));
+            }
+        };
+        this.weaponInfoHandler = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                Weapon weapon = Weapon.valueOf(((ImageView)event.getSource()).getId().toUpperCase());
+                new Thread(() -> getView().showWeaponInfo(weapon)).start();
             }
         };
     }
@@ -208,6 +213,7 @@ public class BoardController extends AbstractSceneController {
         if (player != getView().getCharacter()) {
             this.pointsVBox.setVisible(false);
         } else {
+            this.pointsVBox.setVisible(true);
             updatePoints();
         }
         updateWeapons();
@@ -333,16 +339,20 @@ public class BoardController extends AbstractSceneController {
             int i = 0;
             for (Weapon w : s.getStore()) {
                 ImageView img = (ImageView) grid.getChildren().get(i);
-                Platform.runLater(() ->
-                    img.setImage(new Image(WEAPONS_PATH + w.toString().toLowerCase() + ".png"))
-                );
+                Platform.runLater(() -> {
+                    img.setId(w.toString().toLowerCase());
+                    img.setImage(new Image(WEAPONS_PATH + w.toString().toLowerCase() + ".png"));
+                    img.setOnMousePressed(this.weaponInfoHandler);
+                });
                 i++;
             }
             while (i < 3) {
                 ImageView img = (ImageView) grid.getChildren().get(i);
-                Platform.runLater(() ->
-                        img.setImage(null)
-                );
+                Platform.runLater(() -> {
+                    img.setId(null);
+                    img.setImage(null);
+                    img.setOnMousePressed(this.weaponInfoHandler);
+                });
                 i++;
             }
         }
@@ -360,8 +370,10 @@ public class BoardController extends AbstractSceneController {
             ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
             ImageView stateImg = (ImageView) this.playerAssetsGrid.getChildren().get(i + 6);
             Platform.runLater(() -> {
+                img.setId(w.toString().toLowerCase());
                 img.setImage(new Image(WEAPONS_PATH + w.toString().toLowerCase()));
                 stateImg.setImage(new Image(UTILS_PATH + "unloaded_weapon.png"));
+                img.setOnMousePressed(this.weaponInfoHandler);
             });
             i++;
         }
@@ -370,8 +382,10 @@ public class BoardController extends AbstractSceneController {
                 ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
                 ImageView stateImg = (ImageView) this.playerAssetsGrid.getChildren().get(i + 6);
                 Platform.runLater(() -> {
+                    img.setId(null);
                     img.setImage(new Image(WEAPONS_PATH + "weapon_back.png"));
                     stateImg.setImage(null);
+                    img.setOnMousePressed(this.weaponInfoHandler);
                 });
                 i++;
             }
@@ -380,8 +394,10 @@ public class BoardController extends AbstractSceneController {
                 ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
                 ImageView stateImg = (ImageView) this.playerAssetsGrid.getChildren().get(i + 6);
                 Platform.runLater(() -> {
+                    img.setId(w.toString().toLowerCase());
                     img.setImage(new Image(WEAPONS_PATH + w.toString().toLowerCase()));
                     stateImg.setImage(new Image(UTILS_PATH + "weapon_ready.png"));
+                    img.setOnMousePressed(this.weaponInfoHandler);
                 });
                 i++;
             }
@@ -390,8 +406,10 @@ public class BoardController extends AbstractSceneController {
             ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
             ImageView stateImg = (ImageView) this.playerAssetsGrid.getChildren().get(i + 6);
             Platform.runLater(() -> {
+                img.setId(null);
                 img.setImage(null);
                 stateImg.setImage(null);
+                img.setOnMousePressed(this.weaponInfoHandler);
             });
             i++;
         }
@@ -413,7 +431,7 @@ public class BoardController extends AbstractSceneController {
                 ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
                 Platform.runLater(() ->
                     img.setImage(new Image(POWERUPS_PATH + p.getType().toString().toLowerCase() +
-                            p.getColor().toString().toLowerCase()))
+                            p.getColor().toString().toLowerCase() + ".png"))
                 );
                 i++;
             }
@@ -484,12 +502,8 @@ public class BoardController extends AbstractSceneController {
         }
     }
 
-    void showMessage(String text) {
-        if (this.messages.size() == 5) {
-            this.messages.removeFirst();
-        }
-        this.messages.addLast(text);
-        String message = this.messages.stream().collect(Collectors.joining("\n"));
+    void showMessage(List<String> messages) {
+        String message = messages.stream().collect(Collectors.joining("\n"));
         Platform.runLater(() ->
                 this.messagesText.setText(message)
         );
