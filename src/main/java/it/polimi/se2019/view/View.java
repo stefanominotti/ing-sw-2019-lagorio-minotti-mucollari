@@ -350,9 +350,9 @@ public abstract class View {
 
 
     /**
-     * //TODO
-     * @param type
-     * @param amount
+     * Adds ammo into a list of the ammo to be paid request
+     * @param type of ammo
+     * @param amount of ammo
      */
     void putRequiredPayment(AmmoType type, int amount) {
         this.requiredPayment.put(type, amount);
@@ -376,8 +376,8 @@ public abstract class View {
     }
 
     /**
-     * //TODO
-     * @param message
+     * Uses to sort message type based and forward it
+     * @param message to be sort and forward
      */
     public void manageUpdate(Message message) {
         switch (message.getMessageType()) {
@@ -441,6 +441,10 @@ public abstract class View {
         return null;
     }
 
+    /**
+     * Uses to forward a nickname message to client
+     * @param message to be forwarded
+     */
     private void update(NicknameMessage message) {
         switch (message.getType()) {
             case REQUIRE:
@@ -462,8 +466,7 @@ public abstract class View {
     }
 
     /**
-     * //TODO
-     * Sets the client state on typing nickname in case of nickname duplicated
+     * Sets again the client state on typing nickname in case of nickname duplicated
      */
     void handleNicknameDuplicated() {
         this.state = TYPING_NICKNAME;
@@ -883,6 +886,10 @@ public abstract class View {
         }
     }
 
+    /**
+     * Uses to forward a powerup message to client
+     * @param message to be forwarded
+     */
     private void update(PowerupMessage message) {
         if (message.getType() == PowerupMessageType.ADD) {
             handlePowerupAdded(message.getCharacter(), message.getPowerup());
@@ -891,6 +898,11 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles a powerup added
+     * @param character who add a powerup
+     * @param powerup added
+     */
     void handlePowerupAdded(GameCharacter character, Powerup powerup) {
         if (character != this.character) {
             PlayerBoard playerBoard = getBoardByCharacter(character);
@@ -902,6 +914,12 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles powerup removed
+     * @param character who removed a powerup
+     * @param powerup removed
+     * @param type of the powerup message
+     */
     void handlePowerupRemoved(GameCharacter character, Powerup powerup, PowerupMessageType type) {
         if (this.character == character) {
             this.selfPlayerBoard.removePowerup(powerup.getType(), powerup.getColor());
@@ -913,6 +931,10 @@ public abstract class View {
         }
     }
 
+    /**
+     * Uses to forward an ammo message to client
+     * @param message to be forwarded
+     */
     private void update(AmmosMessage message) {
         switch (message.getType()) {
             case ADD:
@@ -926,6 +948,11 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles add ammo
+     * @param character who has added ammo
+     * @param ammos Map with ammo type and its quantity added
+     */
     void handleAddAmmos(GameCharacter character, Map<AmmoType, Integer> ammos) {
         this.board.getPlayerPosition(character).removeAmmoTile();
         if (this.character == character) {
@@ -938,6 +965,11 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles remove ammo
+     * @param character who has removed ammo
+     * @param ammos Map with ammo type and its quantity removed
+     */
     void handleRemoveAmmos(GameCharacter character, Map<AmmoType, Integer> ammos) {
         if (this.character == character) {
             this.selfPlayerBoard.useAmmos(ammos);
@@ -949,6 +981,10 @@ public abstract class View {
         }
     }
 
+    /**
+     * Uses to forward a weapon message to client
+     * @param message to be forwarded
+     */
     private void update(WeaponMessage message) {
         switch (message.getType()) {
             case PICKUP:
@@ -967,6 +1003,12 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles weapon pickup
+     * @param character who has picked up the weapon
+     * @param weapon picked up
+     */
+
     void handleWeaponPickup(GameCharacter character, Weapon weapon) {
         this.board.getPlayerPosition(character).removeStoreWeapon(weapon);
         if (this.character == character) {
@@ -978,6 +1020,13 @@ public abstract class View {
             }
         }
     }
+
+    /**
+     * Handles weapon switched
+     * @param character who has switched the weapon
+     * @param oldWeapon to be switched
+     * @param newWeapon switched
+     */
 
     void handleWeaponSwitch(GameCharacter character, Weapon oldWeapon, Weapon newWeapon) {
         if (character == this.character) {
@@ -994,6 +1043,11 @@ public abstract class View {
         this.board.getPlayerPosition(character).addStoreWeapon(oldWeapon);
     }
 
+    /**
+     * Handles weapon reload
+     * @param character who has reload weapon
+     * @param weapon reloaded
+     */
     void handleWeaponReload(GameCharacter character, Weapon weapon) {
         if (character == this.character) {
             this.selfPlayerBoard.reloadWeapon(weapon);
@@ -1005,6 +1059,12 @@ public abstract class View {
         }
     }
 
+
+    /**
+     * Handles weapon unload
+     * @param character who unloaded the weapon
+     * @param weapon unloaded
+     */
     void handleWeaponUnload(GameCharacter character, Weapon weapon) {
         if (character == this.character) {
             this.selfPlayerBoard.unloadWeapon(weapon);
@@ -1016,19 +1076,32 @@ public abstract class View {
         }
     }
 
+    /**
+     * Uses to forward a payment message to client
+     * @param message to be forwarded
+     */
     private void update(PaymentMessage message) {
         handlePayment(message.getPaymentType(), message.getAmmos());
     }
 
-    private void handlePayment(PaymentType type, Map<AmmoType, Integer> request) {
+    /**
+     * Handles the player payment
+     * @param type of payment to be done
+     * @param ammoRequested ammo requested
+     */
+    private void handlePayment(PaymentType type, Map<AmmoType, Integer> ammoRequested) {
         this.state = PAYMENT;
-        this.requiredPayment = request;
+        this.requiredPayment = ammoRequested;
         this.currentPayment = type;
         this.ammosSelection = new EnumMap<>(this.selfPlayerBoard.getAvailableAmmos());
         this.powerupsSelection = new ArrayList<>(this.selfPlayerBoard.getPowerups());
         requirePayment();
     }
 
+    /**
+     * Uses to forward a turn message to client
+     * @param message to be forwarded
+     */
     private void update(TurnMessage message) {
         switch (message.getType()) {
             case START:
@@ -1043,6 +1116,11 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles start turm
+     * @param message type of turn
+     * @param character of the turn
+     */
     void handleStartTurn(TurnMessage message, GameCharacter character) {
         if (character != this.character) {
             this.state = OTHER_PLAYER_TURN;
@@ -1052,6 +1130,10 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles end turn o a player
+     * @param character who has to end his turn
+     */
     abstract void handleEndTurn(GameCharacter character);
 
     void handleTurnContinuation(GameCharacter player) {
@@ -1088,10 +1170,16 @@ public abstract class View {
         }
     }
 
+    /**
+     * Closes the app after persistence choice
+     */
     void handlePersistenceFinish(){
         System.exit(0);
     }
 
+    /**
+     * Closes the app after the game has finished and the ranking has shown
+     */
     void handleGameFinished(Map<GameCharacter, Integer> ranking) {
         try {
             removeToken();
@@ -1101,15 +1189,31 @@ public abstract class View {
         System.exit(0);
     }
 
+    /**
+     * Handles change on killshot track
+     * @param skulls current number
+     * @param players of which the kill shot track has to be changed
+     */
     void handleKillshotTrackChange(int skulls, List<GameCharacter> players) {
         this.board.setSkulls(skulls - 1);
         this.board.addKillshotPoints(players, skulls);
     }
 
+    /**
+     * Handles setup interrupted setting the game state on waiting start
+     */
     void handleSetupInterrupted() {
         this.state = WAITING_START;
     }
 
+    /**
+     * Handles
+     * @param colors Map with room colors and their coordinates
+     * @param spawns Map with coordinates and true if they are a spawn point, else false
+     * @param nearbyAccessibility Map with coordinates  and map with cardinal points and their accessibility
+     * @param skulls set for the game
+     * @param arena chosen for the game
+     */
     void handleGameSet(Map<Coordinates, RoomColor> colors, Map<Coordinates, Boolean> spawns,
                        Map<Coordinates, Map<CardinalPoint, Boolean>> nearbyAccessibility, int skulls, int arena) {
         List<SquareView> squares = new ArrayList<>();
@@ -1122,6 +1226,10 @@ public abstract class View {
         this.board = new BoardView(skulls, squares, arena);
     }
 
+    /**
+     * Handles store refilled
+     * @param weapons Map with coordinates of the store and weapons to placed in
+     */
     void handleStoresRefilled(Map<Coordinates, Weapon> weapons) {
         for (Map.Entry<Coordinates, Weapon> weapon : weapons.entrySet()) {
             int x = weapon.getKey().getX();
@@ -1130,6 +1238,10 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles tiles refilled
+     * @param tiles Map with ammo and its quantity refilled
+     */
     void handleTilesRefilled(Map<Coordinates, AmmoTile> tiles) {
         for (Map.Entry<Coordinates, AmmoTile> tile : tiles.entrySet()) {
             int x = tile.getKey().getX();
@@ -1138,6 +1250,10 @@ public abstract class View {
         }
     }
 
+    /**
+     * Uses to sort request messages
+     * @param message to be sort
+     */
     private void update(SelectionListMessage message) {
         switch (message.getType()) {
             case SWITCH:
@@ -1181,41 +1297,73 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles weapon switch request, setting game state on switch weapon
+     * @param weapons
+     */
     void handleWeaponSwitchRequest(List<Weapon> weapons) {
         this.weaponsSelection = weapons;
         this.state = SWITCH_WEAPON;
     }
 
+    /**
+     * Handles pickup request, setting game state on select pickup
+     * @param coordinates of the available squares where you can pickup
+     */
     void handlePickupActionRequest(List<Coordinates> coordinates) {
         this.coordinatesSelection = coordinates;
         this.state = SELECT_PICKUP;
     }
 
+    /**
+     * Handles movement request, setting game state on select movement
+     * @param coordinates of the available squares where you can move
+     */
     void handleMovementActionRequest(List<Coordinates> coordinates) {
         this.coordinatesSelection = coordinates;
         this.state = SELECT_MOVEMENT;
     }
 
+    /**
+     * Handles targets request for powerup, setting game state on select powerup targer
+     * @param targets available for that powerup
+     */
     void handlePowerupTargetRequest(List<GameCharacter> targets) {
         this.charactersSelection = targets;
         this.state = SELECT_POWERUP_TARGET;
     }
 
+    /**
+     * Handles targets request for position, setting game state on select powerup position
+     * @param coordinates of the squares available for that powerup
+     */
     void handlePowerupPositionRequest(List<Coordinates> coordinates) {
         this.coordinatesSelection = coordinates;
         this.state = SELECT_POWERUP_POSITION;
     }
 
+    /**
+     * Handles reload request, setting game state on recharge weapon
+     * @param weapons that can be reloaded
+     */
     void handleReloadRequest(List<Weapon> weapons) {
         this.weaponsSelection = new ArrayList<>(weapons);
         this.state = RECHARGE_WEAPON;
     }
 
+    /**
+     * Handles discard powerup to spawn request, setting game state on discard spawn
+     * @param powerups that can be discarded to spawn
+     */
     void handleDiscardPowerupRequest(List<Powerup> powerups) {
         this.powerupsSelection = powerups;
         this.state = DISCARD_SPAWN;
     }
 
+    /**
+     * Handles discard powerup to spawn request, setting game state on discard spawn
+     * @param powerups
+     */
     void handleUsePowerupRequest(List<Powerup> powerups) {
         this.powerupsSelection = powerups;
         if (powerups.get(0).getType() == PowerupType.TAGBACK_GRENADE) {
@@ -1225,27 +1373,47 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles weapon pickup request, setting game state on select weapon
+     * @param weapons List of the available weapons to pickup
+     */
     void handleWeaponPickupRequest(List<Weapon> weapons) {
         this.weaponsSelection = new ArrayList<>(weapons);
         this.state = SELECT_WEAPON;
     }
 
+    /**
+     * Handles action selection request, setting game state on select action
+     * @param actions List of the available actions
+     */
     void handleActionSelectionRequest(List<ActionType> actions) {
         this.actionsSelection = new ArrayList<>(actions);
         this.actionsSelection.add(ActionType.ENDTURN);
         this.state = SELECT_ACTION;
     }
 
+    /**
+     * Handles weapons use request, setting game state on use weapon
+     * @param weapons List of the available weapons to use
+     */
     void handleWeaponUseRequest(List<Weapon> weapons) {
         this.weaponsSelection = new ArrayList<>(weapons);
         this.state = USE_WEAPON;
     }
 
+    /**
+     * Handles effect use request, settin game state on use weapon
+     * @param effects List of the available effect to use
+     */
     void handleEffectRequest(List<WeaponEffectOrderType> effects) {
         this.effectsSelection = new ArrayList<>(effects);
         this.state = USE_EFFECT;
     }
 
+    /**
+     * Forward client choices for combo request, effects request, persistence request
+     * @param message client choice
+     */
     private void update(SingleSelectionMessage message) {
         switch (message.getType()) {
             case EFFECT_COMBO:
@@ -1268,14 +1436,24 @@ public abstract class View {
         }
     }
 
+    /**
+     * Sets game state on persitence selection
+     * @param character which has to answer to persitence request
+     */
     void handlePersistenceRequest(GameCharacter character) {
         this.state = PERSISTENCE_SELECTION;
     }
 
+    /**
+     * Sets game state on effect required selection
+     */
     void handleEffectRequireRequest() {
         this.state = EFFECT_REQUIRE_SELECTION;
     }
 
+    /**
+     * Handles effect selection based on effect type
+     */
     private void handleEffectSelections() {
         if (this.effectPossibility.getType() == EffectType.SELECT) {
             handleEffectSelectRequest();
@@ -1286,10 +1464,17 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles effect combo request, setting game state on effect combo selection
+     * @param effect of the combo
+     */
     void handleEffectComboRequest(WeaponEffectOrderType effect) {
         this.state = EFFECT_COMBO_SELECTION;
     }
 
+    /**
+     * Handles the effect which has the select of objects inside, setting game state based on the select
+     */
     void handleEffectSelectRequest() {
         if(!this.effectPossibility.getSquares().isEmpty()) {
             this.state = EFFECT_SELECT_SQUARE;
@@ -1300,36 +1485,68 @@ public abstract class View {
         }
     }
 
+    /**
+     * Handles move selection request, setting state to effect move selection
+     */
     void handleEffectMoveRequest() {
         this.state = EFFECT_MOVE_SELECTION;
     }
 
+    /**
+     * Handles target selection request, setting state to effect target selection
+     */
     void handleEffectTargetRequest() {
         this.state = EFFECT_TARGET_SELECTION;
     }
 
+    /**
+     * Handles effect multiple squares request, setting state to multiple squares selection
+     */
     void handleMultipleSquareRequest() {
         this.state = MULTIPLE_SQUARES_SELECTION;
     }
 
+    /**
+     * Requires a payment
+     */
     abstract void requirePayment();
 
+    /**
+     * Sets the list of the available characters
+     * @param characters list of the available ones
+     */
     void setPossibilityCharacters(List<GameCharacter> characters) {
         this.possibilitySelections.setCharacters(characters);
     }
 
+    /**
+     * Sets the list of the available squares
+     * @param squares List of the coordinates of the available squares
+     */
     void setPossibilitySquares(List<Coordinates> squares) {
         this.possibilitySelections.setSquares(squares);
     }
 
+    /**
+     * Sets the list of the available rooms
+     * @param rooms List of the available rooms color
+     */
     void setPossibilityRooms(List<RoomColor> rooms) {
         this.possibilitySelections.setRooms(rooms);
     }
 
+    /**
+     * List of the available cardinal points
+     * @param cardinal List of the available cardinal points
+     */
     void setPossibilityCardinal(List<CardinalPoint> cardinal) {
         this.possibilitySelections.setCardinalPoints(cardinal);
     }
 
+    /**
+     * Sets and effect selection as required
+     * @param isRequired true if it is, else false
+     */
     void setPossibilityRequire(boolean isRequired) {
         this.possibilitySelections.setRequire(isRequired);
         if(!isRequired) {
