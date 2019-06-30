@@ -1,6 +1,8 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.server.ServerAllSender;
+import it.polimi.se2019.server.ServerSingleSender;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,10 +34,9 @@ public class PowerupsControllerTest {
         this.board.movePlayer(this.player, this.board.getArena().getSquareByCoordinate(1, 0));
         this.board.movePlayer(p1, this.board.getArena().getSquareByCoordinate(2, 0));
         this.board.movePlayer(p2, this.board.getArena().getSquareByCoordinate(1, 1));
-        this.gameController = new GameController(this.board, null);
+        this.gameController = new GameController(this.board, new ServerSingleSender(null), new ServerAllSender(null));
         this.turnController = new TurnController(this.board, this.gameController, null);
         this.controller = new PowerupsController(this.board, this.gameController, this.turnController);
-        this.controller.setActivePlayer(this.player);
         List<GameCharacter> characters = new ArrayList<>();
         characters.add(p1.getCharacter());
         characters.add(p2.getCharacter());
@@ -51,28 +52,28 @@ public class PowerupsControllerTest {
         characters = new ArrayList<>();
         characters.add(p1.getCharacter());
         characters.add(p2.getCharacter());
-        this.controller.setActivePowerup(PowerupType.TARGETING_SCOPE);
+        this.controller.startEffect(this.player.getCharacter(), new Powerup(PowerupType.TARGETING_SCOPE, AmmoType.BLUE));
         assertEquals(characters, this.controller.avialableTargets());
-        this.controller.setActivePowerup(PowerupType.NEWTON);
+        this.controller.startEffect(this.player.getCharacter(), new Powerup(PowerupType.NEWTON, AmmoType.BLUE));
         assertEquals(characters, this.controller.avialableTargets());
     }
 
     //case newton ewst south
     @Test
     public void avialablePositionsTest() {
-        this.controller.setTarget(p1);
+        this.board.movePlayer(this.p1, this.board.getArena().getSquareByCoordinate(2,1));
         List<Coordinates> coordinates;
         coordinates = new ArrayList<>();
-        coordinates.add(new Coordinates(1,0));
-        coordinates.add(new Coordinates(2,1));
-        coordinates.add(new Coordinates(0,0));
-        this.controller.setActivePowerup(PowerupType.NEWTON);
+        coordinates.add(new Coordinates(1,1));
+        coordinates.add(new Coordinates(2,0));
+        coordinates.add(new Coordinates(3,1));
+        this.controller.startEffect(this.player.getCharacter(), new Powerup(PowerupType.NEWTON, AmmoType.BLUE), p1);
         assertTrue(assertCoordinates(coordinates, this.controller.avialablePositions()));
         coordinates = new ArrayList<>();
         for (Square square : this.board.getArena().getAllSquares()) {
             coordinates.add(new Coordinates(square.getX(), square.getY()));
         }
-        this.controller.setActivePowerup(PowerupType.TELEPORTER);
+        this.controller.startEffect(this.player.getCharacter(), new Powerup(PowerupType.TELEPORTER, AmmoType.BLUE));
         assertTrue(assertCoordinates(coordinates, this.controller.avialablePositions()));
     }
 

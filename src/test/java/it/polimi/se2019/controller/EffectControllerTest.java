@@ -1,6 +1,10 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.messages.turn.TurnMessage;
+import it.polimi.se2019.model.messages.turn.TurnMessageType;
+import it.polimi.se2019.server.ServerAllSender;
+import it.polimi.se2019.server.ServerSingleSender;
 import javafx.scene.effect.Effect;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,6 +13,8 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 import static it.polimi.se2019.model.WeaponEffectOrderType.*;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
@@ -20,6 +26,7 @@ public class EffectControllerTest {
     private Player p1;
     private Player p2;
     private EffectsController controller;
+    private GameController gameController;
 
     // For pack
     private List<GameCharacter> characters;
@@ -60,7 +67,8 @@ public class EffectControllerTest {
         this.player.addWeapon(new WeaponCard(Weapon.POWER_GLOVE));
         this.player.addWeapon(new WeaponCard(Weapon.SLEDGEHAMMER));
         this.player.addPowerup(new Powerup(PowerupType.NEWTON, AmmoType.BLUE));
-        this.controller = new EffectsController(this.board, null);
+        this.gameController = new GameController(this.board, new ServerSingleSender(null), new ServerAllSender(null));
+        this.controller = new EffectsController(this.board, this.gameController);
         this.controller.setActivePlayer(this.player);
         List<Weapon> weapons = new ArrayList<>();
         weapons.add(Weapon.MACHINE_GUN);
@@ -74,6 +82,35 @@ public class EffectControllerTest {
         weapons.add(Weapon.SHOCKWAVE);
         weapons.add(Weapon.POWER_GLOVE);
         assertEquals(weapons, this.controller.getAvailableWeapons());
+        this.gameController.update(null,
+                new TurnMessage(TurnMessageType.START, TurnType.FIRST_TURN, this.player.getCharacter()));
+    }
+
+    @Test
+    public void effectPossibiltyPackTest() {
+        this.weapon = Weapon.MACHINE_GUN;
+        this.controller.setWeapon(weapon);
+        this.controller.selectEffect(PRIMARY);
+        EffectPossibilityPack pack = this.controller.seeEffectPossibility(this.weapon.getPrimaryEffect().get(0));
+        assertEquals("1", pack.getTargetsAmount().get(0));
+        assertEquals("2", pack.getTargetsAmount().get(1));
+        assertEquals(EffectType.DAMAGE, pack.getType());
+        assertNotNull(pack.getDescription());
+        this.characters = new ArrayList<>(Arrays.asList(this.p1.getCharacter()));
+        this.squares = new ArrayList<>(Arrays.asList(new Coordinates(0,0)));
+        this.rooms = new ArrayList<>(Arrays.asList(RoomColor.RED));
+        this.cardinalPoints = new ArrayList<>(Arrays.asList(CardinalPoint.EAST));
+        pack = new EffectPossibilityPack(false, EffectType.DAMAGE);
+        pack.setCharacters(this.characters);
+        pack.setSquares(this.squares);
+        pack.setRooms(this.rooms);
+        pack.setCardinalPoints(this.cardinalPoints);
+        pack.setRequire(false);
+        assertEquals(this.characters, pack.getCharacters());
+        assertEquals(this.squares, pack.getSquares());
+        assertEquals(this.rooms, pack.getRooms());
+        assertEquals(this.cardinalPoints, pack.getCardinalPoints());
+        assertFalse(pack.isRequire());
     }
 
     @Test
@@ -93,12 +130,7 @@ public class EffectControllerTest {
         this.controller.setWeapon(Weapon.CYBERBLADE);
         availableEffects.add(SECONDARYONE);
         assertTrue(availableEffects.containsAll(this.controller.getAvailableEffects().keySet()));
-        this.weapon = Weapon.MACHINE_GUN;
-        this.controller.setWeapon(weapon);
-        this.controller.effectSelected(PRIMARY);
-        List<String> amount = this.controller.seeEffectPossibility(this.weapon.getPrimaryEffect().get(0)).getTargetsAmount();
-        assertEquals("1", amount.get(0));
-        assertEquals("2", amount.get(1));
+
         this.player.setPosition(this.board.getArena().getSquareByCoordinate(0,0));
         this.weapon = Weapon.CYBERBLADE;
         this.controller.setWeapon(weapon);
@@ -109,33 +141,35 @@ public class EffectControllerTest {
     public void damageCaseTest() {
         this.weapon = Weapon.ROCKET_LAUNCHER;
         this.controller.setWeapon(weapon);
-        this.controller.effectSelected(PRIMARY);
+        this.controller.selectEffect(PRIMARY);
         this.characters.add(this.p1.getCharacter());
         this.characters.add(this.p2.getCharacter());
-        assertEquals(this.characters, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(0)).getCharacters());
-        this.controller.setHitByCases(this.p1.getCharacter());
+        EffectPossibilityPack pack = this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(0));
+        assertEquals(this.characters, pack.getCharacters());
+        pack.setCharacters(new ArrayList<>(Arrays.asList(this.p1.getCharacter())));
+        this.controller.application(pack);
         this.controller.effectSelected(SECONDARYTWO);
         this.characters.remove(this.p2.getCharacter());
         assertEquals(this.characters, this.controller.seeEffectPossibility(weapon.getSecondaryEffectTwo().get(0)).getCharacters());
         this.characters = new ArrayList<>(Arrays.asList(p2.getCharacter()));
         this.weapon = Weapon.FURNACE;
         this.controller.setWeapon(weapon);
-        this.controller.effectSelected(PRIMARY);
+        this.controller.selectEffect(PRIMARY);
         this.controller.setCurrentEffect(this.weapon.getPrimaryEffect().get(0));
         this.controller.application(this.controller.seeEffectPossibility(this.weapon.getPrimaryEffect().get(0)));
         assertEquals(this.characters, this.controller.seeEffectPossibility(this.weapon.getPrimaryEffect().get(1)).getCharacters());
         this.weapon = Weapon.MACHINE_GUN;
         this.controller.setWeapon(weapon);
-        this.controller.effectSelected(PRIMARY);
+        this.controller.selectEffect(PRIMARY);
         this.controller.setCurrentEffect(this.weapon.getPrimaryEffect().get(0));
         this.controller.application(this.controller.seeEffectPossibility(this.weapon.getPrimaryEffect().get(0)));
-        this.controller.effectSelected(SECONDARYONE);
+        this.controller.selectEffect(SECONDARYONE);
         this.controller.setCurrentEffect(this.weapon.getSecondaryEffectOne().get(0));
-        EffectPossibilityPack pack = this.controller.seeEffectPossibility(this.weapon.getSecondaryEffectOne().get(0));
+        pack = this.controller.seeEffectPossibility(this.weapon.getSecondaryEffectOne().get(0));
         pack.setCharacters(new ArrayList<>(Arrays.asList(p1.getCharacter())));
         this.characters = new ArrayList<>(Arrays.asList(this.p2.getCharacter()));
         this.controller.application(pack);
-        this.controller.effectSelected(SECONDARYTWO);
+        this.controller.selectEffect(SECONDARYTWO);
         assertEquals(this.characters, this.controller.seeEffectPossibility(this.weapon.getSecondaryEffectTwo().get(0)).getCharacters());
 
     }
@@ -144,7 +178,7 @@ public class EffectControllerTest {
     public void damageExeptionCaseTest() {
         this.weapon = Weapon.HEATSEEKER;
         this.controller.setWeapon(weapon);
-        this.controller.effectSelected(PRIMARY);
+        this.controller.selectEffect(PRIMARY);
         this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(0));
     }
 
@@ -152,7 +186,7 @@ public class EffectControllerTest {
     public void markCaseTest() {
         this.weapon = Weapon.LOCK_RIFLE;
         this.controller.setWeapon(weapon);
-        this.controller.effectSelected(PRIMARY);
+        this.controller.selectEffect(PRIMARY);
         this.controller.setHitByCases(p1.getCharacter());
         this.characters.add(this.p1.getCharacter());
         assertEquals(this.characters, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(1)).getCharacters());
@@ -162,7 +196,7 @@ public class EffectControllerTest {
     public void moveSelfCaseTest() {
         this.weapon = Weapon.CYBERBLADE;
         this.controller.setWeapon(weapon);
-        this.controller.effectSelected(SECONDARYONE);
+        this.controller.selectEffect(SECONDARYONE);
         this.characters.add(this.player.getCharacter());
         this.squares.add(new Coordinates(2,0));
         this.squares.add(new Coordinates(1,1));
@@ -171,7 +205,7 @@ public class EffectControllerTest {
                 this.controller.seeEffectPossibility(weapon.getSecondaryEffectOne().get(0)).getSquares()));
         this.weapon = Weapon.POWER_GLOVE;
         this.controller.setWeapon(weapon);
-        this.controller.effectSelected(PRIMARY);
+        this.controller.selectEffect(PRIMARY);
         this.controller.setEnvironment(this.player.getPosition(), this.board.getArena().getSquareByCoordinate(1,1));
         this.squares = new ArrayList<>(Arrays.asList(new Coordinates(1,1)));
         assertEquals(this.characters, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(1)).getCharacters());
@@ -189,7 +223,7 @@ public class EffectControllerTest {
     public void moveHitByMainCaseTest() {
         this.weapon = Weapon.ROCKET_LAUNCHER;
         this.controller.setWeapon(weapon);
-        this.controller.effectSelected(PRIMARY);
+        this.controller.selectEffect(PRIMARY);
         this.controller.setHitByCases(p1.getCharacter());
         this.characters.add(this.p1.getCharacter());
         this.squares.add(new Coordinates(1,0));
@@ -204,7 +238,7 @@ public class EffectControllerTest {
     public void mooveOtherCaseTest() {
         this.weapon = Weapon.TRACTOR_BEAM;
         this.controller.setWeapon(weapon);
-        this.controller.effectSelected(ALTERNATIVE);
+        this.controller.selectEffect(ALTERNATIVE);
         this.characters.add(this.p1.getCharacter());
         this.characters.add(this.p2.getCharacter());
         this.squares.add(new Coordinates(1,0));
@@ -214,7 +248,7 @@ public class EffectControllerTest {
         this.player.setPosition(this.board.getArena().getSquareByCoordinate(1,1));
         this.weapon = Weapon.SLEDGEHAMMER;
         this.controller.setWeapon(weapon);
-        this.controller.effectSelected(ALTERNATIVE);
+        this.controller.selectEffect(ALTERNATIVE);
         this.p1.isDead();
         this.controller.setCurrentEffect(this.weapon.getAlternativeMode().get(0));
         this.controller.application(this.controller.seeEffectPossibility(this.weapon.getAlternativeMode().get(0)));
@@ -236,7 +270,7 @@ public class EffectControllerTest {
     public void selectSquareCaseTest() {
         this.weapon = Weapon.VORTEX_CANNON;
         this.controller.setWeapon(weapon);
-        this.controller.effectSelected(PRIMARY);
+        this.controller.selectEffect(PRIMARY);
         this.squares.add(new Coordinates(2,0));
         this.squares.add(new Coordinates(2,1));
         this.squares.add(new Coordinates(1,1));
@@ -251,7 +285,7 @@ public class EffectControllerTest {
     public void selectRoomCaseTest() {
         this.weapon = Weapon.FURNACE;
         this.controller.setWeapon(weapon);
-        this.controller.effectSelected(PRIMARY);
+        this.controller.selectEffect(PRIMARY);
         this.rooms.add(RoomColor.PURPLE);
         assertEquals(this.rooms, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(0)).getRooms());
     }
@@ -260,7 +294,7 @@ public class EffectControllerTest {
     public void selectCardinalCaseTest() {
         this.weapon = Weapon.RAILGUN;
         this.controller.setWeapon(weapon);
-        this.controller.effectSelected(PRIMARY);
+        this.controller.selectEffect(PRIMARY);
         this.cardinalPoints.add(CardinalPoint.EAST);
         this.cardinalPoints.add(CardinalPoint.SOUTH);
         assertEquals(this.cardinalPoints, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(0)).getCardinalPoints());
@@ -273,7 +307,7 @@ public class EffectControllerTest {
     public void selectMultipleSquareCaseTest() {
         this.weapon = Weapon.SHOCKWAVE;
         this.controller.setWeapon(weapon);
-        this.controller.effectSelected(PRIMARY);
+        this.controller.selectEffect(PRIMARY);
         List<GameCharacter> characters;
         characters = new ArrayList<>();
         characters.add(p1.getCharacter());

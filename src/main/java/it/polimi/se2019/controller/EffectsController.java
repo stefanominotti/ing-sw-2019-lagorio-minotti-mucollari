@@ -218,15 +218,15 @@ class EffectsController {
         return null;
     }
 
+    /**
+     * Handles player effect selection
+     * @param effectType choosen by the player
+     */
     void selectEffect(WeaponEffectOrderType effectType) {
         effectSelected(effectType);
         handleEffectsQueue();
     }
 
-    /**
-     * Handles player effect selection
-     * @param effectType choosen by the player
-     */
     void effectSelected(WeaponEffectOrderType effectType) {
         if (this.activePlayer.getWeaponCardByWeapon(this.weapon).isReady()) {
             this.board.unloadWeapon(this.activePlayer, this.activePlayer.getWeaponCardByWeapon(this.weapon));

@@ -1,6 +1,10 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.messages.selections.SelectionMessageType;
+import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
+import it.polimi.se2019.server.ServerAllSender;
+import it.polimi.se2019.server.ServerSingleSender;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,15 +22,15 @@ public class TurnControllerTest {
     Player p2;
     GameController gameController;
     TurnController controller;
+    EffectsController effectsController;
 
-
-    //canusenewton S-N
     @Before
     public void setUp() {
         this.board = new Board();
         this.board.createArena("4");
-        this.gameController = new GameController(this.board, null);
-        this.controller = new TurnController(this.board, this.gameController, new EffectsController(this.board, this.gameController));
+        this.gameController = new GameController(this.board, new ServerSingleSender(null), new ServerAllSender(null));
+        this.effectsController = new EffectsController(this.board, this.gameController);
+        this.controller = new TurnController(this.board, this.gameController,this.effectsController );
         this.board.addPlayer(GameCharacter.DOZER, "a", "123");
         this.board.addPlayer(GameCharacter.SPROG, "b", "234");
         this.board.addPlayer(GameCharacter.VIOLET, "c", "345");
@@ -40,6 +44,23 @@ public class TurnControllerTest {
         this.board.setSkulls(2);
         this.board.finalizeGameSetup();
         assertEquals(this.player, this.controller.getActivePlayer());
+        this.controller.startTurn(TurnType.NORMAL, this.player.getCharacter());
+    }
+
+    @Test
+    public void startTurnMovesLeftTest() {
+        this.controller.startTurn(TurnType.FIRST_TURN, this.player.getCharacter());
+        assertEquals(2, this.player.getPowerups().size());
+        assertEquals(2, this.controller.getMovesLeft());
+        this.controller.startTurn(TurnType.AFTER_DEATH, this.player.getCharacter());
+        assertEquals(3, this.player.getPowerups().size());
+        assertEquals(0, this.controller.getMovesLeft());
+        this.controller.startTurn(TurnType.NORMAL, this.player.getCharacter());
+        assertEquals(2, this.controller.getMovesLeft());
+        this.controller.startTurn(TurnType.FINAL_FRENZY_FIRST, this.player.getCharacter());
+        assertEquals(2, this.controller.getMovesLeft());
+        this.controller.startTurn(TurnType.FINAL_FRENZY_AFTER, this.player.getCharacter());
+        assertEquals(1, this.controller.getMovesLeft());
     }
 
     @Test
@@ -51,6 +72,26 @@ public class TurnControllerTest {
         assertTrue(this.player.getPowerups().isEmpty());
         assertEquals(color, this.player.getPosition().getRoom().getColor());
 
+    }
+
+    @Test
+    public void pickupSwitchWeaponTest() {
+        /*this.board.movePlayer(this.player, this.board.getArena().getSquareByCoordinate(2,0));
+        this.board.giveWeapon(this.player, this.player.getPosition().getWeaponsStore().get(0));
+        this.board.giveWeapon(this.player, this.player.getPosition().getWeaponsStore().get(0));
+        WeaponCard weapon = this.player.getPosition().getWeaponsStore().get(0);
+        this.controller.update(null,
+                new SingleSelectionMessage(SelectionMessageType.PICKUP_WEAPON, this.player.getCharacter(), weapon.getWeaponType()));
+        assertEquals(weapon, this.turnController.getWeaponToGet());
+        this.board.giveWeapon(this.player, weapon);
+        weapon = new WeaponCard(Weapon.MACHINE_GUN);
+        this.board.getArena().getSquareByCoordinate(2,0).addWeapon(weapon);
+        this.controller.update(null,
+                new SingleSelectionMessage(SelectionMessageType.PICKUP_WEAPON, this.player.getCharacter(), weapon));
+        assertEquals(weapon, this.turnController.getWeaponToGet());
+        this.controller.update(null,
+                new SingleSelectionMessage(SelectionMessageType.SWITCH, this.player.getCharacter(), weapon.getWeaponType()));
+        assertEquals(weapon, this.turnController.getWeaponToGet());*/
     }
 
     @Test
@@ -103,6 +144,19 @@ public class TurnControllerTest {
         coordinates.add(new Coordinates(2,0));
         coordinates.add(new Coordinates(2,1));
         assertTrue(assertCoordinates(coordinates, this.controller.getMoveReloadShootMovements()));
+    }
+
+    @Test
+    public void calculateShootActionFrenzyTest() {
+        this.controller.setFinalFrenzy(true);
+        this.controller.handleAction(ActionType.SHOT);
+        assertTrue(this.controller.getMoveShoot());
+    }
+
+    @Test
+    public void handleEndActionsTest() {
+        this.controller.handleEndAction();
+        assertEquals(TurnState.SELECTACTION, this.controller.getState());
     }
 
     @Test
@@ -182,7 +236,7 @@ public class TurnControllerTest {
     public void cancelTest() {
         this.controller.setMovesLeft(1);
         this.controller.setMoveShoot(true);
-        this.controller.cancel();
+        this.controller.cancelAction();
         assertEquals(2, this.controller.getMovesLeft());
     }
 

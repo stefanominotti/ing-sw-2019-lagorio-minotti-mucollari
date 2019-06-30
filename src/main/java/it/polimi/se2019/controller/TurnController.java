@@ -55,6 +55,22 @@ class TurnController {
         this.weaponToGet = weapon;
     }
 
+    WeaponCard getWeaponToGet() {
+        return this.weaponToGet;
+    }
+
+    boolean getMoveShoot() {
+        return this.moveShoot;
+    }
+
+    TurnState getState() {
+        return this.state;
+    }
+
+    void setFinalFrenzy(boolean finalFrenzy) {
+        this.finalFrenzy = finalFrenzy;
+    }
+
     void setMovesLeft(int moves) {
         this.movesLeft = moves;
     }
@@ -289,12 +305,7 @@ class TurnController {
     /**
      * Aborts player selected action
      */
-    private void cancelAction() {
-        cancel();
-        sendActions();
-    }
-
-    void cancel() {
+    void cancelAction() {
         if ((!this.finalFrenzy && this.movesLeft < 2) ||
                 (this.finalFrenzy && !this.beforeFirstPlayer && this.movesLeft < 1) ||
                 (this.finalFrenzy && this.beforeFirstPlayer && this.movesLeft < 2)) {
@@ -310,6 +321,7 @@ class TurnController {
                 this.activePlayer.setPosition(this.originalPosition);
             }
         }
+        sendActions();
     }
 
     /**
@@ -748,6 +760,7 @@ class TurnController {
      */
     void useWeapon(Weapon weapon) {
         this.effectsController.setWeapon(weapon);
+        this.effectsController.setActivePlayer(this.activePlayer);
         this.controller.send(new SelectionListMessage<>(SelectionMessageType.EFFECT,
                 this.activePlayer.getCharacter(),
                 new ArrayList<>(this.effectsController.getAvailableEffects().keySet())));

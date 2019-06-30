@@ -42,10 +42,10 @@ class PowerupsController {
      * @param target of the powerup effect
      */
     void startEffect(GameCharacter player, Powerup powerup, Player target) {
-        setActivePlayer(this.board.getPlayerByCharacter(player));
+        this.activePlayer = this.board.getPlayerByCharacter(player);
         this.board.removePowerup(this.board.getPlayerByCharacter(player), powerup);
-        setTarget(target);
-        setActivePowerup(powerup.getType());
+        this.target = target;
+        this.activePowerup = powerup.getType();
         switch (powerup.getType()) {
             case TELEPORTER:
                 this.target = this.activePlayer;
@@ -170,17 +170,4 @@ class PowerupsController {
         this.board.attackPlayer(this.activePlayer.getCharacter(), this.target.getCharacter(), 1, EffectType.MARK);
         this.controller.checkEnemyTurnPowerup();
     }
-
-    void setActivePlayer(Player player) {
-        this.activePlayer = player;
-    }
-
-    void setActivePowerup(PowerupType type) {
-        this.activePowerup = type;
-    }
-
-    void setTarget(Player player) {
-        this.target = player;
-    }
-
 }

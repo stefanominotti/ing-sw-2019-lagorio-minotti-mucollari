@@ -21,6 +21,8 @@ import it.polimi.se2019.model.messages.timer.TimerMessageType;
 import it.polimi.se2019.model.messages.timer.TimerType;
 import it.polimi.se2019.model.messages.turn.TurnContinuationMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
+import it.polimi.se2019.server.ServerAllSender;
+import it.polimi.se2019.server.ServerSingleSender;
 import it.polimi.se2019.view.VirtualView;
 
 import java.util.*;
@@ -33,7 +35,6 @@ public class GameController implements Observer {
     private Board model;
     private TurnController turnController;
     private Map<GameCharacter, PowerupsController> powerupsControllers;
-    private VirtualView view;
     private boolean gameStarted;
     private EffectsController effectsController;
     private Timer powerupRequestsTimer;
@@ -43,13 +44,17 @@ public class GameController implements Observer {
     private List<Powerup> powerupsUsed;
     private Map<AmmoType, Integer> ammoUsed;
 
+    private ServerSingleSender singleSender;
+    private ServerAllSender allSender;
+
     /**
      * Class constructor, it builds a game controller
      *
      * @param board the board to handle
-     * @param view  the view used to send message to clients
+     * @param singleSender  used to send message to a client
+     * @param allSender  used to send message to all clients
      */
-    public GameController(Board board, VirtualView view) {
+    public GameController(Board board, ServerSingleSender singleSender, ServerAllSender allSender) {
         this.model = board;
         this.effectsController = new EffectsController(this.model, this);
         this.turnController = new TurnController(this.model, this, this.effectsController);
@@ -57,21 +62,14 @@ public class GameController implements Observer {
         for (GameCharacter c : GameCharacter.values()) {
             this.powerupsControllers.put(c, new PowerupsController(this.model, this, this.turnController));
         }
-        this.view = view;
         this.powerupRequestsTimer = new Timer();
         this.powerupsUsed = new ArrayList<>();
+        this.singleSender = singleSender;
+        this.allSender = allSender;
     }
-    
+
     TurnController getTurnController() {
         return this.turnController;
-    }
-
-    void setPowerupRequests(int i) {
-        this.powerupRequests = i;
-    }
-
-    int getPowerupRequests() {
-        return (this.powerupRequests);
     }
 
     void setPowerupsUsed(List<Powerup> powerups) {
@@ -554,7 +552,7 @@ public class GameController implements Observer {
      * @param message to be sent
      */
     void send(SingleReceiverMessage message) {
-        this.view.send(message);
+        this.singleSender.send(message);
     }
 
     /**
@@ -563,7 +561,7 @@ public class GameController implements Observer {
      * @param message to be sent
      */
     void sendAll(Message message) {
-        this.view.sendAll(message);
+        this.allSender.send(message);
     }
 
     /**
