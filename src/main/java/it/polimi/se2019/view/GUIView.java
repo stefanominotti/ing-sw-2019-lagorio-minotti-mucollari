@@ -1,5 +1,6 @@
 package it.polimi.se2019.view;
 
+import it.polimi.se2019.controller.ActionType;
 import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.messages.board.ArenaMessage;
 import it.polimi.se2019.model.messages.board.SkullsMessage;
@@ -7,6 +8,8 @@ import it.polimi.se2019.model.messages.client.CharacterMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessageType;
 import it.polimi.se2019.model.messages.powerups.PowerupMessageType;
+import it.polimi.se2019.model.messages.selections.SelectionMessageType;
+import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 import javafx.application.Platform;
@@ -56,18 +59,20 @@ public class GUIView extends View {
      * @param scene to bne shown
      */
     private void setScene(SceneType scene) {
-        this.controller = null;
-        this.guiApp.setScene(scene);
-        synchronized (this) {
-            while(this.controller == null) {
-                try {
-                    this.wait();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+        if (this.currentScene != scene) {
+            this.controller = null;
+            this.guiApp.setScene(scene);
+            synchronized (this) {
+                while(this.controller == null) {
+                    try {
+                        this.wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
                 }
             }
+            this.currentScene = scene;
         }
-        this.currentScene = scene;
     }
 
     /**
@@ -305,8 +310,8 @@ public class GUIView extends View {
                        Map<Coordinates, Map<CardinalPoint, Boolean>> nearbyAccessibility, int skulls, int arena) {
         super.handleGameSet(colors, spawns, nearbyAccessibility, skulls, arena);
         setScene(SceneType.BOARD);
-        ((BoardController) this.controller).setArena();
-        ((BoardController) this.controller).setPlayerBoard(getCharacter());
+        setArena();
+        setPlayerBoard(getCharacter());
     }
 
     /**
@@ -316,7 +321,7 @@ public class GUIView extends View {
     @Override
     void handleStoresRefilled(Map<Coordinates, Weapon> weapons) {
         super.handleStoresRefilled(weapons);
-        ((BoardController) this.controller).updateStores();
+        updateStores();
     }
 
     /**
@@ -326,7 +331,7 @@ public class GUIView extends View {
     @Override
     void handleTilesRefilled(Map<Coordinates, AmmoTile> tiles) {
         super.handleTilesRefilled(tiles);
-        ((BoardController) this.controller).updateTiles();
+        updateTiles();
     }
 
     /**
@@ -341,7 +346,7 @@ public class GUIView extends View {
             addMessage(character + " spawned");
         }
         showMessage();
-        ((BoardController) this.controller).updatePlayersPositions();
+        updatePlayersPositions();
     }
 
     /**
@@ -356,7 +361,7 @@ public class GUIView extends View {
             addMessage(character + " moved");
         }
         showMessage();
-        ((BoardController) this.controller).updatePlayersPositions();
+        updatePlayersPositions();
     }
 
     /**
@@ -401,10 +406,10 @@ public class GUIView extends View {
 
         addMessage(text.toString());
         showMessage();
-        if (((BoardController) this.controller).getActiveBoard() == character && attackType == EffectType.DAMAGE) {
-            ((BoardController) this.controller).updateBoardDamages();
-        } else if (((BoardController) this.controller).getActiveBoard() == character && attackType == EffectType.MARK) {
-            ((BoardController) this.controller).updateBoardMarks();
+        if (attackType == EffectType.DAMAGE) {
+            updateBoardDamages(character);
+        } else if (attackType == EffectType.MARK) {
+            updateBoardMarks(character);
         }
 
         if (getState() == MULTIPLE_POWERUPS_SELECTION && attacker != getCharacter()) {
@@ -428,10 +433,8 @@ public class GUIView extends View {
             addMessage(attacker + "'s marks on " + player + " converted");
         }
         showMessage();
-        if (((BoardController) this.controller).getActiveBoard() == player) {
-            ((BoardController) this.controller).updateBoardMarks();
-            ((BoardController) this.controller).updateBoardDamages();
-        }
+        updateBoardMarks(player);
+        updateBoardDamages(player);
     }
 
     /**
@@ -446,11 +449,9 @@ public class GUIView extends View {
             addMessage(character + " picked up an ammo tile");
         }
         showMessage();
-        ((BoardController) this.controller).updateTiles();
-        if (((BoardController) this.controller).getActiveBoard() == character) {
-            ((BoardController) this.controller).updateAmmo();
-            ((BoardController) this.controller).updatePowerups();
-        }
+        updateTiles();
+        updateAmmo(character);
+        updatePowerups(character);
     }
 
     /**
@@ -470,9 +471,7 @@ public class GUIView extends View {
             }
             showMessage();
         }
-        if (((BoardController) this.controller).getActiveBoard() == character) {
-            ((BoardController) this.controller).updateAmmo();
-        }
+        updateAmmo(character);
     }
 
     /**
@@ -487,9 +486,7 @@ public class GUIView extends View {
             addMessage(character + " has drawn a powerup");
         }
         showMessage();
-        if (((BoardController) this.controller).getActiveBoard() == character) {
-            ((BoardController) this.controller).updatePowerups();
-        }
+        updatePowerups(character);
     }
 
     /**
@@ -505,9 +502,7 @@ public class GUIView extends View {
             addMessage(character + " has discarded " + powerup.getType() + " " + powerup.getColor());
         }
         showMessage();
-        if (((BoardController) this.controller).getActiveBoard() == character) {
-            ((BoardController) this.controller).updatePowerups();
-        }
+        updatePowerups(character);
     }
 
     /**
@@ -522,10 +517,8 @@ public class GUIView extends View {
             addMessage(character + " got " + weapon);
         }
         showMessage();
-        ((BoardController) this.controller).updateStores();
-        if (((BoardController) this.controller).getActiveBoard() == character) {
-            ((BoardController) this.controller).updateWeapons();
-        }
+        updateStores();
+        updateWeapons(character);
     }
 
     /**
@@ -541,10 +534,8 @@ public class GUIView extends View {
             addMessage(character + " dropped a " + oldWeapon + " to get a " + newWeapon);
         }
         showMessage();
-        ((BoardController) this.controller).updateStores();
-        if (((BoardController) this.controller).getActiveBoard() == character) {
-            ((BoardController) this.controller).updateWeapons();
-        }
+        updateStores();
+        updateWeapons(character);
     }
 
     /**
@@ -559,9 +550,7 @@ public class GUIView extends View {
             addMessage(character + " realoaded " + weapon);
         }
         showMessage();
-        if (((BoardController) this.controller).getActiveBoard() == character) {
-            ((BoardController) this.controller).updateWeapons();
-        }
+        updateWeapons(character);
     }
 
     /**
@@ -576,9 +565,7 @@ public class GUIView extends View {
             addMessage(character + " used " + weapon);
         }
         showMessage();
-        if (((BoardController) this.controller).getActiveBoard() == character) {
-            ((BoardController) this.controller).updateWeapons();
-        }
+        updateWeapons(character);
     }
 
     /**
@@ -588,6 +575,7 @@ public class GUIView extends View {
      */
     @Override
     void handleStartTurn(TurnMessage message, GameCharacter character) {
+        resetSelections();
         if (character != getCharacter()) {
             this.currentStatus = "Waiting for other players...";
             this.currentAction = getBoardByCharacter(character).getNickname() + " (" + character + ") is playing";
@@ -613,6 +601,76 @@ public class GUIView extends View {
             this.currentStatus = "Turn finished";
             this.currentAction = null;
         }
+        setBanner();
+    }
+
+    /**
+     * Shows available actions choice request
+     * @param actions List of the avilable actions
+     */
+    @Override
+    void handleActionSelectionRequest(List<ActionType> actions) {
+        super.handleActionSelectionRequest(actions);
+        showBoard();
+        this.currentStatus = "What do you want to do?";
+        this.currentAction = "Select an action from the list above";
+        setBanner();
+    }
+
+    void setActions() {
+        if (this.currentScene == SceneType.BOARD) {
+            ((BoardController) this.controller).setActions(getActionsSelection());
+        }
+    }
+
+    void handleActionInput(ActionType action) {
+        getClient().send(new SingleSelectionMessage(SelectionMessageType.ACTION, getCharacter(), action));
+        resetSelections();
+        setActions();
+    }
+
+    /**
+     * Shows powerups to discard for spawn
+     * @param powerups List of the available powerups to discard for spawn
+     */
+    @Override
+    void handleDiscardPowerupRequest(List<Powerup> powerups) {
+        super.handleDiscardPowerupRequest(powerups);
+        showBoard();
+        ((BoardController) this.controller).disableBoardChange();
+        this.currentStatus = "Where do you want to spawn?";
+        this.currentAction = "Select a powerup to discard";
+        setBanner();
+        setPowerups();
+    }
+
+    void setPowerups() {
+        if (this.currentScene == SceneType.BOARD) {
+            ((BoardController) this.controller).setPowerups(getPowerupsSelection());
+        }
+    }
+
+    void handlePowerupInput(PowerupType type, AmmoType color) {
+        if (getState() == DISCARD_SPAWN) {
+            getClient().send(new SingleSelectionMessage(SelectionMessageType.DISCARD_POWERUP, getCharacter(),
+                    new Powerup(type, color)));
+        }
+        resetSelections();
+        setPowerups();
+        ((BoardController) this.controller).enableBoardChange();
+    }
+
+    /**
+     * Shows squares choice request message for move action
+     * @param coordinates List of the available coordinates for move action
+     */
+    @Override
+    void handleMovementActionRequest(List<Coordinates> coordinates) {
+        super.handleMovementActionRequest(coordinates);
+        addActionsSelection(ActionType.CANCEL);
+        setActions();
+        this.currentStatus = "Where do you want to move";
+        this.currentAction = "Select one of the available squares or cancel";
         setBanner();
     }
 
@@ -665,17 +723,79 @@ public class GUIView extends View {
 
     void showBoard() {
         setScene(SceneType.BOARD);
-        ((BoardController) this.controller).setArena();
-        ((BoardController) this.controller).setPlayerBoard(getCharacter());
-        ((BoardController) this.controller).updateTiles();
-        ((BoardController) this.controller).updatePlayersPositions();
-        ((BoardController) this.controller).updateStores();
+        setArena();
+        setPlayerBoard(getCharacter());
+        updateTiles();
+        updatePlayersPositions();
+        updateStores();
         showMessage();
         setBanner();
+        setActions();
+        setPowerups();
     }
 
     void showWeaponInfo(Weapon weapon) {
         setScene(SceneType.WEAPON_INFO);
         ((CardDetailController) this.controller).setWeapon(weapon);
+    }
+
+    void setArena() {
+        if (this.currentScene == SceneType.BOARD) {
+            ((BoardController) this.controller).setArena();
+        }
+    }
+
+    void setPlayerBoard(GameCharacter character) {
+        if (this.currentScene == SceneType.BOARD) {
+            ((BoardController) this.controller).setPlayerBoard(character);
+        }
+    }
+
+    void updateStores() {
+        if (this.currentScene == SceneType.BOARD) {
+            ((BoardController) this.controller).updateStores();
+        }
+    }
+
+    void updateTiles() {
+        if (this.currentScene == SceneType.BOARD) {
+            ((BoardController) this.controller).updateTiles();
+        }
+    }
+
+    void updatePlayersPositions() {
+        if (this.currentScene == SceneType.BOARD) {
+            ((BoardController) this.controller).updatePlayersPositions();
+        }
+    }
+
+    void updateBoardDamages(GameCharacter character) {
+        if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {
+            ((BoardController) this.controller).updateBoardDamages();
+        }
+    }
+
+    void updateBoardMarks(GameCharacter character) {
+        if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {
+            ((BoardController) this.controller).updateBoardMarks();
+        }
+    }
+
+    void updateAmmo(GameCharacter character) {
+        if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {
+            ((BoardController) this.controller).updateAmmo();
+        }
+    }
+
+    void updatePowerups(GameCharacter character) {
+        if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {
+            ((BoardController) this.controller).updatePowerups();
+        }
+    }
+
+    void updateWeapons(GameCharacter character) {
+        if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {
+            ((BoardController) this.controller).updateWeapons();
+        }
     }
 }

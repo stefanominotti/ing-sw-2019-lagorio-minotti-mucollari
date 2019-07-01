@@ -91,4 +91,43 @@ public class BoardViewTest {
         assertEquals(squares, alternativeBoard.getSquares());
         assertEquals(killshotTrack, alternativeBoard.getKillshotTrack());
     }
+
+    @Test
+    public void toStringTest() {
+        assertEquals("             0                      1                      2                      3           \n" +
+                        "  │‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾│‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾│                                              \n" +
+                        "  │                      │                     │                                              \n" +
+                        "  │                      │                     │                                              \n" +
+                        "  │        SPAWN         │        SPAWN        │                                              \n" +
+                        "0 │       YELLOW         │       YELLOW        │                                              \n" +
+                        "  │                      │                     │                                              \n" +
+                        "  │                      │                     │                                              \n" +
+                        "  │                      │                     │                                              \n" +
+                        "  │                      │                     │                                              \n" +
+                        "  │______________________│_____________________│                                              \n" +
+                        "                                                                                                                     \n" +
+                        "                                                                                                                     \n" +
+                        "                                                                                                                     \n" +
+                        "                                                                                                                     \n" +
+                        "1                                                                                                                    \n" +
+                        "                                                                                                                     \n" +
+                        "                                                                                                                     \n" +
+                        "                                                                                                                     \n" +
+                        "                                                                                                                     \n" +
+                        "                                                                                                                     \n" +
+                        "                                                                                              \n" +
+                        "                                                                                              \n" +
+                        "                                                                                              \n" +
+                        "                                                                                              \n" +
+                        "2                                                                                             \n" +
+                        "                                                                                              \n" +
+                        "                                                                                              \n" +
+                        "                                                                                              \n" +
+                        "                                                                                              \n" +
+                        "                                                                                              \n",
+                this.board.arenaToString());
+        assertEquals("Skulls left: 3\n" +
+                        "Kill points: _ _ | _ _ | _ _ ",
+                this.board.killshotTrackToString());
+    }
 }

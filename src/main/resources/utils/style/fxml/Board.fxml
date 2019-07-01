@@ -24,10 +24,7 @@
                <children>
                   <Pane fx:id="arenaContainer" VBox.vgrow="ALWAYS">
                      <children>
-                        <ImageView fx:id="arenaImage" fitHeight="678.0" fitWidth="985.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../arenas/img/arena_3.png" />
-                           </image></ImageView>
+                        <ImageView fx:id="arenaImage" fitHeight="678.0" fitWidth="985.0" pickOnBounds="true" preserveRatio="true" />
                         <GridPane fx:id="blueWeaponsGrid" layoutX="477.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="130.0" prefWidth="288.0">
                           <columnConstraints>
                               <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="740.0" minWidth="10.0" prefWidth="740.0" />
@@ -1321,7 +1318,7 @@
                         <Insets top="20.0" />
                      </VBox.margin>
                   </ImageView>
-                  <GridPane alignment="CENTER" prefHeight="143.0" prefWidth="377.0" styleClass="backgroud-dark-tiny">
+                  <GridPane fx:id="actionsPane" alignment="CENTER" prefHeight="143.0" prefWidth="377.0" styleClass="backgroud-dark-tiny">
                     <columnConstraints>
                       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -1332,32 +1329,32 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Button fx:id="ENDTURN" mnemonicParsing="false" prefHeight="35.0" prefWidth="130.0" styleClass="button-std" text="End Turn" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Button fx:id="endturn" disable="true" mnemonicParsing="false" prefHeight="35.0" prefWidth="130.0" styleClass="button-std" text="End Turn" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Button>
-                        <Button fx:id="MOVE" mnemonicParsing="false" prefHeight="35.0" prefWidth="130.0" styleClass="button-active" text="Move" textFill="WHITE">
+                        <Button fx:id="move" disable="true" mnemonicParsing="false" prefHeight="35.0" prefWidth="130.0" styleClass="button-active" text="Move" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Button>
-                        <Button fx:id="PICKUP" mnemonicParsing="false" prefHeight="35.0" prefWidth="130.0" styleClass="button-active" text="Move &amp; Pick up" textFill="WHITE" GridPane.columnIndex="1">
+                        <Button fx:id="pickup" disable="true" mnemonicParsing="false" prefHeight="35.0" prefWidth="130.0" styleClass="button-active" text="Move &amp; Pick up" textFill="WHITE" GridPane.columnIndex="1">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Button>
-                        <Button fx:id="SHOOT" mnemonicParsing="false" prefHeight="35.0" prefWidth="130.0" styleClass="button-active" text="Shoot" textFill="WHITE" GridPane.rowIndex="1">
+                        <Button fx:id="shoot" disable="true" mnemonicParsing="false" prefHeight="35.0" prefWidth="130.0" styleClass="button-active" text="Shoot" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Button>
-                        <Button fx:id="RELOAD" mnemonicParsing="false" prefHeight="35.0" prefWidth="130.0" styleClass="button-active" text="Reload" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Button fx:id="reload" disable="true" mnemonicParsing="false" prefHeight="35.0" prefWidth="130.0" styleClass="button-active" text="Reload" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Button>
-                        <Button fx:id="POWERUP" mnemonicParsing="false" prefHeight="35.0" prefWidth="130.0" styleClass="button-active" text="Use a Powerup" textFill="WHITE" GridPane.rowIndex="2">
+                        <Button fx:id="powerup" disable="true" mnemonicParsing="false" prefHeight="35.0" prefWidth="130.0" styleClass="button-active" text="Use a Powerup" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -1455,12 +1452,12 @@
                                     </Label>
                                  </children>
                               </VBox>
-                              <ImageView fx:id="weapon1Image" fitHeight="171.0" fitWidth="103.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" />
-                              <ImageView fx:id="weapon2Image" fitHeight="171.0" fitWidth="103.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" />
-                              <ImageView fx:id="weapon3Image" fitHeight="171.0" fitWidth="103.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" />
-                              <ImageView fx:id="powerup1Image" fitHeight="171.0" fitWidth="103.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <ImageView fx:id="powerup2Image" fitHeight="171.0" fitWidth="103.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                              <ImageView fx:id="powerup3Image" fitHeight="171.0" fitWidth="103.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                              <ImageView fitHeight="171.0" fitWidth="103.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" />
+                              <ImageView fitHeight="171.0" fitWidth="103.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" />
+                              <ImageView fitHeight="171.0" fitWidth="103.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" />
+                              <ImageView fitHeight="171.0" fitWidth="103.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <ImageView fitHeight="171.0" fitWidth="103.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                              <ImageView fitHeight="171.0" fitWidth="103.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                               <ImageView fx:id="weapon1StatusImage" fitHeight="27.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
                                  <GridPane.margin>
                                     <Insets top="3.0" />

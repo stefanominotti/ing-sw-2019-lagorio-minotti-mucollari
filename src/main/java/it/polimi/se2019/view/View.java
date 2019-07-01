@@ -169,6 +169,10 @@ public abstract class View {
         return new ArrayList<>(this.actionsSelection);
     }
 
+    void addActionsSelection(ActionType action) {
+        this.actionsSelection.add(action);
+    }
+
     /**
      * Gets selected actions
      * @return Map with ammo type and its quantity selected

@@ -1,10 +1,12 @@
 package it.polimi.se2019.view;
 
+import it.polimi.se2019.controller.ActionType;
 import it.polimi.se2019.model.*;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,6 +16,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,6 +39,7 @@ public class BoardController extends AbstractSceneController {
 
     private GameCharacter activeBoard;
     private Pane arenaPane;
+    private List<ImageView> players;
 
     @FXML
     private GridPane skullsGrid;
@@ -93,22 +97,42 @@ public class BoardController extends AbstractSceneController {
     private Label currentStatusLabel;
     @FXML
     private Label currentActionLabel;
+    @FXML
+    private GridPane actionsPane;
 
     private EventHandler<MouseEvent> setPlayerBoardHandler;
     private EventHandler<MouseEvent> weaponInfoHandler;
+    private EventHandler<MouseEvent> actionSelectionHandler;
+    private EventHandler<MouseEvent> powerupSelectionHandler;
 
     public BoardController() {
         this.setPlayerBoardHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                setPlayerBoard(GameCharacter.valueOf(((ImageView)event.getSource()).getId().toUpperCase()));
+                setPlayerBoard(GameCharacter.valueOf(((ImageView) event.getSource()).getId().toUpperCase()));
             }
         };
         this.weaponInfoHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                Weapon weapon = Weapon.valueOf(((ImageView)event.getSource()).getId().toUpperCase());
+                Weapon weapon = Weapon.valueOf(((ImageView) event.getSource()).getId().toUpperCase());
                 new Thread(() -> getView().showWeaponInfo(weapon)).start();
+            }
+        };
+        this.actionSelectionHandler = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                ActionType action = ActionType.valueOf(((Button) event.getSource()).getId().toUpperCase());
+                getView().handleActionInput(action);
+            }
+        };
+        this.powerupSelectionHandler = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                PowerupType type =
+                        PowerupType.valueOf(((ImageView) event.getSource()).getId().split("_")[1].toUpperCase());
+                AmmoType color = AmmoType.valueOf(((ImageView) event.getSource()).getId().split("_")[2].toUpperCase());
+                getView().handlePowerupInput(type, color);
             }
         };
     }
@@ -120,6 +144,23 @@ public class BoardController extends AbstractSceneController {
 
     GameCharacter getActiveBoard() {
         return this.activeBoard;
+    }
+
+    void disableBoardChange() {
+        setPlayerBoard(getView().getCharacter());
+        for (ImageView p : this.players) {
+            Platform.runLater(() ->
+                    p.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.setPlayerBoardHandler)
+            );
+        }
+    }
+
+    void enableBoardChange() {
+        for (ImageView p : this.players) {
+            Platform.runLater(() ->
+                p.setOnMousePressed(this.setPlayerBoardHandler)
+            );
+        }
     }
 
     void setArena() {
@@ -421,26 +462,31 @@ public class BoardController extends AbstractSceneController {
             PlayerBoard board = getView().getBoardByCharacter(this.activeBoard);
             while (i < board.getPowerupsNumber() + 6) {
                 ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
-                Platform.runLater(() ->
-                    img.setImage(new Image(POWERUPS_PATH + "powerup_back.png"))
-                );
+                Platform.runLater(() -> {
+                    img.setImage(new Image(POWERUPS_PATH + "powerup_back.png"));
+                    img.setId(null);
+                });
                 i++;
             }
         } else {
             for (Powerup p : getView().getSelfPlayerBoard().getPowerups()) {
                 ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
-                Platform.runLater(() ->
-                    img.setImage(new Image(POWERUPS_PATH + p.getType().toString().toLowerCase() +
-                            p.getColor().toString().toLowerCase() + ".png"))
-                );
+                int index = i - 5;
+                Platform.runLater(() -> {
+                    img.setImage(new Image(POWERUPS_PATH + p.getType().toString().toLowerCase() + "_" +
+                            p.getColor().toString().toLowerCase() + ".png"));
+                    img.setId(index + "_" + p.getType().toString().toLowerCase() + "_" +
+                            p.getColor().toString().toLowerCase());
+                });
                 i++;
             }
         }
         while (i < 9) {
             ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
-            Platform.runLater(() ->
-                img.setImage(null)
-            );
+            Platform.runLater(() -> {
+                img.setImage(null);
+                img.setId(null);
+            });
             i++;
         }
     }
@@ -476,6 +522,7 @@ public class BoardController extends AbstractSceneController {
     }
 
     void updatePlayersPositions() {
+        this.players = new ArrayList<>();
         for (SquareView s : getView().getBoard().getSquares()) {
             GridPane squarePane = getSquarePaneByCoordinates(s.getX(), s.getY());
             if (s.getActivePlayers().isEmpty()) {
@@ -492,6 +539,7 @@ public class BoardController extends AbstractSceneController {
             int i = 0;
             for (GameCharacter c : s.getActivePlayers()) {
                 ImageView img = (ImageView) squarePane.getChildren().get(i);
+                this.players.add(img);
                 Platform.runLater(() -> {
                     img.setImage(new Image(CHARACTERS_PATH + c.toString().toLowerCase() + ".png"));
                     img.setId(c.toString().toLowerCase());
@@ -513,6 +561,54 @@ public class BoardController extends AbstractSceneController {
         Platform.runLater(() -> {
             this.currentStatusLabel.setText(status);
             this.currentActionLabel.setText(action);
+        });
+    }
+
+    void setActions(List<ActionType> actions) {
+        Button b = (Button) this.actionsPane.getChildren().get(0);
+        Platform.runLater(() -> {
+            if (actions.contains(ActionType.CANCEL)) {
+                b.setDisable(false);
+                b.setText("Cancel");
+                b.setOnMousePressed(this.actionSelectionHandler);
+                b.setId("cancel");
+            } else {
+                b.setDisable(false);
+                b.setText("End Turn");
+                b.setOnMousePressed(this.actionSelectionHandler);
+                b.setId("endturn");
+            }
+        });
+        for (Node n : this.actionsPane.getChildren()) {
+            Platform.runLater(() -> {
+                if (actions.contains(ActionType.valueOf(n.getId().toUpperCase()))) {
+                    n.setDisable(false);
+                    n.setOnMousePressed(this.actionSelectionHandler);
+                } else {
+                    n.setDisable(true);
+                    n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.actionSelectionHandler);
+                }
+            });
+        }
+    }
+
+    void setPowerups(List<Powerup> powerups) {
+        Platform.runLater(() -> {
+            for (int i = 6; i < 9; i++) {
+                ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
+                if (img.getId().equals("")) {
+                    continue;
+                }
+                PowerupType type = PowerupType.valueOf(img.getId().split("_")[1].toUpperCase());
+                AmmoType color = AmmoType.valueOf(img.getId().split("_")[2].toUpperCase());
+                for (Powerup p : powerups) {
+                        if (p.getType() == type && p.getColor() == color) {
+                            img.setOnMousePressed(this.powerupSelectionHandler);
+                        } else {
+                            img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.powerupSelectionHandler);
+                        }
+                }
+            }
         });
     }
 }

@@ -295,7 +295,7 @@ class TurnController {
             case RELOAD:
                 handleReload();
                 break;
-            case SHOT:
+            case SHOOT:
                 this.movesLeft--;
                 calculateShootAction();
                 break;
@@ -435,10 +435,10 @@ class TurnController {
             if (!this.finalFrenzy && this.activePlayer.getDamages().size() < 6) {
                 this.effectsController.setActivePlayer(this.activePlayer);
                 if (!this.effectsController.getAvailableWeapons().isEmpty()) {
-                    availableActions.add(ActionType.SHOT);
+                    availableActions.add(ActionType.SHOOT);
                 }
             } else if (!getMoveReloadShootMovements().isEmpty()) {
-                availableActions.add(ActionType.SHOT);
+                availableActions.add(ActionType.SHOOT);
             }
         }
         for (Powerup p : this.activePlayer.getPowerups()) {

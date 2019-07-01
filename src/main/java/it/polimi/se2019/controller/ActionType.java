@@ -8,7 +8,7 @@ public enum ActionType {
     ENDTURN,
     MOVE,
     PICKUP,
-    SHOT,
+    SHOOT,
     POWERUP,
     RELOAD,
     CANCEL

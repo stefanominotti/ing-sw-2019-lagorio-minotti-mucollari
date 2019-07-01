@@ -101,4 +101,58 @@ public class SquareViewTest {
         assertEquals(south, square.getSquareAtDirection(CardinalPoint.SOUTH));
         assertEquals(north, square.getSquareAtDirection(CardinalPoint.NORTH));
     }
+
+    @Test
+    public void toStringTest() {
+        assertEquals("│‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾│\n" +
+                "│                     │\n" +
+                "│                     │\n" +
+                "│        SPAWN        │\n" +
+                "│       YELLOW        │\n" +
+                "│                     │\n" +
+                "│                     │\n" +
+                "│                     │\n" +
+                "│                     │\n" +
+                "│_____________________│\n", this.squareSpawn.toString(false));
+        assertEquals("│‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾│\n" +
+                "│                     │\n" +
+                "│         ***         │\n" +
+                "│        SPAWN        │\n" +
+                "│       YELLOW        │\n" +
+                "│                     │\n" +
+                "│                     │\n" +
+                "│                     │\n" +
+                "│                     │\n" +
+                "│_____________________│\n", this.squareSpawn.toString(true));
+        this.squareSpawn.addStoreWeapon(Weapon.MACHINE_GUN);
+        this.squareSpawn.addStoreWeapon(Weapon.ZX_2);
+        this.squareSpawn.addStoreWeapon(Weapon.FLAMETHROWER);
+        assertEquals("│‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾│\n" +
+                "│                     │\n" +
+                "│                     │\n" +
+                "│        SPAWN        │\n" +
+                "│       YELLOW        │\n" +
+                "│                     │\n" +
+                "│     MACHINE_GUN     │\n" +
+                "│        ZX_2         │\n" +
+                "│    FLAMETHROWER     │\n" +
+                "│_____________________│\n", this.squareSpawn.toString(false));
+        Map<AmmoType, Integer> ammos = new EnumMap<>(AmmoType.class);
+        ammos.put(AmmoType.YELLOW, 1);
+        ammos.put(AmmoType.RED, 2);
+        ammos.put(AmmoType.BLUE, 0);
+        AmmoTile tile = new AmmoTile(false, ammos);
+        this.squareNotSpawn.setAvailableAmmoTile(tile);
+        this.squareNotSpawn.addActivePlayer(GameCharacter.BANSHEE);
+        assertEquals("│‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n" +
+                "│          β           \n" +
+                "│                      \n" +
+                "│                      \n" +
+                "│       YELLOW         \n" +
+                "│                      \n" +
+                "│         RED          \n" +
+                "│         RED          \n" +
+                "│       YELLOW         \n" +
+                "│______________________\n", this.squareNotSpawn.toString(false));
+    }
 }

@@ -1943,7 +1943,7 @@ public class CLIView extends View {
                     }
                     text.append(toAppend);
                     break;
-                case SHOT:
+                case SHOOT:
                     if (!getBoard().isFrenzy() && getSelfPlayerBoard().getDamages().size() < 6) {
                         toAppend = "[" + number + "] - Shoot\n";
                     } else if (!getBoard().isFrenzy()) {

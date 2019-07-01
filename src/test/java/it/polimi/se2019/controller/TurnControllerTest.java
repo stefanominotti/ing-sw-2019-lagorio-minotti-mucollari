@@ -1,8 +1,6 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.model.messages.selections.SelectionMessageType;
-import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
 import it.polimi.se2019.server.ServerAllSender;
 import it.polimi.se2019.server.ServerSingleSender;
 import org.junit.Before;
@@ -149,7 +147,7 @@ public class TurnControllerTest {
     @Test
     public void calculateShootActionFrenzyTest() {
         this.controller.setFinalFrenzy(true);
-        this.controller.handleAction(ActionType.SHOT);
+        this.controller.handleAction(ActionType.SHOOT);
         assertTrue(this.controller.getMoveShoot());
     }
 
@@ -176,7 +174,7 @@ public class TurnControllerTest {
         List<ActionType> availableActions = new ArrayList<>(Arrays.asList(ActionType.MOVE, ActionType.PICKUP));
         this.player.addWeapon(new WeaponCard(Weapon.MACHINE_GUN));
         this.player.addPowerup(new Powerup(PowerupType.NEWTON, AmmoType.BLUE));
-        availableActions.add(ActionType.SHOT);
+        availableActions.add(ActionType.SHOOT);
         availableActions.add(ActionType.POWERUP);
         assertEquals(availableActions, this.controller.calculateActions());
     }

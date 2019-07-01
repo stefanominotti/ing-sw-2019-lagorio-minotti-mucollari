@@ -98,4 +98,23 @@ public class SelfPlayerBoardTest {
         assertEquals(readyWeapons, alternativeBoard.getReadyWeapons());
         assertEquals(10, alternativeBoard.getScore());
     }
+
+    @Test
+    public void toStringTest() {
+        assertEquals("Nickname:  test\n" +
+                "Character: D_STRUCT_OR (α)\n" +
+                "\n" +
+                "Revenge marks: \n" +
+                "\n" +
+                "Damages:  _ _ | _ _ _ | _ _ _ _ _ | _ _ \n" +
+                "Killshot: 8 6 4 2 1 1 \n" +
+                "\n" +
+                "Available ammos:    B R Y \n" +
+                "Available powerups\n" +
+                "Ready weapons:    \n" +
+                "Unloaded weapons: \n" +
+                "\n" +
+                "Score: 0",
+                this.board.toString());
+    }
 }
