@@ -7,6 +7,7 @@ import it.polimi.se2019.model.messages.board.SkullsMessage;
 import it.polimi.se2019.model.messages.client.CharacterMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessageType;
+import it.polimi.se2019.model.messages.payment.PaymentSentMessage;
 import it.polimi.se2019.model.messages.powerups.PowerupMessageType;
 import it.polimi.se2019.model.messages.selections.SelectionMessageType;
 import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
@@ -32,6 +33,8 @@ public class GUIView extends View {
     private String currentAction;
     private SceneType currentScene;
 
+    private List<String> secondaryButtons;
+
     /**
      * Class constructor, it builds a CLI view
      * @param connection "0" for socket, "1" for RMI
@@ -44,6 +47,7 @@ public class GUIView extends View {
         this.guiApp = guiApp;
         super.connect(connection, ip, port);
         this.messages = new LinkedList<>();
+        this.secondaryButtons = new ArrayList<>();
     }
 
     /**
@@ -650,12 +654,65 @@ public class GUIView extends View {
     }
 
     void handlePowerupInput(PowerupType type, AmmoType color) {
-        if (getState() == DISCARD_SPAWN) {
-            getClient().send(new SingleSelectionMessage(SelectionMessageType.DISCARD_POWERUP, getCharacter(),
-                    new Powerup(type, color)));
+        switch (getState()) {
+            case DISCARD_SPAWN:
+                getClient().send(new SingleSelectionMessage(SelectionMessageType.DISCARD_POWERUP, getCharacter(),
+                        new Powerup(type, color)));
+                break;
+            case PAYMENT:
+                addPaidPowerup(new Powerup(type, color));
+
+                int newValue = getRequiredPayment().get(color) - 1;
+                putRequiredPayment(color, newValue);
+
+                List<Powerup> toRemove = new ArrayList<>();
+                for (Powerup p : getPowerupsSelection()) {
+                    if (getRequiredPayment().keySet().contains(p.getColor()) && getRequiredPayment().get(p.getColor()) != 0
+                            || getRequiredPayment().isEmpty()) {
+                        continue;
+                    }
+                    toRemove.add(p);
+                }
+                for (Powerup p : toRemove) {
+                    removePowerupSelection(p);
+                }
+
+                if (getPowerupsSelection().isEmpty()) {
+                    getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
+                            getPaidPowerups()));
+                    resetSelections();
+                    setPowerups();
+                    return;
+                }
+
+                if (!getRequiredPayment().isEmpty()) {
+                    for (Map.Entry<AmmoType, Integer> ammo : getRequiredPayment().entrySet()) {
+                        if (ammo.getValue() != 0) {
+                            requirePayment();
+                            return;
+                        }
+                    }
+                }
+
+                getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
+                        getPaidPowerups()));
+
         }
         resetSelections();
         setPowerups();
+    }
+
+    void handleConfirmation() {
+        switch (getState()) {
+            case PAYMENT:
+                getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
+                        getPaidPowerups()));
+                resetSelections();
+                setPowerups();
+                break;
+        }
+        this.secondaryButtons = new ArrayList<>();
+        setSecondaryButtons();
     }
 
     /**
@@ -713,6 +770,96 @@ public class GUIView extends View {
     }
 
     /**
+     * Shows weapons pickup choice
+     * @param weapons List of the available weapons to pickup
+     */
+    @Override
+    void handleWeaponPickupRequest(List<Weapon> weapons) {
+        super.handleWeaponPickupRequest(weapons);
+        this.currentStatus = "Which weapon do you want?";
+        this.currentAction = "Select one of the available weapons";
+        setBanner();
+        setWeapons();
+    }
+
+    void setWeapons() {
+        if (this.currentScene == SceneType.BOARD) {
+            ((BoardController) this.controller).setWeapons(getWeaponsSelection());
+        }
+    }
+
+    void handleWeaponInput(Weapon weapon) {
+        switch (getState()) {
+            case SELECT_WEAPON:
+                getClient().send(new SingleSelectionMessage(SelectionMessageType.PICKUP_WEAPON, getCharacter(), weapon));
+                break;
+            default:
+                break;
+        }
+        resetSelections();
+        setWeapons();
+        setActions();
+    }
+
+    /**
+     * Shows payment request message
+     */
+    @Override
+    void requirePayment() {
+        StringBuilder text = new StringBuilder("You must pay ");
+        String toAppend;
+        if (getRequiredPayment().isEmpty()) {
+            text.append("one ammo of any color");
+        } else {
+            for (Map.Entry<AmmoType, Integer> ammo : getRequiredPayment().entrySet()) {
+                if (ammo.getValue() == 0) {
+                    continue;
+                }
+                toAppend = ammo.getValue() + "x" + ammo.getKey() + ", ";
+                text.append(toAppend);
+            }
+            text.setLength((text.length() - 1));
+
+        }
+        List<Powerup> toRemove = new ArrayList<>();
+        for (Powerup p : getPowerupsSelection()) {
+            if (getRequiredPayment().keySet().contains(p.getColor()) && getRequiredPayment().get(p.getColor()) != 0
+                    || getRequiredPayment().isEmpty()) {
+                continue;
+            }
+            toRemove.add(p);
+        }
+        for (Powerup p : toRemove) {
+            removePowerupSelection(p);
+        }
+        if (getPowerupsSelection().isEmpty()) {
+            getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
+                    getPaidPowerups()));
+            resetSelections();
+            setPowerups();
+            return;
+        }
+        this.currentStatus = text.toString();
+        boolean powerupsMandatory = false;
+        for (Map.Entry<AmmoType, Integer> ammo : getRequiredPayment().entrySet()) {
+            if (ammo.getValue() > getSelfPlayerBoard().getAvailableAmmos().get(ammo.getKey())) {
+                powerupsMandatory = true;
+                break;
+            }
+        }
+        this.secondaryButtons = new ArrayList<>();
+        if (powerupsMandatory) {
+            this.currentAction = "You must pay with powerups, select desired ones";
+        } else {
+            this.currentAction = "Select powerups if you want, then confirm";
+            this.secondaryButtons.add("confirm");
+        }
+        setBanner();
+        setPowerups();
+        setSecondaryButtons();
+    }
+
+    /**
      * Handles game finish setting the ranking scene
      * @param ranking map with game characters and total points raised
      */
@@ -726,14 +873,6 @@ public class GUIView extends View {
      */
     @Override
     void handlePersistenceFinish() {
-
-    }
-
-    /**
-     * Handles require payment
-     */
-    @Override
-    public void requirePayment() {
 
     }
 
@@ -759,6 +898,12 @@ public class GUIView extends View {
         this.messages.addLast(message);
     }
 
+    void setSecondaryButtons() {
+        if (this.currentScene == SceneType.BOARD) {
+            ((BoardController) this.controller).setSecondaryButtons(this.secondaryButtons);
+        }
+    }
+
     void showBoard() {
         setScene(SceneType.BOARD);
         setArena();
@@ -770,6 +915,8 @@ public class GUIView extends View {
         setBanner();
         setActions();
         setSquares();
+        setWeapons();
+        setSecondaryButtons();
     }
 
     void showWeaponInfo(Weapon weapon) {
@@ -788,6 +935,7 @@ public class GUIView extends View {
             ((BoardController) this.controller).setPlayerBoard(character);
             if (character == getCharacter()) {
                 setPowerups();
+                setWeapons();
             }
         }
     }
