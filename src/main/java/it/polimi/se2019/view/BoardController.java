@@ -806,13 +806,13 @@ public class BoardController extends AbstractSceneController {
                 Button b = (Button) this.secondaryButtonsBox.getChildren().get(i);
                 EventHandler<MouseEvent> handler;
                 String classString;
-                if (!buttons.isEmpty() && buttons.get(i).equals("continue")) {
+                if (buttons.get(0).equals("continue")) {
                     handler = this.confirmHandler;
                     classString = "button-confirm";
-                } else if (!buttons.isEmpty() && WeaponEffectOrderType.getFromIdentifier(buttons.get(i).toUpperCase()) != null) {
+                } else if (WeaponEffectOrderType.getFromIdentifier(buttons.get(0).toUpperCase()) != null) {
                     handler = this.effectSelectionHandler;
                     classString = "button-std";
-                } else if (!buttons.isEmpty() && buttons.get(0).equals("y")) {
+                } else if (buttons.get(0).equals("y")) {
                     handler = this.decisionSelectionHandler;
                     classString = "button-std";
                 } else {
