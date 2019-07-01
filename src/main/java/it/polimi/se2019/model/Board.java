@@ -656,6 +656,7 @@ public class Board extends Observable {
      * @param character you want to start turn timer
      */
     public void startTurnTimer(GameCharacter character) {
+        this.gameTimerStartDate = LocalDateTime.now();
         this.timer = new Timer();
         if (character == this.players.get(this.currentPlayer).getCharacter()) {
             this.timer.schedule(new TimerTask() {
@@ -664,7 +665,6 @@ public class Board extends Observable {
                     endTurn(character);
                 }
             }, this.turnTimer);
-            this.gameTimerStartDate = LocalDateTime.now();
         } else {
             this.timer.schedule(new TimerTask() {
                 @Override

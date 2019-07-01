@@ -33,6 +33,10 @@ public class GUIView extends View {
     private String currentAction;
     private SceneType currentScene;
 
+    private List<GameCharacter> targetSelectet;
+    private int minSelectable;
+    private int maxSelectable;
+
     private List<String> secondaryButtons;
 
     /**
@@ -96,9 +100,18 @@ public class GUIView extends View {
      * @param character chosen
      */
     void handleCharacterInput(GameCharacter character) {
-        if (getState() == CHOOSING_CHARACTER) {
-            getClient().send(new CharacterMessage(character, generateToken()));
+        switch (getState()) {
+            case CHOOSING_CHARACTER:
+                getClient().send(new CharacterMessage(character, generateToken()));
+                break;
+            case EFFECT_TARGET_SELECTION:
+                handleEffectTargetSelect(character);
+                break;
+            case MULTIPLE_SQUARES_SELECTION:
+                handleEffectMultipleSquareSelect(character);
+                break;
         }
+        resetSelections();
     }
 
     /**
@@ -660,55 +673,56 @@ public class GUIView extends View {
                         new Powerup(type, color)));
                 break;
             case PAYMENT:
-                addPaidPowerup(new Powerup(type, color));
-
-                int newValue = getRequiredPayment().get(color) - 1;
-                putRequiredPayment(color, newValue);
-
-                List<Powerup> toRemove = new ArrayList<>();
-                for (Powerup p : getPowerupsSelection()) {
-                    if (getRequiredPayment().keySet().contains(p.getColor()) && getRequiredPayment().get(p.getColor()) != 0
-                            || getRequiredPayment().isEmpty()) {
-                        continue;
-                    }
-                    toRemove.add(p);
-                }
-                for (Powerup p : toRemove) {
-                    removePowerupSelection(p);
-                }
-
-                if (getPowerupsSelection().isEmpty()) {
-                    getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
-                            getPaidPowerups()));
-                    this.secondaryButtons = new ArrayList<>();
-                    setSecondaryButtons();
-                    resetSelections();
-                    setPowerups();
-                    return;
-                }
-
-                if (!getRequiredPayment().isEmpty()) {
-                    for (Map.Entry<AmmoType, Integer> ammo : getRequiredPayment().entrySet()) {
-                        if (ammo.getValue() != 0) {
-                            requirePayment();
-                            return;
-                        }
-                    }
-                }
-
-                getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
-                        getPaidPowerups()));
+                handlePowerupPaymentSelect(type, color);
                 break;
             case USE_POWERUP:
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.USE_POWERUP, getCharacter(),
                         new Powerup(type, color)));
                 setActivePowerup(type);
                 break;
-
         }
         resetSelections();
         setPowerups();
-        setActions();
+    }
+
+    void handlePowerupPaymentSelect(PowerupType type, AmmoType color) {
+        addPaidPowerup(new Powerup(type, color));
+
+        int newValue = getRequiredPayment().get(color) - 1;
+        putRequiredPayment(color, newValue);
+
+        List<Powerup> toRemove = new ArrayList<>();
+        for (Powerup p : getPowerupsSelection()) {
+            if (getRequiredPayment().keySet().contains(p.getColor()) && getRequiredPayment().get(p.getColor()) != 0
+                    || getRequiredPayment().isEmpty()) {
+                continue;
+            }
+            toRemove.add(p);
+        }
+        for (Powerup p : toRemove) {
+            removePowerupSelection(p);
+        }
+
+        if (getPowerupsSelection().isEmpty()) {
+            getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
+                    getPaidPowerups()));
+            resetSelections();
+            setPowerups();
+            return;
+        }
+
+        if (!getRequiredPayment().isEmpty()) {
+            for (Map.Entry<AmmoType, Integer> ammo : getRequiredPayment().entrySet()) {
+                if (ammo.getValue() != 0) {
+                    requirePayment();
+                    return;
+                }
+            }
+        }
+
+        getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
+                getPaidPowerups()));
+
     }
 
     void handleConfirmation() {
@@ -718,6 +732,17 @@ public class GUIView extends View {
                         getPaidPowerups()));
                 resetSelections();
                 setPowerups();
+                break;
+            case EFFECT_SELECT_SQUARE:
+                super.selectionEffectFinish();
+                break;
+            case EFFECT_TARGET_SELECTION:
+                super.setPossibilityCharacters(this.targetSelectet);
+                if (!getEffectPossibility().getSquares().isEmpty()) {
+                    handleEffectMoveRequest();
+                } else {
+                    super.selectionEffectFinish();
+                }
                 break;
         }
         this.secondaryButtons = new ArrayList<>();
@@ -745,6 +770,160 @@ public class GUIView extends View {
         }
     }
 
+    /**
+     * Shows effect targets choice request message
+     */
+    @Override
+    void handleEffectTargetRequest() {
+        super.handleEffectTargetRequest();
+        if (getEffectPossibility().getCharacters().size() == 1 &&
+                getEffectPossibility().getCharacters().get(0) == super.getCharacter()) {
+            handleEffectMoveRequest();
+            return;
+        }
+        StringBuilder text = new StringBuilder();
+        List<String> targetsAmount = getEffectPossibility().getTargetsAmount();
+        if (targetsAmount.size() == 1) {
+            int amount = Integer.parseInt(targetsAmount.get(0));
+            this.minSelectable = amount;
+            this.maxSelectable = amount;
+            String toAppend = "Select " + amount + " target";
+            text.append(toAppend);
+            if (amount != 1) {
+                text.append("s");
+            }
+        } else if (targetsAmount.get(1).equals("MAX")) {
+            int min = Integer.parseInt(targetsAmount.get(0));
+            this.minSelectable = min;
+            this.maxSelectable = getEffectPossibility().getCharacters().size();
+            String toAppend = "Select at least " + min + " target";
+            text.append(toAppend);
+        } else {
+            int min = Integer.parseInt(targetsAmount.get(0));
+            int max = Integer.parseInt(targetsAmount.get(1));
+            this.minSelectable = min;
+            this.maxSelectable = max;
+            String toAppend = "Select from " + min + " to " + max + " targets";
+            text.append(toAppend);
+        }
+        if (getEffectPossibility().getType() == EffectType.MARK) {
+            text.append(" to mark");
+        } else if (getEffectPossibility().getType() == EffectType.DAMAGE) {
+            text.append(" to damage");
+        } else if (getEffectPossibility().getType() == EffectType.MOVE) {
+            text.append(" to move");
+        }
+        this.currentStatus = text.toString();
+        this.currentAction = "Select one of the available targets";
+        setBanner();
+        setTargets();
+
+    }
+
+    /**
+     * Shows movement request message
+     */
+    @Override
+    void handleEffectMoveRequest() {
+        super.handleEffectMoveRequest();
+        this.currentStatus = "Select a square to perform the movement";
+        this.currentAction = "Select one of the available squares";
+        setBanner();
+        setSquares();
+    }
+
+    /**
+     * Shows the select of the effect
+     */
+    @Override
+    void handleEffectSelectRequest() {
+        super.handleEffectSelectRequest();
+        StringBuilder text = new StringBuilder();
+        if (getState() == EFFECT_SELECT_SQUARE) {
+            text.append("square");
+            setSquares();
+
+        } else if (getState() == EFFECT_SELECT_CARDINAL) {
+            text.append("cardinal direction");
+            //setCardinal(); TODO
+        } else {
+            text.append("room");
+            //setRoom(); TODO
+        }
+        this.currentStatus = "Select a " + text.toString();
+        this.currentAction = "Select one of the available " + text.toString();
+        setBanner();
+    }
+
+    /**
+     * Shows multiple squares choice request message
+     */
+    @Override
+    void handleMultipleSquareRequest() {
+        super.handleMultipleSquareRequest();
+        List<String> targetsAmount = getEffectPossibility().getTargetsAmount();
+        StringBuilder text = new StringBuilder();
+        String toAppend;
+        if (targetsAmount.size() == 1) {
+            int amount = Integer.parseInt(targetsAmount.get(0));
+            this.minSelectable = amount;
+            this.maxSelectable = amount;
+            toAppend = "Choose " + amount + " players each in different squares\n";
+            text.append(toAppend);
+        } else if (targetsAmount.get(1).equals("MAX")) {
+            int min = Integer.parseInt(targetsAmount.get(0));
+            this.minSelectable = min;
+            this.maxSelectable = getEffectPossibility().getMultipleSquares().size();
+            toAppend = "Choose at least " + min + " players each in different squares\n";
+            text.append(toAppend);
+        } else {
+            int min = Integer.parseInt(targetsAmount.get(0));
+            int max = Integer.parseInt(targetsAmount.get(1));
+            this.minSelectable = min;
+            this.maxSelectable = max;
+            toAppend = "Choose from " + min + " to " + max + " players each in different squares\n";
+            text.append(toAppend);
+        }
+        this.currentStatus = text.toString();
+        this.currentAction = "Select from the available players";
+        setBanner();
+
+    }
+
+    /**
+     * Shows effect combo request message
+     * @param effect weapon effect macro of the combo
+     */
+    @Override
+    void handleEffectComboRequest(WeaponEffectOrderType effect) {
+        super.handleEffectComboRequest(effect);
+        String description;
+        if (effect == WeaponEffectOrderType.SECONDARYONE) {
+            description = getCurrentWeapon().getSecondaryEffectOne().get(0).getDescription();
+        } else {
+            description = getCurrentWeapon().getSecondaryEffectTwo().get(0).getDescription();
+        }
+        this.currentStatus = "Do you want to apply \"" + description + "\"?";
+        this.currentAction = "Select one of the available options";
+        setBanner();
+    }
+
+    /**
+     * Shows effect required request message
+     */
+    @Override
+    void handleEffectRequireRequest() {
+        super.handleEffectRequireRequest();
+        this.currentStatus = "Do you want to perform \"" + getEffectPossibility().getDescription() + "\"?";
+        this.currentAction = "Select one of the available options";
+        setBanner();
+    }
+
+    /**
+     * Handles client cardinal point choice
+     * @param x x coordinate of the point chosen
+     * @param y y coordinate of the point chosen
+     */
     void handleSquareInput(int x, int y) {
         switch (getState()) {
             case SELECT_MOVEMENT:
@@ -755,16 +934,61 @@ public class GUIView extends View {
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.PICKUP, getCharacter(),
                         new Coordinates(x, y)));
                 break;
-            case SELECT_POWERUP_POSITION:
-                getClient().send(new SingleSelectionMessage(SelectionMessageType.POWERUP_POSITION, getCharacter(),
-                        new Coordinates(x, y)));
+            case EFFECT_SELECT_SQUARE:
+                super.setPossibilitySquares(new ArrayList<>(Arrays.asList(new Coordinates(x, y))));
+                super.selectionEffectFinish();
                 break;
             default:
+                break;
+            case EFFECT_SELECT_ROOM:
+                super.setPossibilityRooms(new ArrayList<>(Arrays.asList(super.getBoard().getSquareByCoordinates(x, y).getColor())));
+                super.selectionEffectFinish();
                 break;
         }
         resetSelections();
         setSquares();
         setActions();
+    }
+
+    /**
+     * Handles clien effect target choice
+     * @param character target chosen
+     */
+    void handleEffectTargetSelect(GameCharacter character) {
+        this.targetSelectet.add(character);
+        if(this.targetSelectet.size() < this.maxSelectable) {
+            removeCharacterSelection(character);
+            handleEffectTargetRequest();
+            return;
+        }
+        super.setPossibilityCharacters(this.targetSelectet);
+        if (!getEffectPossibility().getSquares().isEmpty()) {
+            handleEffectMoveRequest();
+        } else {
+            super.selectionEffectFinish();
+        }
+    }
+
+    /**
+     * Handles client multiple squares target input
+     * @param character multiple squares chosen and target chosen
+     */
+    void handleEffectMultipleSquareSelect(GameCharacter character) {
+        this.targetSelectet.add(character);
+        Coordinates toRemove = null;
+        for(Coordinates coordinates : getMultipleSquareSelection().keySet()) {
+            if(getMultipleSquareSelection().get(coordinates).contains(character)) {
+                toRemove = coordinates;
+            }
+        }
+        this.removeMultipleSquareSelection(toRemove);
+        if(this.targetSelectet.size() < this.minSelectable) {
+            handleMultipleSquareRequest();
+            return;
+        }
+        super.setPossibilityCharacters(this.targetSelectet);
+        super.selectionEffectFinish();
+
     }
 
     /**

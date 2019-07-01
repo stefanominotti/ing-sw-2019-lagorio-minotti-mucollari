@@ -61,6 +61,7 @@ public abstract class View {
     private List<Powerup> powerupsSelection;
     private Map<AmmoType, Integer> ammosSelection;
     private List<WeaponEffectOrderType> effectsSelection;
+    private Map<Coordinates, List<GameCharacter>> multipleSquareSelection;
 
     private Weapon currentWeapon;
     private boolean weaponActivated;
@@ -316,6 +317,26 @@ public abstract class View {
      */
     void setCharactersSelection(List<GameCharacter> characters) {
         this.charactersSelection = new ArrayList<>(characters);
+    }
+
+    /**
+     * Removes a character from the characters selection list
+     * @param character you want to remove
+     */
+    void removeCharacterSelection(GameCharacter character) {
+        this.charactersSelection.remove(character);
+    }
+
+    void setMultipleSquareSelection(Map<Coordinates, List<GameCharacter>> selection) {
+        this.multipleSquareSelection = selection;
+    }
+
+    Map<Coordinates, List<GameCharacter>> getMultipleSquareSelection() {
+        return this.multipleSquareSelection;
+    }
+
+    void removeMultipleSquareSelection(Coordinates coordinates) {
+        this.multipleSquareSelection.remove(coordinates);
     }
 
     /**
@@ -1460,6 +1481,9 @@ public abstract class View {
      * Handles effect selection based on effect type
      */
     private void handleEffectSelections() {
+        this.charactersSelection = this.effectPossibility.getCharacters();
+        this.coordinatesSelection = this.effectPossibility.getSquares();
+        this.multipleSquareSelection = this.effectPossibility.getMultipleSquares();
         if (this.effectPossibility.getType() == EffectType.SELECT) {
             handleEffectSelectRequest();
         } else if (!this.effectPossibility.getMultipleSquares().isEmpty()) {
