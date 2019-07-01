@@ -57,7 +57,7 @@
 }
 
 .img-characters-shadow {
-	-fx-effect: dropshadow(three-pass-box, rgba(230,230,230,1), 10, 0.2, 1, 1);
+	-fx-effect: dropshadow(three-pass-box, rgba(230,230,230,1), 13, 0.5, 0.5, 0.5);
 }
 
 .square-disabled {
