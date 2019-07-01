@@ -62,6 +62,9 @@ public abstract class View {
     private Map<AmmoType, Integer> ammosSelection;
     private List<WeaponEffectOrderType> effectsSelection;
     private Map<Coordinates, List<GameCharacter>> multipleSquareSelection;
+    private List<RoomColor> roomsSelection;
+    private List<CardinalPoint> cardinalPointsSelection;
+
 
     private Weapon currentWeapon;
     private boolean weaponActivated;
@@ -153,6 +156,14 @@ public abstract class View {
      */
     BoardView getBoard() {
         return this.board;
+    }
+
+    List<RoomColor> getRoomsSelection() {
+        return this.roomsSelection;
+    }
+
+    List<CardinalPoint> getCardinalPointsSelection() {
+        return this.cardinalPointsSelection;
     }
 
     /**
@@ -399,6 +410,8 @@ public abstract class View {
         for (AmmoType type : AmmoType.values()) {
             this.paidAmmos.put(type, 0);
         }
+        this.cardinalPointsSelection = new ArrayList<>();
+        this.roomsSelection = new ArrayList<>();
     }
 
     /**
@@ -1481,6 +1494,8 @@ public abstract class View {
      * Handles effect selection based on effect type
      */
     private void handleEffectSelections() {
+        this.roomsSelection = this.effectPossibility.getRooms();
+        this.cardinalPointsSelection = this.effectPossibility.getCardinalPoints();
         this.charactersSelection = this.effectPossibility.getCharacters();
         this.coordinatesSelection = this.effectPossibility.getSquares();
         this.multipleSquareSelection = this.effectPossibility.getMultipleSquares();

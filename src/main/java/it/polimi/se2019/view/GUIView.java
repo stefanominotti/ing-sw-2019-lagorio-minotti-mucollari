@@ -13,8 +13,6 @@ import it.polimi.se2019.model.messages.selections.SelectionMessageType;
 import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
-import javafx.application.Platform;
-import javafx.scene.Scene;
 
 import java.util.*;
 
@@ -33,7 +31,7 @@ public class GUIView extends View {
     private String currentAction;
     private SceneType currentScene;
 
-    private List<GameCharacter> targetSelectet;
+    private List<GameCharacter> targetSelected;
     private int minSelectable;
     private int maxSelectable;
 
@@ -110,8 +108,17 @@ public class GUIView extends View {
             case MULTIPLE_SQUARES_SELECTION:
                 handleEffectMultipleSquareSelect(character);
                 break;
+            case SELECT_POWERUP_TARGET:
+                getClient().send(new SingleSelectionMessage(SelectionMessageType.POWERUP_TARGET, getCharacter(),
+                        character));
+                break;
+            default:
+                break;
+
         }
         resetSelections();
+        setTargets();
+        setActions();
     }
 
     /**
@@ -737,14 +744,29 @@ public class GUIView extends View {
                 super.selectionEffectFinish();
                 break;
             case EFFECT_TARGET_SELECTION:
-                super.setPossibilityCharacters(this.targetSelectet);
+                super.setPossibilityCharacters(this.targetSelected);
                 if (!getEffectPossibility().getSquares().isEmpty()) {
                     handleEffectMoveRequest();
                 } else {
                     super.selectionEffectFinish();
                 }
                 break;
+            case USE_EFFECT:
+                getClient().send(new SingleSelectionMessage(SelectionMessageType.EFFECT, getCharacter(), null));
+                break;
         }
+        this.secondaryButtons = new ArrayList<>();
+        setSecondaryButtons();
+    }
+
+    void handleEffectInput(WeaponEffectOrderType effect) {
+        if (getState() == USE_EFFECT) {
+            getClient().send(new SingleSelectionMessage(SelectionMessageType.EFFECT, getCharacter(), effect));
+            setWeaponActivated(true);
+        }
+        resetSelections();
+        setEffects();
+        setActions();
         this.secondaryButtons = new ArrayList<>();
         setSecondaryButtons();
     }
@@ -817,7 +839,6 @@ public class GUIView extends View {
         this.currentAction = "Select one of the available targets";
         setBanner();
         setTargets();
-
     }
 
     /**
@@ -845,10 +866,10 @@ public class GUIView extends View {
 
         } else if (getState() == EFFECT_SELECT_CARDINAL) {
             text.append("cardinal direction");
-            //setCardinal(); TODO
+            setCardinalPoints();
         } else {
             text.append("room");
-            //setRoom(); TODO
+            setRooms();
         }
         this.currentStatus = "Select a " + text.toString();
         this.currentAction = "Select one of the available " + text.toString();
@@ -955,13 +976,13 @@ public class GUIView extends View {
      * @param character target chosen
      */
     void handleEffectTargetSelect(GameCharacter character) {
-        this.targetSelectet.add(character);
-        if(this.targetSelectet.size() < this.maxSelectable) {
-            removeCharacterSelection(character);
+        this.targetSelected.add(character);
+        removeCharacterSelection(character);
+        if(this.targetSelected.size() < this.maxSelectable) {
             handleEffectTargetRequest();
             return;
         }
-        super.setPossibilityCharacters(this.targetSelectet);
+        super.setPossibilityCharacters(this.targetSelected);
         if (!getEffectPossibility().getSquares().isEmpty()) {
             handleEffectMoveRequest();
         } else {
@@ -974,7 +995,7 @@ public class GUIView extends View {
      * @param character multiple squares chosen and target chosen
      */
     void handleEffectMultipleSquareSelect(GameCharacter character) {
-        this.targetSelectet.add(character);
+        this.targetSelected.add(character);
         Coordinates toRemove = null;
         for(Coordinates coordinates : getMultipleSquareSelection().keySet()) {
             if(getMultipleSquareSelection().get(coordinates).contains(character)) {
@@ -982,11 +1003,11 @@ public class GUIView extends View {
             }
         }
         this.removeMultipleSquareSelection(toRemove);
-        if(this.targetSelectet.size() < this.minSelectable) {
+        if(this.targetSelected.size() < this.minSelectable) {
             handleMultipleSquareRequest();
             return;
         }
-        super.setPossibilityCharacters(this.targetSelectet);
+        super.setPossibilityCharacters(this.targetSelected);
         super.selectionEffectFinish();
 
     }
@@ -1046,11 +1067,37 @@ public class GUIView extends View {
             case SWITCH_WEAPON:
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.SWITCH, getCharacter(), weapon));
                 break;
+            case USE_WEAPON:
+                getClient().send(new SingleSelectionMessage(SelectionMessageType.USE_WEAPON, getCharacter(), weapon));
+                setCurrentWeapon(weapon);
+                setWeaponActivated(false);
+                break;
             default:
                 break;
         }
         resetSelections();
         setWeapons();
+        setActions();
+    }
+
+    /**
+     * Shows the effect choice request
+     * @param effects List of the available weapon effect macro
+     */
+    @Override
+    void handleEffectRequest(List<WeaponEffectOrderType> effects) {
+        super.handleEffectRequest(effects);
+        this.targetSelected = new ArrayList<>();
+        this.currentStatus = "Which effect do you want to use?";
+        this.currentAction = "Select one from the buttons below";
+        setBanner();
+        setEffects();
+        if (isWeaponActivated()) {
+            this.secondaryButtons.add("continue");
+        } else {
+            addActionsSelection(ActionType.CANCEL);
+        }
+        setSecondaryButtons();
         setActions();
     }
 
@@ -1173,19 +1220,28 @@ public class GUIView extends View {
         setTargets();
     }
 
-    void handleTargetInput(GameCharacter character) {
-        switch (getState()) {
-            case SELECT_POWERUP_TARGET:
-                getClient().send(new SingleSelectionMessage(SelectionMessageType.POWERUP_TARGET, getCharacter(),
-                        character));
-                break;
-            default:
-                break;
-
+    void handleCardinalPointInput(CardinalPoint point) {
+        if (getState() == EFFECT_SELECT_CARDINAL) {
+            super.setPossibilityCardinal(new ArrayList<>(Arrays.asList(point)));
+            super.selectionEffectFinish();
         }
+        this.secondaryButtons = new ArrayList<>();
         resetSelections();
-        setTargets();
-        setActions();
+        setSecondaryButtons();
+    }
+
+    /**
+     * Shows weapon choice request
+     * @param weapons List of the available weapons to use
+     */
+    @Override
+    void handleWeaponUseRequest(List<Weapon> weapons) {
+        super.handleWeaponUseRequest(weapons);
+        this.currentStatus = "Which weapon do you want to use?";
+        this.currentAction = "Select one of your weapons";
+        addActionsSelection(ActionType.CANCEL);
+        setWeapons();
+        setBanner();
     }
 
     /**
@@ -1252,7 +1308,10 @@ public class GUIView extends View {
         setActions();
         setSquares();
         setWeapons();
+        setRooms();
+        setTargets();
         setSecondaryButtons();
+        setCardinalPoints();
     }
 
     void showWeaponInfo(Weapon weapon) {
@@ -1279,6 +1338,38 @@ public class GUIView extends View {
                 setPowerups();
                 setWeapons();
             }
+        }
+    }
+
+    void setRooms() {
+        if (this.currentScene == SceneType.BOARD) {
+            List<Coordinates> squares = new ArrayList<>();
+            for (SquareView s : getBoard().getSquares()) {
+                if (getRoomsSelection().contains(s.getColor())) {
+                    squares.add(new Coordinates(s.getX(), s.getY()));
+                }
+            }
+            ((BoardController) this.controller).setSquares(squares);
+        }
+    }
+
+    void setCardinalPoints() {
+        if (this.currentScene == SceneType.BOARD) {
+            this.secondaryButtons = new ArrayList<>();
+            for (CardinalPoint p : getCardinalPointsSelection()) {
+                this.secondaryButtons.add(p.toString().toLowerCase());
+            }
+            setSecondaryButtons();
+        }
+    }
+
+    void setEffects() {
+        if (this.currentScene == SceneType.BOARD) {
+            this.secondaryButtons = new ArrayList<>();
+            for (WeaponEffectOrderType p : getEffectsSelection()) {
+                this.secondaryButtons.add(p.getIdentifier().toLowerCase());
+            }
+            setSecondaryButtons();
         }
     }
 

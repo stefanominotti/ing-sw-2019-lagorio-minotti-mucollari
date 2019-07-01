@@ -1,6 +1,5 @@
 package it.polimi.se2019.view;
 
-import com.sun.media.jfxmedia.events.PlayerStateEvent;
 import it.polimi.se2019.controller.ActionType;
 import it.polimi.se2019.model.*;
 import javafx.application.Platform;
@@ -112,7 +111,9 @@ public class BoardController extends AbstractSceneController {
     private EventHandler<MouseEvent> squareSelectionHandler;
     private EventHandler<MouseEvent> weaponSelectionHandler;
     private EventHandler<MouseEvent> confirmHandler;
-    private EventHandler<MouseEvent> targetSelectionHandler;
+    private EventHandler<MouseEvent> characterSelectionHandler;
+    private EventHandler<MouseEvent> cardinalPointSelectionHandler;
+    private EventHandler<MouseEvent> effectSelectionHandler;
 
     public BoardController() {
         this.storeWeapons = new EnumMap<>(Weapon.class);
@@ -171,11 +172,25 @@ public class BoardController extends AbstractSceneController {
                 getView().handleConfirmation();
             }
         };
-        this.targetSelectionHandler = new EventHandler<MouseEvent>() {
+        this.characterSelectionHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 ImageView s = (ImageView) event.getSource();
-                getView().handleTargetInput(GameCharacter.valueOf(s.getId().toUpperCase()));
+                getView().handleCharacterInput(GameCharacter.valueOf(s.getId().toUpperCase()));
+            }
+        };
+        this.cardinalPointSelectionHandler = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                Button s = (Button) event.getSource();
+                getView().handleCardinalPointInput(CardinalPoint.valueOf(s.getId().toUpperCase()));
+            }
+        };
+        this.effectSelectionHandler = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                Button s = (Button) event.getSource();
+                getView().handleEffectInput(WeaponEffectOrderType.getFromIdentifier(s.getId().toUpperCase()));
             }
         };
     }
@@ -252,9 +267,9 @@ public class BoardController extends AbstractSceneController {
 
     void updateKillshotTrack() {
         Map<Integer, List<GameCharacter>> killshotTrack = getView().getBoard().getKillshotTrack();
-        for (Map.Entry<Integer, List<GameCharacter>> skull : killshotTrack.entrySet()) {
-            ImageView img = (ImageView) this.skullsGrid.getChildren().get(killshotTrack.size() - skull.getKey());
-            Platform.runLater(() -> {
+        Platform.runLater(() -> {
+            for (Map.Entry<Integer, List<GameCharacter>> skull : killshotTrack.entrySet()) {
+                ImageView img = (ImageView) this.skullsGrid.getChildren().get(killshotTrack.size() - skull.getKey());
                 if (skull.getValue().isEmpty()) {
                     img.setImage(new Image(UTILS_PATH + "skull.png"));
                 } else if (skull.getValue().size() == 1) {
@@ -263,8 +278,8 @@ public class BoardController extends AbstractSceneController {
                     img.setImage(new Image(DROPS_PATH + "drop_" + skull.getValue().get(0).getColor() + "_" +
                             skull.getValue().get(1).getColor() + ".png"));
                 }
-            });
-        }
+            }
+        });
     }
 
     void setPlayerBoard(GameCharacter player) {
@@ -311,14 +326,14 @@ public class BoardController extends AbstractSceneController {
         } else {
             board = getView().getBoardByCharacter(this.activeBoard);
         }
-        int i = 0;
-        for (GameCharacter c : board.getRevengeMarks()) {
-            ImageView img = (ImageView) this.marksGrid.getChildren().get(i);
-            Platform.runLater(() ->
-                img.setImage(new Image(DROPS_PATH + "drop_" + c.getColor() + ".png"))
-            );
-            i++;
-        }
+        Platform.runLater(() -> {
+            int i = 0;
+            for (GameCharacter c : board.getRevengeMarks()) {
+                ImageView img = (ImageView) this.marksGrid.getChildren().get(i);
+                img.setImage(new Image(DROPS_PATH + "drop_" + c.getColor() + ".png"));
+                i++;
+            }
+        });
     }
 
     void updateBoardDamages() {
@@ -328,14 +343,14 @@ public class BoardController extends AbstractSceneController {
         } else {
             board = getView().getBoardByCharacter(this.activeBoard);
         }
-        int i = 0;
-        for (GameCharacter c : board.getDamages()) {
-            ImageView img = (ImageView) this.damagesGrid.getChildren().get(i);
-            Platform.runLater(() ->
-                img.setImage(new Image(DROPS_PATH + "drop_" + c.getColor() + ".png"))
-            );
-            i++;
-        }
+        Platform.runLater(() -> {
+            int i = 0;
+            for (GameCharacter c : board.getDamages()) {
+                ImageView img = (ImageView) this.damagesGrid.getChildren().get(i);
+                img.setImage(new Image(DROPS_PATH + "drop_" + c.getColor() + ".png"));
+                i++;
+            }
+        });
     }
 
     void updateKillshotPoints() {
@@ -345,12 +360,12 @@ public class BoardController extends AbstractSceneController {
         } else {
             board = getView().getBoardByCharacter(this.activeBoard);
         }
-        for (int i = 0; i < KILLSHOT_POINTS_SIZE - board.getKillshotPoints().size(); i++) {
-            ImageView img = (ImageView) this.deathsGrid.getChildren().get(i);
-            Platform.runLater(() ->
-                img.setImage(new Image(UTILS_PATH + "skull.png"))
-            );
-        }
+        Platform.runLater(() -> {
+            for (int i = 0; i < KILLSHOT_POINTS_SIZE - board.getKillshotPoints().size(); i++) {
+                ImageView img = (ImageView) this.deathsGrid.getChildren().get(i);
+                img.setImage(new Image(UTILS_PATH + "skull.png"));
+            }
+        });
     }
 
     void updateAmmo() {
@@ -363,11 +378,9 @@ public class BoardController extends AbstractSceneController {
             board = getView().getBoardByCharacter(this.activeBoard);
             labelText = this.activeBoard + "'s ammo";
         }
-        Platform.runLater(() ->
-            this.ammoLabel.setText(labelText)
-        );
-        for (Map.Entry<AmmoType, Integer> ammo : board.getAvailableAmmos().entrySet()) {
-            Platform.runLater(() -> {
+        Platform.runLater(() -> {
+            this.ammoLabel.setText(labelText);
+            for (Map.Entry<AmmoType, Integer> ammo : board.getAvailableAmmos().entrySet()) {
                 switch (ammo.getKey()) {
                     case BLUE:
                         this.blueAmmoQty.setText("x" + ammo.getValue());
@@ -379,8 +392,8 @@ public class BoardController extends AbstractSceneController {
                         this.yellowAmmoQty.setText("x" + ammo.getValue());
                         break;
                 }
-            });
-        }
+            }
+        });
     }
 
     void updatePoints() {
@@ -398,142 +411,130 @@ public class BoardController extends AbstractSceneController {
     }
 
     void updateStores() {
-        this.storeWeapons = new EnumMap<>(Weapon.class);
-        for (SquareView s : getView().getBoard().getSquares()) {
-            if (!s.isSpawn()) {
-                continue;
+        Platform.runLater(() -> {
+            this.storeWeapons = new EnumMap<>(Weapon.class);
+            for (SquareView s : getView().getBoard().getSquares()) {
+                if (!s.isSpawn()) {
+                    continue;
+                }
+                GridPane grid;
+                switch (s.getColor()) {
+                    case RED:
+                        grid = this.redWeaponsGrid;
+                        break;
+                    case BLUE:
+                        grid = this.blueWeaponsGrid;
+                        break;
+                    case YELLOW:
+                        grid = this.yellowWeaponsGrid;
+                        break;
+                    default:
+                        grid = null;
+                        break;
+                }
+                if (grid == null) {
+                    return;
+                }
+                int i = 0;
+                for (Weapon w : s.getStore()) {
+                    ImageView img = (ImageView) grid.getChildren().get(i);
+                    this.storeWeapons.put(w, img);
+                        img.setId(w.toString().toLowerCase());
+                        img.setImage(new Image(WEAPONS_PATH + w.toString().toLowerCase() + ".png"));
+                        img.setOnMousePressed(this.weaponInfoHandler);
+                    i++;
+                }
+                while (i < 3) {
+                    ImageView img = (ImageView) grid.getChildren().get(i);
+                        img.setId(null);
+                        img.setImage(null);
+                        img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
+                    i++;
+                }
             }
-            GridPane grid;
-            switch (s.getColor()) {
-                case RED:
-                    grid = this.redWeaponsGrid;
-                    break;
-                case BLUE:
-                    grid = this.blueWeaponsGrid;
-                    break;
-                case YELLOW:
-                    grid = this.yellowWeaponsGrid;
-                    break;
-                default:
-                    grid = null;
-                    break;
-            }
-            if (grid == null) {
-                return;
-            }
-            int i = 0;
-            for (Weapon w : s.getStore()) {
-                ImageView img = (ImageView) grid.getChildren().get(i);
-                this.storeWeapons.put(w, img);
-                Platform.runLater(() -> {
-                    img.setId(w.toString().toLowerCase());
-                    img.setImage(new Image(WEAPONS_PATH + w.toString().toLowerCase() + ".png"));
-                    img.setOnMousePressed(this.weaponInfoHandler);
-                });
-                i++;
-            }
-            while (i < 3) {
-                ImageView img = (ImageView) grid.getChildren().get(i);
-                Platform.runLater(() -> {
-                    img.setId(null);
-                    img.setImage(null);
-                    img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
-                });
-                i++;
-            }
-        }
+        });
     }
 
     void updateWeapons() {
-        int i = 3;
-        PlayerBoard board;
-        if (this.activeBoard == getView().getCharacter()) {
-            board = getView().getSelfPlayerBoard();
-        } else {
-            board = getView().getBoardByCharacter(this.activeBoard);
-        }
-        for (Weapon w : board.getUnloadedWeapons()) {
-            ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
-            ImageView stateImg = (ImageView) this.playerAssetsGrid.getChildren().get(i + 6);
-            Platform.runLater(() -> {
+        Platform.runLater(() -> {
+            int i = 3;
+            PlayerBoard board;
+            if (this.activeBoard == getView().getCharacter()) {
+                board = getView().getSelfPlayerBoard();
+            } else {
+                board = getView().getBoardByCharacter(this.activeBoard);
+            }
+            for (Weapon w : board.getUnloadedWeapons()) {
+                ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
+                ImageView stateImg = (ImageView) this.playerAssetsGrid.getChildren().get(i + 6);
                 img.setId(w.toString().toLowerCase());
                 img.setImage(new Image(WEAPONS_PATH + w.toString().toLowerCase() + ".png"));
                 stateImg.setImage(new Image(UTILS_PATH + "unloaded_weapon.png"));
                 img.setOnMousePressed(this.weaponInfoHandler);
-            });
-            i++;
-        }
-        if (this.activeBoard != getView().getCharacter()) {
-            while (i < board.getWeaponsNumber() + 3) {
-                ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
-                ImageView stateImg = (ImageView) this.playerAssetsGrid.getChildren().get(i + 6);
-                Platform.runLater(() -> {
+                i++;
+            }
+            if (this.activeBoard != getView().getCharacter()) {
+                while (i < board.getWeaponsNumber() + 3) {
+                    ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
+                    ImageView stateImg = (ImageView) this.playerAssetsGrid.getChildren().get(i + 6);
                     img.setId(null);
                     img.setImage(new Image(WEAPONS_PATH + "weapon_back.png"));
                     stateImg.setImage(null);
                     img.setOnMousePressed(this.weaponInfoHandler);
-                });
-                i++;
-            }
-        } else {
-            for (Weapon w : getView().getSelfPlayerBoard().getReadyWeapons()) {
-                ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
-                ImageView stateImg = (ImageView) this.playerAssetsGrid.getChildren().get(i + 6);
-                Platform.runLater(() -> {
+                    i++;
+                }
+            } else {
+                for (Weapon w : getView().getSelfPlayerBoard().getReadyWeapons()) {
+                    ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
+                    ImageView stateImg = (ImageView) this.playerAssetsGrid.getChildren().get(i + 6);
                     img.setId(w.toString().toLowerCase());
                     img.setImage(new Image(WEAPONS_PATH + w.toString().toLowerCase() + ".png"));
                     stateImg.setImage(new Image(UTILS_PATH + "weapon_ready.png"));
                     img.setOnMousePressed(this.weaponInfoHandler);
-                });
-                i++;
+                    i++;
+                }
             }
-        }
-        while (i < 6) {
-            ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
-            ImageView stateImg = (ImageView) this.playerAssetsGrid.getChildren().get(i + 6);
-            Platform.runLater(() -> {
+            while (i < 6) {
+                ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
+                ImageView stateImg = (ImageView) this.playerAssetsGrid.getChildren().get(i + 6);
                 img.setId(null);
                 img.setImage(null);
                 stateImg.setImage(null);
                 img.setOnMousePressed(this.weaponInfoHandler);
-            });
-            i++;
-        }
+                i++;
+            }
+        });
     }
 
     void updatePowerups() {
-        int i = 6;
-        if (this.activeBoard != getView().getCharacter()) {
-            PlayerBoard board = getView().getBoardByCharacter(this.activeBoard);
-            while (i < board.getPowerupsNumber() + 6) {
-                ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
-                Platform.runLater(() -> {
+        Platform.runLater(() -> {
+            int i = 6;
+            if (this.activeBoard != getView().getCharacter()) {
+                PlayerBoard board = getView().getBoardByCharacter(this.activeBoard);
+                while (i < board.getPowerupsNumber() + 6) {
+                    ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
                     img.setImage(new Image(POWERUPS_PATH + "powerup_back.png"));
                     img.setId(null);
-                });
-                i++;
-            }
-        } else {
-            for (Powerup p : getView().getSelfPlayerBoard().getPowerups()) {
-                ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
-                int index = i - 5;
-                Platform.runLater(() -> {
+                    i++;
+                }
+            } else {
+                for (Powerup p : getView().getSelfPlayerBoard().getPowerups()) {
+                    ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
+                    int index = i - 5;
                     img.setImage(new Image(POWERUPS_PATH + p.getType().toString().toLowerCase() + "_" +
                             p.getColor().toString().toLowerCase() + ".png"));
                     img.setId(index + "_" + p.getType().toString().toLowerCase() + "_" +
                             p.getColor().toString().toLowerCase());
-                });
-                i++;
+                    i++;
+                }
             }
-        }
-        while (i < 9) {
-            ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
-            Platform.runLater(() -> {
+            while (i < 9) {
+                ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
                 img.setImage(null);
                 img.setId(null);
-            });
-            i++;
-        }
+                i++;
+            }
+        });
     }
 
     GridPane getSquarePaneByCoordinates(int x, int y) {
@@ -556,49 +557,45 @@ public class BoardController extends AbstractSceneController {
     }
 
     void updateTiles() {
-        for (SquareView s : getView().getBoard().getSquares()) {
-            if (s.isSpawn()) {
-                continue;
+        Platform.runLater(() -> {
+            for (SquareView s : getView().getBoard().getSquares()) {
+                if (s.isSpawn()) {
+                    continue;
+                }
+                ImageView img = (ImageView) getSquarePaneByCoordinates(s.getX(), s.getY())
+                        .getChildren().get(getSquarePaneByCoordinates(s.getX(), s.getY()).getChildren().size() - 1);
+                if (s.getAvailableAmmoTile() == null) {
+                    img.setImage(null);
+                } else {
+                    img.setImage(new Image(AMMO_TILES_PATH + "ammotile_" + s.getAvailableAmmoTile().getNumber() +
+                            ".png"));
+                }
             }
-            ImageView img = (ImageView) getSquarePaneByCoordinates(s.getX(), s.getY())
-                    .getChildren().get(getSquarePaneByCoordinates(s.getX(), s.getY()).getChildren().size() - 1);
-            if (s.getAvailableAmmoTile() == null) {
-                Platform.runLater(() ->
-                        img.setImage(null)
-                );
-            } else {
-                Platform.runLater(() ->
-                        img.setImage(new Image(AMMO_TILES_PATH + "ammotile_" + s.getAvailableAmmoTile().getNumber() +
-                                ".png"))
-                );
-            }
-        }
+        });
     }
 
     void updatePlayersPositions() {
-        this.players = new ArrayList<>();
-        for (SquareView s : getView().getBoard().getSquares()) {
-            GridPane squarePane = getSquarePaneByCoordinates(s.getX(), s.getY());
-            for (int j = 0; j < 5; j++) {
-                ImageView img = (ImageView) squarePane.getChildren().get(j);
-                Platform.runLater(() -> {
+        Platform.runLater(() -> {
+            this.players = new ArrayList<>();
+            for (SquareView s : getView().getBoard().getSquares()) {
+                GridPane squarePane = getSquarePaneByCoordinates(s.getX(), s.getY());
+                for (int j = 0; j < 5; j++) {
+                    ImageView img = (ImageView) squarePane.getChildren().get(j);
                     img.setImage(null);
                     img.setId(null);
                     img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.setPlayerBoardHandler);
-                });
-            }
-            int i = 0;
-            for (GameCharacter c : s.getActivePlayers()) {
-                ImageView img = (ImageView) squarePane.getChildren().get(i);
-                this.players.add(img);
-                Platform.runLater(() -> {
+                }
+                int i = 0;
+                for (GameCharacter c : s.getActivePlayers()) {
+                    ImageView img = (ImageView) squarePane.getChildren().get(i);
+                    this.players.add(img);
                     img.setImage(new Image(CHARACTERS_PATH + c.toString().toLowerCase() + ".png"));
                     img.setId(c.toString().toLowerCase());
                     img.setOnMousePressed(this.setPlayerBoardHandler);
-                });
-                i++;
+                    i++;
+                }
             }
-        }
+        });
     }
 
     void showMessage(List<String> messages) {
@@ -616,8 +613,8 @@ public class BoardController extends AbstractSceneController {
     }
 
     void setActions(List<ActionType> actions) {
-        Button b = (Button) this.actionsPane.getChildren().get(0);
         Platform.runLater(() -> {
+            Button b = (Button) this.actionsPane.getChildren().get(0);
             if (actions.contains(ActionType.CANCEL)) {
                 b.setDisable(false);
                 b.setText("Cancel");
@@ -629,9 +626,7 @@ public class BoardController extends AbstractSceneController {
                 b.setOnMousePressed(this.actionSelectionHandler);
                 b.setId("endturn");
             }
-        });
-        for (Node n : this.actionsPane.getChildren()) {
-            Platform.runLater(() -> {
+            for (Node n : this.actionsPane.getChildren()) {
                 if (actions.contains(ActionType.valueOf(n.getId().toUpperCase()))) {
                     n.setDisable(false);
                     n.setOnMousePressed(this.actionSelectionHandler);
@@ -639,8 +634,8 @@ public class BoardController extends AbstractSceneController {
                     n.setDisable(true);
                     n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.actionSelectionHandler);
                 }
-            });
-        }
+            }
+        });
     }
 
     void setPowerups(List<Powerup> powerups, List<Powerup> selected) {
@@ -687,32 +682,26 @@ public class BoardController extends AbstractSceneController {
 
     void setSquares(List<Coordinates> coordinates) {
         Platform.runLater(() -> {
-            if (coordinates.isEmpty()) {
-                this.arenaPane.toFront();
-            } else {
+            if (!coordinates.isEmpty()) {
                 this.arenaButtonsContainer.toFront();
             }
-        });
-        for (Node s : this.arenaButtonsContainer.getChildren()) {
-            boolean valid = false;
-            for (Coordinates c : coordinates) {
-                if (s.getId().equalsIgnoreCase("s" + c.getX() + c.getY())) {
-                    Platform.runLater(() -> {
+            for (Node s : this.arenaButtonsContainer.getChildren()) {
+                boolean valid = false;
+                for (Coordinates c : coordinates) {
+                    if (s.getId().equalsIgnoreCase("s" + c.getX() + c.getY())) {
                         s.getStyleClass().add("button-square-enable");
                         s.setOnMousePressed(this.squareSelectionHandler);
                         s.setVisible(true);
-                    });
-                    valid = true;
+                        valid = true;
+                    }
                 }
-            }
-            if (!valid) {
-                Platform.runLater(() -> {
+                if (!valid) {
                     s.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.squareSelectionHandler);
                     s.setVisible(false);
                     s.getStyleClass().remove("button-square-enable");
-                });
+                }
             }
-        }
+        });
     }
 
     void setWeapons(List<Weapon> weapons) {
@@ -774,37 +763,41 @@ public class BoardController extends AbstractSceneController {
     }
 
     void setSecondaryButtons(List<String> buttons) {
-        int i = 0;
-        EventHandler<MouseEvent> handler;
-        String classString;
-        if (!buttons.isEmpty() && buttons.get(0).equals("continue")) {
-            handler = this.confirmHandler;
-            classString = "button-confirm";
-        } else {
-            handler = null;
-            classString = null;
-        }
-        for (String id : buttons) {
-            Button b = (Button) this.secondaryButtonsBox.getChildren().get(i);
-            Platform.runLater(() -> {
+        Platform.runLater(() -> {
+            int i = 0;
+            for (String id : buttons) {
+                Button b = (Button) this.secondaryButtonsBox.getChildren().get(i);
+                EventHandler<MouseEvent> handler;
+                String classString;
+                if (!buttons.isEmpty() && buttons.get(i).equals("continue")) {
+                    handler = this.confirmHandler;
+                    classString = "button-confirm";
+                } else if (!buttons.isEmpty() && WeaponEffectOrderType.getFromIdentifier(buttons.get(i).toUpperCase()) != null) {
+                    handler = this.effectSelectionHandler;
+                    classString = "button-std";
+                } else {
+                    handler = this.cardinalPointSelectionHandler;
+                    classString = "button-std";
+                }
                 b.setId(id);
                 b.setText(Character.toUpperCase(id.charAt(0)) + id.substring(1));
                 b.setVisible(true);
                 b.setOnMousePressed(handler);
                 b.getStyleClass().add(classString);
-            });
-            i++;
-        }
-        while (i < 4) {
-            Button b = (Button) this.secondaryButtonsBox.getChildren().get(i);
-            Platform.runLater(() -> {
-                b.setId(null);
-                b.setVisible(false);
-                b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.confirmHandler);
-                b.getStyleClass().remove(classString);
-            });
-            i++;
-        }
+                i++;
+            }
+            while (i < 4) {
+                Button b = (Button) this.secondaryButtonsBox.getChildren().get(i);
+                    b.setId(null);
+                    b.setVisible(false);
+                    b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.confirmHandler);
+                    b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.cardinalPointSelectionHandler);
+                    b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.effectSelectionHandler);
+                    b.getStyleClass().remove("button-confirm");
+                    b.getStyleClass().remove("button-std");
+                i++;
+            }
+        });
     }
 
     void setTargets(List<GameCharacter> targets) {
@@ -815,13 +808,13 @@ public class BoardController extends AbstractSceneController {
                     player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.setPlayerBoardHandler);
                     player.getStyleClass().remove("card-selectable");
                     if (targets.contains(GameCharacter.valueOf(player.getId().toUpperCase()))) {
-                        player.setOnMousePressed(this.targetSelectionHandler);
+                        player.setOnMousePressed(this.characterSelectionHandler);
                         player.getStyleClass().add("card-selectable");
                     }
                 }
             } else {
                 for (ImageView player : this.players) {
-                    player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.targetSelectionHandler);
+                    player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.characterSelectionHandler);
                     player.setOnMousePressed(this.setPlayerBoardHandler);
                     player.getStyleClass().remove("card-selectable");
                 }
