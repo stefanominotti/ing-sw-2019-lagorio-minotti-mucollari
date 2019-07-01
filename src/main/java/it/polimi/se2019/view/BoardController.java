@@ -121,6 +121,7 @@ public class BoardController extends AbstractSceneController {
     private EventHandler<MouseEvent> characterSelectionHandler;
     private EventHandler<MouseEvent> cardinalPointSelectionHandler;
     private EventHandler<MouseEvent> effectSelectionHandler;
+    private EventHandler<MouseEvent> decisionSelectionHandler;
 
     public BoardController() {
         this.storeWeapons = new EnumMap<>(Weapon.class);
@@ -199,6 +200,13 @@ public class BoardController extends AbstractSceneController {
             public void handle(MouseEvent event) {
                 Button s = (Button) event.getSource();
                 getView().handleEffectInput(WeaponEffectOrderType.getFromIdentifier(s.getId().toUpperCase()));
+            }
+        };
+        this.decisionSelectionHandler = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                Button s = (Button) event.getSource();
+                getView().handleDecisionInput(s.getId());
             }
         };
     }
@@ -798,12 +806,21 @@ public class BoardController extends AbstractSceneController {
                 } else if (!buttons.isEmpty() && WeaponEffectOrderType.getFromIdentifier(buttons.get(i).toUpperCase()) != null) {
                     handler = this.effectSelectionHandler;
                     classString = "button-std";
+                } else if (!buttons.isEmpty() && buttons.get(0).equals("y")) {
+                    handler = this.decisionSelectionHandler;
+                    classString = "button-std";
                 } else {
                     handler = this.cardinalPointSelectionHandler;
                     classString = "button-std";
                 }
                 b.setId(id);
-                b.setText(Character.toUpperCase(id.charAt(0)) + id.substring(1));
+                if (id.equals("y")) {
+                    b.setText("Yes");
+                } else if (id.equals("N")) {
+                    b.setText("No");
+                } else {
+                    b.setText(Character.toUpperCase(id.charAt(0)) + id.substring(1));
+                }
                 b.setVisible(true);
                 b.setOnMousePressed(handler);
                 b.getStyleClass().add(classString);
@@ -829,17 +846,17 @@ public class BoardController extends AbstractSceneController {
                 this.arenaPane.toFront();
                 for (ImageView player : this.players) {
                     player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.setPlayerBoardHandler);
-                    player.getStyleClass().remove("card-selectable");
+                    player.getStyleClass().remove("character-selectable");
                     if (targets.contains(GameCharacter.valueOf(player.getId().toUpperCase()))) {
                         player.setOnMousePressed(this.characterSelectionHandler);
-                        player.getStyleClass().add("card-selectable");
+                        player.getStyleClass().add("character-selectable");
                     }
                 }
             } else {
                 for (ImageView player : this.players) {
                     player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.characterSelectionHandler);
                     player.setOnMousePressed(this.setPlayerBoardHandler);
-                    player.getStyleClass().remove("card-selectable");
+                    player.getStyleClass().remove("character-selectable");
                 }
             }
         });

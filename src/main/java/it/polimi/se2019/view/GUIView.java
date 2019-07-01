@@ -636,7 +636,6 @@ public class GUIView extends View {
     @Override
     void handleActionSelectionRequest(List<ActionType> actions) {
         super.handleActionSelectionRequest(actions);
-        showBoard();
         this.currentStatus = "What do you want to do?";
         this.currentAction = "Select an action from the list above";
         setBanner();
@@ -661,7 +660,6 @@ public class GUIView extends View {
     @Override
     void handleDiscardPowerupRequest(List<Powerup> powerups) {
         super.handleDiscardPowerupRequest(powerups);
-        showBoard();
         this.currentStatus = "Where do you want to spawn?";
         this.currentAction = "Select a powerup to discard";
         setBanner();
@@ -967,7 +965,6 @@ public class GUIView extends View {
         this.currentAction = "Select from the available players";
         setBanner();
         setTargets();
-
     }
 
     /**
@@ -983,9 +980,11 @@ public class GUIView extends View {
         } else {
             description = getCurrentWeapon().getSecondaryEffectTwo().get(0).getDescription();
         }
-        this.currentStatus = "Do you want to apply \"" + description + "\"?";
-        this.currentAction = "Select one of the available options";
+        this.currentStatus = "Do you want to combo?";
+        this.currentAction = description;
         setBanner();
+        this.secondaryButtons = Arrays.asList("y", "n");
+        setSecondaryButtons();
     }
 
     /**
@@ -994,9 +993,11 @@ public class GUIView extends View {
     @Override
     void handleEffectRequireRequest() {
         super.handleEffectRequireRequest();
-        this.currentStatus = "Do you want to perform \"" + getEffectPossibility().getDescription() + "\"?";
-        this.currentAction = "Select one of the available options";
+        this.currentStatus = "Do you want to perform not mandatory effect?";
+        this.currentAction = getEffectPossibility().getDescription();
         setBanner();
+        this.secondaryButtons = Arrays.asList("y", "n");
+        setSecondaryButtons();
     }
 
     /**
@@ -1067,7 +1068,6 @@ public class GUIView extends View {
                 }
                 toRemove = coordinates;
             }
-
         }
         removeMultipleSquareSelection(toRemove);
         if(this.targetSelected.size() < this.minSelectable) {
@@ -1133,6 +1133,48 @@ public class GUIView extends View {
         setBanner();
         setSecondaryButtons();
         setWeapons();
+    }
+
+    /**
+     * Shows persistence request
+     */
+    @Override
+    void handlePersistenceRequest(GameCharacter character) {
+        super.handlePersistenceRequest(character);
+        resetSelections();
+        setWeapons();
+        setActions();
+        setPowerups();
+        setTargets();
+        setSquares();
+        if (character == getCharacter()) {
+            this.currentStatus = "Do you want to save the game";
+            this.currentAction = "Select one of the options above";
+            setBanner();
+            this.secondaryButtons = Arrays.asList("y", "n");
+            setSecondaryButtons();
+        }
+    }
+
+    void handleDecisionInput(String input) {
+        input = input.toUpperCase();
+        switch (getState()) {
+            case PERSISTENCE_SELECTION:
+                getClient().send(new SingleSelectionMessage(SelectionMessageType.PERSISTENCE, getCharacter(), input));
+                break;
+            case EFFECT_COMBO_SELECTION:
+                getClient().send(new SingleSelectionMessage(SelectionMessageType.EFFECT_COMBO, getCharacter(), input));
+                break;
+            case EFFECT_REQUIRE_SELECTION:
+                if (input.equals("Y")) {
+                    super.setPossibilityRequire(true);
+                } else {
+                    super.setPossibilityRequire(false);
+                }
+                break;
+        }
+        this.secondaryButtons = new ArrayList<>();
+        setSecondaryButtons();
     }
 
     void setWeapons() {
@@ -1374,6 +1416,11 @@ public class GUIView extends View {
         setWeapons();
         setSecondaryButtons();
         setCardinalPoints();
+    }
+
+    void showWeaponInfo(Weapon weapon) {
+        setScene(SceneType.WEAPON_INFO);
+        ((CardDetailController) this.controller).setWeapon(weapon);
     }
 
     void setArena() {
