@@ -839,6 +839,7 @@ public class BoardController extends AbstractSceneController {
                     b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.confirmHandler);
                     b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.cardinalPointSelectionHandler);
                     b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.effectSelectionHandler);
+                    b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.decisionSelectionHandler);
                     b.getStyleClass().remove("button-confirm");
                     b.getStyleClass().remove("button-std");
                 i++;
