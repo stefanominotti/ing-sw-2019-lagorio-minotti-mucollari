@@ -136,9 +136,11 @@ public class BoardController extends AbstractSceneController {
         this.weaponInfoHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                Weapon weapon = Weapon.valueOf(((ImageView) event.getSource()).getId().toUpperCase());
-                //new Thread(() -> getView().showWeaponInfo(weapon)).start();
-                showWeaponInfo(weapon);
+                if (((Node) event.getSource()).getId() != null) {
+                    Weapon weapon = Weapon.valueOf(((ImageView) event.getSource()).getId().toUpperCase());
+                    //new Thread(() -> getView().showWeaponInfo(weapon)).start();
+                    showWeaponInfo(weapon);
+                }
             }
         };
         this.actionSelectionHandler = new EventHandler<MouseEvent>() {
@@ -151,12 +153,14 @@ public class BoardController extends AbstractSceneController {
         this.powerupSelectionHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                String[] splitId = ((ImageView) event.getSource()).getId().split("_");
-                String typeString = String.join("_", Arrays.copyOfRange(splitId, 1, splitId.length-1));
-                String colorString = splitId[splitId.length-1];
-                PowerupType type = PowerupType.valueOf(typeString.toUpperCase());
-                AmmoType color = AmmoType.valueOf(colorString.toUpperCase());
-                getView().handlePowerupInput(type, color);
+                if (((Node) event.getSource()).getId() != null) {
+                    String[] splitId = ((ImageView) event.getSource()).getId().split("_");
+                    String typeString = String.join("_", Arrays.copyOfRange(splitId, 1, splitId.length - 1));
+                    String colorString = splitId[splitId.length - 1];
+                    PowerupType type = PowerupType.valueOf(typeString.toUpperCase());
+                    AmmoType color = AmmoType.valueOf(colorString.toUpperCase());
+                    getView().handlePowerupInput(type, color);
+                }
             }
         };
         this.squareSelectionHandler = new EventHandler<MouseEvent>() {
