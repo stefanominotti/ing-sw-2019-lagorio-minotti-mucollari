@@ -94,13 +94,9 @@
 }
 
 .card-selectable {
-	-fx-effect: dropshadow(three-pass-box, rgba(40,167,69,1), 10, 0, 0, 0);
-}
-
-.card-unselectable {
-	-fx-effect: dropshadow(three-pass-box, rgba(20,53,69,1), 10, 0, 0, 0);
+	-fx-effect: dropshadow(three-pass-box, rgba(255,193,7,1), 10, 0, 0, 0);
 }
 
 .card:hover{
-	-fx-effect: dropshadow(three-pass-box, rgba(255,193,7,1), 10, 0, 0, 0);
+	-fx-effect: dropshadow(three-pass-box, rgba(0,123,255,1), 10, 0, 0, 0);
 }
