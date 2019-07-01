@@ -136,7 +136,7 @@ public class BoardController extends AbstractSceneController {
         this.weaponInfoHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if (((Node) event.getSource()).getId() != null) {
+                if (event.getSource() != null && ((Node) event.getSource()).getId() != null) {
                     Weapon weapon = Weapon.valueOf(((ImageView) event.getSource()).getId().toUpperCase());
                     //new Thread(() -> getView().showWeaponInfo(weapon)).start();
                     showWeaponInfo(weapon);
@@ -153,7 +153,7 @@ public class BoardController extends AbstractSceneController {
         this.powerupSelectionHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if (((Node) event.getSource()).getId() != null) {
+                if (event.getSource() != null && ((Node) event.getSource()).getId() != null) {
                     String[] splitId = ((ImageView) event.getSource()).getId().split("_");
                     String typeString = String.join("_", Arrays.copyOfRange(splitId, 1, splitId.length - 1));
                     String colorString = splitId[splitId.length - 1];
@@ -175,8 +175,10 @@ public class BoardController extends AbstractSceneController {
         this.weaponSelectionHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                ImageView s = (ImageView) event.getSource();
-                getView().handleWeaponInput(Weapon.valueOf(s.getId().toUpperCase()));
+                if (event.getSource() != null && ((Node) event.getSource()).getId() != null) {
+                    ImageView s = (ImageView) event.getSource();
+                    getView().handleWeaponInput(Weapon.valueOf(s.getId().toUpperCase()));
+                }
             }
         };
         this.confirmHandler = new EventHandler<MouseEvent>() {
@@ -217,7 +219,7 @@ public class BoardController extends AbstractSceneController {
 
     @FXML
     void setPlayerBoard() {
-        setPlayerBoard(getView().getCharacter());
+        new Thread(() -> getView().setPlayerBoard(getView().getCharacter())).start();
     }
 
     GameCharacter getActiveBoard() {
@@ -820,7 +822,7 @@ public class BoardController extends AbstractSceneController {
                 b.setId(id);
                 if (id.equals("y")) {
                     b.setText("Yes");
-                } else if (id.equals("N")) {
+                } else if (id.equals("n")) {
                     b.setText("No");
                 } else {
                     b.setText(Character.toUpperCase(id.charAt(0)) + id.substring(1));
@@ -851,9 +853,11 @@ public class BoardController extends AbstractSceneController {
                 for (ImageView player : this.players) {
                     player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.setPlayerBoardHandler);
                     player.getStyleClass().remove("character-selectable");
+                    player.getStyleClass().add("img-characters");
                     if (targets.contains(GameCharacter.valueOf(player.getId().toUpperCase()))) {
                         player.setOnMousePressed(this.characterSelectionHandler);
                         player.getStyleClass().add("character-selectable");
+                        player.getStyleClass().remove("img-characters");
                     }
                 }
             } else {
@@ -861,6 +865,7 @@ public class BoardController extends AbstractSceneController {
                     player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.characterSelectionHandler);
                     player.setOnMousePressed(this.setPlayerBoardHandler);
                     player.getStyleClass().remove("character-selectable");
+                    player.getStyleClass().add("img-characters");
                 }
             }
         });

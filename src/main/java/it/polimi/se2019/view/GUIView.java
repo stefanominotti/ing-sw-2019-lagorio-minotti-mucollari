@@ -635,10 +635,15 @@ public class GUIView extends View {
      */
     @Override
     void handleActionSelectionRequest(List<ActionType> actions) {
+        resetSelections();
         super.handleActionSelectionRequest(actions);
         this.currentStatus = "What do you want to do?";
         this.currentAction = "Select an action from the list above";
         setBanner();
+        setActions();
+        setSquares();
+        setWeapons();
+        setPowerups();
     }
 
     void setActions() {
