@@ -1,5 +1,6 @@
 package it.polimi.se2019.view;
 
+import com.sun.media.jfxmedia.events.PlayerStateEvent;
 import it.polimi.se2019.controller.ActionType;
 import it.polimi.se2019.model.*;
 import javafx.application.Platform;
@@ -17,10 +18,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -35,13 +33,14 @@ public class BoardController extends AbstractSceneController {
     private static final String CHARACTERS_PATH = "characters/";
     private static final String PLAYER_BOARDS_PATH = "player_boards/";
     private static final String WEAPONS_PATH = "weapons/img/";
-    private static final String POWERUPS_PATH = "powerups/";
+    private static final String POWERUPS_PATH = "powerups/img/";
     private static final String ARENAS_PATH = "arenas/img/";
     private static final String AMMO_TILES_PATH = "ammotiles/img/";
 
     private GameCharacter activeBoard;
     private Pane arenaPane;
     private List<ImageView> players;
+    private Map<Weapon, ImageView> storeWeapons;
 
     @FXML
     private GridPane skullsGrid;
@@ -113,12 +112,16 @@ public class BoardController extends AbstractSceneController {
     private EventHandler<MouseEvent> squareSelectionHandler;
     private EventHandler<MouseEvent> weaponSelectionHandler;
     private EventHandler<MouseEvent> confirmHandler;
+    private EventHandler<MouseEvent> targetSelectionHandler;
 
     public BoardController() {
+        this.storeWeapons = new EnumMap<>(Weapon.class);
         this.setPlayerBoardHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                setPlayerBoard(GameCharacter.valueOf(((ImageView) event.getSource()).getId().toUpperCase()));
+                new Thread(() ->
+                        getView().setPlayerBoard(GameCharacter.valueOf(((ImageView) event.getSource()).getId()
+                                .toUpperCase()))).start();
             }
         };
         this.weaponInfoHandler = new EventHandler<MouseEvent>() {
@@ -166,6 +169,13 @@ public class BoardController extends AbstractSceneController {
             @Override
             public void handle(MouseEvent event) {
                 getView().handleConfirmation();
+            }
+        };
+        this.targetSelectionHandler = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                ImageView s = (ImageView) event.getSource();
+                getView().handleTargetInput(GameCharacter.valueOf(s.getId().toUpperCase()));
             }
         };
     }
@@ -388,6 +398,7 @@ public class BoardController extends AbstractSceneController {
     }
 
     void updateStores() {
+        this.storeWeapons = new EnumMap<>(Weapon.class);
         for (SquareView s : getView().getBoard().getSquares()) {
             if (!s.isSpawn()) {
                 continue;
@@ -413,6 +424,7 @@ public class BoardController extends AbstractSceneController {
             int i = 0;
             for (Weapon w : s.getStore()) {
                 ImageView img = (ImageView) grid.getChildren().get(i);
+                this.storeWeapons.put(w, img);
                 Platform.runLater(() -> {
                     img.setId(w.toString().toLowerCase());
                     img.setImage(new Image(WEAPONS_PATH + w.toString().toLowerCase() + ".png"));
@@ -425,7 +437,7 @@ public class BoardController extends AbstractSceneController {
                 Platform.runLater(() -> {
                     img.setId(null);
                     img.setImage(null);
-                    img.setOnMousePressed(this.weaponInfoHandler);
+                    img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
                 });
                 i++;
             }
@@ -631,7 +643,7 @@ public class BoardController extends AbstractSceneController {
         }
     }
 
-    void setPowerups(List<Powerup> powerups) {
+    void setPowerups(List<Powerup> powerups, List<Powerup> selected) {
         Platform.runLater(() -> {
             for (int i = 6; i < 9; i++) {
                 ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
@@ -643,12 +655,31 @@ public class BoardController extends AbstractSceneController {
                 String colorString = splitId[splitId.length-1];
                 PowerupType type = PowerupType.valueOf(typeString.toUpperCase());
                 AmmoType color = AmmoType.valueOf(colorString.toUpperCase());
+                boolean set = false;
                 for (Powerup p : powerups) {
                     if (p.getType() == type && p.getColor() == color) {
                         img.setOnMousePressed(this.powerupSelectionHandler);
-                    } else {
-                        img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.powerupSelectionHandler);
+                        img.getStyleClass().add("card-selectable");
+                        img.getStyleClass().remove("card-selected");
+                        set = true;
+                        break;
                     }
+                }
+                if (!set) {
+                    for (Powerup p : selected) {
+                        if (p.getType() == type && p.getColor() == color) {
+                            img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.powerupSelectionHandler);
+                            img.getStyleClass().add("card-selected");
+                            img.getStyleClass().remove("card-selectable");
+                            set = true;
+                            break;
+                        }
+                    }
+                }
+                if (!set) {
+                    img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.powerupSelectionHandler);
+                    img.getStyleClass().remove("card-selected");
+                    img.getStyleClass().remove("card-selectable");
                 }
             }
         });
@@ -685,78 +716,58 @@ public class BoardController extends AbstractSceneController {
     }
 
     void setWeapons(List<Weapon> weapons) {
-        for (Node n : this.redWeaponsGrid.getChildren()) {
+        if (!weapons.isEmpty()) {
             Platform.runLater(() -> {
-                try {
-                    if (n.getId() != null && weapons.contains(Weapon.valueOf(n.getId().toUpperCase()))) {
-                        n.setOnMousePressed(this.weaponSelectionHandler);
-                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
-                    } else if (n.getId() == null) {
-                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
-                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                for (Map.Entry<Weapon, ImageView> weapon : this.storeWeapons.entrySet()) {
+                    Weapon name = weapon.getKey();
+                    ImageView img = weapon.getValue();
+                    if (weapons.contains(name)) {
+                        img.setOnMousePressed(this.weaponSelectionHandler);
+                        img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
+                        img.getStyleClass().add("card-selectable");
                     } else {
-                        n.setOnMousePressed(this.weaponInfoHandler);
-                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                        img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
+                        img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                        img.getStyleClass().remove("card-selectable");
                     }
-                } catch (IllegalArgumentException e) {
-                    n.setOnMousePressed(this.weaponInfoHandler);
-                    n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                }
+                for (Node n : this.playerAssetsGrid.getChildren()) {
+                    try {
+                        if (n.getId() != null && weapons.contains(Weapon.valueOf(n.getId().toUpperCase()))) {
+                            n.setOnMousePressed(this.weaponSelectionHandler);
+                            n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
+                            n.getStyleClass().add("card-selectable");
+                        } else {
+                            n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
+                            n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                            n.getStyleClass().remove("card-selectable");
+                        }
+                    } catch (IllegalArgumentException e) {
+                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
+                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                        n.getStyleClass().remove("card-selectable");
+                    }
                 }
             });
-        }
-        for (Node n : this.blueWeaponsGrid.getChildren()) {
+        } else {
             Platform.runLater(() -> {
-                try {
-                    if (n.getId() != null && weapons.contains(Weapon.valueOf(n.getId().toUpperCase()))) {
-                        n.setOnMousePressed(this.weaponSelectionHandler);
-                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
-                    } else if (n.getId() == null) {
-                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
-                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
-                    } else {
-                        n.setOnMousePressed(this.weaponInfoHandler);
-                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
-                    }
-                } catch (IllegalArgumentException e) {
-                    n.setOnMousePressed(this.weaponInfoHandler);
-                    n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                for (Map.Entry<Weapon, ImageView> weapon : this.storeWeapons.entrySet()) {
+                    ImageView img = weapon.getValue();
+                    img.setOnMousePressed(this.weaponInfoHandler);
+                    img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                    img.getStyleClass().remove("card-selectable");
                 }
-            });
-        }
-        for (Node n : this.yellowWeaponsGrid.getChildren()) {
-            Platform.runLater(() -> {
-                try {
-                    if (n.getId() != null && weapons.contains(Weapon.valueOf(n.getId().toUpperCase()))) {
-                        n.setOnMousePressed(this.weaponSelectionHandler);
-                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
-                    } else if (n.getId() == null) {
-                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
-                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
-                    } else {
+                for (Node n : this.playerAssetsGrid.getChildren()) {
+                    try {
+                        Weapon.valueOf(n.getId().toUpperCase());
                         n.setOnMousePressed(this.weaponInfoHandler);
                         n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
-                    }
-                } catch (IllegalArgumentException e) {
-                    n.setOnMousePressed(this.weaponInfoHandler);
-                    n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
-                }
-            });
-        }
-        for (Node n : this.playerAssetsGrid.getChildren()) {
-            Platform.runLater(() -> {
-                try {
-                    if (n.getId() != null && weapons.contains(Weapon.valueOf(n.getId().toUpperCase()))) {
-                        n.setOnMousePressed(this.weaponSelectionHandler);
-                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
-                    } else if (n.getId() == null) {
+                        n.getStyleClass().remove("card-selectable");
+                    } catch (IllegalArgumentException | NullPointerException e) {
                         n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
                         n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
-                    } else if (!weapons.contains(Weapon.valueOf(n.getId().toUpperCase()))) {
-                        n.setOnMousePressed(this.weaponInfoHandler);
-                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                        n.getStyleClass().remove("card-selectable");
                     }
-                } catch (IllegalArgumentException e) {
-                    // Ignore
                 }
             });
         }
@@ -766,7 +777,7 @@ public class BoardController extends AbstractSceneController {
         int i = 0;
         EventHandler<MouseEvent> handler;
         String classString;
-        if (!buttons.isEmpty() && buttons.get(0).equals("confirm")) {
+        if (!buttons.isEmpty() && buttons.get(0).equals("continue")) {
             handler = this.confirmHandler;
             classString = "button-confirm";
         } else {
@@ -794,6 +805,28 @@ public class BoardController extends AbstractSceneController {
             });
             i++;
         }
+    }
+
+    void setTargets(List<GameCharacter> targets) {
+        Platform.runLater(() -> {
+            if (!targets.isEmpty()) {
+                this.arenaPane.toFront();
+                for (ImageView player : this.players) {
+                    player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.setPlayerBoardHandler);
+                    player.getStyleClass().remove("card-selectable");
+                    if (targets.contains(GameCharacter.valueOf(player.getId().toUpperCase()))) {
+                        player.setOnMousePressed(this.targetSelectionHandler);
+                        player.getStyleClass().add("card-selectable");
+                    }
+                }
+            } else {
+                for (ImageView player : this.players) {
+                    player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.targetSelectionHandler);
+                    player.setOnMousePressed(this.setPlayerBoardHandler);
+                    player.getStyleClass().remove("card-selectable");
+                }
+            }
+        });
     }
 }
 

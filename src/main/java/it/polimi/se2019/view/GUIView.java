@@ -649,7 +649,7 @@ public class GUIView extends View {
 
     void setPowerups() {
         if (this.currentScene == SceneType.BOARD) {
-            ((BoardController) this.controller).setPowerups(getPowerupsSelection());
+            ((BoardController) this.controller).setPowerups(getPowerupsSelection(), getPaidPowerups());
         }
     }
 
@@ -680,6 +680,8 @@ public class GUIView extends View {
                 if (getPowerupsSelection().isEmpty()) {
                     getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
                             getPaidPowerups()));
+                    this.secondaryButtons = new ArrayList<>();
+                    setSecondaryButtons();
                     resetSelections();
                     setPowerups();
                     return;
@@ -696,10 +698,17 @@ public class GUIView extends View {
 
                 getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
                         getPaidPowerups()));
+                break;
+            case USE_POWERUP:
+                getClient().send(new SingleSelectionMessage(SelectionMessageType.USE_POWERUP, getCharacter(),
+                        new Powerup(type, color)));
+                setActivePowerup(type);
+                break;
 
         }
         resetSelections();
         setPowerups();
+        setActions();
     }
 
     void handleConfirmation() {
@@ -746,6 +755,10 @@ public class GUIView extends View {
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.PICKUP, getCharacter(),
                         new Coordinates(x, y)));
                 break;
+            case SELECT_POWERUP_POSITION:
+                getClient().send(new SingleSelectionMessage(SelectionMessageType.POWERUP_POSITION, getCharacter(),
+                        new Coordinates(x, y)));
+                break;
             default:
                 break;
         }
@@ -782,6 +795,19 @@ public class GUIView extends View {
         setWeapons();
     }
 
+    /**
+     * Shows weapon switching request message
+     * @param weapons List of the weapon of switching
+     */
+    @Override
+    void handleWeaponSwitchRequest(List<Weapon> weapons) {
+        super.handleWeaponSwitchRequest(weapons);
+        this.currentStatus = "Which weapon do you want to drop?";
+        this.currentAction = "Select one of your weapons";
+        setBanner();
+        setWeapons();
+    }
+
     void setWeapons() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setWeapons(getWeaponsSelection());
@@ -792,6 +818,9 @@ public class GUIView extends View {
         switch (getState()) {
             case SELECT_WEAPON:
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.PICKUP_WEAPON, getCharacter(), weapon));
+                break;
+            case SWITCH_WEAPON:
+                getClient().send(new SingleSelectionMessage(SelectionMessageType.SWITCH, getCharacter(), weapon));
                 break;
             default:
                 break;
@@ -835,6 +864,8 @@ public class GUIView extends View {
         if (getPowerupsSelection().isEmpty()) {
             getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
                     getPaidPowerups()));
+            this.secondaryButtons = new ArrayList<>();
+            setSecondaryButtons();
             resetSelections();
             setPowerups();
             return;
@@ -852,11 +883,85 @@ public class GUIView extends View {
             this.currentAction = "You must pay with powerups, select desired ones";
         } else {
             this.currentAction = "Select powerups if you want, then confirm";
-            this.secondaryButtons.add("confirm");
+            this.secondaryButtons.add("continue");
         }
         setBanner();
         setPowerups();
         setSecondaryButtons();
+    }
+
+    /**
+     * Shows powerups choice
+     * @param powerups
+     */
+    @Override
+    void handleUsePowerupRequest(List<Powerup> powerups) {
+        super.handleUsePowerupRequest(powerups);
+        if (getState() == MULTIPLE_POWERUPS_SELECTION) {
+            this.currentStatus = "Which powerups do you want to use?";
+            this.currentAction = "Select available powerups";
+            this.secondaryButtons = new ArrayList<>();
+            this.secondaryButtons.add("continue");
+        } else {
+            addActionsSelection(ActionType.CANCEL);
+            this.currentStatus = "Which powerup do you want to use?";
+            this.currentAction = "Select one of the available powerups";
+        }
+        setActions();
+        setBanner();
+        setPowerups();
+        setSecondaryButtons();
+    }
+
+    /**
+     * Shows squares choice request message for powerup movement
+     * @param coordinates List of the available coordinates for move action for powerup
+     */
+    @Override
+    void handlePowerupPositionRequest(List<Coordinates> coordinates) {
+        super.handlePowerupPositionRequest(coordinates);
+        switch (getActivePowerup()) {
+            case TELEPORTER:
+                this.currentStatus = "Where do you want to move?";
+                this.currentAction = "Select one of the available squares";
+                break;
+            case NEWTON:
+                this.currentStatus = "Where do you want to move your target?";
+                this.currentAction = "Select one of the available squares";
+                break;
+            default:
+                break;
+        }
+        setBanner();
+        setSquares();
+    }
+
+    /**
+     * Shows targets choice request for powerup targets
+     * @param targets List of the available characters targets
+     */
+    @Override
+    void handlePowerupTargetRequest(List<GameCharacter> targets) {
+        super.handlePowerupTargetRequest(targets);
+        this.currentStatus = "Who do you want to use tour powerup on?";
+        this.currentAction = "Select one of the available targets";
+        setBanner();
+        setTargets();
+    }
+
+    void handleTargetInput(GameCharacter character) {
+        switch (getState()) {
+            case SELECT_POWERUP_TARGET:
+                getClient().send(new SingleSelectionMessage(SelectionMessageType.POWERUP_TARGET, getCharacter(),
+                        character));
+                break;
+            default:
+                break;
+
+        }
+        resetSelections();
+        setTargets();
+        setActions();
     }
 
     /**
@@ -927,6 +1032,12 @@ public class GUIView extends View {
     void setArena() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setArena();
+        }
+    }
+
+    void setTargets() {
+        if (this.currentScene == SceneType.BOARD) {
+            ((BoardController) this.controller).setTargets(getCharactersSelection());
         }
     }
 
