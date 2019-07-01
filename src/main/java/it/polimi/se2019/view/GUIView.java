@@ -680,11 +680,35 @@ public class GUIView extends View {
     }
 
     void handleSquareInput(int x, int y) {
-        if (getState() == SELECT_MOVEMENT) {
-            getClient().send(new SingleSelectionMessage(SelectionMessageType.MOVE, getCharacter(),
-                    new Coordinates(x, y)));
+        switch (getState()) {
+            case SELECT_MOVEMENT:
+                getClient().send(new SingleSelectionMessage(SelectionMessageType.MOVE, getCharacter(),
+                        new Coordinates(x, y)));
+                break;
+            case SELECT_PICKUP:
+                getClient().send(new SingleSelectionMessage(SelectionMessageType.PICKUP, getCharacter(),
+                        new Coordinates(x, y)));
+                break;
+            default:
+                break;
         }
         resetSelections();
+        setSquares();
+        setActions();
+    }
+
+    /**
+     * Shows squares choice request for move and pickup action
+     * @param coordinates List of the available squares for move and pickup action
+     */
+    @Override
+    void handlePickupActionRequest(List<Coordinates> coordinates) {
+        super.handlePickupActionRequest(coordinates);
+        addActionsSelection(ActionType.CANCEL);
+        setActions();
+        this.currentStatus = "Where do you want to pickup?";
+        this.currentAction = "Select one of the available squares or cancel";
+        setBanner();
         setSquares();
     }
 

@@ -24,10 +24,7 @@
                <children>
                   <Pane fx:id="arenaContainer" VBox.vgrow="ALWAYS">
                      <children>
-                        <ImageView fx:id="arenaImage" fitHeight="678.0" fitWidth="985.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../arenas/img/arena_1.png" />
-                           </image></ImageView>
+                        <ImageView fx:id="arenaImage" fitHeight="678.0" fitWidth="985.0" pickOnBounds="true" preserveRatio="true" />
                         <GridPane fx:id="blueWeaponsGrid" layoutX="477.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="130.0" prefWidth="288.0">
                           <columnConstraints>
                               <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="740.0" minWidth="10.0" prefWidth="740.0" />

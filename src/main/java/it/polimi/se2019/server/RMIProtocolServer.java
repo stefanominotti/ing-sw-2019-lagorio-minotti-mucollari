@@ -1,6 +1,7 @@
 package it.polimi.se2019.server;
 
 import it.polimi.se2019.client.RMIClientInterface;
+import it.polimi.se2019.client.RMIProtocolClient;
 import it.polimi.se2019.model.messages.Message;
 import it.polimi.se2019.model.messages.client.ClientMessage;
 import it.polimi.se2019.model.messages.client.ClientMessageType;
@@ -12,6 +13,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
@@ -24,7 +26,7 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
 
     private transient Server server;
     private Map<RMIClientInterface, RMIVirtualClient> clientCorrespondency;
-    private final ConcurrentLinkedQueue<ClientMessagePair> queue;
+    private final LinkedList<ClientMessagePair> queue;
     private Registry registry;
 
     /**
@@ -37,13 +39,21 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
         this.server = server;
         this.clientCorrespondency = new HashMap<>();
 
-        this.queue = new ConcurrentLinkedQueue<>();
+        this.queue = new LinkedList<>();
 
         new Thread(() -> {
             while(true) {
-                if (!RMIProtocolServer.this.queue.isEmpty()) {
-                    ClientMessagePair toReceive = RMIProtocolServer.this.queue.poll();
-                    RMIProtocolServer.this.server.receiveMessage(toReceive.getMessage(), toReceive.getClient());
+                synchronized(RMIProtocolServer.this.queue) {
+                    if (!RMIProtocolServer.this.queue.isEmpty()) {
+                        ClientMessagePair toReceive = RMIProtocolServer.this.queue.poll();
+                        RMIProtocolServer.this.server.receiveMessage(toReceive.getMessage(), toReceive.getClient());
+                    } else {
+                        try {
+                            RMIProtocolServer.this.queue.wait();
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
                 }
             }
         }).start();
@@ -109,7 +119,10 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
      */
     @Override
     public void notify(Message message, RMIClientInterface client) {
-        this.queue.add(new ClientMessagePair(this.clientCorrespondency.get(client), message));
+        synchronized(this.queue) {
+            this.queue.add(new ClientMessagePair(this.clientCorrespondency.get(client), message));
+            this.queue.notifyAll();
+        }
     }
 
     /**

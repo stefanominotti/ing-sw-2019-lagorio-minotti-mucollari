@@ -9,6 +9,7 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static java.lang.Thread.sleep;
@@ -19,7 +20,7 @@ import static java.lang.Thread.sleep;
 public class RMIProtocolClient extends AbstractClient implements RMIClientInterface {
 
     private RMIServerInterface server;
-    private final ConcurrentLinkedQueue<Message> queue;
+    private final LinkedList<Message> queue;
 
     /**
      * Class constructor, it builds an RMI protocol client
@@ -29,14 +30,22 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
     public RMIProtocolClient(View view, String ip) {
         super(view);
 
-        this.queue = new ConcurrentLinkedQueue<>();
+        this.queue = new LinkedList<>();
 
         new Thread(() -> {
-            while(true) {
-                if (!RMIProtocolClient.this.queue.isEmpty()) {
-                    Message message = RMIProtocolClient.this.queue.poll();
-                    if (message != null) {
-                        getView().manageUpdate(message);
+            synchronized (RMIProtocolClient.this.queue) {
+                while (true) {
+                    if (!RMIProtocolClient.this.queue.isEmpty()) {
+                        Message message = RMIProtocolClient.this.queue.poll();
+                        if (message != null) {
+                            getView().manageUpdate(message);
+                        }
+                    } else {
+                        try {
+                            RMIProtocolClient.this.queue.wait();
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
                     }
                 }
             }
@@ -59,7 +68,7 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
                 }
 
                 try {
-                    sleep(1000);
+                    sleep(3000);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
@@ -94,6 +103,9 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
      */
     @Override
     public void notify(Message message) {
-        this.queue.add(message);
+        synchronized (this.queue) {
+            this.queue.add(message);
+            this.queue.notifyAll();
+        }
     }
 }

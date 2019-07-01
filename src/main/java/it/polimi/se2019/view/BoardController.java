@@ -145,8 +145,8 @@ public class BoardController extends AbstractSceneController {
             @Override
             public void handle(MouseEvent event) {
                 Button s = (Button) event.getSource();
-                int x = s.getId().charAt(s.getId().length()-2);
-                int y = s.getId().charAt(s.getId().length()-1);
+                int x = Integer.parseInt(String.valueOf(s.getId().charAt(s.getId().length()-2)));
+                int y = Integer.parseInt(String.valueOf(s.getId().charAt(s.getId().length()-1)));
                 getView().handleSquareInput(x, y);
             }
         };
@@ -549,16 +549,13 @@ public class BoardController extends AbstractSceneController {
         this.players = new ArrayList<>();
         for (SquareView s : getView().getBoard().getSquares()) {
             GridPane squarePane = getSquarePaneByCoordinates(s.getX(), s.getY());
-            if (s.getActivePlayers().isEmpty()) {
-                for (int j = 0; j < 5; j++) {
-                    ImageView img = (ImageView) squarePane.getChildren().get(j);
-                    Platform.runLater(() -> {
-                        img.setImage(null);
-                        img.setId(null);
-                        img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.setPlayerBoardHandler);
-                    });
-                }
-                continue;
+            for (int j = 0; j < 5; j++) {
+                ImageView img = (ImageView) squarePane.getChildren().get(j);
+                Platform.runLater(() -> {
+                    img.setImage(null);
+                    img.setId(null);
+                    img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.setPlayerBoardHandler);
+                });
             }
             int i = 0;
             for (GameCharacter c : s.getActivePlayers()) {
@@ -640,13 +637,19 @@ public class BoardController extends AbstractSceneController {
     }
 
     void setSquares(List<Coordinates> coordinates) {
+        Platform.runLater(() -> {
+            if (coordinates.isEmpty()) {
+                this.arenaPane.toFront();
+            } else {
+                this.arenaButtonsContainer.toFront();
+            }
+        });
         for (Node s : this.arenaButtonsContainer.getChildren()) {
             boolean valid = false;
             for (Coordinates c : coordinates) {
                 if (s.getId().equalsIgnoreCase("s" + c.getX() + c.getY())) {
                     Platform.runLater(() -> {
                         s.setOnMousePressed(this.squareSelectionHandler);
-                        s.toFront();
                         s.setVisible(true);
                     });
                     valid = true;
@@ -656,7 +659,6 @@ public class BoardController extends AbstractSceneController {
                 Platform.runLater(() -> {
                     s.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.squareSelectionHandler);
                     s.setVisible(false);
-                    s.toBack();
                 });
             }
         }

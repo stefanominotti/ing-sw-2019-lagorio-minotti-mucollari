@@ -51,7 +51,7 @@ public class RMIVirtualClient extends Thread implements VirtualClientInterface {
             }
 
             try {
-                sleep(1000);
+                sleep(3000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
