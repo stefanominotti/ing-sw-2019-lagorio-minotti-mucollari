@@ -966,6 +966,7 @@ public class GUIView extends View {
         this.currentStatus = text.toString();
         this.currentAction = "Select from the available players";
         setBanner();
+        setTargets();
 
     }
 
@@ -1061,17 +1062,20 @@ public class GUIView extends View {
         Coordinates toRemove = null;
         for(Coordinates coordinates : getMultipleSquareSelection().keySet()) {
             if(getMultipleSquareSelection().get(coordinates).contains(character)) {
+                for(GameCharacter c: getMultipleSquareSelection().get(coordinates)) {
+                    removeCharacterSelection(c);
+                }
                 toRemove = coordinates;
             }
+
         }
-        this.removeMultipleSquareSelection(toRemove);
+        removeMultipleSquareSelection(toRemove);
         if(this.targetSelected.size() < this.minSelectable) {
             handleMultipleSquareRequest();
             return;
         }
         super.setPossibilityCharacters(this.targetSelected);
         super.selectionEffectFinish();
-
     }
 
     /**
@@ -1370,11 +1374,6 @@ public class GUIView extends View {
         setWeapons();
         setSecondaryButtons();
         setCardinalPoints();
-    }
-
-    void showWeaponInfo(Weapon weapon) {
-        setScene(SceneType.WEAPON_INFO);
-        ((CardDetailController) this.controller).setWeapon(weapon);
     }
 
     void setArena() {

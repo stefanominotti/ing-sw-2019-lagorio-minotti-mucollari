@@ -1499,6 +1499,9 @@ public abstract class View {
         this.charactersSelection = this.effectPossibility.getCharacters();
         this.coordinatesSelection = this.effectPossibility.getSquares();
         this.multipleSquareSelection = this.effectPossibility.getMultipleSquares();
+        for(Coordinates coordinates: this.effectPossibility.getMultipleSquares().keySet()) {
+            this.charactersSelection.addAll(this.effectPossibility.getMultipleSquares().get(coordinates));
+        }
         if (this.effectPossibility.getType() == EffectType.SELECT) {
             handleEffectSelectRequest();
         } else if (!this.effectPossibility.getMultipleSquares().isEmpty()) {
