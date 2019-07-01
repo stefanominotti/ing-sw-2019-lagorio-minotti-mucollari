@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +21,6 @@ import java.util.Map;
 public class CardDetailController extends AbstractSceneController {
 
     private static final String AMMO_PATH = "ammos/";
-    private static final String UTILS_PATH = "utils/icons/";
     private static final String WEAPONS_PATH = "weapons/img/";
 
     @FXML
@@ -43,14 +43,11 @@ public class CardDetailController extends AbstractSceneController {
     private VBox secondaryOnePanel;
     @FXML
     private VBox secondaryTwoPanel;
-    @FXML
-    private ImageView statusImage;
-    @FXML
-    private Label statusDescription;
 
     @FXML
     void close() {
-        new Thread(() -> getView().showBoard()).start();
+        Stage stage = (Stage) cardImage.getScene().getWindow();
+        stage.close();
     }
 
     void setWeapon(Weapon weapon) {
@@ -117,29 +114,5 @@ public class CardDetailController extends AbstractSceneController {
                 }
             }
         }
-
-        if (isReady(weapon)) {
-            Platform.runLater(() -> {
-                this.statusImage.setImage(new Image(UTILS_PATH + "weapon_ready.png"));
-                this.statusDescription.setText("ready");
-            });
-        } else {
-            Platform.runLater(() -> {
-                this.statusImage.setImage(new Image(UTILS_PATH + "unloaded_weapon.png"));
-                this.statusDescription.setText("unload");
-            });
-        }
-    }
-
-    private boolean isReady(Weapon weapon) {
-        for (SquareView s : getView().getBoard().getSquares()) {
-            if (!s.isSpawn()) {
-                continue;
-            }
-            if (s.getStore().contains(weapon)) {
-                return true;
-            }
-        }
-        return getView().getSelfPlayerBoard().getReadyWeapons().contains(weapon);
     }
 }

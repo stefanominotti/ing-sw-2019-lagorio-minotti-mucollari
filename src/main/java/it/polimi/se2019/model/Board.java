@@ -25,8 +25,10 @@ import it.polimi.se2019.model.messages.weapon.WeaponMessage;
 import it.polimi.se2019.model.messages.weapon.WeaponMessageType;
 import it.polimi.se2019.model.messages.weapon.WeaponSwitchMessage;
 import it.polimi.se2019.server.SocketVirtualClient;
+import it.polimi.se2019.view.CardDetailController;
 import it.polimi.se2019.view.PlayerBoard;
 import it.polimi.se2019.view.SquareView;
+import javafx.fxml.FXMLLoader;
 
 import java.io.FileReader;
 import java.io.InputStream;
@@ -296,7 +298,7 @@ public class Board extends Observable {
         if (this.players.size() > 3) {
             long remainingTime = this.startTimer /1000L -
                     Duration.between(this.gameTimerStartDate, LocalDateTime.now()).getSeconds();
-            notifyChanges(new TimerMessage(TimerMessageType.UPDATE, TimerType.SETUP, remainingTime));
+            notifyChanges(new TimerMessage(TimerMessageType.UPDATE, TimerType.SETUP, remainingTime*1000L));
         }
 
         if (this.players.size() == 3) {

@@ -38,31 +38,6 @@
                   </ImageView>
                   <VBox prefHeight="374.0" prefWidth="297.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <HBox fx:id="statusPanel" alignment="BOTTOM_LEFT" prefHeight="65.0" prefWidth="280.0" VBox.vgrow="NEVER">
-                           <children>
-                              <Label prefHeight="25.0" prefWidth="51.0" text="Status:" textFill="WHITE">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </Label>
-                              <ImageView fx:id="statusImage" fitHeight="33.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
-                                 <HBox.margin>
-                                    <Insets left="5.0" />
-                                 </HBox.margin>
-                              </ImageView>
-                              <Label fx:id="statusDescription" prefHeight="25.0" prefWidth="51.0" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets left="10.0" />
-                                 </HBox.margin>
-                              </Label>
-                           </children>
-                           <VBox.margin>
-                              <Insets left="10.0" />
-                           </VBox.margin>
-                        </HBox>
                         <HBox fx:id="costPanel" alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="322.0" VBox.vgrow="NEVER">
                            <children>
                               <Label fx:id="costName" prefHeight="25.0" prefWidth="105.0" text="Recharge Cost:" textFill="WHITE">
@@ -224,7 +199,7 @@
                         </VBox>
                         <VBox alignment="TOP_RIGHT" prefHeight="44.0" prefWidth="290.0" VBox.vgrow="NEVER">
                            <children>
-                              <Button fx:id="backButton" alignment="CENTER" contentDisplay="CENTER" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#close" prefHeight="31.0" prefWidth="89.0" styleClass="button-std" text="Back" textFill="WHITE" VBox.vgrow="NEVER">
+                              <Button fx:id="backButton" alignment="CENTER" contentDisplay="CENTER" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#close" prefHeight="31.0" prefWidth="89.0" styleClass="button-std" text="Close" textFill="WHITE" VBox.vgrow="NEVER">
                                  <VBox.margin>
                                     <Insets />
                                  </VBox.margin>

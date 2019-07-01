@@ -1533,7 +1533,7 @@ public abstract class View {
      * Handles move selection request, setting state to effect move selection
      */
     void handleEffectMoveRequest() {
-        this.state = EFFECT_MOVE_SELECTION;
+        this.state = EFFECT_SELECT_SQUARE;
     }
 
     /**

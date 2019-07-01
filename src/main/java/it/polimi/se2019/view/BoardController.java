@@ -2,10 +2,14 @@ package it.polimi.se2019.view;
 
 import it.polimi.se2019.controller.ActionType;
 import it.polimi.se2019.model.*;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -16,7 +20,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,6 +32,7 @@ import java.util.stream.Collectors;
 public class BoardController extends AbstractSceneController {
 
     private static final int KILLSHOT_POINTS_SIZE = 6;
+    private static final String FXML_PATH = "utils/style/fxml/";
     private static final String DROPS_PATH = "drops/";
     private static final String UTILS_PATH = "utils/icons/";
     private static final String CHARACTERS_ICONS_PATH = "utils/icons/characters_icon/";
@@ -129,7 +136,8 @@ public class BoardController extends AbstractSceneController {
             @Override
             public void handle(MouseEvent event) {
                 Weapon weapon = Weapon.valueOf(((ImageView) event.getSource()).getId().toUpperCase());
-                new Thread(() -> getView().showWeaponInfo(weapon)).start();
+                //new Thread(() -> getView().showWeaponInfo(weapon)).start();
+                showWeaponInfo(weapon);
             }
         };
         this.actionSelectionHandler = new EventHandler<MouseEvent>() {
@@ -221,6 +229,24 @@ public class BoardController extends AbstractSceneController {
         }
     }
 
+    void showWeaponInfo(Weapon weapon) {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(FXML_PATH + "CardDetail.fxml"));
+        Parent root1;
+        try {
+            root1 = loader.load();
+        } catch (IOException e) {
+            return;
+        }
+        Stage stage = new Stage();
+        stage.setTitle(Character.toUpperCase(weapon.toString().toLowerCase().charAt(0)) +
+                weapon.toString().toLowerCase().substring(1));
+        stage.setScene(new Scene(root1));
+        stage.show();
+        CardDetailController controller = loader.getController();
+        controller.setWeapon(weapon);
+    }
+
     void setArena() {
         Platform.runLater(() ->
                 this.arenaImage.setImage(new Image(ARENAS_PATH + "arena_" + getView().getBoard().getArena() +
@@ -310,9 +336,13 @@ public class BoardController extends AbstractSceneController {
         updateKillshotPoints();
         updateAmmo();
         if (player != getView().getCharacter()) {
-            this.pointsVBox.setVisible(false);
+            Platform.runLater(() ->
+                    this.pointsVBox.setVisible(false)
+            );
         } else {
-            this.pointsVBox.setVisible(true);
+            Platform.runLater(() ->
+                    this.pointsVBox.setVisible(true)
+            );
             updatePoints();
         }
         updateWeapons();
@@ -542,15 +572,6 @@ public class BoardController extends AbstractSceneController {
         for (Node n : this.arenaPane.getChildren()) {
             if (n.getId().equalsIgnoreCase("arena" + arena + x + y)) {
                 return (GridPane) n;
-            }
-        }
-        return null;
-    }
-
-    Button getSquareButtonByCoordinates(int x, int y) {
-        for (Node n : this.arenaPane.getChildren()) {
-            if (n.getId().equalsIgnoreCase("s" + x + y)) {
-                return (Button) n;
             }
         }
         return null;
