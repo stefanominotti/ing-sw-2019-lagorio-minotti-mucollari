@@ -48,6 +48,10 @@
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);
 }
 
+.img-characters-shadow {
+	-fx-effect: dropshadow(three-pass-box, rgba(230,230,230,1), 10, 0.2, 1, 1);
+}
+
 .square-disabled {
 	-fx-background-color: rgba(219,219,219,0.6);
 }
