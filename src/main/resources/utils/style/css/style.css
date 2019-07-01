@@ -64,3 +64,19 @@
 .font-ammo-small {
 	-fx-font-size: 10pt;
 }
+
+.button-square {
+    -fx-background-color: transparent;
+}
+
+.button-square-enable {
+    -fx-background-color: rgba(255, 247, 252, 0.5);
+}
+
+.button-square-enable:focused {
+	-fx-background-color: rgba(119, 117, 121, 0.8);
+}
+
+.button-square-selected {
+	-fx-background-color: rgba(40, 167, 69, 0.5);
+}
