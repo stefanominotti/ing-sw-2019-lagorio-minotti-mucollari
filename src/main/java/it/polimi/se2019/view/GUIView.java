@@ -688,7 +688,10 @@ public class GUIView extends View {
                 setActivePowerup(type);
                 break;
         }
+        this.secondaryButtons = new ArrayList<>();
         resetSelections();
+        setSecondaryButtons();
+        setActions();
         setPowerups();
     }
 
@@ -753,6 +756,9 @@ public class GUIView extends View {
                 break;
             case USE_EFFECT:
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.EFFECT, getCharacter(), null));
+                break;
+            case USE_POWERUP:
+                getClient().send(new SingleSelectionMessage(SelectionMessageType.USE_POWERUP, getCharacter(), null));
                 break;
         }
         this.secondaryButtons = new ArrayList<>();
@@ -951,6 +957,10 @@ public class GUIView extends View {
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.MOVE, getCharacter(),
                         new Coordinates(x, y)));
                 break;
+            case SELECT_POWERUP_POSITION:
+                getClient().send(new SingleSelectionMessage(SelectionMessageType.POWERUP_POSITION, getCharacter(),
+                        new Coordinates(x, y)));
+                break;
             case SELECT_PICKUP:
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.PICKUP, getCharacter(),
                         new Coordinates(x, y)));
@@ -959,11 +969,11 @@ public class GUIView extends View {
                 super.setPossibilitySquares(new ArrayList<>(Arrays.asList(new Coordinates(x, y))));
                 super.selectionEffectFinish();
                 break;
-            default:
-                break;
             case EFFECT_SELECT_ROOM:
                 super.setPossibilityRooms(new ArrayList<>(Arrays.asList(super.getBoard().getSquareByCoordinates(x, y).getColor())));
                 super.selectionEffectFinish();
+                break;
+            default:
                 break;
         }
         resetSelections();
@@ -1174,7 +1184,11 @@ public class GUIView extends View {
             this.secondaryButtons = new ArrayList<>();
             this.secondaryButtons.add("continue");
         } else {
-            addActionsSelection(ActionType.CANCEL);
+            if (powerups.get(0).getType() == PowerupType.TARGETING_SCOPE) {
+                this.secondaryButtons.add("continue");
+            } else {
+                addActionsSelection(ActionType.CANCEL);
+            }
             this.currentStatus = "Which powerup do you want to use?";
             this.currentAction = "Select one of the available powerups";
         }
@@ -1307,9 +1321,9 @@ public class GUIView extends View {
         setBanner();
         setActions();
         setSquares();
-        setWeapons();
         setRooms();
         setTargets();
+        setWeapons();
         setSecondaryButtons();
         setCardinalPoints();
     }

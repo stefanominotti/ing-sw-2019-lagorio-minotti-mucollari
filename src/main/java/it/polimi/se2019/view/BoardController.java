@@ -684,6 +684,8 @@ public class BoardController extends AbstractSceneController {
         Platform.runLater(() -> {
             if (!coordinates.isEmpty()) {
                 this.arenaButtonsContainer.toFront();
+            } else {
+                this.arenaPane.toFront();
             }
             for (Node s : this.arenaButtonsContainer.getChildren()) {
                 boolean valid = false;
