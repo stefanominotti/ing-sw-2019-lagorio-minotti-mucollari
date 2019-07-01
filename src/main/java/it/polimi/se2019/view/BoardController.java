@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -102,12 +103,16 @@ public class BoardController extends AbstractSceneController {
     private GridPane actionsPane;
     @FXML
     private GridPane arenaButtonsContainer;
+    @FXML
+    private HBox secondaryButtonsBox;
 
     private EventHandler<MouseEvent> setPlayerBoardHandler;
     private EventHandler<MouseEvent> weaponInfoHandler;
     private EventHandler<MouseEvent> actionSelectionHandler;
     private EventHandler<MouseEvent> powerupSelectionHandler;
     private EventHandler<MouseEvent> squareSelectionHandler;
+    private EventHandler<MouseEvent> weaponSelectionHandler;
+    private EventHandler<MouseEvent> confirmHandler;
 
     public BoardController() {
         this.setPlayerBoardHandler = new EventHandler<MouseEvent>() {
@@ -148,6 +153,19 @@ public class BoardController extends AbstractSceneController {
                 int x = Integer.parseInt(String.valueOf(s.getId().charAt(s.getId().length()-2)));
                 int y = Integer.parseInt(String.valueOf(s.getId().charAt(s.getId().length()-1)));
                 getView().handleSquareInput(x, y);
+            }
+        };
+        this.weaponSelectionHandler = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                ImageView s = (ImageView) event.getSource();
+                getView().handleWeaponInput(Weapon.valueOf(s.getId().toUpperCase()));
+            }
+        };
+        this.confirmHandler = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                getView().handleConfirmation();
             }
         };
     }
@@ -427,7 +445,7 @@ public class BoardController extends AbstractSceneController {
             ImageView stateImg = (ImageView) this.playerAssetsGrid.getChildren().get(i + 6);
             Platform.runLater(() -> {
                 img.setId(w.toString().toLowerCase());
-                img.setImage(new Image(WEAPONS_PATH + w.toString().toLowerCase()));
+                img.setImage(new Image(WEAPONS_PATH + w.toString().toLowerCase() + ".png"));
                 stateImg.setImage(new Image(UTILS_PATH + "unloaded_weapon.png"));
                 img.setOnMousePressed(this.weaponInfoHandler);
             });
@@ -451,7 +469,7 @@ public class BoardController extends AbstractSceneController {
                 ImageView stateImg = (ImageView) this.playerAssetsGrid.getChildren().get(i + 6);
                 Platform.runLater(() -> {
                     img.setId(w.toString().toLowerCase());
-                    img.setImage(new Image(WEAPONS_PATH + w.toString().toLowerCase()));
+                    img.setImage(new Image(WEAPONS_PATH + w.toString().toLowerCase() + ".png"));
                     stateImg.setImage(new Image(UTILS_PATH + "weapon_ready.png"));
                     img.setOnMousePressed(this.weaponInfoHandler);
                 });
@@ -660,8 +678,121 @@ public class BoardController extends AbstractSceneController {
                 Platform.runLater(() -> {
                     s.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.squareSelectionHandler);
                     s.setVisible(false);
+                    s.getStyleClass().remove("button-square-enable");
                 });
             }
+        }
+    }
+
+    void setWeapons(List<Weapon> weapons) {
+        for (Node n : this.redWeaponsGrid.getChildren()) {
+            Platform.runLater(() -> {
+                try {
+                    if (n.getId() != null && weapons.contains(Weapon.valueOf(n.getId().toUpperCase()))) {
+                        n.setOnMousePressed(this.weaponSelectionHandler);
+                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
+                    } else if (n.getId() == null) {
+                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
+                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                    } else {
+                        n.setOnMousePressed(this.weaponInfoHandler);
+                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                    }
+                } catch (IllegalArgumentException e) {
+                    n.setOnMousePressed(this.weaponInfoHandler);
+                    n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                }
+            });
+        }
+        for (Node n : this.blueWeaponsGrid.getChildren()) {
+            Platform.runLater(() -> {
+                try {
+                    if (n.getId() != null && weapons.contains(Weapon.valueOf(n.getId().toUpperCase()))) {
+                        n.setOnMousePressed(this.weaponSelectionHandler);
+                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
+                    } else if (n.getId() == null) {
+                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
+                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                    } else {
+                        n.setOnMousePressed(this.weaponInfoHandler);
+                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                    }
+                } catch (IllegalArgumentException e) {
+                    n.setOnMousePressed(this.weaponInfoHandler);
+                    n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                }
+            });
+        }
+        for (Node n : this.yellowWeaponsGrid.getChildren()) {
+            Platform.runLater(() -> {
+                try {
+                    if (n.getId() != null && weapons.contains(Weapon.valueOf(n.getId().toUpperCase()))) {
+                        n.setOnMousePressed(this.weaponSelectionHandler);
+                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
+                    } else if (n.getId() == null) {
+                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
+                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                    } else {
+                        n.setOnMousePressed(this.weaponInfoHandler);
+                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                    }
+                } catch (IllegalArgumentException e) {
+                    n.setOnMousePressed(this.weaponInfoHandler);
+                    n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                }
+            });
+        }
+        for (Node n : this.playerAssetsGrid.getChildren()) {
+            Platform.runLater(() -> {
+                try {
+                    if (n.getId() != null && weapons.contains(Weapon.valueOf(n.getId().toUpperCase()))) {
+                        n.setOnMousePressed(this.weaponSelectionHandler);
+                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
+                    } else if (n.getId() == null) {
+                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
+                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                    } else if (!weapons.contains(Weapon.valueOf(n.getId().toUpperCase()))) {
+                        n.setOnMousePressed(this.weaponInfoHandler);
+                        n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
+                    }
+                } catch (IllegalArgumentException e) {
+                    // Ignore
+                }
+            });
+        }
+    }
+
+    void setSecondaryButtons(List<String> buttons) {
+        int i = 0;
+        EventHandler<MouseEvent> handler;
+        String classString;
+        if (!buttons.isEmpty() && buttons.get(0).equals("confirm")) {
+            handler = this.confirmHandler;
+            classString = "button-confirm";
+        } else {
+            handler = null;
+            classString = null;
+        }
+        for (String id : buttons) {
+            Button b = (Button) this.secondaryButtonsBox.getChildren().get(i);
+            Platform.runLater(() -> {
+                b.setId(id);
+                b.setText(Character.toUpperCase(id.charAt(0)) + id.substring(1));
+                b.setVisible(true);
+                b.setOnMousePressed(handler);
+                b.getStyleClass().add(classString);
+            });
+            i++;
+        }
+        while (i < 4) {
+            Button b = (Button) this.secondaryButtonsBox.getChildren().get(i);
+            Platform.runLater(() -> {
+                b.setId(null);
+                b.setVisible(false);
+                b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.confirmHandler);
+                b.getStyleClass().remove(classString);
+            });
+            i++;
         }
     }
 }
