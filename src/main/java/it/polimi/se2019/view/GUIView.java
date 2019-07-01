@@ -637,7 +637,6 @@ public class GUIView extends View {
     void handleDiscardPowerupRequest(List<Powerup> powerups) {
         super.handleDiscardPowerupRequest(powerups);
         showBoard();
-        ((BoardController) this.controller).disableBoardChange();
         this.currentStatus = "Where do you want to spawn?";
         this.currentAction = "Select a powerup to discard";
         setBanner();
@@ -657,7 +656,6 @@ public class GUIView extends View {
         }
         resetSelections();
         setPowerups();
-        ((BoardController) this.controller).enableBoardChange();
     }
 
     /**
@@ -669,9 +667,25 @@ public class GUIView extends View {
         super.handleMovementActionRequest(coordinates);
         addActionsSelection(ActionType.CANCEL);
         setActions();
-        this.currentStatus = "Where do you want to move";
+        this.currentStatus = "Where do you want to move?";
         this.currentAction = "Select one of the available squares or cancel";
         setBanner();
+        setSquares();
+    }
+
+    void setSquares() {
+        if (this.currentScene == SceneType.BOARD) {
+            ((BoardController) this.controller).setSquares(getCoordinatesSelection());
+        }
+    }
+
+    void handleSquareInput(int x, int y) {
+        if (getState() == SELECT_MOVEMENT) {
+            getClient().send(new SingleSelectionMessage(SelectionMessageType.MOVE, getCharacter(),
+                    new Coordinates(x, y)));
+        }
+        resetSelections();
+        setSquares();
     }
 
     /**
@@ -731,7 +745,7 @@ public class GUIView extends View {
         showMessage();
         setBanner();
         setActions();
-        setPowerups();
+        setSquares();
     }
 
     void showWeaponInfo(Weapon weapon) {
@@ -748,6 +762,9 @@ public class GUIView extends View {
     void setPlayerBoard(GameCharacter character) {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setPlayerBoard(character);
+            if (character == getCharacter()) {
+                setPowerups();
+            }
         }
     }
 

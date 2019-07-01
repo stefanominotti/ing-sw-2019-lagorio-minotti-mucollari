@@ -85,6 +85,7 @@ public abstract class View {
         }
         this.paidPowerups = new ArrayList<>();
         this.charactersSelection = new ArrayList<>();
+        resetSelections();
     }
 
     /**

@@ -17,6 +17,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -99,11 +100,14 @@ public class BoardController extends AbstractSceneController {
     private Label currentActionLabel;
     @FXML
     private GridPane actionsPane;
+    @FXML
+    private GridPane arenaButtonsContainer;
 
     private EventHandler<MouseEvent> setPlayerBoardHandler;
     private EventHandler<MouseEvent> weaponInfoHandler;
     private EventHandler<MouseEvent> actionSelectionHandler;
     private EventHandler<MouseEvent> powerupSelectionHandler;
+    private EventHandler<MouseEvent> squareSelectionHandler;
 
     public BoardController() {
         this.setPlayerBoardHandler = new EventHandler<MouseEvent>() {
@@ -129,10 +133,21 @@ public class BoardController extends AbstractSceneController {
         this.powerupSelectionHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                PowerupType type =
-                        PowerupType.valueOf(((ImageView) event.getSource()).getId().split("_")[1].toUpperCase());
-                AmmoType color = AmmoType.valueOf(((ImageView) event.getSource()).getId().split("_")[2].toUpperCase());
+                String[] splitId = ((ImageView) event.getSource()).getId().split("_");
+                String typeString = String.join("_", Arrays.copyOfRange(splitId, 1, splitId.length-1));
+                String colorString = splitId[splitId.length-1];
+                PowerupType type = PowerupType.valueOf(typeString.toUpperCase());
+                AmmoType color = AmmoType.valueOf(colorString.toUpperCase());
                 getView().handlePowerupInput(type, color);
+            }
+        };
+        this.squareSelectionHandler = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                Button s = (Button) event.getSource();
+                int x = s.getId().charAt(s.getId().length()-2);
+                int y = s.getId().charAt(s.getId().length()-1);
+                getView().handleSquareInput(x, y);
             }
         };
     }
@@ -501,6 +516,15 @@ public class BoardController extends AbstractSceneController {
         return null;
     }
 
+    Button getSquareButtonByCoordinates(int x, int y) {
+        for (Node n : this.arenaPane.getChildren()) {
+            if (n.getId().equalsIgnoreCase("s" + x + y)) {
+                return (Button) n;
+            }
+        }
+        return null;
+    }
+
     void updateTiles() {
         for (SquareView s : getView().getBoard().getSquares()) {
             if (s.isSpawn()) {
@@ -596,20 +620,46 @@ public class BoardController extends AbstractSceneController {
         Platform.runLater(() -> {
             for (int i = 6; i < 9; i++) {
                 ImageView img = (ImageView) this.playerAssetsGrid.getChildren().get(i);
-                if (img.getId().equals("")) {
+                if (img.getId() == null) {
                     continue;
                 }
-                PowerupType type = PowerupType.valueOf(img.getId().split("_")[1].toUpperCase());
-                AmmoType color = AmmoType.valueOf(img.getId().split("_")[2].toUpperCase());
+                String[] splitId = img.getId().split("_");
+                String typeString = String.join("_", Arrays.copyOfRange(splitId, 1, splitId.length-1));
+                String colorString = splitId[splitId.length-1];
+                PowerupType type = PowerupType.valueOf(typeString.toUpperCase());
+                AmmoType color = AmmoType.valueOf(colorString.toUpperCase());
                 for (Powerup p : powerups) {
-                        if (p.getType() == type && p.getColor() == color) {
-                            img.setOnMousePressed(this.powerupSelectionHandler);
-                        } else {
-                            img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.powerupSelectionHandler);
-                        }
+                    if (p.getType() == type && p.getColor() == color) {
+                        img.setOnMousePressed(this.powerupSelectionHandler);
+                    } else {
+                        img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.powerupSelectionHandler);
+                    }
                 }
             }
         });
+    }
+
+    void setSquares(List<Coordinates> coordinates) {
+        for (Node s : this.arenaButtonsContainer.getChildren()) {
+            boolean valid = false;
+            for (Coordinates c : coordinates) {
+                if (s.getId().equalsIgnoreCase("s" + c.getX() + c.getY())) {
+                    Platform.runLater(() -> {
+                        s.setOnMousePressed(this.squareSelectionHandler);
+                        s.toFront();
+                        s.setVisible(true);
+                    });
+                    valid = true;
+                }
+            }
+            if (!valid) {
+                Platform.runLater(() -> {
+                    s.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.squareSelectionHandler);
+                    s.setVisible(false);
+                    s.toBack();
+                });
+            }
+        }
     }
 }
 
