@@ -1415,18 +1415,18 @@
                               </Pane>
                               <HBox fx:id="secondaryButtonsBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="55.0" prefWidth="376.0">
                                  <children>
-                                    <Button fx:id="actionButton1" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0" visible="false" />
-                                    <Button fx:id="actionButton2" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0" visible="false">
+                                    <Button fx:id="actionButton1" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0" textFill="WHITE" visible="false" />
+                                    <Button fx:id="actionButton2" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0" textFill="WHITE" visible="false">
                                        <HBox.margin>
                                           <Insets left="5.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button fx:id="actionButton3" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0" visible="false">
+                                    <Button fx:id="actionButton3" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0" textFill="WHITE" visible="false">
                                        <HBox.margin>
                                           <Insets left="5.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button fx:id="actionButton4" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0" visible="false">
+                                    <Button fx:id="actionButton4" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0" textFill="WHITE" visible="false">
                                        <HBox.margin>
                                           <Insets left="5.0" />
                                        </HBox.margin>
