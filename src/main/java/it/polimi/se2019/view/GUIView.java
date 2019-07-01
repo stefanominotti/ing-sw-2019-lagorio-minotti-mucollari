@@ -9,6 +9,7 @@ import it.polimi.se2019.model.messages.nickname.NicknameMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessageType;
 import it.polimi.se2019.model.messages.payment.PaymentSentMessage;
 import it.polimi.se2019.model.messages.powerups.PowerupMessageType;
+import it.polimi.se2019.model.messages.selections.SelectionListMessage;
 import it.polimi.se2019.model.messages.selections.SelectionMessageType;
 import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
@@ -667,6 +668,33 @@ public class GUIView extends View {
         setPowerups();
     }
 
+    /**
+     * Shows powerups choice
+     * @param powerups
+     */
+    @Override
+    void handleUsePowerupRequest(List<Powerup> powerups) {
+        super.handleUsePowerupRequest(powerups);
+        if (getState() == MULTIPLE_POWERUPS_SELECTION) {
+            this.currentStatus = "Which powerups do you want to use?";
+            this.currentAction = "Select available powerups";
+            this.secondaryButtons = new ArrayList<>();
+            this.secondaryButtons.add("continue");
+        } else {
+            if (powerups.get(0).getType() == PowerupType.TARGETING_SCOPE) {
+                this.secondaryButtons.add("continue");
+            } else {
+                addActionsSelection(ActionType.CANCEL);
+            }
+            this.currentStatus = "Which powerup do you want to use?";
+            this.currentAction = "Select one of the available powerups";
+        }
+        setActions();
+        setBanner();
+        setPowerups();
+        setSecondaryButtons();
+    }
+
     void setPowerups() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setPowerups(getPowerupsSelection(), getPaidPowerups());
@@ -687,12 +715,29 @@ public class GUIView extends View {
                         new Powerup(type, color)));
                 setActivePowerup(type);
                 break;
+            case MULTIPLE_POWERUPS_SELECTION:
+                handleMultiplePowerupsSelect(type, color);
         }
         this.secondaryButtons = new ArrayList<>();
         resetSelections();
         setSecondaryButtons();
         setActions();
         setPowerups();
+    }
+
+    void handleMultiplePowerupsSelect(PowerupType type, AmmoType color) {
+        for(Powerup powerup: getPowerupsSelection()){
+            if(powerup.getColor() == color && powerup.getType() == type) {
+                addPaidPowerup(powerup);
+                removePowerupSelection(powerup);
+                break;
+            }
+        }
+        if(!getPowerupsSelection().isEmpty()) {
+            handleUsePowerupRequest(getPowerupsSelection());
+            return;
+        }
+        getClient().send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP, getCharacter(), getPaidPowerups()));
     }
 
     void handlePowerupPaymentSelect(PowerupType type, AmmoType color) {
@@ -760,6 +805,13 @@ public class GUIView extends View {
             case USE_POWERUP:
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.USE_POWERUP, getCharacter(), null));
                 break;
+            case MULTIPLE_POWERUPS_SELECTION:
+                if(getPowerupsSelection().isEmpty()) {
+                    getClient().send(new SingleSelectionMessage(SelectionMessageType.USE_POWERUP, getCharacter(), null));
+                } else {
+                    getClient().send(new SingleSelectionMessage(SelectionMessageType.USE_POWERUP, getCharacter(), getPaidPowerups()));
+                }
+
         }
         this.secondaryButtons = new ArrayList<>();
         setSecondaryButtons();
@@ -1063,6 +1115,22 @@ public class GUIView extends View {
         setWeapons();
     }
 
+    /**
+     * Shows weapons to reload
+     * @param weapons List of the available weapons to be reloaded
+     */
+    @Override
+    void handleReloadRequest(List<Weapon> weapons) {
+        super.handleReloadRequest(weapons);
+        this.currentStatus = "Do you want to reload?";
+        this.currentAction = "Select a weapon or continue";
+        this.secondaryButtons = new ArrayList<>();
+        this.secondaryButtons.add("continue");
+        setBanner();
+        setSecondaryButtons();
+        setWeapons();
+    }
+
     void setWeapons() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setWeapons(getWeaponsSelection());
@@ -1081,6 +1149,9 @@ public class GUIView extends View {
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.USE_WEAPON, getCharacter(), weapon));
                 setCurrentWeapon(weapon);
                 setWeaponActivated(false);
+                break;
+            case RECHARGE_WEAPON:
+                getClient().send(new SingleSelectionMessage(SelectionMessageType.RELOAD, getCharacter(), weapon));
                 break;
             default:
                 break;
@@ -1166,33 +1237,6 @@ public class GUIView extends View {
             this.currentAction = "Select powerups if you want, then confirm";
             this.secondaryButtons.add("continue");
         }
-        setBanner();
-        setPowerups();
-        setSecondaryButtons();
-    }
-
-    /**
-     * Shows powerups choice
-     * @param powerups
-     */
-    @Override
-    void handleUsePowerupRequest(List<Powerup> powerups) {
-        super.handleUsePowerupRequest(powerups);
-        if (getState() == MULTIPLE_POWERUPS_SELECTION) {
-            this.currentStatus = "Which powerups do you want to use?";
-            this.currentAction = "Select available powerups";
-            this.secondaryButtons = new ArrayList<>();
-            this.secondaryButtons.add("continue");
-        } else {
-            if (powerups.get(0).getType() == PowerupType.TARGETING_SCOPE) {
-                this.secondaryButtons.add("continue");
-            } else {
-                addActionsSelection(ActionType.CANCEL);
-            }
-            this.currentStatus = "Which powerup do you want to use?";
-            this.currentAction = "Select one of the available powerups";
-        }
-        setActions();
         setBanner();
         setPowerups();
         setSecondaryButtons();

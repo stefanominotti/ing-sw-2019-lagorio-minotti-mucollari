@@ -101,8 +101,6 @@ public class CLIView extends View {
             handleSelectCardinalInput(input);
         } else if (getState() == EFFECT_TARGET_SELECTION) {
             handleEffectTargetInput(input);
-        } else if (getState() == EFFECT_MOVE_SELECTION) {
-            handleSelectSquareInput(input);
         } else if (getState() == EFFECT_REQUIRE_SELECTION) {
             handleDecisionInput(input);
         } else if (getState() == MULTIPLE_SQUARES_SELECTION) {
