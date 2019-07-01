@@ -13,5 +13,6 @@ public enum SceneType {
     RELOAD_GAME,
     BOARD,
     WEAPON_INFO,
-    INVALID_TOKEN
+    INVALID_TOKEN,
+    RANKING
 }

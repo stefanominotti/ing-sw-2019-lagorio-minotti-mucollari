@@ -7,155 +7,116 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="700.0" styleClass="background-pane" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.LobbyController">
-   <top>
-      <VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="89.0" prefWidth="600.0" styleClass="topPane" stylesheets="@../css/style.css" BorderPane.alignment="CENTER">
-         <children>
-            <ImageView fitHeight="41.0" fitWidth="303.0" pickOnBounds="true" preserveRatio="true" translateX="3.0" translateY="-10.0">
+<AnchorPane prefHeight="550.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.RankingController">
+   <children>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="backgroud-dark-heavy" stylesheets="@../css/style.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <top>
+            <ImageView fitHeight="57.0" fitWidth="214.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
                <image>
                   <Image url="@../../icons/logo.png" />
-               </image></ImageView>
-         </children>
-      </VBox>
-   </top>
-   <center>
-      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="436.0" prefWidth="438.0" styleClass="cardPane" stylesheets="@../css/style.css" translateY="-35.0" BorderPane.alignment="CENTER">
-         <children>
-            <VBox fx:id="playersList" prefHeight="389.0" prefWidth="438.0">
+               </image>
+               <BorderPane.margin>
+                  <Insets top="30.0" />
+               </BorderPane.margin>
+            </ImageView>
+         </top>
+         <center>
+            <VBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" prefWidth="476.0" translateY="-10.0" BorderPane.alignment="CENTER">
                <children>
-                  <HBox fx:id="player1" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="438.0" translateY="4.0">
+                  <Pane prefWidth="492.0">
                      <children>
-                        <VBox alignment="CENTER" prefHeight="47.0" prefWidth="49.0">
+                        <ImageView fitHeight="360.0" fitWidth="542.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../icons/podium.png" />
+                           </image></ImageView>
+                        <ImageView fx:id="firstIcon" fitHeight="83.0" fitWidth="96.0" layoutX="200.0" layoutY="133.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fitHeight="35.0" fitWidth="35.0" layoutX="260.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../icons/point_flag.png" />
+                           </image></ImageView>
+                        <Label fx:id="firstPoints" alignment="CENTER" contentDisplay="CENTER" layoutX="260.0" layoutY="125.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="35.0" prefWidth="35.0" textAlignment="CENTER" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <ImageView fx:id="secondIcon" fitHeight="50.0" fitWidth="58.0" layoutX="116.0" layoutY="189.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fitHeight="26.0" fitWidth="26.0" layoutX="152.0" layoutY="180.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../icons/point_flag.png" />
+                           </image></ImageView>
+                        <Label fx:id="secondPoints" alignment="CENTER" contentDisplay="CENTER" layoutX="152.0" layoutY="184.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="11.0" prefWidth="26.0" textAlignment="CENTER" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font>
+                        </Label>
+                        <ImageView fx:id="thirdIcon" fitHeight="50.0" fitWidth="58.0" layoutX="304.0" layoutY="195.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fitHeight="26.0" fitWidth="26.0" layoutX="340.0" layoutY="192.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../icons/point_flag.png" />
+                           </image></ImageView>
+                        <Label fx:id="thirdPoints" alignment="CENTER" contentDisplay="CENTER" layoutX="340.0" layoutY="196.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="11.0" prefWidth="26.0" textAlignment="CENTER" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="message" alignment="CENTER" layoutY="85.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="33.0" prefWidth="477.0" textFill="WHITE">
+                           <font>
+                              <Font size="27.0" />
+                           </font>
+                        </Label>
+                        <Pane fx:id="fourPlayerPane" layoutY="304.0" prefHeight="56.0" prefWidth="83.0" visible="false">
                            <children>
-                              <ImageView fx:id="master" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                              <Label alignment="CENTER" contentDisplay="CENTER" layoutX="4.0" layoutY="10.0" prefHeight="41.0" prefWidth="13.0" text="4." textFill="WHITE">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </Label>
+                              <ImageView fx:id="fourthIcon" fitHeight="41.0" fitWidth="42.0" layoutX="20.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fitHeight="19.0" fitWidth="21.0" layoutX="50.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../icons/master.png" />
+                                    <Image url="@../../icons/point_flag.png" />
+                                 </image></ImageView>
+                              <Label fx:id="fourthPoints" alignment="CENTER" contentDisplay="CENTER" layoutX="50.0" layoutY="5.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="19.0" prefWidth="19.0" textAlignment="CENTER" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="10.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </Pane>
+                        <Pane fx:id="fivePlayerPane" layoutX="80.0" layoutY="304.0" prefHeight="56.0" prefWidth="83.0" visible="false">
+                           <children>
+                              <Label alignment="CENTER" contentDisplay="CENTER" layoutX="4.0" layoutY="10.0" prefHeight="41.0" prefWidth="13.0" text="5." textFill="WHITE">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </Label>
+                              <ImageView fx:id="fifthIcon" fitHeight="41.0" fitWidth="42.0" layoutX="20.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fitHeight="19.0" fitWidth="21.0" layoutX="50.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../icons/point_flag.png" />
                                  </image>
                               </ImageView>
-                              <Label text="Winner">
-                                 <padding>
-                                    <Insets top="5.0" />
-                                 </padding>
+                              <Label fx:id="fifthPoints" alignment="CENTER" contentDisplay="CENTER" layoutX="50.0" layoutY="5.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="19.0" prefWidth="19.0" textAlignment="CENTER" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="10.0" />
+                                 </font>
                               </Label>
                            </children>
-                           <HBox.margin>
-                              <Insets left="-20.0" />
-                           </HBox.margin>
-                        </VBox>
-                        <ImageView fx:id="player1_img" fitHeight="66.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true">
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin></ImageView>
-                        <Label fx:id="player1_name" alignment="CENTER" contentDisplay="CENTER" prefHeight="95.0" prefWidth="124.0">
-                           <font>
-                              <Font name="System Bold" size="18.0" />
-                           </font>
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                        </Label>
+                        </Pane>
                      </children>
-                  </HBox>
-                  <HBox fx:id="player2" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="438.0" translateY="4.0">
-                     <children>
-                        <VBox alignment="CENTER" prefHeight="47.0" prefWidth="49.0">
-                           <children>
-                              <Label fx:id="secondText">
-                                 <padding>
-                                    <Insets top="5.0" />
-                                 </padding>
-                              </Label>
-                           </children>
-                           <HBox.margin>
-                              <Insets left="-20.0" />
-                           </HBox.margin>
-                        </VBox>
-                        <ImageView fx:id="player2_img" fitHeight="66.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true" />
-                        <Label fx:id="player2_name" alignment="CENTER" contentDisplay="CENTER" prefHeight="95.0" prefWidth="124.0">
-                           <font>
-                              <Font name="System Bold" size="18.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </HBox>
-                  <HBox fx:id="player3" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="438.0" translateY="4.0">
-                     <children>
-                        <VBox alignment="CENTER" prefHeight="47.0" prefWidth="49.0">
-                           <children>
-                              <Label fx:id="thirdText">
-                                 <padding>
-                                    <Insets top="5.0" />
-                                 </padding>
-                              </Label>
-                           </children>
-                           <HBox.margin>
-                              <Insets left="-20.0" />
-                           </HBox.margin>
-                        </VBox>
-                        <ImageView fx:id="player3_img" fitHeight="66.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true" />
-                        <Label fx:id="player3_name" alignment="CENTER" contentDisplay="CENTER" prefHeight="95.0" prefWidth="124.0">
-                           <font>
-                              <Font name="System Bold" size="18.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </HBox>
-                  <HBox fx:id="player4" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="438.0" translateY="4.0">
-                     <children>
-                        <VBox alignment="CENTER" prefHeight="47.0" prefWidth="49.0">
-                           <children>
-                              <Label fx:id="forthText">
-                                 <padding>
-                                    <Insets top="5.0" />
-                                 </padding>
-                              </Label>
-                           </children>
-                           <HBox.margin>
-                              <Insets left="-20.0" />
-                           </HBox.margin>
-                        </VBox>
-                        <ImageView fx:id="player4_img" fitHeight="66.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true" />
-                        <Label fx:id="player4_name" alignment="CENTER" contentDisplay="CENTER" prefHeight="95.0" prefWidth="124.0">
-                           <font>
-                              <Font name="System Bold" size="18.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </HBox>
-                  <HBox fx:id="player5" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="438.0" translateY="4.0">
-                     <children>
-                        <VBox alignment="CENTER" prefHeight="47.0" prefWidth="49.0">
-                           <children>
-                              <Label fx:id="fifthText">
-                                 <padding>
-                                    <Insets top="5.0" />
-                                 </padding>
-                              </Label>
-                           </children>
-                           <HBox.margin>
-                              <Insets left="-20.0" />
-                           </HBox.margin>
-                        </VBox>
-                        <ImageView fx:id="player5_img" fitHeight="66.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true" />
-                        <Label fx:id="player5_name" alignment="CENTER" contentDisplay="CENTER" prefHeight="95.0" prefWidth="124.0">
-                           <font>
-                              <Font name="System Bold" size="18.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </HBox>
-                  <HBox fx:id="actionsPanel" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="438.0">
-                     <children>
-                        <Button fx:id="quitButton" mnemonicParsing="false" styleClass="button-std" text="Quit Adrenaline" textFill="WHITE" />
-                     </children>
-                  </HBox>
+                  </Pane>
+                  <Button fx:id="quitButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#quitApp" prefHeight="33.0" styleClass="button-std" text="Quit Adrenaline" textFill="WHITE">
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </Button>
                </children>
             </VBox>
-         </children>
-      </AnchorPane>
-   </center>
-</BorderPane>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>

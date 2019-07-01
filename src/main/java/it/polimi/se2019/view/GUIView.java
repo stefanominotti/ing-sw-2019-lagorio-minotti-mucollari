@@ -1194,7 +1194,14 @@ public class GUIView extends View {
      */
     @Override
     void handleGameFinished(Map<GameCharacter, Integer> ranking) {
-
+        setScene(SceneType.RANKING);
+        ((RankingController) this.controller).showMessage(ranking);
+        (new Timer()).schedule(new TimerTask() {
+            @Override
+            public void run() {
+                GUIView.super.handleGameFinished(ranking);
+            }
+        }, 10*1000L);
     }
 
     /**

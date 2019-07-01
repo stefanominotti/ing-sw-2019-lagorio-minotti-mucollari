@@ -83,6 +83,9 @@ public class GUIApp extends Application {
                 case WEAPON_INFO:
                     loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "CardDetail.fxml"));
                     break;
+                case RANKING:
+                    loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "Ranking.fxml"));
+                    break;
             }
             try {
                 this.stage.setScene(new Scene(loader.load()));
