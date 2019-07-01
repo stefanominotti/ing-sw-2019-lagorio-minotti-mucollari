@@ -1378,25 +1378,25 @@
                         <Insets top="20.0" />
                      </VBox.margin>
                   </GridPane>
-                  <HBox alignment="CENTER" maxHeight="-Infinity" prefHeight="58.0" prefWidth="376.0" VBox.vgrow="NEVER">
+                  <HBox alignment="CENTER" maxHeight="-Infinity" prefHeight="72.0" prefWidth="376.0" VBox.vgrow="NEVER">
                      <children>
                         <ImageView fx:id="currentActionImage" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../icons/loading.gif" />
                            </image>
                         </ImageView>
-                        <VBox alignment="CENTER" prefHeight="77.0" prefWidth="246.0">
+                        <VBox alignment="CENTER">
                            <children>
                               <Label fx:id="currentStatusLabel" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="currentActionLabel" alignment="CENTER" textFill="WHITE">
+                              <Text fx:id="currentActionLabel" fill="WHITE" textAlignment="CENTER" wrappingWidth="300.0">
                                  <font>
                                     <Font size="12.0" />
                                  </font>
-                              </Label>
+                              </Text>
                            </children>
                            <opaqueInsets>
                               <Insets left="5.0" />
@@ -1408,12 +1408,31 @@
                      <children>
                         <VBox prefHeight="200.0" prefWidth="100.0">
                            <children>
-                              <Pane prefHeight="82.0" prefWidth="376.0">
+                              <Pane prefHeight="95.0" prefWidth="376.0">
                                  <children>
                                     <Text fx:id="messagesText" fill="WHITE" layoutX="14.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="362.00000381469727" />
                                  </children>
                               </Pane>
-                              <HBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="55.0" prefWidth="376.0" />
+                              <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="55.0" prefWidth="376.0" visible="false">
+                                 <children>
+                                    <Button fx:id="actionButton1" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0" />
+                                    <Button fx:id="actionButton2" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0">
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="actionButton3" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0">
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="actionButton4" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0">
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                              </HBox>
                            </children>
                         </VBox>
                      </children></StackPane>

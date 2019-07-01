@@ -97,7 +97,7 @@ public class BoardController extends AbstractSceneController {
     @FXML
     private Label currentStatusLabel;
     @FXML
-    private Label currentActionLabel;
+    private Text currentActionLabel;
     @FXML
     private GridPane actionsPane;
     @FXML
@@ -649,6 +649,7 @@ public class BoardController extends AbstractSceneController {
             for (Coordinates c : coordinates) {
                 if (s.getId().equalsIgnoreCase("s" + c.getX() + c.getY())) {
                     Platform.runLater(() -> {
+                        s.getStyleClass().add("button-square-enable");
                         s.setOnMousePressed(this.squareSelectionHandler);
                         s.setVisible(true);
                     });
