@@ -1205,6 +1205,7 @@
                                           <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" />
                                           <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4" />
                                           <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5" />
+                                          <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="6" />
                                           <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="7" />
                                           <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="8" />
                                           <ImageView fitHeight="21.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="9" />
