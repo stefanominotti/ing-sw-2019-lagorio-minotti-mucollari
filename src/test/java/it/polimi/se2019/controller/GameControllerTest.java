@@ -21,6 +21,7 @@ import org.omg.PortableInterceptor.INACTIVE;
 import java.util.*;
 
 import static it.polimi.se2019.model.GameState.ENDED;
+import static it.polimi.se2019.model.GameState.IN_GAME;
 import static it.polimi.se2019.model.WeaponEffectOrderType.ALTERNATIVE;
 import static it.polimi.se2019.model.WeaponEffectOrderType.PRIMARY;
 import static it.polimi.se2019.model.messages.client.ClientMessageType.READY;
@@ -298,7 +299,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void activePlayerDeisconected() {
+    public void activePlayerDisconnected() {
         this.controller.update(null, new ClientDisconnectedMessage(this.player.getCharacter()));
         assertFalse(this.player.isConnected());
     }

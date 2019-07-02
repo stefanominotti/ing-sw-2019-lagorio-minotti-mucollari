@@ -161,6 +161,7 @@ public class VirtualView extends Observable implements Observer {
                 this.server.removeTemporaryClients(message);
                 break;
             case LOAD_VIEW:
+                this.server.setConnectionAllowed(false);
                 send(message);
                 break;
             default:
