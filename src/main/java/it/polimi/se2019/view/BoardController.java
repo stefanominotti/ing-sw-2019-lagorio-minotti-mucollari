@@ -371,6 +371,10 @@ public class BoardController extends AbstractSceneController {
             board = getView().getBoardByCharacter(this.activeBoard);
         }
         Platform.runLater(() -> {
+            for (int j = 0; j < 12; j++) {
+                ImageView img = (ImageView) this.marksGrid.getChildren().get(j);
+                img.setImage(null);
+            }
             int i = 0;
             for (GameCharacter c : board.getRevengeMarks()) {
                 ImageView img = (ImageView) this.marksGrid.getChildren().get(i);
@@ -388,6 +392,10 @@ public class BoardController extends AbstractSceneController {
             board = getView().getBoardByCharacter(this.activeBoard);
         }
         Platform.runLater(() -> {
+            for (int j = 0; j < 12; j++) {
+                ImageView img = (ImageView) this.damagesGrid.getChildren().get(j);
+                img.setImage(null);
+            }
             int i = 0;
             for (GameCharacter c : board.getDamages()) {
                 ImageView img = (ImageView) this.damagesGrid.getChildren().get(i);
@@ -847,17 +855,21 @@ public class BoardController extends AbstractSceneController {
         });
     }
 
-    void setTargets(List<GameCharacter> targets) {
+    void setTargets(List<GameCharacter> targets, List<GameCharacter> selected) {
         Platform.runLater(() -> {
             if (!targets.isEmpty()) {
                 this.arenaPane.toFront();
                 for (ImageView player : this.players) {
                     player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.setPlayerBoardHandler);
                     player.getStyleClass().remove("character-selectable");
+                    player.getStyleClass().remove("character-selected");
                     player.getStyleClass().add("img-characters");
                     if (targets.contains(GameCharacter.valueOf(player.getId().toUpperCase()))) {
                         player.setOnMousePressed(this.characterSelectionHandler);
                         player.getStyleClass().add("character-selectable");
+                        player.getStyleClass().remove("img-characters");
+                    } else if (selected.contains(GameCharacter.valueOf(player.getId().toUpperCase()))) {
+                        player.getStyleClass().add("character-selected");
                         player.getStyleClass().remove("img-characters");
                     }
                 }
@@ -866,6 +878,7 @@ public class BoardController extends AbstractSceneController {
                     player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.characterSelectionHandler);
                     player.setOnMousePressed(this.setPlayerBoardHandler);
                     player.getStyleClass().remove("character-selectable");
+                    player.getStyleClass().remove("character-selected");
                     player.getStyleClass().add("img-characters");
                 }
             }

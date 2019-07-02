@@ -32,6 +32,7 @@ public class GUIView extends View {
     private String currentAction;
     private SceneType currentScene;
 
+    private GameCharacter activePlayer;
     private List<GameCharacter> targetSelected;
     private int minSelectable;
     private int maxSelectable;
@@ -594,12 +595,50 @@ public class GUIView extends View {
     }
 
     /**
+     * Continues the current player turn after tagback granade timer
+     * @param action type of timer message
+     */
+    @Override
+    void handlePowerupTimer(TimerMessageType action) {
+        if (getState() == MULTIPLE_POWERUPS_SELECTION) {
+            resetSelections();
+            this.secondaryButtons = new ArrayList<>();
+            setSecondaryButtons();
+            setPowerups();
+            this.currentStatus = "Waiting for other players...";
+            this.currentAction = getBoardByCharacter(this.activePlayer).getNickname() + " (" + this.activePlayer +
+                    ") is playing";
+            setBanner();
+        }
+        super.handlePowerupTimer(action);
+    }
+
+    /**
+     * Continues the current player turn after tagback grenade request
+     * @param player who is still playing
+     */
+    @Override
+    void handleTurnContinuation(GameCharacter player) {
+        super.handleTurnContinuation(player);
+        resetSelections();
+        this.secondaryButtons = new ArrayList<>();
+        setSecondaryButtons();
+        setPowerups();
+        if (player != getCharacter()) {
+            this.currentStatus = "Waiting for other players...";
+            this.currentAction = getBoardByCharacter(player).getNickname() + " (" + player + ") is playing";
+        }
+        setBanner();
+    }
+
+    /**
      * Displays active player message
      * @param message type of turn
      * @param character who is playing
      */
     @Override
     void handleStartTurn(TurnMessage message, GameCharacter character) {
+        this.activePlayer = character;
         resetSelections();
         if (character != getCharacter()) {
             this.currentStatus = "Waiting for other players...";
@@ -627,6 +666,33 @@ public class GUIView extends View {
             this.currentAction = null;
         }
         setBanner();
+    }
+
+    /**
+     * Shows Final Frenzy started message
+     * @param beforeFirst true if the player is playing before the first player in this turn, else false
+     */
+    @Override
+    void handleFinalFrenzy(boolean beforeFirst) {
+        super.handleFinalFrenzy(beforeFirst);
+        addMessage("Final frenzy started");
+        showMessage();
+    }
+
+    /**
+     * Shows board flipped message
+     * @param player active player
+     */
+    @Override
+    void handleBoardFlip(GameCharacter player) {
+        super.handleBoardFlip(player);
+        if (player == getCharacter()) {
+            addMessage("Your board flipped");
+        } else {
+            addMessage(player + "'s board flipped");
+        }
+        showMessage();
+        setPlayerBoard(player);
     }
 
     /**
@@ -764,6 +830,8 @@ public class GUIView extends View {
         if (getPowerupsSelection().isEmpty()) {
             getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
                     getPaidPowerups()));
+            this.secondaryButtons = new ArrayList<>();
+            setSecondaryButtons();
             resetSelections();
             setPowerups();
             return;
@@ -780,7 +848,6 @@ public class GUIView extends View {
 
         getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
                 getPaidPowerups()));
-
     }
 
     void handleConfirmation() {
@@ -814,6 +881,9 @@ public class GUIView extends View {
                 } else {
                     getClient().send(new SingleSelectionMessage(SelectionMessageType.USE_POWERUP, getCharacter(), getPaidPowerups()));
                 }
+                break;
+            default:
+                break;
 
         }
         this.secondaryButtons = new ArrayList<>();
@@ -900,6 +970,12 @@ public class GUIView extends View {
         this.currentAction = "Select one of the available targets";
         setBanner();
         setTargets();
+        if (this.targetSelected.size() >= this.minSelectable) {
+            this.secondaryButtons.add("continue");
+        } else {
+            this.secondaryButtons = new ArrayList<>();
+        }
+        setSecondaryButtons();
     }
 
     /**
@@ -1436,7 +1512,7 @@ public class GUIView extends View {
 
     void setTargets() {
         if (this.currentScene == SceneType.BOARD) {
-            ((BoardController) this.controller).setTargets(getCharactersSelection());
+            ((BoardController) this.controller).setTargets(getCharactersSelection(), this.targetSelected);
         }
     }
 
@@ -1528,5 +1604,11 @@ public class GUIView extends View {
         if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {
             ((BoardController) this.controller).updateWeapons();
         }
+    }
+
+    @Override
+    void resetSelections() {
+        super.resetSelections();
+        this.targetSelected = new ArrayList<>();
     }
 }
