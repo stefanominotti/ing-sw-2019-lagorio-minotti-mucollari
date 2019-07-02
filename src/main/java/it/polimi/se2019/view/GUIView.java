@@ -138,10 +138,10 @@ public class GUIView extends View {
                 break;
             case EFFECT_TARGET_SELECTION:
                 handleEffectTargetSelect(character);
-                break;
+                return;
             case MULTIPLE_SQUARES_SELECTION:
                 handleEffectMultipleSquareSelect(character);
-                break;
+                return;
             case SELECT_POWERUP_TARGET:
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.POWERUP_TARGET, getCharacter(),
                         character));
@@ -825,7 +825,7 @@ public class GUIView extends View {
                 break;
             case PAYMENT:
                 handlePowerupPaymentSelect(type, color);
-                break;
+                return;
             case USE_POWERUP:
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.USE_POWERUP, getCharacter(),
                         new Powerup(type, color)));
@@ -865,6 +865,10 @@ public class GUIView extends View {
             ammo.put(AmmoType.RED, 0);
             getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
                     getPaidPowerups()));
+            resetSelections();
+            setSecondaryButtons();
+            setActions();
+            setPowerups();
             return;
         }
 
@@ -887,8 +891,9 @@ public class GUIView extends View {
             getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
                     getPaidPowerups()));
             this.secondaryButtons = new ArrayList<>();
-            setSecondaryButtons();
             resetSelections();
+            setSecondaryButtons();
+            setActions();
             setPowerups();
             return;
         }
@@ -935,6 +940,8 @@ public class GUIView extends View {
                     getClient().send(new SingleSelectionMessage(SelectionMessageType.USE_POWERUP, getCharacter(), getPaidPowerups()));
                 }
                 break;
+            case RECHARGE_WEAPON:
+                getClient().send(new SingleSelectionMessage(SelectionMessageType.RELOAD, getCharacter(), null));
             default:
                 break;
 
@@ -1181,6 +1188,9 @@ public class GUIView extends View {
             return;
         }
         super.setPossibilityCharacters(this.targetSelected);
+        resetSelections();
+        setTargets();
+        setActions();
         if (!getEffectPossibility().getSquares().isEmpty()) {
             handleEffectMoveRequest();
         } else {
@@ -1212,6 +1222,9 @@ public class GUIView extends View {
         }
         super.setPossibilityCharacters(this.targetSelected);
         super.selectionEffectFinish();
+        resetSelections();
+        setTargets();
+        setActions();
     }
 
     /**
