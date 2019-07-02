@@ -85,7 +85,8 @@ public class BoardViewTest {
         List<SquareView> squares = this.board.getSquares();
         killshotTrackTest();
         Map<Integer, List<GameCharacter>> killshotTrack = this.board.getKillshotTrack();
-        BoardView alternativeBoard = new BoardView(3, squares, killshotTrack, true, true);
+        BoardView alternativeBoard = new BoardView(3, squares, killshotTrack, true, true,
+                4);
         assertTrue(alternativeBoard.isFrenzy());
         assertTrue(alternativeBoard.isBeforeFirstPlayer());
         assertEquals(squares, alternativeBoard.getSquares());
