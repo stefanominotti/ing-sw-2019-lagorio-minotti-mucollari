@@ -56,7 +56,6 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
             RMIClientInterface remoteRef = (RMIClientInterface) UnicastRemoteObject.exportObject(this, 0);
             this.server.addClient(remoteRef);
         } catch (MalformedURLException | RemoteException | NotBoundException e) {
-            e.printStackTrace();
             getView().handleConnectionError();
         }
 
@@ -65,7 +64,6 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
                 try {
                     this.server.ping();
                 } catch (RemoteException e) {
-                    e.printStackTrace();
                     getView().handleConnectionError();
                 }
 
@@ -87,7 +85,6 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
         try {
             this.server.notify(message, this);
         } catch (RemoteException e) {
-            e.printStackTrace();
             getView().handleConnectionError();
         }
     }
