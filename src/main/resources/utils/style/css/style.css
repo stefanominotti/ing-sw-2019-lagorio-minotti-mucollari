@@ -71,7 +71,7 @@
 	-fx-effect: dropshadow(three-pass-box, rgba(0,123,255,1), 13, 0.5, 0.5, 0.5);
 }
 
-.img-character-selected {
+.img-characters-selected {
 	-fx-effect: dropshadow(three-pass-box, rgba(40,167,69,1), 13, 0.5, 0.5, 0.5);
 }
 
