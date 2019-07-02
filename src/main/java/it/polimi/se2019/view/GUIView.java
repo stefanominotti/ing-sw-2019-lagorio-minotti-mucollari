@@ -84,6 +84,38 @@ public class GUIView extends View {
     }
 
     /**
+     * Loads the view
+     * @param character active character
+     * @param skulls number
+     * @param squares list of the squares view
+     * @param killshotTrack map with points and list of characters
+     * @param playerBoards list of the player boards
+     * @param weapons list of the available weapons on stores
+     * @param powerups list of the available powerups
+     * @param score your raised points
+     * @param others map with the other characters
+     * @param isFrenzy true if the Final Frenzy mode is active, else false
+     * @param isBeforeFirstPlayer true if the player is playing before the first player in this turn, else false
+     */
+    @Override
+    void loadView(GameCharacter character, int skulls, List<SquareView> squares,
+                  Map<Integer, List<GameCharacter>> killshotTrack, List<PlayerBoard> playerBoards,
+                  List<Weapon> weapons, List<Powerup> powerups, int score, Map<GameCharacter, String> others,
+                  boolean isFrenzy, boolean isBeforeFirstPlayer) {
+        super.loadView(character, skulls, squares, killshotTrack, playerBoards, weapons, powerups, score, others,
+                isFrenzy, isBeforeFirstPlayer);
+        setScene(SceneType.BOARD);
+        setArena();
+        setPlayerBoard(getCharacter());
+        updateTiles();
+        updatePlayersPositions();
+        updateStores();
+        this.currentStatus = "Reconnected!";
+        this.currentAction = "You can now keep playing";
+        setBanner();
+    }
+
+    /**
      * Handles client nickname input
      * @param input nickname of the client
      */
@@ -743,6 +775,7 @@ public class GUIView extends View {
      */
     @Override
     void handleDiscardPowerupRequest(List<Powerup> powerups) {
+        setPlayerBoard(getCharacter());
         super.handleDiscardPowerupRequest(powerups);
         this.currentStatus = "Where do you want to spawn?";
         this.currentAction = "Select a powerup to discard";
@@ -756,6 +789,7 @@ public class GUIView extends View {
      */
     @Override
     void handleUsePowerupRequest(List<Powerup> powerups) {
+        setPlayerBoard(getCharacter());
         super.handleUsePowerupRequest(powerups);
         if (getState() == MULTIPLE_POWERUPS_SELECTION) {
             this.currentStatus = "Which powerups do you want to use?";
@@ -1214,6 +1248,7 @@ public class GUIView extends View {
      */
     @Override
     void handleWeaponSwitchRequest(List<Weapon> weapons) {
+        setPlayerBoard(getCharacter());
         super.handleWeaponSwitchRequest(weapons);
         this.currentStatus = "Which weapon do you want to drop?";
         this.currentAction = "Select one of your weapons";
@@ -1442,6 +1477,7 @@ public class GUIView extends View {
      */
     @Override
     void handleWeaponUseRequest(List<Weapon> weapons) {
+        setPlayerBoard(getCharacter());
         super.handleWeaponUseRequest(weapons);
         this.currentStatus = "Which weapon do you want to use?";
         this.currentAction = "Select one of your weapons";
