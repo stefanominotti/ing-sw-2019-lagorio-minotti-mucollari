@@ -25,15 +25,11 @@ import it.polimi.se2019.model.messages.weapon.WeaponMessage;
 import it.polimi.se2019.model.messages.weapon.WeaponMessageType;
 import it.polimi.se2019.model.messages.weapon.WeaponSwitchMessage;
 import it.polimi.se2019.server.SocketVirtualClient;
-import it.polimi.se2019.view.CardDetailController;
 import it.polimi.se2019.view.PlayerBoard;
 import it.polimi.se2019.view.SquareView;
-import javafx.fxml.FXMLLoader;
 
 import java.io.FileReader;
 import java.io.InputStream;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -69,12 +65,12 @@ public class Board extends Observable {
     private List<AmmoTile> ammosDiscardPile;
     private Map<Integer, List<GameCharacter>> killshotTrack;
     private GameState gameState;
-    private Timer timer;
-    private long gameTimerStartDate;
+    private GameTimer gameTimer;
+    private Timer utilsTimer;
+    private long utilsTimerStartTime;
     private int currentPlayer;
     private List<GameCharacter> finalFrenzyOrder;
     private List<GameCharacter> deadPlayers;
-    private long timerRemainingTime;
     private Map<GameCharacter, Integer> pointsFromKillshotTrack;
 
     /**
@@ -89,7 +85,7 @@ public class Board extends Observable {
         this.powerupsDiscardPile = new ArrayList<>();
         this.ammosDiscardPile = new ArrayList<>();
         this.killshotTrack = new HashMap<>();
-        this.timer = new Timer();
+        this.utilsTimer = new Timer();
         this.deadPlayers = new ArrayList<>();
         this.finalFrenzyOrder = new ArrayList<>();
         this.pointsFromKillshotTrack = new EnumMap<>(GameCharacter.class);
@@ -229,8 +225,8 @@ public class Board extends Observable {
     }
 
     /**
-     * Gets powerups timer duration
-     * @return Powerups timer duration
+     * Gets powerups utilsTimer duration
+     * @return Powerups utilsTimer duration
      */
     public long getPowerupsTimerDuration() {
         return this.powerupsTimer;
@@ -297,19 +293,19 @@ public class Board extends Observable {
         notifyChanges(new PlayerCreatedMessage(character, nickname, others));
 
         if (this.players.size() > 3) {
-            long remainingTime = this.startTimer /1000L - (this.gameTimerStartDate - System.currentTimeMillis());
+            long remainingTime = this.startTimer/1000L - (this.utilsTimerStartTime - System.currentTimeMillis());
             notifyChanges(new TimerMessage(TimerMessageType.UPDATE, TimerType.SETUP, remainingTime*1000L));
         }
 
         if (this.players.size() == 3) {
-            this.timer.schedule(new TimerTask() {
+            this.utilsTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     finalizePlayersCreation();
                 }
             }, this.startTimer);
-            notifyChanges(new TimerMessage(TimerMessageType.START, TimerType.SETUP,this.startTimer /1000L));
-            this.gameTimerStartDate = System.currentTimeMillis();
+            notifyChanges(new TimerMessage(TimerMessageType.START, TimerType.SETUP,this.startTimer/1000L));
+            this.utilsTimerStartTime = System.currentTimeMillis();
         }
     }
 
@@ -367,8 +363,8 @@ public class Board extends Observable {
         notifyChanges(new ClientDisconnectedMessage(player, true));
         this.players.remove(getPlayerByCharacter(player));
         if (this.players.size() == 2) {
-            this.timer.cancel();
-            this.timer = new Timer();
+            this.utilsTimer.cancel();
+            this.utilsTimer = new Timer();
             notifyChanges(new TimerMessage(TimerMessageType.STOP, TimerType.SETUP));
         }
     }
@@ -386,7 +382,7 @@ public class Board extends Observable {
         notifyChanges(new ClientDisconnectedMessage(player, true));
         if (this.players.size() == 2) {
             this.gameState = ACCEPTING_PLAYERS;
-            this.timer = new Timer();
+            this.utilsTimer = new Timer();
             notifyChanges(new BoardMessage(BoardMessageType.SETUP_INTERRUPTED));
             return;
         }
@@ -401,7 +397,6 @@ public class Board extends Observable {
      * @param player of which you want to handle disconnection
      */
     private void handleInGameDisconnection(GameCharacter player) {
-        this.timer.cancel();
         int validPlayers = 0;
         Player disconnected = getPlayerByCharacter(player);
         disconnected.disconnect();
@@ -412,7 +407,7 @@ public class Board extends Observable {
             }
         }
         if (validPlayers < MIN_PLAYERS) {
-            this.timer.cancel();
+            this.gameTimer.cancel();
             for (Player p : this.players) {
                 if (p.isConnected()) {
                     notifyChanges(new SingleSelectionMessage(SelectionMessageType.PERSISTENCE, p.getCharacter(),
@@ -461,7 +456,6 @@ public class Board extends Observable {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Invalid settings file, timers set to default");
             setDefaultTimers();
-            return;
         }
     }
 
@@ -559,7 +553,7 @@ public class Board extends Observable {
      */
     public void endTurn(GameCharacter character) {
         Player player = getPlayerByCharacter(character);
-        this.timer.cancel();
+        this.gameTimer.cancel();
         if(this.gameState == FIRST_TURN && this.currentPlayer == this.players.size() - 1) {
             this.gameState = IN_GAME;
         }
@@ -652,27 +646,16 @@ public class Board extends Observable {
     }
 
     /**
-     * Starts a player turn timer
-     * @param character you want to start turn timer
+     * Starts a player turn utilsTimer
+     * @param character you want to start turn utilsTimer
      */
     public void startTurnTimer(GameCharacter character) {
-        this.gameTimerStartDate = currentTimeMillis();
-        this.timer = new Timer();
         if (character == this.players.get(this.currentPlayer).getCharacter()) {
-            this.timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    endTurn(character);
-                }
-            }, this.turnTimer);
+            this.gameTimer = new GameTimer(this.turnTimer, this.turnTimer, this, character);
         } else {
-            this.timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    endTurn(character);
-                }
-            }, this.respawnTimer);
+            this.gameTimer = new GameTimer(this.respawnTimer, this.respawnTimer, this, character);
         }
+        this.gameTimer.start();
     }
 
     /**
@@ -1620,23 +1603,16 @@ public class Board extends Observable {
     }
 
     /**
-     * Sets on pause the turn timer
+     * Sets on pause the turn utilsTimer
      */
     public void pauseTurnTimer() {
-        this.timerRemainingTime = this.turnTimer - (this.gameTimerStartDate - currentTimeMillis());
-        this.timer.cancel();
+        this.gameTimer.pause();
     }
 
     /**
-     * Resumes the turn timer
+     * Resumes the turn utilsTimer
      */
     public void resumeTurnTimer() {
-        this.timer = new Timer();
-        this.timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                endTurn(Board.this.players.get(Board.this.currentPlayer).getCharacter());
-            }
-        }, this.timerRemainingTime);
+        this.gameTimer.resume();
     }
 }
