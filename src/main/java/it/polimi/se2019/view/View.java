@@ -338,10 +338,6 @@ public abstract class View {
         this.charactersSelection.remove(character);
     }
 
-    void setMultipleSquareSelection(Map<Coordinates, List<GameCharacter>> selection) {
-        this.multipleSquareSelection = selection;
-    }
-
     Map<Coordinates, List<GameCharacter>> getMultipleSquareSelection() {
         return this.multipleSquareSelection;
     }

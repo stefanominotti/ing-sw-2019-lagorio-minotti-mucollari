@@ -1153,7 +1153,7 @@ public class GUIView extends View {
             super.selectionEffectFinish();
         }
     }
-
+    
     /**
      * Handles client multiple squares target input
      * @param character multiple squares chosen and target chosen
@@ -1161,13 +1161,15 @@ public class GUIView extends View {
     void handleEffectMultipleSquareSelect(GameCharacter character) {
         this.targetSelected.add(character);
         Coordinates toRemove = null;
+        List<GameCharacter> removeCharacter = new ArrayList<>();
         for(Coordinates coordinates : getMultipleSquareSelection().keySet()) {
             if(getMultipleSquareSelection().get(coordinates).contains(character)) {
-                for(GameCharacter c: getMultipleSquareSelection().get(coordinates)) {
-                    removeCharacterSelection(c);
-                }
+                removeCharacter.addAll(getMultipleSquareSelection().get(coordinates));
                 toRemove = coordinates;
             }
+        }
+        for(GameCharacter c: removeCharacter) {
+            removeCharacterSelection(c);
         }
         removeMultipleSquareSelection(toRemove);
         if(this.targetSelected.size() < this.minSelectable) {
