@@ -250,6 +250,9 @@ public class GUIView extends View {
         if (getState() == WAITING_START || getState() == WAITING_SETUP) {
             ((LobbyController) this.controller).removePlayer(character);
         }
+        if (this.currentScene == SceneType.BOARD) {
+            addMessage(getBoardByCharacter(character).getNickname() + " (" + character + ") disconnected");
+        }
     }
 
     /**
@@ -279,6 +282,10 @@ public class GUIView extends View {
         if (getState() == WAITING_START) {
             ((LobbyController) this.controller).addPlayer(character, nickname);
         }
+        if (this.currentScene == SceneType.BOARD && character != getCharacter()) {
+            addMessage(nickname + " (" + character + ") connected");
+            showMessage();
+        }
     }
 
     /**
@@ -302,7 +309,7 @@ public class GUIView extends View {
     /**
      * Handles game setup timer
      * @param action type of timer message
-     * @param duration
+     * @param duration left
      */
     @Override
     void handleGameSetupTimer(TimerMessageType action, long duration) {
@@ -1308,7 +1315,8 @@ public class GUIView extends View {
             setSecondaryButtons();
         } else {
             this.currentStatus = "Too few players";
-            this.currentAction = getBoardByCharacter(character) + " (" + character + ") is saving the game";
+            this.currentAction = getBoardByCharacter(character).getNickname()
+                    + " (" + character + ") is saving the game";
             setBanner();
         }
     }

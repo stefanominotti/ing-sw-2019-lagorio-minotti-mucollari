@@ -231,23 +231,6 @@ public class BoardController extends AbstractSceneController {
         return this.activeBoard;
     }
 
-    void disableBoardChange() {
-        setPlayerBoard(getView().getCharacter());
-        for (ImageView p : this.players) {
-            Platform.runLater(() ->
-                    p.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.setPlayerBoardHandler)
-            );
-        }
-    }
-
-    void enableBoardChange() {
-        for (ImageView p : this.players) {
-            Platform.runLater(() ->
-                p.setOnMousePressed(this.setPlayerBoardHandler)
-            );
-        }
-    }
-
     void showWeaponInfo(Weapon weapon) {
 
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(FXML_PATH + "CardDetail.fxml"));
@@ -884,15 +867,15 @@ public class BoardController extends AbstractSceneController {
                 this.arenaPane.toFront();
                 for (ImageView player : this.players) {
                     player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.setPlayerBoardHandler);
-                    player.getStyleClass().remove("img-character-selectable");
-                    player.getStyleClass().remove("img-character-selected");
+                    player.getStyleClass().remove("img-characters-selectable");
+                    player.getStyleClass().remove("img-characters-selected");
                     player.getStyleClass().add("img-characters");
                     if (targets.contains(GameCharacter.valueOf(player.getId().toUpperCase()))) {
                         player.setOnMousePressed(this.characterSelectionHandler);
-                        player.getStyleClass().add("img-character-selectable");
+                        player.getStyleClass().add("img-characters-selectable");
                         player.getStyleClass().remove("img-characters");
                     } else if (selected.contains(GameCharacter.valueOf(player.getId().toUpperCase()))) {
-                        player.getStyleClass().add("img-character-selected");
+                        player.getStyleClass().add("img-characters-selected");
                         player.getStyleClass().remove("img-characters");
                     }
                 }
@@ -900,8 +883,8 @@ public class BoardController extends AbstractSceneController {
                 for (ImageView player : this.players) {
                     player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.characterSelectionHandler);
                     player.setOnMousePressed(this.setPlayerBoardHandler);
-                    player.getStyleClass().remove("img-character-selectable");
-                    player.getStyleClass().remove("img-character-selected");
+                    player.getStyleClass().remove("img-characters-selectable");
+                    player.getStyleClass().remove("img-characters-selected");
                     player.getStyleClass().add("img-characters");
                 }
             }
