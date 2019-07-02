@@ -818,6 +818,15 @@ public class GUIView extends View {
 
     void handlePowerupPaymentSelect(PowerupType type, AmmoType color) {
         addPaidPowerup(new Powerup(type, color));
+        if(getRequiredPayment().isEmpty()) {
+            Map<AmmoType, Integer> ammo = new HashMap<>();
+            ammo.put(AmmoType.BLUE, 0);
+            ammo.put(AmmoType.YELLOW, 0);
+            ammo.put(AmmoType.RED, 0);
+            getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
+                    getPaidPowerups()));
+            return;
+        }
 
         int newValue = getRequiredPayment().get(color) - 1;
         putRequiredPayment(color, newValue);
@@ -852,9 +861,6 @@ public class GUIView extends View {
                 }
             }
         }
-
-        getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
-                getPaidPowerups()));
     }
 
     void handleConfirmation() {
@@ -1333,7 +1339,7 @@ public class GUIView extends View {
                 toAppend = ammo.getValue() + "x" + ammo.getKey() + ", ";
                 text.append(toAppend);
             }
-            text.setLength((text.length() - 1));
+            text.setLength((text.length() - 2));
 
         }
         List<Powerup> toRemove = new ArrayList<>();
