@@ -111,9 +111,6 @@ public class VirtualView extends Observable implements Observer {
         if(message.getType() == BoardMessageType.GAME_FINISHED) {
             this.server.deleteGame();
         }
-        if(message.getType() == BoardMessageType.PERSISTENCE) {
-            this.server.resetServer();
-        }
     }
 
     /**
@@ -221,7 +218,11 @@ public class VirtualView extends Observable implements Observer {
      * @param character which the message has not be sent to
      * @param message to be sent
      */
-    public void sendOthers(GameCharacter character, Message message) {
+    void sendOthers(GameCharacter character, Message message) {
         this.server.sendOthers(character, message);
+    }
+
+    public void resetServer() {
+        this.server.resetServer();
     }
 }

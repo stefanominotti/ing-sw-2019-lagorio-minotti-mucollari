@@ -105,7 +105,7 @@ public class Player {
     /**
      * Disconnects the player
      */
-    void disconnect() {
+    public void disconnect() {
         this.connected = false;
     }
 

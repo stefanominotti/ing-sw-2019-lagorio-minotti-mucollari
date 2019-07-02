@@ -3,13 +3,9 @@ package it.polimi.se2019.controller;
 import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessageType;
-import it.polimi.se2019.server.ServerAllSender;
-import it.polimi.se2019.server.ServerSingleSender;
-import javafx.scene.effect.Effect;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 import static it.polimi.se2019.model.WeaponEffectOrderType.*;
@@ -67,7 +63,7 @@ public class EffectControllerTest {
         this.player.addWeapon(new WeaponCard(Weapon.POWER_GLOVE));
         this.player.addWeapon(new WeaponCard(Weapon.SLEDGEHAMMER));
         this.player.addPowerup(new Powerup(PowerupType.NEWTON, AmmoType.BLUE));
-        this.gameController = new GameController(this.board, new ServerSingleSender(null), new ServerAllSender(null));
+        this.gameController = new GameController(this.board, null);
         this.controller = new EffectsController(this.board, this.gameController);
         this.controller.setActivePlayer(this.player);
         List<Weapon> weapons = new ArrayList<>();

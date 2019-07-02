@@ -788,7 +788,7 @@ public class CLIView extends View {
     @Override
     void handleReadyPlayer(GameCharacter character, String nickname) {
         super.handleReadyPlayer(character, nickname);
-        if (character != getCharacter()) {
+        if (getCharacter() != null && character != getCharacter()) {
             showMessage(nickname + " - " + character + " connected!");
         }
     }
@@ -1694,6 +1694,7 @@ public class CLIView extends View {
             showMessage("Do you want to save game state? [Y/N]");
             this.inputEnabled = true;
         } else {
+            showMessage(character + " is saving the game");
             this.inputEnabled = false;
         }
     }
@@ -1910,7 +1911,7 @@ public class CLIView extends View {
      * @param message to be shown
      */
     private void showMessage(String message) {
-        System.out.println(ansi().eraseScreen().a("\n" + message));
+        System.out.println(ansi().a("\n" + message));
     }
 
     /**

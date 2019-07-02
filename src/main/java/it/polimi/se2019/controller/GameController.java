@@ -21,8 +21,6 @@ import it.polimi.se2019.model.messages.timer.TimerMessageType;
 import it.polimi.se2019.model.messages.timer.TimerType;
 import it.polimi.se2019.model.messages.turn.TurnContinuationMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
-import it.polimi.se2019.server.ServerAllSender;
-import it.polimi.se2019.server.ServerSingleSender;
 import it.polimi.se2019.view.VirtualView;
 
 import java.util.*;
@@ -33,9 +31,11 @@ import java.util.*;
 public class GameController implements Observer {
 
     private Board model;
+    private VirtualView view;
     private TurnController turnController;
     private Map<GameCharacter, PowerupsController> powerupsControllers;
     private boolean gameStarted;
+    private boolean gameSaved;
     private EffectsController effectsController;
     private Timer powerupRequestsTimer;
     private int powerupRequests;
@@ -44,17 +44,15 @@ public class GameController implements Observer {
     private List<Powerup> powerupsUsed;
     private Map<AmmoType, Integer> ammoUsed;
 
-    private ServerSingleSender singleSender;
-    private ServerAllSender allSender;
+    private Sender sender;
 
     /**
      * Class constructor, it builds a game controller
      *
      * @param board the board to handle
-     * @param singleSender  used to send message to a client
-     * @param allSender  used to send message to all clients
+     * @param view the virtual view to communicate with clients
      */
-    public GameController(Board board, ServerSingleSender singleSender, ServerAllSender allSender) {
+    public GameController(Board board, VirtualView view) {
         this.model = board;
         this.effectsController = new EffectsController(this.model, this);
         this.turnController = new TurnController(this.model, this, this.effectsController);
@@ -64,8 +62,8 @@ public class GameController implements Observer {
         }
         this.powerupRequestsTimer = new Timer();
         this.powerupsUsed = new ArrayList<>();
-        this.singleSender = singleSender;
-        this.allSender = allSender;
+        this.view = view;
+        this.sender = new Sender(this.view);
     }
 
     TurnController getTurnController() {
@@ -83,7 +81,7 @@ public class GameController implements Observer {
     /**
      * Updates the view with a message
      *
-     * @param view    the view to notify
+     * @param view the view to notify
      * @param message to be notified
      */
     @Override
@@ -182,6 +180,16 @@ public class GameController implements Observer {
      * @param character who is disconnected
      */
     private void handleClientDisconnected(GameCharacter character) {
+        int count = 0;
+        for (Player p : this.model.getPlayers()) {
+            if (p.isConnected()) {
+                count++;
+            }
+        }
+        if (this.gameSaved && count == 0) {
+            this.view.resetServer();
+            return;
+        }
         this.model.handleDisconnection(character);
         if (this.model.getPlayerByCharacter(character) == this.turnController.getActivePlayer() && this.gameStarted) {
             int validPlayers = 0;
@@ -193,6 +201,15 @@ public class GameController implements Observer {
             if (validPlayers >= 3) {
                 this.turnController.endTurn();
             }
+        }
+        int counter = 0;
+        for (Player p : this.model.getPlayers()) {
+            if (p.isConnected()) {
+                counter++;
+            }
+        }
+        if (counter < 3) {
+            this.gameStarted = false;
         }
     }
 
@@ -339,6 +356,7 @@ public class GameController implements Observer {
             this.model.endGame();
         } else {
             sendAll(new BoardMessage(BoardMessageType.PERSISTENCE));
+            this.gameSaved = true;
         }
     }
 
@@ -560,7 +578,7 @@ public class GameController implements Observer {
      * @param message to be sent
      */
     void send(SingleReceiverMessage message) {
-        this.singleSender.send(message);
+        this.sender.send(message, false);
     }
 
     /**
@@ -569,7 +587,7 @@ public class GameController implements Observer {
      * @param message to be sent
      */
     void sendAll(Message message) {
-        this.allSender.send(message);
+        this.sender.send(message, true);
     }
 
     /**

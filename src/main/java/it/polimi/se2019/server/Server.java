@@ -12,7 +12,6 @@ import it.polimi.se2019.model.messages.client.*;
 import it.polimi.se2019.model.messages.nickname.NicknameMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessageType;
 import it.polimi.se2019.view.VirtualView;
-import org.omg.PortableServer.THREAD_POLICY_ID;
 
 import java.io.FileReader;
 import java.rmi.RemoteException;
@@ -82,11 +81,7 @@ public class Server {
     private void startMVC(Board board) {
         this.model = board;
         this.view = new VirtualView(this);
-        ServerAllSender allSender = new ServerAllSender(this.view);
-        ServerSingleSender singleSender = new ServerSingleSender(this.view);
-        allSender.addObserver(allSender);
-        singleSender.addObserver(singleSender);
-        GameController controller = new GameController(this.model, singleSender, allSender);
+        GameController controller = new GameController(this.model, this.view);
         this.view.addObserver(controller);
         this.model.addObserver(this.view);
     }

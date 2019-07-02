@@ -1,8 +1,6 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.server.ServerAllSender;
-import it.polimi.se2019.server.ServerSingleSender;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,7 +24,7 @@ public class TurnControllerTest {
     public void setUp() {
         this.board = new Board();
         this.board.createArena("4");
-        this.gameController = new GameController(this.board, new ServerSingleSender(null), new ServerAllSender(null));
+        this.gameController = new GameController(this.board, null);
         this.effectsController = new EffectsController(this.board, this.gameController);
         this.controller = new TurnController(this.board, this.gameController,this.effectsController );
         this.board.addPlayer(GameCharacter.DOZER, "a", "123");

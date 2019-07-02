@@ -1,8 +1,6 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.server.ServerAllSender;
-import it.polimi.se2019.server.ServerSingleSender;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,7 +32,7 @@ public class PowerupsControllerTest {
         this.board.movePlayer(this.player, this.board.getArena().getSquareByCoordinate(1, 0));
         this.board.movePlayer(p1, this.board.getArena().getSquareByCoordinate(2, 0));
         this.board.movePlayer(p2, this.board.getArena().getSquareByCoordinate(1, 1));
-        this.gameController = new GameController(this.board, new ServerSingleSender(null), new ServerAllSender(null));
+        this.gameController = new GameController(this.board, null);
         this.turnController = new TurnController(this.board, this.gameController, null);
         this.controller = new PowerupsController(this.board, this.gameController, this.turnController);
         List<GameCharacter> characters = new ArrayList<>();

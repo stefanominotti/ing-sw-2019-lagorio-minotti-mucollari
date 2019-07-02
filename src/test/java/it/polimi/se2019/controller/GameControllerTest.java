@@ -4,7 +4,6 @@ import it.polimi.se2019.model.*;
 import it.polimi.se2019.model.messages.board.ArenaMessage;
 import it.polimi.se2019.model.messages.board.SkullsMessage;
 import it.polimi.se2019.model.messages.client.*;
-import it.polimi.se2019.model.messages.payment.PaymentMessage;
 import it.polimi.se2019.model.messages.payment.PaymentSentMessage;
 import it.polimi.se2019.model.messages.payment.PaymentType;
 import it.polimi.se2019.model.messages.selections.SelectionListMessage;
@@ -12,19 +11,12 @@ import it.polimi.se2019.model.messages.selections.SelectionMessageType;
 import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessageType;
-import it.polimi.se2019.server.ServerAllSender;
-import it.polimi.se2019.server.ServerSingleSender;
 import org.junit.Before;
 import org.junit.Test;
-import org.omg.PortableInterceptor.INACTIVE;
 
 import java.util.*;
 
 import static it.polimi.se2019.model.GameState.ENDED;
-import static it.polimi.se2019.model.GameState.IN_GAME;
-import static it.polimi.se2019.model.WeaponEffectOrderType.ALTERNATIVE;
-import static it.polimi.se2019.model.WeaponEffectOrderType.PRIMARY;
-import static it.polimi.se2019.model.messages.client.ClientMessageType.READY;
 import static org.junit.Assert.*;
 
 public class GameControllerTest {
@@ -40,7 +32,7 @@ public class GameControllerTest {
     @Before
     public void setUp() {
         this.board = new Board();
-        this.controller = new GameController(this.board, new ServerSingleSender(null), new ServerAllSender(null));
+        this.controller = new GameController(this.board, null);
         this.turnController = this.controller.getTurnController();
         this.board.addPlayer(GameCharacter.DOZER, "a", "123");
         this.controller.update(null, new ClientReadyMessage(GameCharacter.DOZER, "a", "123"));

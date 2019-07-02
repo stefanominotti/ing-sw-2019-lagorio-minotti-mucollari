@@ -72,6 +72,7 @@ public class GameLoader {
             if (player.isDead()) {
                 this.board.addDeadPlayer(player);
             }
+            player.disconnect();
             try {
                 int posX = this.gson.fromJson(
                         jsonPlayer.getAsJsonObject().get("player_position").getAsJsonObject().get("x"), int.class);
