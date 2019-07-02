@@ -150,7 +150,6 @@ public class GameController implements Observer {
         int counter = 0;
         Player player = this.model.getPlayerByCharacter(character);
         player.connect();
-        this.model.sendModelView(player);
         sendAll(new PlayerReadyMessage(player.getCharacter(), player.getNickname()));
         for (Player boardPlayer : this.model.getPlayers()) {
             if (boardPlayer.isConnected()) {
@@ -160,6 +159,9 @@ public class GameController implements Observer {
             }
         }
         if (counter == this.model.getPlayers().size()) {
+            for (Player p : this.model.getPlayers()) {
+                this.model.sendModelView(p);
+            }
             if (this.model.getDeadPlayers().isEmpty()) {
                 this.model.startTurn(this.model.getPlayers().get(this.model.getCurrentPlayer()));
             } else {

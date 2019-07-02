@@ -16,6 +16,10 @@ import it.polimi.se2019.model.messages.timer.TimerMessageType;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 import java.util.*;
 import static it.polimi.se2019.view.ClientState.*;
+import static org.fusesource.jansi.Ansi.ansi;
+
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.AnsiConsole;
 
 /**
  * Class for handling CLI view
@@ -38,7 +42,7 @@ public class CLIView extends View {
         super();
 
         super.connect(connection, ip, port);
-
+        AnsiConsole.systemInstall();
         Thread inputThread = new Thread() {
             Scanner scanner = new Scanner(System.in);
             boolean read = true;
@@ -1907,7 +1911,7 @@ public class CLIView extends View {
      * @param message to be shown
      */
     private void showMessage(String message) {
-        System.out.println("\n" + message);
+        System.out.println(ansi().eraseScreen().a("\n" + message));
     }
 
     /**

@@ -347,10 +347,11 @@ public class Board extends Observable {
             case SETTING_UP_GAME:
                 handleSettingUpGameDisconnection(player);
                 break;
+            case IN_GAME:
+                handleInGameDisconnection(player);
+                break;
             case ENDED:
                 break;
-            default:
-                handleInGameDisconnection(player);
         }
 
     }
