@@ -72,6 +72,7 @@ public class Board extends Observable {
     private List<GameCharacter> finalFrenzyOrder;
     private List<GameCharacter> deadPlayers;
     private Map<GameCharacter, Integer> pointsFromKillshotTrack;
+    private boolean reconnection;
 
     /**
      * Class constructor, it builds a board
@@ -335,11 +336,23 @@ public class Board extends Observable {
         notifyChanges(new PlayerMessage(PlayerMessageType.START_SETUP, this.players.get(0).getCharacter()));
     }
 
+    /** Sets reconnection flag, meaning game is restarting
+     * @param reconnection flag value
+     */
+    public void setReconnection(boolean reconnection) {
+        this.reconnection = reconnection;
+    }
+
     /**
      * Handles a player disconnection removing him from the game
      * @param player of which you want to handle disconnection
      */
     public void handleDisconnection(GameCharacter player) {
+        if (this.reconnection) {
+            getPlayerByCharacter(player).disconnect();
+            notifyChanges(new ClientDisconnectedMessage(player, true));
+            return;
+        }
         switch(this.gameState) {
             case ACCEPTING_PLAYERS:
                 handleAcceptingPlayersDisconnection(player);

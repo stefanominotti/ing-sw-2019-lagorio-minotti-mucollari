@@ -1301,13 +1301,34 @@ public class GUIView extends View {
         setTargets();
         setSquares();
         if (character == getCharacter()) {
-            this.currentStatus = "Do you want to save the game";
+            this.currentStatus = "Do you want to save the game?";
             this.currentAction = "Select one of the options above";
             setBanner();
             this.secondaryButtons = Arrays.asList("y", "n");
             setSecondaryButtons();
+        } else {
+            this.currentStatus = "Too few players";
+            this.currentAction = getBoardByCharacter(character) + " (" + character + ") is saving the game";
+            setBanner();
         }
     }
+
+    /**
+     * Shows game saved message
+     */
+    @Override
+    void handlePersistenceFinish() {
+        this.currentStatus = "Game saved";
+        this.currentAction = "This window will close";
+        setBanner();
+        (new Timer()).schedule(new TimerTask() {
+            @Override
+            public void run() {
+                GUIView.super.handlePersistenceFinish();
+            }
+        }, 7*1000L);
+    }
+
 
     void handleDecisionInput(String input) {
         input = input.toUpperCase();
@@ -1516,14 +1537,6 @@ public class GUIView extends View {
                 GUIView.super.handleGameFinished(ranking);
             }
         }, 10*1000L);
-    }
-
-    /**
-     * Handles persistence finish
-     */
-    @Override
-    void handlePersistenceFinish() {
-
     }
 
     /**+

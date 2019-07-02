@@ -6,6 +6,7 @@ import it.polimi.se2019.model.messages.board.BoardMessage;
 import it.polimi.se2019.model.messages.board.BoardMessageType;
 import it.polimi.se2019.model.messages.client.ClientDisconnectedMessage;
 import it.polimi.se2019.model.messages.client.ClientMessage;
+import it.polimi.se2019.model.messages.client.ClientMessageType;
 import it.polimi.se2019.model.messages.payment.PaymentMessage;
 import it.polimi.se2019.model.messages.payment.PaymentMessageType;
 import it.polimi.se2019.model.messages.player.PlayerCreatedMessage;
@@ -28,6 +29,7 @@ import java.util.Observer;
 public class VirtualView extends Observable implements Observer {
 
     private Server server;
+    private boolean reconnecting;
 
     /**
      * Class constructor, it builds a virtual view

@@ -151,14 +151,20 @@ public class GameController implements Observer {
         Player player = this.model.getPlayerByCharacter(character);
         player.connect();
         sendAll(new PlayerReadyMessage(player.getCharacter(), player.getNickname()));
+        if (this.gameStarted) {
+            this.model.sendModelView(player);
+            send(new TurnContinuationMessage(player.getCharacter(),
+                    this.turnController.getActivePlayer().getCharacter()));
+            return;
+        }
+        this.model.setReconnection(true);
         for (Player boardPlayer : this.model.getPlayers()) {
             if (boardPlayer.isConnected()) {
                 counter++;
-            } else {
-                return;
             }
         }
-        if (counter == this.model.getPlayers().size()) {
+        if (counter == this.model.getPlayers().size() ) {
+            this.model.setReconnection(false);
             for (Player p : this.model.getPlayers()) {
                 this.model.sendModelView(p);
             }

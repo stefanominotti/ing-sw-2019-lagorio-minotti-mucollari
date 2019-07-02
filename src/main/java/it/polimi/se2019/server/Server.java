@@ -234,7 +234,6 @@ public class Server {
                                     this.clientNicknames.get(client), ((CharacterMessage) message).getToken()));
                     this.clientNicknames.remove(client);
                 } else {
-                    this.connectionAllowed = true;
                     for (Player player : this.model.getPlayers()) {
                         GameCharacter character = player.verifyPlayer(((ReconnectionMessage) message).getToken());
                         if (character != null && !this.clients.containsKey(character)) {
