@@ -657,6 +657,13 @@ public class GUIView extends View {
      */
     @Override
     void handleEndTurn(GameCharacter character) {
+        resetSelections();
+        setPowerups();
+        setWeapons();
+        setSquares();
+        setActions();
+        this.secondaryButtons = new ArrayList<>();
+        setSecondaryButtons();
         if (character != getCharacter()) {
             this.currentStatus = "Waiting for other players...";
             this.currentAction = getBoardByCharacter(character).getNickname() + " (" + character +
