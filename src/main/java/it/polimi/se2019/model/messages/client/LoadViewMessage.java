@@ -27,6 +27,7 @@ public class LoadViewMessage extends ClientMessage {
     private boolean frenzy;
     private boolean beforeFirstPlayer;
     private int arena;
+    private List<GameCharacter> deadPlayers;
 
     /**
      * Class constructor, it builds a load view message
@@ -42,12 +43,14 @@ public class LoadViewMessage extends ClientMessage {
      * @param otherPlayers map with the other players nickname-character
      * @param frenzy true if the Final Frenzy mode is activated, else false
      * @param beforeFirstPlayer true if the addressee plays before the first player in the current turn, else false
+     * @param arena integer representing arena number
+     * @param deadPlayers List of dead players
      */
     public LoadViewMessage(GameCharacter character, String nickname, int skulls, List<SquareView> squares,
                            Map<Integer, List<GameCharacter>> killshotTrack, List<PlayerBoard> playerBoards,
                            List<Weapon> readyWeapons, List<Powerup> powerups, int score,
                            Map<GameCharacter, String> otherPlayers, boolean frenzy, boolean beforeFirstPlayer,
-                           int arena) {
+                           int arena, List<GameCharacter> deadPlayers) {
 
         super(ClientMessageType.LOAD_VIEW, character);
         this.nickname = nickname;
@@ -62,7 +65,7 @@ public class LoadViewMessage extends ClientMessage {
         this.beforeFirstPlayer = frenzy;
         this.frenzy = beforeFirstPlayer;
         this.arena = arena;
-
+        this.deadPlayers = deadPlayers;
     }
 
     /**
@@ -160,5 +163,14 @@ public class LoadViewMessage extends ClientMessage {
      */
     public int getArena() {
         return this.arena;
+    }
+
+
+    /**
+     * Gets dead players list
+     * @return List of dead players
+     */
+    public List<GameCharacter> getDeadPlayers() {
+        return this.deadPlayers;
     }
 }

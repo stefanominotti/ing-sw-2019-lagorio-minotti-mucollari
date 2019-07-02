@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.util.*;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 
 public class PlayerBoardTest {
 
@@ -127,7 +128,7 @@ public class PlayerBoardTest {
         unloadedWeapons.add(Weapon.MACHINE_GUN);
         PlayerBoard alternativeBoard = new PlayerBoard(GameCharacter.DOZER, "alternative",
                 this.board.getAvailableAmmos(), this.board.getRevengeMarks(), this.board.getDamages(),
-                this.board.getKillshotPoints(), unloadedWeapons, 3, 2);
+                this.board.getKillshotPoints(), unloadedWeapons, 3, 2, false);
         assertEquals(GameCharacter.DOZER, alternativeBoard.getCharacter());
         assertEquals("alternative", alternativeBoard.getNickname());
         assertEquals(this.board.getAvailableAmmos(), alternativeBoard.getAvailableAmmos());
@@ -137,6 +138,12 @@ public class PlayerBoardTest {
         assertEquals(unloadedWeapons, alternativeBoard.getUnloadedWeapons());
         assertEquals(3, alternativeBoard.getWeaponsNumber());
         assertEquals(2, alternativeBoard.getPowerupsNumber());
+    }
+
+    @Test
+    public void deadTest() {
+        this.board.setDead(true);
+        assertTrue(this.board.isDead());
     }
 
     @Test

@@ -25,6 +25,7 @@ public class PlayerBoard implements Serializable {
     private int weaponsNumber;
     private int powerupsNumber;
     private boolean frenzyBoard;
+    private boolean dead;
 
     /**
      * Class constructor, it builds a player board
@@ -57,11 +58,12 @@ public class PlayerBoard implements Serializable {
      * @param unloadedWeapons List of the unloaded weapons
      * @param weaponsNumber amount of weapons
      * @param powerupsNumber amount of powerups
+     * @param dead true if player is dead, else false
      */
     public PlayerBoard(GameCharacter character, String nickname, Map<AmmoType, Integer> availableAmmos,
                        List<GameCharacter> revengeMarks, List<GameCharacter> damages,
                        List<Integer> killshotPoints, List<Weapon> unloadedWeapons, int weaponsNumber,
-                       int powerupsNumber) {
+                       int powerupsNumber, boolean dead) {
         this.nickname = nickname;
         this.character = character;
         this.damages = damages;
@@ -71,6 +73,7 @@ public class PlayerBoard implements Serializable {
         this.weaponsNumber = weaponsNumber;
         this.powerupsNumber = powerupsNumber;
         this.unloadedWeapons = new ArrayList<>(unloadedWeapons);
+        this.dead = dead;
     }
 
     /**
@@ -87,6 +90,22 @@ public class PlayerBoard implements Serializable {
      */
     boolean isFrenzyBoard() {
         return this.frenzyBoard;
+    }
+
+    /**
+     * Knows if player is dead
+     * @return true if it is, else false
+     */
+    public boolean isDead() {
+        return this.dead;
+    }
+
+    /**
+     * Sets if player is dead or not
+     * @param dead true if player is dead, else false
+     */
+    public void setDead(boolean dead) {
+        this.dead = dead;
     }
 
     /**

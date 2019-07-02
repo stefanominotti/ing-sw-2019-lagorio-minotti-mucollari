@@ -18,6 +18,7 @@ public class BoardView {
     private boolean frenzy;
     private boolean beforeFirstPlayer;
     private int arena;
+    private List<GameCharacter> deadPlayers;
 
     /**
      * Class constructor, it builds a board view
@@ -38,6 +39,7 @@ public class BoardView {
         for (SquareView square : this.squares) {
             square.setBoard(this);
         }
+        this.deadPlayers = new ArrayList<>();
     }
 
     /**
@@ -47,9 +49,10 @@ public class BoardView {
      * @param killshotTrack killshot tracks of the game characters
      * @param frenzy true if Final Frenzy is active, else false
      * @param beforeFirstPlayer true if the current player is playing before the first player, else false
+     * @param deadPlayers List of dead players
      */
     BoardView(int skulls, List<SquareView> squares, Map<Integer, List<GameCharacter>> killshotTrack, boolean frenzy,
-              boolean beforeFirstPlayer, int arena) {
+              boolean beforeFirstPlayer, int arena, List<GameCharacter> deadPlayers) {
 
         this.arena = arena;
         this.skulls = skulls;
@@ -64,6 +67,23 @@ public class BoardView {
             }
             square.setBoard(this);
         }
+        this.deadPlayers = deadPlayers;
+    }
+
+    /**
+     * Add a player to dead players list
+     * @param player to add to dead players list
+     */
+    void addDeadPlayer(GameCharacter player) {
+        this.deadPlayers.add(player);
+    }
+
+    /**
+     * Remove a player from dead players list
+     * @param player to remove from dead players list
+     */
+    void removeDeadPlayer(GameCharacter player) {
+        this.deadPlayers.remove(player);
     }
 
     /**
@@ -225,7 +245,8 @@ public class BoardView {
                 }
             }
             if (i == 1) {
-                squaresStrings.add(Arrays.asList(legendSquare(new ArrayList<>(this.positions.keySet())).split("\n")));
+                squaresStrings.add(Arrays.asList(legendSquare(new ArrayList<>(this.positions.keySet()),
+                        this.deadPlayers).split("\n")));
             }
             for (int j = 0; j < 10; j++) {
                 int count = 0;

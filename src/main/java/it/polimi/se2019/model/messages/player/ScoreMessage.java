@@ -8,15 +8,19 @@ import it.polimi.se2019.model.GameCharacter;
 public class ScoreMessage extends PlayerMessage {
 
     private int score;
+    private ScoreMotivation motivation;
+    private GameCharacter killedCharacter;
 
     /**
      * Class constructor, it builds a score message
      * @param character who is raising score
      * @param score amount to be raised
      */
-    public ScoreMessage(GameCharacter character, int score) {
+    public ScoreMessage(GameCharacter character, int score, ScoreMotivation motivation, GameCharacter killedCharacter) {
         super(PlayerMessageType.SCORE, character);
         this.score = score;
+        this.motivation = motivation;
+        this.killedCharacter = killedCharacter;
     }
 
     /**
@@ -25,5 +29,22 @@ public class ScoreMessage extends PlayerMessage {
      */
     public int getScore() {
         return this.score;
+    }
+
+
+    /**
+     * Gets the motivation of score raising
+     * @return the motivation of score raising
+     */
+    public ScoreMotivation getMotivation() {
+        return this.motivation;
+    }
+
+    /**
+     * Gets killed character
+     * @return killed character
+     */
+    public GameCharacter getKilledCharacter() {
+        return killedCharacter;
     }
 }

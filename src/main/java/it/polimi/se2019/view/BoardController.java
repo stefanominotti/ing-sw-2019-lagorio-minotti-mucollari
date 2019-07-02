@@ -641,6 +641,17 @@ public class BoardController extends AbstractSceneController {
                     img.setImage(new Image(CHARACTERS_PATH + c.toString().toLowerCase() + ".png"));
                     img.setId(c.toString().toLowerCase());
                     img.setOnMousePressed(this.setPlayerBoardHandler);
+                    PlayerBoard board;
+                    if (c == getView().getCharacter()) {
+                        board = getView().getSelfPlayerBoard();
+                    } else {
+                        board = getView().getBoardByCharacter(c);
+                    }
+                    if (board.isDead()) {
+                        img.setRotate(90);
+                    } else {
+                        img.setRotate(0);
+                    }
                     i++;
                 }
             }

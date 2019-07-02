@@ -14,7 +14,6 @@ public enum PlayerMessageType {
     ATTACK,
     MARKS_TO_DAMAGES,
     FRENZY,
-    FIRST_BLOOD,
     KILLSHOT_POINTS,
     DEATH,
     BOARD_FLIP,

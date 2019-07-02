@@ -8,6 +8,7 @@ import it.polimi.se2019.model.messages.client.CharacterMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessageType;
 import it.polimi.se2019.model.messages.payment.PaymentSentMessage;
+import it.polimi.se2019.model.messages.player.ScoreMotivation;
 import it.polimi.se2019.model.messages.powerups.PowerupMessageType;
 import it.polimi.se2019.model.messages.selections.SelectionListMessage;
 import it.polimi.se2019.model.messages.selections.SelectionMessageType;
@@ -96,14 +97,16 @@ public class GUIView extends View {
      * @param others map with the other characters
      * @param isFrenzy true if the Final Frenzy mode is active, else false
      * @param isBeforeFirstPlayer true if the player is playing before the first player in this turn, else false
+     * @param arena integer representing arena number
+     * @param deadPlayers List of dead players
      */
     @Override
     void loadView(GameCharacter character, int skulls, List<SquareView> squares,
                   Map<Integer, List<GameCharacter>> killshotTrack, List<PlayerBoard> playerBoards,
                   List<Weapon> weapons, List<Powerup> powerups, int score, Map<GameCharacter, String> others,
-                  boolean isFrenzy, boolean isBeforeFirstPlayer, int arena) {
+                  boolean isFrenzy, boolean isBeforeFirstPlayer, int arena, List<GameCharacter> deadPlayers) {
         super.loadView(character, skulls, squares, killshotTrack, playerBoards, weapons, powerups, score, others,
-                isFrenzy, isBeforeFirstPlayer, arena);
+                isFrenzy, isBeforeFirstPlayer, arena, deadPlayers);
         setScene(SceneType.BOARD);
         setArena();
         setPlayerBoard(getCharacter());
@@ -631,6 +634,50 @@ public class GUIView extends View {
         }
         showMessage();
         updateWeapons(character);
+    }
+
+    /**
+     * Shows score changed message
+     * @param player of which the score has changed
+     * @param score amount of change
+     * @param motivation for score change
+     * @param killedCharacter who gave the points
+     */
+    void handleScoreChange(GameCharacter player, int score, ScoreMotivation motivation, GameCharacter killedCharacter) {
+        super.handleScoreChange(player, score, motivation, killedCharacter);
+        StringBuilder text = new StringBuilder();
+        String toAppend;
+        if (player == getCharacter()) {
+            toAppend = "You got " + score + " points from ";
+        } else {
+            toAppend = player + " got " + score + " points from ";
+        }
+        text.append(toAppend);
+        switch (motivation) {
+            case FIRST_BLOOD:
+                text.append("first blood on ");
+                if (killedCharacter == getCharacter()) {
+                    text.append("you");
+                } else {
+                    text.append(killedCharacter);
+                }
+                break;
+            case PLAYER_BOARD:
+                if (killedCharacter == getCharacter()) {
+                    text.append("your ");
+                } else {
+                    toAppend = killedCharacter + "'s ";
+                    text.append(toAppend);
+                }
+                text.append("player board");
+                break;
+            case KILLSHOT_TRACK:
+                text.append("killshot track");
+                break;
+        }
+        addMessage(text.toString());
+        showMessage();
+        updatePoints();
     }
 
     /**
@@ -1337,6 +1384,22 @@ public class GUIView extends View {
         }, 7*1000L);
     }
 
+    /**
+     * Shows player dead
+     * @param player dead
+     */
+    @Override
+    void handleDeath(GameCharacter player) {
+        super.handleDeath(player);
+        if (getCharacter() == player) {
+            addMessage("You died");
+        } else {
+            addMessage(player + " died");
+        }
+        showMessage();
+        updatePlayersPositions();
+        setTargets();
+    }
 
     void handleDecisionInput(String input) {
         input = input.toUpperCase();
@@ -1593,11 +1656,6 @@ public class GUIView extends View {
         setCardinalPoints();
     }
 
-    void showWeaponInfo(Weapon weapon) {
-        setScene(SceneType.WEAPON_INFO);
-        ((CardDetailController) this.controller).setWeapon(weapon);
-    }
-
     void setArena() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setArena();
@@ -1697,6 +1755,13 @@ public class GUIView extends View {
     void updateWeapons(GameCharacter character) {
         if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {
             ((BoardController) this.controller).updateWeapons();
+        }
+    }
+
+    void updatePoints() {
+        if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() ==
+                getCharacter()) {
+            ((BoardController) this.controller).updatePoints();
         }
     }
 

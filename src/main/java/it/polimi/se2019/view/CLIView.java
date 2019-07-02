@@ -8,6 +8,7 @@ import it.polimi.se2019.model.messages.client.CharacterMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessage;
 import it.polimi.se2019.model.messages.nickname.NicknameMessageType;
 import it.polimi.se2019.model.messages.payment.PaymentSentMessage;
+import it.polimi.se2019.model.messages.player.ScoreMotivation;
 import it.polimi.se2019.model.messages.powerups.PowerupMessageType;
 import it.polimi.se2019.model.messages.selections.SelectionListMessage;
 import it.polimi.se2019.model.messages.selections.SelectionMessageType;
@@ -965,16 +966,43 @@ public class CLIView extends View {
      * Shows score changed message
      * @param player of which the score has changed
      * @param score amount of change
+     * @param motivation for score change
+     * @param killedCharacter who gave the points
      */
-    @Override
-    void handleScoreChange(GameCharacter player, int score) {
-        super.handleScoreChange(player, score);
+    void handleScoreChange(GameCharacter player, int score, ScoreMotivation motivation, GameCharacter killedCharacter) {
+        super.handleScoreChange(player, score, motivation, killedCharacter);
+        StringBuilder text = new StringBuilder();
+        String toAppend;
         if (player == getCharacter()) {
             showMessage(getSelfPlayerBoard().toString());
-            showMessage("You got " + score + " points");
+            toAppend = "You got " + score + " points from ";
         } else {
-            showMessage(player + " got " + score + " points");
+            toAppend = player + " got " + score + " points from ";
         }
+        text.append(toAppend);
+        switch (motivation) {
+            case FIRST_BLOOD:
+                text.append("first blood on ");
+                if (killedCharacter == getCharacter()) {
+                    text.append("you");
+                } else {
+                    text.append(killedCharacter);
+                }
+                break;
+            case PLAYER_BOARD:
+                if (killedCharacter == getCharacter()) {
+                    text.append("your ");
+                } else {
+                    toAppend = killedCharacter + "'s ";
+                    text.append(toAppend);
+                }
+                text.append("player board");
+                break;
+            case KILLSHOT_TRACK:
+                text.append("killshot track");
+                break;
+        }
+        showMessage(text.toString());
     }
 
     /**
@@ -1007,21 +1035,6 @@ public class CLIView extends View {
             showMessage("Your killshot points have been reduced");
         } else {
             showMessage(player + "'s killshot points have been reduced");
-        }
-    }
-
-    /**
-     * Shows point for first blood message
-     * @param player who got point for first blood
-     */
-    @Override
-    void handleFirstBlood(GameCharacter player) {
-        super.handleFirstBlood(player);
-        if (getCharacter() == player) {
-            showMessage(getSelfPlayerBoard().toString());
-            showMessage("You got 1 point for first blood");
-        } else {
-            showMessage(player + " got 1 point for first blood");
         }
     }
 
@@ -1126,14 +1139,16 @@ public class CLIView extends View {
      * @param others map with the other characters
      * @param isFrenzy true if the Final Frenzy mode is active, else false
      * @param isBeforeFirstPlayer true if the player is playing before the first player in this turn, else false
+     * @param arena integer representing arena number
+     * @param deadPlayers List of dead players
      */
     @Override
     void loadView(GameCharacter character, int skulls, List<SquareView> squares,
                   Map<Integer, List<GameCharacter>> killshotTrack, List<PlayerBoard> playerBoards,
                   List<Weapon> weapons, List<Powerup> powerups, int score, Map<GameCharacter, String> others,
-                  boolean isFrenzy, boolean isBeforeFirstPlayer, int arena) {
+                  boolean isFrenzy, boolean isBeforeFirstPlayer, int arena, List<GameCharacter> deadPlayers) {
         super.loadView(character, skulls, squares, killshotTrack, playerBoards, weapons, powerups, score, others,
-                isFrenzy, isBeforeFirstPlayer, arena);
+                isFrenzy, isBeforeFirstPlayer, arena, deadPlayers);
         showMessage("You are " + getCharacter());
         for (Map.Entry<GameCharacter, String> player : others.entrySet()) {
             if (player.getKey() != getCharacter()) {

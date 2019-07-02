@@ -155,7 +155,11 @@ public class Board extends Observable {
         List<PlayerBoard> playerBoards = new ArrayList<>();
         List<Weapon> playerWeapons = new ArrayList<>();
         Map<GameCharacter, String> otherPlayers = new EnumMap<>(GameCharacter.class);
+        List<GameCharacter> deadPlayers = new ArrayList<>();
         for(Player character : this.players) {
+            if (character.isDead()) {
+                deadPlayers.add(character.getCharacter());
+            }
             List<Weapon> weapons = new ArrayList<>();
             for(WeaponCard weaponCard : player.getWeapons()) {
                 if(!weaponCard.isReady()) {
@@ -171,7 +175,7 @@ public class Board extends Observable {
             playerBoards.add(new PlayerBoard(character.getCharacter(), character.getNickname(),
                     character.getAvailableAmmos(), character.getRevengeMarks(), character.getDamages(),
                     character.getKillshotPoints(), weapons, character.getWeapons().size(),
-                    character.getPowerups().size()));
+                    character.getPowerups().size(), character.isDead()));
         }
         Map<Integer, List<GameCharacter>> track = new HashMap<>();
         for (Map.Entry<Integer, List<GameCharacter>> kill : this.killshotTrack.entrySet()) {
@@ -180,7 +184,8 @@ public class Board extends Observable {
 
         return new LoadViewMessage(player.getCharacter(), player.getNickname(), this.skulls, squareViews,
                 track, playerBoards, playerWeapons, player.getPowerups(), player.getScore(), otherPlayers,
-                !this.finalFrenzyOrder.isEmpty(), isPlayerBeforeFirst(player), Integer.parseInt(this.arena.toJson()));
+                !this.finalFrenzyOrder.isEmpty(), isPlayerBeforeFirst(player), Integer.parseInt(this.arena.toJson()),
+                deadPlayers);
 
     }
 
@@ -1017,7 +1022,7 @@ public class Board extends Observable {
         int index = 0;
         for (GameCharacter p : sorted.keySet()) {
             this.pointsFromKillshotTrack.put(p, points.get(index));
-            raisePlayerScore(getPlayerByCharacter(p), points.get(index));
+            raisePlayerScore(getPlayerByCharacter(p), points.get(index), ScoreMotivation.KILLSHOT_TRACK, null);
             index++;
         }
 
@@ -1064,7 +1069,7 @@ public class Board extends Observable {
             } catch (IndexOutOfBoundsException e) {
                 amount = 1;
             }
-            raisePlayerScore(getPlayerByCharacter(p), amount);
+            raisePlayerScore(getPlayerByCharacter(p), amount, ScoreMotivation.PLAYER_BOARD, player.getCharacter());
             index++;
         }
     }
@@ -1158,9 +1163,9 @@ public class Board extends Observable {
      * @param player you want to increase his score
      * @param score amount to increase
      */
-    void raisePlayerScore(Player player, int score) {
+    void raisePlayerScore(Player player, int score, ScoreMotivation motivation, GameCharacter killedCharacter) {
         player.raiseScore(score);
-        notifyChanges(new ScoreMessage(player.getCharacter(), score));
+        notifyChanges(new ScoreMessage(player.getCharacter(), score, motivation, killedCharacter));
     }
 
     /**
@@ -1395,9 +1400,8 @@ public class Board extends Observable {
             notifyChanges(new KillshotTrackMessage(this.skulls + 1, killsToAdd));
         }
 
-        notifyChanges(new PlayerMessage(PlayerMessageType.FIRST_BLOOD, player.getDamages().get(0)));
-
-        getPlayerByCharacter(player.getDamages().get(0)).raiseScore(1);
+        raisePlayerScore(getPlayerByCharacter(player.getDamages().get(0)), 1, ScoreMotivation.FIRST_BLOOD,
+                player.getCharacter());
 
         calculateBoardScore(player);
 

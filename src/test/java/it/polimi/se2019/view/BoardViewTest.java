@@ -6,10 +6,7 @@ import it.polimi.se2019.model.RoomColor;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
@@ -86,7 +83,7 @@ public class BoardViewTest {
         killshotTrackTest();
         Map<Integer, List<GameCharacter>> killshotTrack = this.board.getKillshotTrack();
         BoardView alternativeBoard = new BoardView(3, squares, killshotTrack, true, true,
-                4);
+                4, new ArrayList<>());
         assertTrue(alternativeBoard.isFrenzy());
         assertTrue(alternativeBoard.isBeforeFirstPlayer());
         assertEquals(squares, alternativeBoard.getSquares());

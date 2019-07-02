@@ -38,7 +38,8 @@ public class SelfPlayerBoard extends PlayerBoard {
     SelfPlayerBoard(PlayerBoard playerBoard,  List<Weapon> readyWeapons, List<Powerup> powerups, int score) {
         super(playerBoard.getCharacter(), playerBoard.getNickname(), playerBoard.getAvailableAmmos(),
                 playerBoard.getRevengeMarks(), playerBoard.getDamages(), playerBoard.getKillshotPoints(),
-                playerBoard.getUnloadedWeapons(), playerBoard.getWeaponsNumber(), playerBoard.getPowerupsNumber());
+                playerBoard.getUnloadedWeapons(), playerBoard.getWeaponsNumber(), playerBoard.getPowerupsNumber(),
+                playerBoard.isDead());
         this.readyWeapons = readyWeapons;
         this.powerups = powerups;
         this.score = score;

@@ -33,14 +33,20 @@ class SquareStringUtils {
      * @param characters playing
      * @return legend drawn
      */
-    static String legendSquare(List<GameCharacter> characters) {
+    static String legendSquare(List<GameCharacter> characters, List<GameCharacter> deadPlayers) {
         StringBuilder builder = new StringBuilder();
         int i;
         for (i=0; i<3; i++) {
             builder.append(BLANK_ROW);
         }
         for (GameCharacter character : characters) {
-            String toAppend = center(character.getIdentifier() + " - " + character.toString(), 23) + "\n";
+            String toAppend;
+            if (deadPlayers.contains(character)) {
+                toAppend = center(character.getIdentifier() + " - " + character.toString() + " [DEAD]",
+                        23) + "\n";
+            } else {
+                toAppend = center(character.getIdentifier() + " - " + character.toString(), 23) + "\n";
+            }
             builder.append(toAppend);
             i++;
         }

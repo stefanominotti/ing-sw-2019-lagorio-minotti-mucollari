@@ -575,9 +575,6 @@ public abstract class View {
             case MARKS_TO_DAMAGES:
                 handleMarksToDamages(message.getCharacter(), ((MarksToDamagesMessage) message).getAttacker());
                 break;
-            case FIRST_BLOOD:
-                handleFirstBlood(message.getCharacter());
-                break;
             case KILLSHOT_POINTS:
                 handleKillshotPointsChange(message.getCharacter());
                 break;
@@ -585,7 +582,8 @@ public abstract class View {
                 handleDeath(message.getCharacter());
                 break;
             case SCORE:
-                handleScoreChange(message.getCharacter(), ((ScoreMessage) message).getScore());
+                handleScoreChange(message.getCharacter(), ((ScoreMessage) message).getScore(),
+                        ((ScoreMessage) message).getMotivation(), ((ScoreMessage) message).getKilledCharacter());
                 break;
             case BOARD_FLIP:
                 handleBoardFlip(message.getCharacter());
@@ -625,8 +623,10 @@ public abstract class View {
      * Shows score changed message
      * @param player of which the score has changed
      * @param score amount of change
+     * @param motivation for score change
+     * @param killedCharacter who gave the points
      */
-    void handleScoreChange(GameCharacter player, int score) {
+    void handleScoreChange(GameCharacter player, int score, ScoreMotivation motivation, GameCharacter killedCharacter) {
         if (player == this.character) {
             this.selfPlayerBoard.raiseScore(score);
         }
@@ -645,6 +645,8 @@ public abstract class View {
         }
         if (playerBoard != null) {
             playerBoard.resetDamages();
+            playerBoard.setDead(true);
+            this.board.addDeadPlayer(player);
         }
     }
 
@@ -663,17 +665,6 @@ public abstract class View {
             board.reduceKillshotPoints();
         }
     }
-
-    /**
-     * Handles first blood shot
-     * @param player who dealt the first blood shot
-     */
-    void handleFirstBlood(GameCharacter player) {
-        if (this.character == player) {
-            this.selfPlayerBoard.raiseScore(1);
-        }
-    }
-
 
     /**
      * Handles marks to damages conversion
@@ -771,6 +762,16 @@ public abstract class View {
         int x = coordinates.getX();
         int y = coordinates.getY();
         this.board.setPlayerPosition(character, this.board.getSquareByCoordinates(x, y));
+        PlayerBoard playerBoard;
+        if (character == this.character) {
+            playerBoard = this.selfPlayerBoard;
+        } else {
+            playerBoard = getBoardByCharacter(character);
+        }
+        if (playerBoard != null) {
+            playerBoard.setDead(false);
+            this.board.removeDeadPlayer(character);
+        }
     }
 
     /**
@@ -843,7 +844,8 @@ public abstract class View {
                         ((LoadViewMessage) message).getPlayerBoards(), ((LoadViewMessage) message).getReadyWeapons(),
                         ((LoadViewMessage) message).getPowerups(), ((LoadViewMessage) message).getScore(),
                         ((LoadViewMessage) message).getOtherPlayers(), ((LoadViewMessage) message).isFrenzy(),
-                        ((LoadViewMessage) message).isBeforeFirstPlayer(), ((LoadViewMessage) message).getArena());
+                        ((LoadViewMessage) message).isBeforeFirstPlayer(), ((LoadViewMessage) message).getArena(),
+                        ((LoadViewMessage) message).getDeadPlayers());
                 break;
             default:
                 break;
@@ -904,14 +906,30 @@ public abstract class View {
         System.exit(0);
     }
 
+    /**
+     * Loads the view
+     * @param character active character
+     * @param skulls number
+     * @param squares list of the squares view
+     * @param killshotTrack map with points and list of characters
+     * @param playerBoards list of the player boards
+     * @param weapons list of the available weapons on stores
+     * @param powerups list of the available powerups
+     * @param score your raised points
+     * @param others map with the other characters
+     * @param isFrenzy true if the Final Frenzy mode is active, else false
+     * @param isBeforeFirstPlayer true if the player is playing before the first player in this turn, else false
+     * @param arena integer representing arena number
+     * @param deadPlayers List of dead players
+     */
     void loadView(GameCharacter character, int skulls, List<SquareView> squares,
                   Map<Integer, List<GameCharacter>> killshotTrack, List<PlayerBoard> playerBoards,
                   List<Weapon> weapons, List<Powerup> powerups, int score, Map<GameCharacter, String> others,
-                  boolean isFrenzy, boolean isBeforeFirstPlayer, int arena) {
+                  boolean isFrenzy, boolean isBeforeFirstPlayer, int arena, List<GameCharacter> deadPlayers) {
         this.character = character;
         this.state = WAITING_SETUP;
         this.enemyBoards = new ArrayList<>();
-        this.board = new BoardView(skulls, squares, killshotTrack, isFrenzy, isBeforeFirstPlayer, arena);
+        this.board = new BoardView(skulls, squares, killshotTrack, isFrenzy, isBeforeFirstPlayer, arena, deadPlayers);
         for (PlayerBoard playerBoard : playerBoards) {
             if (playerBoard.getCharacter() == character) {
                 this.selfPlayerBoard = new SelfPlayerBoard(playerBoard, weapons, powerups, score);

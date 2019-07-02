@@ -2,6 +2,7 @@ package it.polimi.se2019.model;
 
 import it.polimi.se2019.model.messages.board.GameSetMessage;
 import it.polimi.se2019.model.messages.client.LoadViewMessage;
+import it.polimi.se2019.model.messages.player.ScoreMotivation;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -370,9 +371,9 @@ public class BoardTest {
     public void raisePlayerScoreTest() {
         this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
         Player player = this.board.getPlayers().get(0);
-        this.board.raisePlayerScore(player, 10);
+        this.board.raisePlayerScore(player, 10, ScoreMotivation.KILLSHOT_TRACK, null);
         assertEquals(10, player.getScore());
-        this.board.raisePlayerScore(player, 10);
+        this.board.raisePlayerScore(player, 10, ScoreMotivation.KILLSHOT_TRACK, null);
         assertEquals(20, player.getScore());
     }
 
