@@ -1097,7 +1097,7 @@
                         </GridPane>
                      </children>
                   </Pane>
-                  <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="122.0" prefWidth="904.0" VBox.vgrow="ALWAYS">
+                  <HBox alignment="CENTER_LEFT" minHeight="-Infinity" minWidth="-Infinity" prefHeight="122.0" prefWidth="904.0" VBox.vgrow="ALWAYS">
                      <children>
                         <VBox alignment="CENTER" prefHeight="122.0" prefWidth="121.0" styleClass="backgroud-dark-tiny">
                            <children>
@@ -1224,7 +1224,7 @@
                                     <Insets top="5.0" />
                                  </VBox.margin>
                                  <font>
-                                    <Font size="12.0" />
+                                    <Font name="System Bold" size="11.0" />
                                  </font>
                               </Label>
                               <HBox alignment="CENTER" prefHeight="20.0" prefWidth="100.0" VBox.vgrow="NEVER">
@@ -1278,7 +1278,7 @@
                                     <Insets top="5.0" />
                                  </VBox.margin>
                                  <font>
-                                    <Font size="12.0" />
+                                    <Font name="System Bold" size="11.0" />
                                  </font>
                               </Label>
                               <HBox alignment="CENTER" prefHeight="20.0" prefWidth="100.0">
@@ -1420,26 +1420,6 @@
                                     <Text fx:id="messagesText" fill="WHITE" layoutX="14.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="362.00000381469727" />
                                  </children>
                               </Pane>
-                              <HBox fx:id="secondaryButtonsBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="47.0" prefWidth="376.0">
-                                 <children>
-                                    <Button fx:id="actionButton1" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0" textFill="WHITE" visible="false" />
-                                    <Button fx:id="actionButton2" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0" textFill="WHITE" visible="false">
-                                       <HBox.margin>
-                                          <Insets left="5.0" />
-                                       </HBox.margin>
-                                    </Button>
-                                    <Button fx:id="actionButton3" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0" textFill="WHITE" visible="false">
-                                       <HBox.margin>
-                                          <Insets left="5.0" />
-                                       </HBox.margin>
-                                    </Button>
-                                    <Button fx:id="actionButton4" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0" textFill="WHITE" visible="false">
-                                       <HBox.margin>
-                                          <Insets left="5.0" />
-                                       </HBox.margin>
-                                    </Button>
-                                 </children>
-                              </HBox>
                            </children>
                         </VBox>
                      </children></StackPane>
