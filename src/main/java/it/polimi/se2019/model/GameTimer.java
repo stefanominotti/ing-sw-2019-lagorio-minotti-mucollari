@@ -57,9 +57,9 @@ public class GameTimer {
      * Pause the timer
      */
     void pause() {
-        if(!isRunning) return;
-        future.cancel(false);
-        isRunning = false;
+        if(!this.isRunning) return;
+        this.future.cancel(false);
+        this.isRunning = false;
     }
 
     /**

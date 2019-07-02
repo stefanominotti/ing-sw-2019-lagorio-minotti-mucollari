@@ -651,9 +651,9 @@ public class Board extends Observable {
      */
     public void startTurnTimer(GameCharacter character) {
         if (character == this.players.get(this.currentPlayer).getCharacter()) {
-            this.gameTimer = new GameTimer(this.turnTimer, this.turnTimer, this, character);
+            this.gameTimer = new GameTimer(1000, this.turnTimer, this, character);
         } else {
-            this.gameTimer = new GameTimer(this.respawnTimer, this.respawnTimer, this, character);
+            this.gameTimer = new GameTimer(1000, this.respawnTimer, this, character);
         }
         this.gameTimer.start();
     }

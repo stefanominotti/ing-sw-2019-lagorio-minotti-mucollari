@@ -1188,12 +1188,15 @@ public class GUIView extends View {
             return;
         }
         super.setPossibilityCharacters(this.targetSelected);
-        resetSelections();
-        setTargets();
-        setActions();
         if (!getEffectPossibility().getSquares().isEmpty()) {
+            setCharactersSelection(new ArrayList<>());
+            setTargets();
+            setActions();
             handleEffectMoveRequest();
         } else {
+            resetSelections();
+            setTargets();
+            setActions();
             super.selectionEffectFinish();
         }
     }
