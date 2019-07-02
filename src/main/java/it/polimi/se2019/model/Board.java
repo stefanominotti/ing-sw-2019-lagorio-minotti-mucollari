@@ -347,10 +347,10 @@ public class Board extends Observable {
             case SETTING_UP_GAME:
                 handleSettingUpGameDisconnection(player);
                 break;
-            case IN_GAME:
-                handleInGameDisconnection(player);
-                break;
             case ENDED:
+                break;
+            default:
+                handleInGameDisconnection(player);
                 break;
         }
 
@@ -408,7 +408,9 @@ public class Board extends Observable {
             }
         }
         if (validPlayers < MIN_PLAYERS) {
-            this.gameTimer.cancel();
+            if (this.gameTimer != null) {
+                this.gameTimer.cancel();
+            }
             for (Player p : this.players) {
                 if (p.isConnected()) {
                     notifyChanges(new SingleSelectionMessage(SelectionMessageType.PERSISTENCE, p.getCharacter(),
@@ -1607,13 +1609,17 @@ public class Board extends Observable {
      * Sets on pause the turn utilsTimer
      */
     public void pauseTurnTimer() {
-        this.gameTimer.pause();
+        if (this.gameTimer != null) {
+            this.gameTimer.pause();
+        }
     }
 
     /**
      * Resumes the turn utilsTimer
      */
     public void resumeTurnTimer() {
-        this.gameTimer.resume();
+        if (this.gameTimer != null) {
+            this.gameTimer.resume();
+        }
     }
 }
