@@ -61,7 +61,7 @@ public class BoardController extends AbstractSceneController {
     @FXML
     private GridPane deathsGrid;
     @FXML
-    private Label characterBoardLabel;
+    private Text characterBoardLabel;
     @FXML
     private Label redAmmoQty;
     @FXML
@@ -70,6 +70,8 @@ public class BoardController extends AbstractSceneController {
     private Label yellowAmmoQty;
     @FXML
     private Label ammoLabel;
+    @FXML
+    private Label scoreLabel;
     @FXML
     private VBox pointsVBox;
     @FXML
@@ -341,7 +343,7 @@ public class BoardController extends AbstractSceneController {
             labelText = "Your board";
         } else {
             board = getView().getBoardByCharacter(player);
-            labelText = player.toString();
+            labelText = player.toString() + "'s\n" + "board";
         }
         Platform.runLater(() -> {
             if (!board.isFrenzyBoard()) {
@@ -445,6 +447,9 @@ public class BoardController extends AbstractSceneController {
             labelText = this.activeBoard + "'s ammo";
         }
         Platform.runLater(() -> {
+            if (labelText.length()>14) {
+                this.ammoLabel.getStyleClass().add("font-ammo-small");
+            }
             this.ammoLabel.setText(labelText);
             for (Map.Entry<AmmoType, Integer> ammo : board.getAvailableAmmos().entrySet()) {
                 switch (ammo.getKey()) {
@@ -460,6 +465,9 @@ public class BoardController extends AbstractSceneController {
                 }
             }
         });
+        if(this.ammoLabel.getStyleClass().contains("font-ammo-small")) {
+            this.ammoLabel.getStyleClass().remove("font-ammo-small");
+        }
     }
 
     void updatePoints() {
@@ -470,6 +478,7 @@ public class BoardController extends AbstractSceneController {
         int twoPoints = score/2;
         int onePoints = twoPoints%2;
         Platform.runLater(() -> {
+            this.scoreLabel.setText("Your Points" + " (" + board.getScore() + ")");
             this.fourPointQty.setText("x" + fourPoints);
             this.twoPointQty.setText("x" + twoPoints);
             this.onePointQty.setText("x" + onePoints);

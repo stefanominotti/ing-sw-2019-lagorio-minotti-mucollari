@@ -36,7 +36,7 @@
                         <Insets left="10.0" />
                      </HBox.margin>
                   </ImageView>
-                  <VBox prefHeight="374.0" prefWidth="297.0" HBox.hgrow="ALWAYS">
+                  <VBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="350.0" prefWidth="290.0" HBox.hgrow="ALWAYS">
                      <children>
                         <HBox fx:id="costPanel" alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="322.0" VBox.vgrow="NEVER">
                            <children>
