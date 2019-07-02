@@ -26,6 +26,7 @@ public class LoadViewMessage extends ClientMessage {
     private final Map<GameCharacter, String> otherPlayers;
     private boolean frenzy;
     private boolean beforeFirstPlayer;
+    private int arena;
 
     /**
      * Class constructor, it builds a load view message
@@ -45,7 +46,8 @@ public class LoadViewMessage extends ClientMessage {
     public LoadViewMessage(GameCharacter character, String nickname, int skulls, List<SquareView> squares,
                            Map<Integer, List<GameCharacter>> killshotTrack, List<PlayerBoard> playerBoards,
                            List<Weapon> readyWeapons, List<Powerup> powerups, int score,
-                           Map<GameCharacter, String> otherPlayers, boolean frenzy, boolean beforeFirstPlayer) {
+                           Map<GameCharacter, String> otherPlayers, boolean frenzy, boolean beforeFirstPlayer,
+                           int arena) {
 
         super(ClientMessageType.LOAD_VIEW, character);
         this.nickname = nickname;
@@ -59,6 +61,7 @@ public class LoadViewMessage extends ClientMessage {
         this.otherPlayers = otherPlayers;
         this.beforeFirstPlayer = frenzy;
         this.frenzy = beforeFirstPlayer;
+        this.arena = arena;
 
     }
 
@@ -151,4 +154,11 @@ public class LoadViewMessage extends ClientMessage {
         return this.beforeFirstPlayer;
     }
 
+    /**
+     * Gets the arena number
+     * @return arena number
+     */
+    public int getArena() {
+        return this.arena;
+    }
 }

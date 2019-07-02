@@ -1128,9 +1128,9 @@ public class CLIView extends View {
     void loadView(GameCharacter character, int skulls, List<SquareView> squares,
                   Map<Integer, List<GameCharacter>> killshotTrack, List<PlayerBoard> playerBoards,
                   List<Weapon> weapons, List<Powerup> powerups, int score, Map<GameCharacter, String> others,
-                  boolean isFrenzy, boolean isBeforeFirstPlayer) {
+                  boolean isFrenzy, boolean isBeforeFirstPlayer, int arena) {
         super.loadView(character, skulls, squares, killshotTrack, playerBoards, weapons, powerups, score, others,
-                isFrenzy, isBeforeFirstPlayer);
+                isFrenzy, isBeforeFirstPlayer, arena);
         showMessage("You are " + getCharacter());
         for (Map.Entry<GameCharacter, String> player : others.entrySet()) {
             if (player.getKey() != getCharacter()) {

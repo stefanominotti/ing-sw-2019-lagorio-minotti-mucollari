@@ -843,7 +843,7 @@ public abstract class View {
                         ((LoadViewMessage) message).getPlayerBoards(), ((LoadViewMessage) message).getReadyWeapons(),
                         ((LoadViewMessage) message).getPowerups(), ((LoadViewMessage) message).getScore(),
                         ((LoadViewMessage) message).getOtherPlayers(), ((LoadViewMessage) message).isFrenzy(),
-                        ((LoadViewMessage) message).isBeforeFirstPlayer());
+                        ((LoadViewMessage) message).isBeforeFirstPlayer(), ((LoadViewMessage) message).getArena());
                 break;
             default:
                 break;
@@ -907,11 +907,11 @@ public abstract class View {
     void loadView(GameCharacter character, int skulls, List<SquareView> squares,
                   Map<Integer, List<GameCharacter>> killshotTrack, List<PlayerBoard> playerBoards,
                   List<Weapon> weapons, List<Powerup> powerups, int score, Map<GameCharacter, String> others,
-                  boolean isFrenzy, boolean isBeforeFirstPlayer) {
+                  boolean isFrenzy, boolean isBeforeFirstPlayer, int arena) {
         this.character = character;
         this.state = WAITING_SETUP;
         this.enemyBoards = new ArrayList<>();
-        this.board = new BoardView(skulls, squares, killshotTrack, isFrenzy, isBeforeFirstPlayer);
+        this.board = new BoardView(skulls, squares, killshotTrack, isFrenzy, isBeforeFirstPlayer, arena);
         for (PlayerBoard playerBoard : playerBoards) {
             if (playerBoard.getCharacter() == character) {
                 this.selfPlayerBoard = new SelfPlayerBoard(playerBoard, weapons, powerups, score);

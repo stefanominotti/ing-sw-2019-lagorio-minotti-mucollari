@@ -49,8 +49,9 @@ public class BoardView {
      * @param beforeFirstPlayer true if the current player is playing before the first player, else false
      */
     BoardView(int skulls, List<SquareView> squares, Map<Integer, List<GameCharacter>> killshotTrack, boolean frenzy,
-              boolean beforeFirstPlayer) {
+              boolean beforeFirstPlayer, int arena) {
 
+        this.arena = arena;
         this.skulls = skulls;
         this.squares = squares;
         this.killshotTrack = killshotTrack;

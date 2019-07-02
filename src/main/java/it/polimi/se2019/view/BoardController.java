@@ -129,9 +129,11 @@ public class BoardController extends AbstractSceneController {
         this.setPlayerBoardHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                new Thread(() ->
-                        getView().setPlayerBoard(GameCharacter.valueOf(((ImageView) event.getSource()).getId()
-                                .toUpperCase()))).start();
+                if (event.getSource() != null && ((ImageView) event.getSource()).getId() != null) {
+                    new Thread(() ->
+                            getView().setPlayerBoard(GameCharacter.valueOf(((ImageView) event.getSource()).getId()
+                                    .toUpperCase()))).start();
+                }
             }
         };
         this.weaponInfoHandler = new EventHandler<MouseEvent>() {
@@ -309,8 +311,14 @@ public class BoardController extends AbstractSceneController {
     void updateKillshotTrack() {
         Map<Integer, List<GameCharacter>> killshotTrack = getView().getBoard().getKillshotTrack();
         Platform.runLater(() -> {
+            int i = 0;
+            while (i < 8 - killshotTrack.size()) {
+                ImageView img = (ImageView) this.skullsGrid.getChildren().get(i);
+                img.setImage(null);
+                i++;
+            }
             for (Map.Entry<Integer, List<GameCharacter>> skull : killshotTrack.entrySet()) {
-                ImageView img = (ImageView) this.skullsGrid.getChildren().get(killshotTrack.size() - skull.getKey());
+                ImageView img = (ImageView) this.skullsGrid.getChildren().get(i);
                 if (skull.getValue().isEmpty()) {
                     img.setImage(new Image(UTILS_PATH + "skull.png"));
                 } else if (skull.getValue().size() == 1) {
@@ -319,6 +327,7 @@ public class BoardController extends AbstractSceneController {
                     img.setImage(new Image(DROPS_PATH + "drop_" + skull.getValue().get(0).getColor() + "_" +
                             skull.getValue().get(1).getColor() + ".png"));
                 }
+                i++;
             }
         });
     }
@@ -414,6 +423,10 @@ public class BoardController extends AbstractSceneController {
             board = getView().getBoardByCharacter(this.activeBoard);
         }
         Platform.runLater(() -> {
+            for (int i = 0; i < KILLSHOT_POINTS_SIZE; i++) {
+                ImageView img = (ImageView) this.deathsGrid.getChildren().get(i);
+                img.setImage(null);
+            }
             for (int i = 0; i < KILLSHOT_POINTS_SIZE - board.getKillshotPoints().size(); i++) {
                 ImageView img = (ImageView) this.deathsGrid.getChildren().get(i);
                 img.setImage(new Image(UTILS_PATH + "skull.png"));

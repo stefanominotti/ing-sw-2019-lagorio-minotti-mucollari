@@ -179,7 +179,7 @@ public class Board extends Observable {
 
         return new LoadViewMessage(player.getCharacter(), player.getNickname(), this.skulls, squareViews,
                 track, playerBoards, playerWeapons, player.getPowerups(), player.getScore(), otherPlayers,
-                !this.finalFrenzyOrder.isEmpty(), isPlayerBeforeFirst(player));
+                !this.finalFrenzyOrder.isEmpty(), isPlayerBeforeFirst(player), Integer.parseInt(this.arena.toJson()));
 
     }
 
