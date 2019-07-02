@@ -685,16 +685,16 @@ class EffectsController {
                     }
                     break;
                 case MOVE:
-                    /*if (pack.getCharacters().isEmpty()) {
+                    if (pack.getCharacters().isEmpty()) {
                         setEnvironment(this.activePlayer.getPosition(), square);
                         this.board.movePlayer(this.activePlayer, square);
-                    } else {*/
+                    } else {
                         for (GameCharacter character : pack.getCharacters()) {
                             setEnvironment(this.board.getPlayerByCharacter(character).getPosition(), square);
                             this.board.movePlayer(this.board.getPlayerByCharacter(character), square);
                             setHitByCases(character);
                         }
-                    //}
+                    }
                     break;
                 default:
                     for (GameCharacter character : pack.getCharacters()) {
@@ -862,8 +862,8 @@ class EffectsController {
                 return this.hitByMain.get(0);
             case SECONDPLAYER:
                 return this.hitBySecondary.get(0);
-            /*case SQUARE:
-                return this.chosenSquare.getActivePlayers().get(0);*/
+            case SQUARE:
+                return this.chosenSquare.getActivePlayers().get(0);
             default:
                 return null;
         }

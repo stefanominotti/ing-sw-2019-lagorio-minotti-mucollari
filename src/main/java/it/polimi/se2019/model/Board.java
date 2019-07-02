@@ -39,6 +39,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static it.polimi.se2019.model.GameState.*;
+import static java.lang.System.currentTimeMillis;
 import static java.util.stream.Collectors.toMap;
 
 public class Board extends Observable {
@@ -69,7 +70,7 @@ public class Board extends Observable {
     private Map<Integer, List<GameCharacter>> killshotTrack;
     private GameState gameState;
     private Timer timer;
-    private LocalDateTime gameTimerStartDate;
+    private long gameTimerStartDate;
     private int currentPlayer;
     private List<GameCharacter> finalFrenzyOrder;
     private List<GameCharacter> deadPlayers;
@@ -296,8 +297,7 @@ public class Board extends Observable {
         notifyChanges(new PlayerCreatedMessage(character, nickname, others));
 
         if (this.players.size() > 3) {
-            long remainingTime = this.startTimer /1000L -
-                    Duration.between(this.gameTimerStartDate, LocalDateTime.now()).getSeconds();
+            long remainingTime = this.startTimer /1000L - (this.gameTimerStartDate - System.currentTimeMillis());
             notifyChanges(new TimerMessage(TimerMessageType.UPDATE, TimerType.SETUP, remainingTime*1000L));
         }
 
@@ -309,7 +309,7 @@ public class Board extends Observable {
                 }
             }, this.startTimer);
             notifyChanges(new TimerMessage(TimerMessageType.START, TimerType.SETUP,this.startTimer /1000L));
-            this.gameTimerStartDate = LocalDateTime.now();
+            this.gameTimerStartDate = System.currentTimeMillis();
         }
     }
 
@@ -366,9 +366,8 @@ public class Board extends Observable {
     private void handleAcceptingPlayersDisconnection(GameCharacter player) {
         notifyChanges(new ClientDisconnectedMessage(player, true));
         this.players.remove(getPlayerByCharacter(player));
-        if (this.gameTimerStartDate != null && this.players.size() == 2) {
+        if (this.players.size() == 2) {
             this.timer.cancel();
-            this.gameTimerStartDate = null;
             this.timer = new Timer();
             notifyChanges(new TimerMessage(TimerMessageType.STOP, TimerType.SETUP));
         }
@@ -387,7 +386,6 @@ public class Board extends Observable {
         notifyChanges(new ClientDisconnectedMessage(player, true));
         if (this.players.size() == 2) {
             this.gameState = ACCEPTING_PLAYERS;
-            this.gameTimerStartDate = null;
             this.timer = new Timer();
             notifyChanges(new BoardMessage(BoardMessageType.SETUP_INTERRUPTED));
             return;
@@ -658,7 +656,7 @@ public class Board extends Observable {
      * @param character you want to start turn timer
      */
     public void startTurnTimer(GameCharacter character) {
-        this.gameTimerStartDate = LocalDateTime.now();
+        this.gameTimerStartDate = currentTimeMillis();
         this.timer = new Timer();
         if (character == this.players.get(this.currentPlayer).getCharacter()) {
             this.timer.schedule(new TimerTask() {
@@ -1625,8 +1623,7 @@ public class Board extends Observable {
      * Sets on pause the turn timer
      */
     public void pauseTurnTimer() {
-        this.timerRemainingTime = this.turnTimer/1000L -
-                Duration.between(this.gameTimerStartDate, LocalDateTime.now()).getSeconds();
+        this.timerRemainingTime = this.turnTimer - (this.gameTimerStartDate - currentTimeMillis());
         this.timer.cancel();
     }
 
@@ -1640,6 +1637,6 @@ public class Board extends Observable {
             public void run() {
                 endTurn(Board.this.players.get(Board.this.currentPlayer).getCharacter());
             }
-        }, this.timerRemainingTime*1000L);
+        }, this.timerRemainingTime);
     }
 }

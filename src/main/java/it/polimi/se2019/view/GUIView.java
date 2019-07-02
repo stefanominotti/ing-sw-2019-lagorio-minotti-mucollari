@@ -556,7 +556,7 @@ public class GUIView extends View {
     @Override
     void handleWeaponSwitch(GameCharacter character, Weapon oldWeapon, Weapon newWeapon) {
         super.handleWeaponSwitch(character, oldWeapon, newWeapon);
-        if (character == getCharacter()) {
+        if (character != getCharacter()) {
             addMessage(character + " dropped a " + oldWeapon + " to get a " + newWeapon);
         }
         showMessage();
@@ -572,7 +572,7 @@ public class GUIView extends View {
     @Override
     void handleWeaponReload(GameCharacter character, Weapon weapon) {
         super.handleWeaponReload(character, weapon);
-        if (character == getCharacter()) {
+        if (character != getCharacter()) {
             addMessage(character + " realoaded " + weapon);
         }
         showMessage();
@@ -587,7 +587,7 @@ public class GUIView extends View {
     @Override
     void handleWeaponUnload(GameCharacter character, Weapon weapon) {
         super.handleWeaponUnload(character, weapon);
-        if (character == getCharacter()) {
+        if (character != getCharacter()) {
             addMessage(character + " used " + weapon);
         }
         showMessage();
@@ -640,6 +640,12 @@ public class GUIView extends View {
     void handleStartTurn(TurnMessage message, GameCharacter character) {
         this.activePlayer = character;
         resetSelections();
+        this.secondaryButtons = new ArrayList<>();
+        setSecondaryButtons();
+        setActions();
+        setSquares();
+        setWeapons();
+        setTargets();
         if (character != getCharacter()) {
             this.currentStatus = "Waiting for other players...";
             this.currentAction = getBoardByCharacter(character).getNickname() + " (" + character + ") is playing";
