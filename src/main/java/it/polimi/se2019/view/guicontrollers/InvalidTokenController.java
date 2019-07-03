@@ -21,8 +21,8 @@ public class InvalidTokenController extends AbstractSceneController {
     Label removeFailedLabel;
 
     /**
-     * Tries to remove an invalid user token saved, on click event
-     * After timer, it closes the scene and exit from the app
+     * Tries to remove an invalid user token saved
+     * After timer set, it closes the scene and exit from the app
      */
     public void removeToken() {
         Platform.runLater(() -> {

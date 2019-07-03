@@ -50,10 +50,19 @@ public class RankingController extends AbstractSceneController {
     private Label fifthPoints;
 
 
-    public void showMessage (Map<GameCharacter, Integer> ranking){
+    /**
+     * Message with the ranking
+     * @param ranking of the game
+     */
+    public void showMessage(Map<GameCharacter, Integer> ranking){
         buildRanking(ranking);
     }
 
+
+    /**
+     * Builds the ranking depending on how many player it is composed by
+     * @param ranking Map with characters and their relative points raised during the game
+     */
     private void buildRanking(Map<GameCharacter, Integer> ranking) {
         if(ranking.size()==MIN_PLAYERS+1) {
             Platform.runLater(() -> {
@@ -73,6 +82,11 @@ public class RankingController extends AbstractSceneController {
         }
 
     }
+
+    /**
+     * Sets the banner and images for the ranking matching them with player position raised
+     * @param ranking Map with characters and their relative points raised during the game
+     */
     private void setImages(Map<GameCharacter, Integer> ranking) {
         Platform.runLater(() -> {
             int index = 1;
@@ -127,6 +141,9 @@ public class RankingController extends AbstractSceneController {
         });
     }
 
+    /**
+     * Quits from the app
+     */
     public void quitApp(){
         System.exit(0);
     }

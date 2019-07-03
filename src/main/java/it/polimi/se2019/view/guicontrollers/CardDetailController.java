@@ -44,12 +44,19 @@ public class CardDetailController extends AbstractSceneController {
     @FXML
     private VBox secondaryTwoPanel;
 
+    /**
+     * Closes the card detail stage
+     */
     @FXML
     void close() {
         Stage stage = (Stage) cardImage.getScene().getWindow();
         stage.close();
     }
 
+    /**
+     * Set the weapons for the card detail stage
+     * @param weapon you want to set
+     */
     void setWeapon(Weapon weapon) {
         Platform.runLater(() -> {
             this.cardImage.setImage(new Image(WEAPONS_PATH + weapon.toString().toLowerCase() + ".png"));
