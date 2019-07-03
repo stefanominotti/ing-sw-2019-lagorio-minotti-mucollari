@@ -119,3 +119,16 @@
 .card:hover{
 	-fx-effect: dropshadow(three-pass-box, rgba(0,123,255,1), 10, 0, 0, 0);
 }
+
+.ammo-red {
+	-fx-background-color: #b52128;
+}
+
+.ammo-yellow {
+	-fx-background-color: #fcc82b;
+}
+
+.ammo-blue {
+	-fx-background-color: #356baf;
+}
+
