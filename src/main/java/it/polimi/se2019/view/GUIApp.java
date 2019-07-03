@@ -87,6 +87,9 @@ public class GUIApp extends Application {
                 case RANKING:
                     loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "Ranking.fxml"));
                     break;
+                case GAME_ALREADY_STARTED:
+                    loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "GameAlreadyStarted.fxml"));
+                    break;
                 default:
                     return;
             }
