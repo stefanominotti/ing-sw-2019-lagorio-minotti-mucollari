@@ -1,6 +1,12 @@
 package it.polimi.se2019.model;
 
 import com.google.gson.Gson;
+import it.polimi.se2019.model.arena.Square;
+import it.polimi.se2019.model.playerassets.AmmoType;
+import it.polimi.se2019.model.playerassets.Powerup;
+import it.polimi.se2019.model.playerassets.PowerupType;
+import it.polimi.se2019.model.playerassets.weapons.Weapon;
+import it.polimi.se2019.model.playerassets.weapons.WeaponCard;
 
 import java.util.*;
 
@@ -32,7 +38,7 @@ public class Player {
      * @param name nickname of the player
      * @param token token of the client associated to the player
      */
-    Player(GameCharacter character, String name, String token) {
+    public Player(GameCharacter character, String name, String token) {
         this.token = token;
         this.name = name;
         this.character = character;

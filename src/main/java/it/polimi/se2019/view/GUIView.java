@@ -2,6 +2,9 @@ package it.polimi.se2019.view;
 
 import it.polimi.se2019.controller.ActionType;
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.arena.CardinalPoint;
+import it.polimi.se2019.model.arena.Coordinates;
+import it.polimi.se2019.model.arena.RoomColor;
 import it.polimi.se2019.model.messages.board.ArenaMessage;
 import it.polimi.se2019.model.messages.board.SkullsMessage;
 import it.polimi.se2019.model.messages.client.CharacterMessage;
@@ -15,6 +18,16 @@ import it.polimi.se2019.model.messages.selections.SelectionMessageType;
 import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
+import it.polimi.se2019.model.playerassets.AmmoTile;
+import it.polimi.se2019.model.playerassets.AmmoType;
+import it.polimi.se2019.model.playerassets.Powerup;
+import it.polimi.se2019.model.playerassets.PowerupType;
+import it.polimi.se2019.model.playerassets.weapons.EffectType;
+import it.polimi.se2019.model.playerassets.weapons.Weapon;
+import it.polimi.se2019.model.playerassets.weapons.WeaponEffectOrderType;
+import it.polimi.se2019.view.guicontrollers.*;
+import it.polimi.se2019.view.modelview.PlayerBoard;
+import it.polimi.se2019.view.modelview.SquareView;
 
 import java.util.*;
 
@@ -127,7 +140,7 @@ public class GUIView extends View {
      * Handles client nickname input
      * @param input nickname of the client
      */
-    void handleNicknameInput(String input) {
+    public void handleNicknameInput(String input) {
         if (input.equalsIgnoreCase("")) {
             this.guiApp.showAlert("Invalid input!");
             return;
@@ -139,7 +152,7 @@ public class GUIView extends View {
      * Handles client character choice
      * @param character chosen
      */
-    void handleCharacterInput(GameCharacter character) {
+    public void handleCharacterInput(GameCharacter character) {
         switch (getState()) {
             case CHOOSING_CHARACTER:
                 getClient().send(new CharacterMessage(character, generateToken()));
@@ -167,7 +180,7 @@ public class GUIView extends View {
      * Handles client skulls number input
      * @param skullsNumber skulls number chosen
      */
-    void handleSkullsInput(int skullsNumber) {
+    public void handleSkullsInput(int skullsNumber) {
         getClient().send(new SkullsMessage(skullsNumber));
     }
 
@@ -175,7 +188,7 @@ public class GUIView extends View {
      * Handles client arena choice
      * @param arenaNumber arena chosen
      */
-    void handleArenaInput(String arenaNumber) {
+    public void handleArenaInput(String arenaNumber) {
         getClient().send(new ArenaMessage(arenaNumber));
     }
 
@@ -823,7 +836,7 @@ public class GUIView extends View {
         }
     }
 
-    void handleActionInput(ActionType action) {
+    public void handleActionInput(ActionType action) {
         getClient().send(new SingleSelectionMessage(SelectionMessageType.ACTION, getCharacter(), action));
         resetSelections();
         setActions();
@@ -877,7 +890,7 @@ public class GUIView extends View {
         }
     }
 
-    void handlePowerupInput(PowerupType type, AmmoType color) {
+    public void handlePowerupInput(PowerupType type, AmmoType color) {
         switch (getState()) {
             case DISCARD_SPAWN:
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.DISCARD_POWERUP, getCharacter(),
@@ -970,7 +983,7 @@ public class GUIView extends View {
         }
     }
 
-    void handleConfirmation() {
+    public void handleConfirmation() {
         switch (getState()) {
             case PAYMENT:
                 getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
@@ -1013,7 +1026,7 @@ public class GUIView extends View {
         setSecondaryButtons();
     }
 
-    void handleEffectInput(WeaponEffectOrderType effect) {
+    public void handleEffectInput(WeaponEffectOrderType effect) {
         if (getState() == USE_EFFECT) {
             getClient().send(new SingleSelectionMessage(SelectionMessageType.EFFECT, getCharacter(), effect));
             setWeaponActivated(true);
@@ -1209,7 +1222,7 @@ public class GUIView extends View {
      * @param x x coordinate of the point chosen
      * @param y y coordinate of the point chosen
      */
-    void handleSquareInput(int x, int y) {
+    public void handleSquareInput(int x, int y) {
         switch (getState()) {
             case SELECT_MOVEMENT:
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.MOVE, getCharacter(),
@@ -1444,7 +1457,7 @@ public class GUIView extends View {
         setTargets();
     }
 
-    void handleDecisionInput(String input) {
+    public void handleDecisionInput(String input) {
         input = input.toUpperCase();
         switch (getState()) {
             case PERSISTENCE_SELECTION:
@@ -1469,7 +1482,7 @@ public class GUIView extends View {
         }
     }
 
-    void handleWeaponInput(Weapon weapon) {
+    public void handleWeaponInput(Weapon weapon) {
         switch (getState()) {
             case SELECT_WEAPON:
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.PICKUP_WEAPON, getCharacter(), weapon));
@@ -1610,7 +1623,7 @@ public class GUIView extends View {
         setTargets();
     }
 
-    void handleCardinalPointInput(CardinalPoint point) {
+    public void handleCardinalPointInput(CardinalPoint point) {
         if (getState() == EFFECT_SELECT_CARDINAL) {
             super.setPossibilityCardinal(new ArrayList<>(Arrays.asList(point)));
             super.selectionEffectFinish();
@@ -1709,7 +1722,7 @@ public class GUIView extends View {
         }
     }
 
-    void setPlayerBoard(GameCharacter character) {
+    public void setPlayerBoard(GameCharacter character) {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setPlayerBoard(character);
             if (character == getCharacter()) {

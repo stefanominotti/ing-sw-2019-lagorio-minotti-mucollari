@@ -1,14 +1,24 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.arena.CardinalPoint;
+import it.polimi.se2019.model.arena.Coordinates;
+import it.polimi.se2019.model.arena.RoomColor;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessageType;
+import it.polimi.se2019.model.playerassets.AmmoType;
+import it.polimi.se2019.model.playerassets.Powerup;
+import it.polimi.se2019.model.playerassets.PowerupType;
+import it.polimi.se2019.model.playerassets.weapons.EffectType;
+import it.polimi.se2019.model.playerassets.weapons.Weapon;
+import it.polimi.se2019.model.playerassets.weapons.WeaponCard;
+import it.polimi.se2019.model.playerassets.weapons.WeaponEffectOrderType;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.*;
 
-import static it.polimi.se2019.model.WeaponEffectOrderType.*;
+import static it.polimi.se2019.model.playerassets.weapons.WeaponEffectOrderType.*;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.TestCase.assertEquals;

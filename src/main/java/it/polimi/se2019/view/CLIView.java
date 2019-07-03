@@ -2,6 +2,9 @@ package it.polimi.se2019.view;
 
 import it.polimi.se2019.controller.ActionType;
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.arena.CardinalPoint;
+import it.polimi.se2019.model.arena.Coordinates;
+import it.polimi.se2019.model.arena.RoomColor;
 import it.polimi.se2019.model.messages.board.ArenaMessage;
 import it.polimi.se2019.model.messages.board.SkullsMessage;
 import it.polimi.se2019.model.messages.client.CharacterMessage;
@@ -15,11 +18,17 @@ import it.polimi.se2019.model.messages.selections.SelectionMessageType;
 import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
 import it.polimi.se2019.model.messages.timer.TimerMessageType;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
+import it.polimi.se2019.model.playerassets.AmmoTile;
+import it.polimi.se2019.model.playerassets.AmmoType;
+import it.polimi.se2019.model.playerassets.Powerup;
+import it.polimi.se2019.model.playerassets.weapons.EffectType;
+import it.polimi.se2019.model.playerassets.weapons.Weapon;
+import it.polimi.se2019.model.playerassets.weapons.WeaponEffectOrderType;
+import it.polimi.se2019.view.modelview.PlayerBoard;
+import it.polimi.se2019.view.modelview.SquareView;
+
 import java.util.*;
 import static it.polimi.se2019.view.ClientState.*;
-import static org.fusesource.jansi.Ansi.ansi;
-
-import org.fusesource.jansi.AnsiConsole;
 
 /**
  * Class for handling CLI view
@@ -42,7 +51,6 @@ public class CLIView extends View {
         super();
 
         super.connect(connection, ip, port);
-        AnsiConsole.systemInstall();
         Thread inputThread = new Thread() {
             Scanner scanner = new Scanner(System.in);
             boolean read = true;
@@ -1956,7 +1964,7 @@ public class CLIView extends View {
      * @param message to be shown
      */
     private void showMessage(String message) {
-        System.out.println(ansi().a("\n" + message));
+        System.out.println("\n" + message);
     }
 
     /**

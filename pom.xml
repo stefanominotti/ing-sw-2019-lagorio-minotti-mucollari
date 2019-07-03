@@ -14,30 +14,8 @@
     <properties>
         <!-- Coverage exclusions paths -->
         <sonar.coverage.exclusions>
-            <!-- view classes -->
-            <!-- **/it/polimi/se2019/view/*, -->
-            **/it/polimi/se2019/view/AbstractSceneController.java,
-            **/it/polimi/se2019/view/BoardController.java,
-            **/it/polimi/se2019/view/CardChoiceController.java,
-            **/it/polimi/se2019/view/CardDetailController.java,
-            **/it/polimi/se2019/view/ClientState.java,
-            **/it/polimi/se2019/view/CLIView.java,
-            **/it/polimi/se2019/view/ConnectionErrorController.java,
-            **/it/polimi/se2019/view/GUIApp.java,
-            **/it/polimi/se2019/view/GUIView.java,
-            **/it/polimi/se2019/view/InvalidTokenController.java,
-            **/it/polimi/se2019/view/LobbyController.java,
-            **/it/polimi/se2019/view/RankingController.java,
-            **/it/polimi/se2019/view/ReloadGameController.java,
-            **/it/polimi/se2019/view/SceneType.java,
-            **/it/polimi/se2019/view/SelectArenaController.java,
-            **/it/polimi/se2019/view/SelectCharacterController.java,
-            **/it/polimi/se2019/view/SelectNicknameController.java,
-            **/it/polimi/se2019/view/SelectSkullsController.java,
-            **/it/polimi/se2019/view/SquareStringUtils.java,
-            **/it/polimi/se2019/view/View.java,
-            **/it/polimi/se2019/view/VirtualView.java,
-            <!-- -->
+            **/it/polimi/se2019/view/*,
+            **/it/polimi/se2019/view/guicontrollers/*,
             **/it/polimi/se2019/client/*,
             **/it/polimi/se2019/server/*,
             **/it/polimi/se2019/model/messages/**
@@ -76,13 +54,6 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.8.5</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.fusesource.jansi/jansi -->
-        <dependency>
-            <groupId>org.fusesource.jansi</groupId>
-            <artifactId>jansi</artifactId>
-            <version>1.18</version>
         </dependency>
 
     </dependencies>
@@ -144,31 +115,8 @@
                 <configuration>
                     <!-- Coverage exclusions paths -->
                     <excludes>
-                        <!-- view classes -->
-                        <!-- <exclude>**/it/polimi/se2019/view/*</exclude> -->
-                        <exclude>**/it/polimi/se2019/view/AbstractSceneController.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/BoardController.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/CardChoiceController.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/CardDetailController.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/ClientState.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/CLIView.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/ConnectionErrorController.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/GUIApp.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/GUIView.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/InvalidTokenController.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/LobbyController.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/RankingController.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/ReloadGameController.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/SceneType.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/SelectArenaController.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/SelectCharacterController.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/SelectNicknameController.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/SelectSkullsController.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/SquareStringUtils.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/View.java</exclude>
-                        <exclude>**/it/polimi/se2019/view/VirtualView.java</exclude>
-                        <!-- -->
                         <exclude>**/it/polimi/se2019/view/*</exclude>
+                        <exclude>**/it/polimi/se2019/view/guicontrollers/*</exclude>
                         <exclude>**/it/polimi/se2019/client/*</exclude>
                         <exclude>**/it/polimi/se2019/server/*</exclude>
                         <exclude>**/it/polimi/se2019/model/messages/**</exclude>

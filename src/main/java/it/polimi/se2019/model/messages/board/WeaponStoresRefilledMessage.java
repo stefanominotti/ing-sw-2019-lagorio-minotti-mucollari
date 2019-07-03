@@ -1,7 +1,7 @@
 package it.polimi.se2019.model.messages.board;
 
-import it.polimi.se2019.model.Coordinates;
-import it.polimi.se2019.model.Weapon;
+import it.polimi.se2019.model.arena.Coordinates;
+import it.polimi.se2019.model.playerassets.weapons.Weapon;
 
 import java.util.Map;
 

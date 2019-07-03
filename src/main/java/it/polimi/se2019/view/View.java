@@ -6,6 +6,9 @@ import it.polimi.se2019.client.SocketClient;
 import it.polimi.se2019.controller.ActionType;
 import it.polimi.se2019.controller.EffectPossibilityPack;
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.arena.CardinalPoint;
+import it.polimi.se2019.model.arena.Coordinates;
+import it.polimi.se2019.model.arena.RoomColor;
 import it.polimi.se2019.model.messages.*;
 import it.polimi.se2019.model.messages.ammos.AmmosMessage;
 import it.polimi.se2019.model.messages.board.*;
@@ -25,6 +28,17 @@ import it.polimi.se2019.model.messages.turn.TurnContinuationMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 import it.polimi.se2019.model.messages.weapon.WeaponMessage;
 import it.polimi.se2019.model.messages.weapon.WeaponSwitchMessage;
+import it.polimi.se2019.model.playerassets.AmmoTile;
+import it.polimi.se2019.model.playerassets.AmmoType;
+import it.polimi.se2019.model.playerassets.Powerup;
+import it.polimi.se2019.model.playerassets.PowerupType;
+import it.polimi.se2019.model.playerassets.weapons.EffectType;
+import it.polimi.se2019.model.playerassets.weapons.Weapon;
+import it.polimi.se2019.model.playerassets.weapons.WeaponEffectOrderType;
+import it.polimi.se2019.view.modelview.BoardView;
+import it.polimi.se2019.view.modelview.PlayerBoard;
+import it.polimi.se2019.view.modelview.SelfPlayerBoard;
+import it.polimi.se2019.view.modelview.SquareView;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -132,7 +146,7 @@ public abstract class View {
      * Get the client character
      * @return the character
      */
-    GameCharacter getCharacter() { return this.character; }
+    public GameCharacter getCharacter() { return this.character; }
 
     /**
      * Gets the enemy boards
@@ -146,7 +160,7 @@ public abstract class View {
      * Gets the player board
      * @return player board
      */
-    SelfPlayerBoard getSelfPlayerBoard() {
+    public SelfPlayerBoard getSelfPlayerBoard() {
         return this.selfPlayerBoard;
     }
 
@@ -154,7 +168,7 @@ public abstract class View {
      * Gets the board view
      * @return the board view
      */
-    BoardView getBoard() {
+    public BoardView getBoard() {
         return this.board;
     }
 
@@ -467,7 +481,7 @@ public abstract class View {
      * @param character of which you want to get the player board
      * @return player board of that character
      */
-    PlayerBoard getBoardByCharacter(GameCharacter character) {
+    public PlayerBoard getBoardByCharacter(GameCharacter character) {
         for (PlayerBoard playerBoard : this.enemyBoards) {
             if (playerBoard.getCharacter() == character) {
                 return playerBoard;
@@ -1692,7 +1706,7 @@ public abstract class View {
      * Removes the token of the client
      * @throws IOException if the file could not be removed
      */
-    void removeToken() throws IOException {
+    public void removeToken() throws IOException {
         Files.delete(Paths.get(PATH + FILE_NAME));
     }
 

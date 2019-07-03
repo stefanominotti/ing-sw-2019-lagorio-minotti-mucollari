@@ -3,6 +3,7 @@ package it.polimi.se2019.model;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import it.polimi.se2019.model.arena.*;
 import it.polimi.se2019.model.messages.player.MarksToDamagesMessage;
 import it.polimi.se2019.model.messages.ammos.AmmosMessage;
 import it.polimi.se2019.model.messages.ammos.AmmosMessageType;
@@ -24,9 +25,16 @@ import it.polimi.se2019.model.messages.turn.TurnMessageType;
 import it.polimi.se2019.model.messages.weapon.WeaponMessage;
 import it.polimi.se2019.model.messages.weapon.WeaponMessageType;
 import it.polimi.se2019.model.messages.weapon.WeaponSwitchMessage;
+import it.polimi.se2019.model.playerassets.AmmoTile;
+import it.polimi.se2019.model.playerassets.AmmoType;
+import it.polimi.se2019.model.playerassets.Powerup;
+import it.polimi.se2019.model.playerassets.PowerupType;
+import it.polimi.se2019.model.playerassets.weapons.EffectType;
+import it.polimi.se2019.model.playerassets.weapons.Weapon;
+import it.polimi.se2019.model.playerassets.weapons.WeaponCard;
 import it.polimi.se2019.server.SocketVirtualClient;
-import it.polimi.se2019.view.PlayerBoard;
-import it.polimi.se2019.view.SquareView;
+import it.polimi.se2019.view.modelview.PlayerBoard;
+import it.polimi.se2019.view.modelview.SquareView;
 
 import java.io.FileReader;
 import java.io.InputStream;
@@ -35,7 +43,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static it.polimi.se2019.model.GameState.*;
-import static java.lang.System.currentTimeMillis;
 import static java.util.stream.Collectors.toMap;
 
 public class Board extends Observable {
@@ -748,7 +755,7 @@ public class Board extends Observable {
     /**
      * Fills the ammos deck loading data from JSON
      */
-    void fillAmmosDeck() {
+    public void fillAmmosDeck() {
         if(this.ammosDiscardPile.isEmpty()) {
             String path = "ammotiles/data/ammotile_";
             int ammosNumber;
@@ -778,7 +785,7 @@ public class Board extends Observable {
      * Gets the ammo deck
      * @return List of ammo of the deck
      */
-    List<AmmoTile> getAmmosDeck() {
+    public List<AmmoTile> getAmmosDeck() {
         return new ArrayList<>(this.ammosDeck);
     }
 
