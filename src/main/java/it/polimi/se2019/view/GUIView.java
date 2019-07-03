@@ -1606,7 +1606,7 @@ public class GUIView extends View {
         setSecondaryButtons();
     }
 
-    void handleAmmoInput(AmmoType ammo) {
+    public void handleAmmoInput(AmmoType ammo) {
         Map<AmmoType, Integer> ammos = new HashMap<>();
         for(AmmoType ammoType : AmmoType.values()) {
             if(ammoType == ammo) {
@@ -1692,56 +1692,38 @@ public class GUIView extends View {
     /**+
      * Shows a message
      */
-    void showMessage() {
+    private void showMessage() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).showMessage(this.messages);
         }
     }
 
-    void setBanner() {
+    private void setBanner() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setBanner(this.currentStatus, this.currentAction);
         }
     }
 
-    void addMessage(String message) {
+    private void addMessage(String message) {
         if (this.messages.size() == 5) {
             this.messages.removeFirst();
         }
         this.messages.addLast(message);
     }
 
-    void setSecondaryButtons() {
+    private void setSecondaryButtons() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setSecondaryButtons(this.secondaryButtons);
         }
     }
 
-    void showBoard() {
-        setScene(SceneType.BOARD);
-        setArena();
-        setPlayerBoard(getCharacter());
-        updateTiles();
-        updatePlayersPositions();
-        updateStores();
-        showMessage();
-        setBanner();
-        setActions();
-        setSquares();
-        setRooms();
-        setTargets();
-        setWeapons();
-        setSecondaryButtons();
-        setCardinalPoints();
-    }
-
-    void setArena() {
+    private void setArena() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setArena();
         }
     }
 
-    void setTargets() {
+    private void setTargets() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setTargets(getCharactersSelection(), this.targetSelected);
         }
@@ -1757,7 +1739,7 @@ public class GUIView extends View {
         }
     }
 
-    void setRooms() {
+    private void setRooms() {
         if (this.currentScene == SceneType.BOARD) {
             List<Coordinates> squares = new ArrayList<>();
             for (SquareView s : getBoard().getSquares()) {
@@ -1769,7 +1751,7 @@ public class GUIView extends View {
         }
     }
 
-    void setCardinalPoints() {
+    private void setCardinalPoints() {
         if (this.currentScene == SceneType.BOARD) {
             this.secondaryButtons = new ArrayList<>();
             for (CardinalPoint p : getCardinalPointsSelection()) {
@@ -1779,7 +1761,7 @@ public class GUIView extends View {
         }
     }
 
-    void setEffects() {
+    private void setEffects() {
         if (this.currentScene == SceneType.BOARD) {
             this.secondaryButtons = new ArrayList<>();
             for (WeaponEffectOrderType p : getEffectsSelection()) {
@@ -1789,55 +1771,55 @@ public class GUIView extends View {
         }
     }
 
-    void updateStores() {
+    private void updateStores() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).updateStores();
         }
     }
 
-    void updateTiles() {
+    private void updateTiles() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).updateTiles();
         }
     }
 
-    void updatePlayersPositions() {
+    private void updatePlayersPositions() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).updatePlayersPositions();
         }
     }
 
-    void updateBoardDamages(GameCharacter character) {
+    private void updateBoardDamages(GameCharacter character) {
         if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {
             ((BoardController) this.controller).updateBoardDamages();
         }
     }
 
-    void updateBoardMarks(GameCharacter character) {
+    private void updateBoardMarks(GameCharacter character) {
         if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {
             ((BoardController) this.controller).updateBoardMarks();
         }
     }
 
-    void updateAmmo(GameCharacter character) {
+    private void updateAmmo(GameCharacter character) {
         if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {
             ((BoardController) this.controller).updateAmmo();
         }
     }
 
-    void updatePowerups(GameCharacter character) {
+    private void updatePowerups(GameCharacter character) {
         if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {
             ((BoardController) this.controller).updatePowerups();
         }
     }
 
-    void updateWeapons(GameCharacter character) {
+    private void updateWeapons(GameCharacter character) {
         if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {
             ((BoardController) this.controller).updateWeapons();
         }
     }
 
-    void updatePoints() {
+    private void updatePoints() {
         if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() ==
                 getCharacter()) {
             ((BoardController) this.controller).updatePoints();

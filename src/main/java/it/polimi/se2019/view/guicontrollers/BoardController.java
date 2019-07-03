@@ -142,6 +142,7 @@ public class BoardController extends AbstractSceneController {
     private EventHandler<MouseEvent> cardinalPointSelectionHandler;
     private EventHandler<MouseEvent> effectSelectionHandler;
     private EventHandler<MouseEvent> decisionSelectionHandler;
+    private EventHandler<MouseEvent> ammosSelectionHandler;
 
     public BoardController() {
         this.players = new ArrayList<>();
@@ -206,7 +207,7 @@ public class BoardController extends AbstractSceneController {
         this.confirmHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                getView().handleConfirmation();
+                getView().handleContinue();
             }
         };
         this.characterSelectionHandler = new EventHandler<MouseEvent>() {
@@ -235,6 +236,13 @@ public class BoardController extends AbstractSceneController {
             public void handle(MouseEvent event) {
                 Button s = (Button) event.getSource();
                 getView().handleDecisionInput(s.getId());
+            }
+        };
+        this.ammosSelectionHandler = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                AmmoType ammo =  AmmoType.valueOf(((Button) event.getSource()).getId());
+                getView().handleAmmoInput(ammo);
             }
         };
     }
@@ -857,6 +865,16 @@ public class BoardController extends AbstractSceneController {
                 } else if (buttons.get(0).equals("y")) {
                     handler = this.decisionSelectionHandler;
                     classString = BUTTON_STD_CLASS;
+                } else if (buttons.get(0).equals("red") || buttons.get(0).equals("yellow") ||
+                        buttons.get(0).equals("blue")) {
+                    handler = this.ammosSelectionHandler;
+                    if (id.equals("red")) {
+                        classString = "ammo-red";
+                    } else if (id.equals("blue")) {
+                        classString = "ammo-blue";
+                    } else {
+                        classString = "ammo-yellow";
+                    }
                 } else {
                     handler = this.cardinalPointSelectionHandler;
                     classString = BUTTON_STD_CLASS;
@@ -867,6 +885,8 @@ public class BoardController extends AbstractSceneController {
                 } else if (id.equals("n")) {
                     b.setText("No");
                     b.getStyleClass().add(BUTTON_DANGER_CLASS);
+                } else if (id.equals("red") || id.equals("blue") || id.equals("yellow")) {
+                    b.setText(null);
                 } else {
                     b.setText(Character.toUpperCase(id.charAt(0)) + id.substring(1));
                 }
@@ -877,15 +897,19 @@ public class BoardController extends AbstractSceneController {
             }
             while (i < 4) {
                 Button b = (Button) this.secondaryButtonsBox.getChildren().get(i);
-                    b.setId(null);
-                    b.setVisible(false);
-                    b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.confirmHandler);
-                    b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.cardinalPointSelectionHandler);
-                    b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.effectSelectionHandler);
-                    b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.decisionSelectionHandler);
-                    b.getStyleClass().remove(BUTTON_CONFIRM_CLASS);
-                    b.getStyleClass().remove(BUTTON_STD_CLASS);
-                    b.getStyleClass().remove(BUTTON_STD_CLASS);
+                b.setId(null);
+                b.setVisible(false);
+                b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.confirmHandler);
+                b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.cardinalPointSelectionHandler);
+                b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.effectSelectionHandler);
+                b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.decisionSelectionHandler);
+                b.getStyleClass().remove(BUTTON_CONFIRM_CLASS);
+                b.getStyleClass().remove(BUTTON_STD_CLASS);
+                b.getStyleClass().remove(BUTTON_STD_CLASS);
+                b.getStyleClass().remove(BUTTON_DANGER_CLASS);
+                b.getStyleClass().remove("ammo-red");
+                b.getStyleClass().remove("ammo-blue");
+                b.getStyleClass().remove("ammo-yellow");
                 i++;
             }
         });
