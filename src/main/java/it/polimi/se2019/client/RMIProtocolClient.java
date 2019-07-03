@@ -61,13 +61,13 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
 
         new Thread(() -> {
             while(true) {
-                try {
-                    this.server.ping(this);
-                } catch (RemoteException e) {
+                if (System.currentTimeMillis() - this.pingTime > 5000) {
                     getView().handleConnectionError();
                 }
 
-                if (System.currentTimeMillis() - this.pingTime > 5000) {
+                try {
+                    this.server.ping(this);
+                } catch (RemoteException e) {
                     getView().handleConnectionError();
                 }
 

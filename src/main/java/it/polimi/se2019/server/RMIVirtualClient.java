@@ -47,13 +47,14 @@ public class RMIVirtualClient extends Thread implements VirtualClientInterface {
         this.pingTime = System.currentTimeMillis();
 
         while(this.active) {
+
+            if (System.currentTimeMillis() - this.pingTime > 5000) {
+                this.server.notifyDisconnection(this);
+            }
+            
             try {
                 this.client.ping();
             } catch (RemoteException e) {
-                this.server.notifyDisconnection(this);
-            }
-
-            if (System.currentTimeMillis() - this.pingTime > 5000) {
                 this.server.notifyDisconnection(this);
             }
 

@@ -127,7 +127,8 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
      * Pings the sever
      */
     @Override
-    public void ping() {
+    public void ping(RMIClientInterface client) {
+        this.clientCorrespondency.get(client).ping();
         // Used to check if server is still connected
     }
 }
