@@ -12,7 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 /**
@@ -72,7 +72,7 @@ public class CardDetailController extends AbstractSceneController {
             this.primaryDescription.setText(weapon.getPrimaryEffect().get(0).getDescription());
         });
 
-        Map<AmmoType, Integer> cost = new HashMap<>();
+        Map<AmmoType, Integer> cost = new EnumMap<>(AmmoType.class);
         if (!weapon.getAlternativeMode().isEmpty()) {
             cost = weapon.getAlternativeMode().get(0).getCost();
             Platform.runLater(() -> {

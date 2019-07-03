@@ -157,14 +157,6 @@ public class EffectPossibilityPack implements Serializable {
     }
 
     /**
-     * Sets the map for applying effects with "multiple squares" position constraint
-     * @param multipleSquares Map with coordinates and list of game characters for that coordinates
-     */
-    /*public void setMultipleSquares(Map<Coordinates, List<GameCharacter>> multipleSquares) {
-        this.multipleSquares = multipleSquares;
-    }*/
-
-    /**
      * Sets the effect possibility as mandatory
      * @param require true if you want to set mandatory, else false
      */

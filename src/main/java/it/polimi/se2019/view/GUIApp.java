@@ -86,6 +86,8 @@ public class GUIApp extends Application {
                 case RANKING:
                     loader = new FXMLLoader(getClass().getClassLoader().getResource(PATH + "Ranking.fxml"));
                     break;
+                default:
+                    return;
             }
             try {
                 this.stage.setScene(new Scene(loader.load()));

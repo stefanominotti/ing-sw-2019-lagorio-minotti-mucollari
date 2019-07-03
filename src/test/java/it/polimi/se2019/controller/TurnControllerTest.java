@@ -71,26 +71,6 @@ public class TurnControllerTest {
     }
 
     @Test
-    public void pickupSwitchWeaponTest() {
-        /*this.board.movePlayer(this.player, this.board.getArena().getSquareByCoordinate(2,0));
-        this.board.giveWeapon(this.player, this.player.getPosition().getWeaponsStore().get(0));
-        this.board.giveWeapon(this.player, this.player.getPosition().getWeaponsStore().get(0));
-        WeaponCard weapon = this.player.getPosition().getWeaponsStore().get(0);
-        this.controller.update(null,
-                new SingleSelectionMessage(SelectionMessageType.PICKUP_WEAPON, this.player.getCharacter(), weapon.getWeaponType()));
-        assertEquals(weapon, this.turnController.getWeaponToGet());
-        this.board.giveWeapon(this.player, weapon);
-        weapon = new WeaponCard(Weapon.MACHINE_GUN);
-        this.board.getArena().getSquareByCoordinate(2,0).addWeapon(weapon);
-        this.controller.update(null,
-                new SingleSelectionMessage(SelectionMessageType.PICKUP_WEAPON, this.player.getCharacter(), weapon));
-        assertEquals(weapon, this.turnController.getWeaponToGet());
-        this.controller.update(null,
-                new SingleSelectionMessage(SelectionMessageType.SWITCH, this.player.getCharacter(), weapon.getWeaponType()));
-        assertEquals(weapon, this.turnController.getWeaponToGet());*/
-    }
-
-    @Test
     public void calculateMovmentTest() {
         List<Coordinates> coordinates = new ArrayList<>();
         coordinates.add(new Coordinates(0,0));

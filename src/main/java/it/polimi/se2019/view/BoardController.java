@@ -2,7 +2,6 @@ package it.polimi.se2019.view;
 
 import it.polimi.se2019.controller.ActionType;
 import it.polimi.se2019.model.*;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -42,6 +41,13 @@ public class BoardController extends AbstractSceneController {
     private static final String POWERUPS_PATH = "powerups/img/";
     private static final String ARENAS_PATH = "arenas/img/";
     private static final String AMMO_TILES_PATH = "ammotiles/img/";
+
+    private static final String CARD_SELECTABLE_CLASS = "card-selectable";
+    private static final String CARD_SELECTED_CLASS = "card-selected";
+    private static final String BUTTON_STD_CLASS = "button-std";
+    private static final String CHARACTER_CLASS = "img-characters";
+    private static final String CHARACTER_SELECTABLE_CLASS = "img-characters-selectable";
+    private static final String CHARACTER_SELECTED_CLASS = "img-characters-selected";
 
     private GameCharacter activeBoard;
     private Pane arenaPane;
@@ -143,7 +149,6 @@ public class BoardController extends AbstractSceneController {
             public void handle(MouseEvent event) {
                 if (event.getSource() != null && ((Node) event.getSource()).getId() != null) {
                     Weapon weapon = Weapon.valueOf(((ImageView) event.getSource()).getId().toUpperCase());
-                    //new Thread(() -> getView().showWeaponInfo(weapon)).start();
                     showWeaponInfo(weapon);
                 }
             }
@@ -714,8 +719,8 @@ public class BoardController extends AbstractSceneController {
                 for (Powerup p : powerups) {
                     if (p.getType() == type && p.getColor() == color) {
                         img.setOnMousePressed(this.powerupSelectionHandler);
-                        img.getStyleClass().add("card-selectable");
-                        img.getStyleClass().remove("card-selected");
+                        img.getStyleClass().add(CARD_SELECTABLE_CLASS);
+                        img.getStyleClass().remove(CARD_SELECTED_CLASS);
                         set = true;
                         break;
                     }
@@ -724,8 +729,8 @@ public class BoardController extends AbstractSceneController {
                     for (Powerup p : selected) {
                         if (p.getType() == type && p.getColor() == color) {
                             img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.powerupSelectionHandler);
-                            img.getStyleClass().add("card-selected");
-                            img.getStyleClass().remove("card-selectable");
+                            img.getStyleClass().add(CARD_SELECTED_CLASS);
+                            img.getStyleClass().remove(CARD_SELECTABLE_CLASS);
                             set = true;
                             break;
                         }
@@ -733,8 +738,8 @@ public class BoardController extends AbstractSceneController {
                 }
                 if (!set) {
                     img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.powerupSelectionHandler);
-                    img.getStyleClass().remove("card-selected");
-                    img.getStyleClass().remove("card-selectable");
+                    img.getStyleClass().remove(CARD_SELECTED_CLASS);
+                    img.getStyleClass().remove(CARD_SELECTABLE_CLASS);
                 }
             }
         });
@@ -775,11 +780,11 @@ public class BoardController extends AbstractSceneController {
                     if (weapons.contains(name)) {
                         img.setOnMousePressed(this.weaponSelectionHandler);
                         img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
-                        img.getStyleClass().add("card-selectable");
+                        img.getStyleClass().add(CARD_SELECTABLE_CLASS);
                     } else {
                         img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
                         img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
-                        img.getStyleClass().remove("card-selectable");
+                        img.getStyleClass().remove(CARD_SELECTABLE_CLASS);
                     }
                 }
                 for (Node n : this.playerAssetsGrid.getChildren()) {
@@ -787,16 +792,16 @@ public class BoardController extends AbstractSceneController {
                         if (n.getId() != null && weapons.contains(Weapon.valueOf(n.getId().toUpperCase()))) {
                             n.setOnMousePressed(this.weaponSelectionHandler);
                             n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
-                            n.getStyleClass().add("card-selectable");
+                            n.getStyleClass().add(CARD_SELECTABLE_CLASS);
                         } else {
                             n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
                             n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
-                            n.getStyleClass().remove("card-selectable");
+                            n.getStyleClass().remove(CARD_SELECTABLE_CLASS);
                         }
                     } catch (IllegalArgumentException e) {
                         n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
                         n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
-                        n.getStyleClass().remove("card-selectable");
+                        n.getStyleClass().remove(CARD_SELECTABLE_CLASS);
                     }
                 }
             });
@@ -806,18 +811,18 @@ public class BoardController extends AbstractSceneController {
                     ImageView img = weapon.getValue();
                     img.setOnMousePressed(this.weaponInfoHandler);
                     img.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
-                    img.getStyleClass().remove("card-selectable");
+                    img.getStyleClass().remove(CARD_SELECTABLE_CLASS);
                 }
                 for (Node n : this.playerAssetsGrid.getChildren()) {
                     try {
                         Weapon.valueOf(n.getId().toUpperCase());
                         n.setOnMousePressed(this.weaponInfoHandler);
                         n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
-                        n.getStyleClass().remove("card-selectable");
+                        n.getStyleClass().remove(CARD_SELECTABLE_CLASS);
                     } catch (IllegalArgumentException | NullPointerException e) {
                         n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponInfoHandler);
                         n.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.weaponSelectionHandler);
-                        n.getStyleClass().remove("card-selectable");
+                        n.getStyleClass().remove(CARD_SELECTABLE_CLASS);
                     }
                 }
             });
@@ -836,13 +841,13 @@ public class BoardController extends AbstractSceneController {
                     classString = "button-confirm";
                 } else if (WeaponEffectOrderType.getFromIdentifier(buttons.get(0).toUpperCase()) != null) {
                     handler = this.effectSelectionHandler;
-                    classString = "button-std";
+                    classString = BUTTON_STD_CLASS;
                 } else if (buttons.get(0).equals("y")) {
                     handler = this.decisionSelectionHandler;
-                    classString = "button-std";
+                    classString = BUTTON_STD_CLASS;
                 } else {
                     handler = this.cardinalPointSelectionHandler;
-                    classString = "button-std";
+                    classString = BUTTON_STD_CLASS;
                 }
                 b.setId(id);
                 if (id.equals("y")) {
@@ -866,7 +871,7 @@ public class BoardController extends AbstractSceneController {
                     b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.effectSelectionHandler);
                     b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.decisionSelectionHandler);
                     b.getStyleClass().remove("button-confirm");
-                    b.getStyleClass().remove("button-std");
+                    b.getStyleClass().remove(BUTTON_STD_CLASS);
                 i++;
             }
         });
@@ -878,25 +883,25 @@ public class BoardController extends AbstractSceneController {
                 this.arenaPane.toFront();
                 for (ImageView player : this.players) {
                     player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.setPlayerBoardHandler);
-                    player.getStyleClass().remove("img-characters-selectable");
-                    player.getStyleClass().remove("img-characters-selected");
-                    player.getStyleClass().add("img-characters");
+                    player.getStyleClass().remove(CHARACTER_SELECTABLE_CLASS);
+                    player.getStyleClass().remove(CHARACTER_SELECTED_CLASS);
+                    player.getStyleClass().add(CHARACTER_CLASS);
                     if (targets.contains(GameCharacter.valueOf(player.getId().toUpperCase()))) {
                         player.setOnMousePressed(this.characterSelectionHandler);
-                        player.getStyleClass().add("img-characters-selectable");
-                        player.getStyleClass().remove("img-characters");
+                        player.getStyleClass().add(CHARACTER_SELECTABLE_CLASS);
+                        player.getStyleClass().remove(CHARACTER_CLASS);
                     } else if (selected.contains(GameCharacter.valueOf(player.getId().toUpperCase()))) {
-                        player.getStyleClass().add("img-characters-selected");
-                        player.getStyleClass().remove("img-characters");
+                        player.getStyleClass().add(CHARACTER_SELECTED_CLASS);
+                        player.getStyleClass().remove(CHARACTER_CLASS);
                     }
                 }
             } else {
                 for (ImageView player : this.players) {
                     player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.characterSelectionHandler);
                     player.setOnMousePressed(this.setPlayerBoardHandler);
-                    player.getStyleClass().remove("img-characters-selectable");
-                    player.getStyleClass().remove("img-characters-selected");
-                    player.getStyleClass().add("img-characters");
+                    player.getStyleClass().remove(CHARACTER_SELECTABLE_CLASS);
+                    player.getStyleClass().remove(CHARACTER_SELECTED_CLASS);
+                    player.getStyleClass().add(CHARACTER_CLASS);
                 }
             }
         });

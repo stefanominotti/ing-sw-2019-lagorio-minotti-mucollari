@@ -4,9 +4,6 @@ import it.polimi.se2019.model.messages.Message;
 import it.polimi.se2019.model.messages.SingleReceiverMessage;
 import it.polimi.se2019.view.VirtualView;
 
-import java.util.Observable;
-import java.util.Observer;
-
 public class Sender {
 
     private VirtualView view;

@@ -1700,6 +1700,36 @@ public class CLIView extends View {
     }
 
     /**
+     * Show weapon effect used message
+     * @param character that used the effect
+     * @param effect used
+     */
+    void handleEffectSelected(GameCharacter character, WeaponEffectOrderType effect) {
+        StringBuilder text = new StringBuilder();
+        if (character == getCharacter()) {
+            text.append("You");
+        } else {
+            text.append(character);
+        }
+        text.append(" used ");
+        switch (effect) {
+            case PRIMARY:
+                text.append("primary effect");
+                break;
+            case ALTERNATIVE:
+                text.append("alternative mode");
+                break;
+            case SECONDARYONE:
+                text.append("first secondary effect");
+                break;
+            case SECONDARYTWO:
+                text.append("alternative secondary effect");
+                break;
+        }
+        showMessage(text.toString());
+    }
+
+    /**
      * Shows persistence request message
      */
     @Override

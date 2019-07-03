@@ -75,13 +75,11 @@ class PowerupsController {
      */
     List<Coordinates> avialablePositions() {
         List<Coordinates> positions = new ArrayList<>();
-        switch (this.activePowerup) {
-            case TELEPORTER:
-                for (Square s : this.board.getArena().getAllSquares()) {
-                    positions.add(new Coordinates(s.getX(), s.getY()));
-                }
-                break;
-            case NEWTON:
+        if (this.activePowerup == PowerupType.TELEPORTER) {
+            for (Square s : this.board.getArena().getAllSquares()) {
+                positions.add(new Coordinates(s.getX(), s.getY()));
+            }
+        } else if (this.activePowerup == PowerupType.NEWTON) {
                 int x = this.target.getPosition().getX();
                 int y = this.target.getPosition().getY();
                 Square current = this.board.getArena().getSquareByCoordinate(x + 1, y);
@@ -116,7 +114,6 @@ class PowerupsController {
                         positions.add(new Coordinates(x, y + 2));
                     }
                 }
-                break;
         }
         return positions;
     }

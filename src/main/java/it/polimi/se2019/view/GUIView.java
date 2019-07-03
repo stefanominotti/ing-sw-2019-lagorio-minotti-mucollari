@@ -24,6 +24,11 @@ import static it.polimi.se2019.view.ClientState.*;
  * Class for handling GUI view
  */
 public class GUIView extends View {
+    
+    private static final String LOADING_GIF = "loading.gif";
+    private static final String WAITING_FOR_PLAYERS_MESSAGE = "Waiting for players...";
+    private static final String WAITING_FOR_PLAYER_TURN_MESSAGE = "Waiting for other players...";
+    private static final String CONTINUE_BUTTON = "continue";
 
     private GUIApp guiApp;
     private AbstractSceneController controller;
@@ -270,7 +275,7 @@ public class GUIView extends View {
         Map<GameCharacter, String> players = new LinkedHashMap<>(otherPlayers);
         players.put(character, nickname);
         setScene(SceneType.LOBBY);
-        ((LobbyController) this.controller).setMessage("loading.gif", "Waiting for players...");
+        ((LobbyController) this.controller).setMessage(LOADING_GIF, WAITING_FOR_PLAYERS_MESSAGE);
         ((LobbyController) this.controller).setPlayers(players);
     }
 
@@ -306,7 +311,7 @@ public class GUIView extends View {
             ((LobbyController) this.controller).setPlayers(players);
         }
         super.handleSetupInterrupted();
-        ((LobbyController) this.controller).setMessage("loading.gif", "Waiting for players...");
+        ((LobbyController) this.controller).setMessage(LOADING_GIF, WAITING_FOR_PLAYERS_MESSAGE);
     }
 
     /**
@@ -319,10 +324,10 @@ public class GUIView extends View {
         if (getState() == WAITING_START) {
             switch (action) {
                 case START:
-                    ((LobbyController) this.controller).setMessage("loading.gif", "Setup will start soon...");
+                    ((LobbyController) this.controller).setMessage(LOADING_GIF, "Setup will start soon...");
                     break;
                 case STOP:
-                    ((LobbyController) this.controller).setMessage("loading.gif", "Waiting for players...");
+                    ((LobbyController) this.controller).setMessage(LOADING_GIF, WAITING_FOR_PLAYERS_MESSAGE);
                     break;
                 default:
                     break;
@@ -643,6 +648,7 @@ public class GUIView extends View {
      * @param motivation for score change
      * @param killedCharacter who gave the points
      */
+    @Override
     void handleScoreChange(GameCharacter player, int score, ScoreMotivation motivation, GameCharacter killedCharacter) {
         super.handleScoreChange(player, score, motivation, killedCharacter);
         StringBuilder text = new StringBuilder();
@@ -691,7 +697,7 @@ public class GUIView extends View {
             this.secondaryButtons = new ArrayList<>();
             setSecondaryButtons();
             setPowerups();
-            this.currentStatus = "Waiting for other players...";
+            this.currentStatus = WAITING_FOR_PLAYER_TURN_MESSAGE;
             this.currentAction = getBoardByCharacter(this.activePlayer).getNickname() + " (" + this.activePlayer +
                     ") is playing";
             setBanner();
@@ -711,7 +717,7 @@ public class GUIView extends View {
         setSecondaryButtons();
         setPowerups();
         if (player != getCharacter()) {
-            this.currentStatus = "Waiting for other players...";
+            this.currentStatus = WAITING_FOR_PLAYER_TURN_MESSAGE;
             this.currentAction = getBoardByCharacter(player).getNickname() + " (" + player + ") is playing";
         }
         setBanner();
@@ -733,7 +739,7 @@ public class GUIView extends View {
         setWeapons();
         setTargets();
         if (character != getCharacter()) {
-            this.currentStatus = "Waiting for other players...";
+            this.currentStatus = WAITING_FOR_PLAYER_TURN_MESSAGE;
             this.currentAction = getBoardByCharacter(character).getNickname() + " (" + character + ") is playing";
         } else {
             this.currentStatus = "It's your turn!";
@@ -757,7 +763,7 @@ public class GUIView extends View {
         this.secondaryButtons = new ArrayList<>();
         setSecondaryButtons();
         if (character != getCharacter()) {
-            this.currentStatus = "Waiting for other players...";
+            this.currentStatus = WAITING_FOR_PLAYER_TURN_MESSAGE;
             this.currentAction = getBoardByCharacter(character).getNickname() + " (" + character +
                     ") finished his turn";
         } else {
@@ -849,10 +855,10 @@ public class GUIView extends View {
             this.currentStatus = "Which powerups do you want to use?";
             this.currentAction = "Select available powerups";
             this.secondaryButtons = new ArrayList<>();
-            this.secondaryButtons.add("continue");
+            this.secondaryButtons.add(CONTINUE_BUTTON);
         } else {
             if (powerups.get(0).getType() == PowerupType.TARGETING_SCOPE) {
-                this.secondaryButtons.add("continue");
+                this.secondaryButtons.add(CONTINUE_BUTTON);
             } else {
                 addActionsSelection(ActionType.CANCEL);
             }
@@ -887,6 +893,8 @@ public class GUIView extends View {
                 break;
             case MULTIPLE_POWERUPS_SELECTION:
                 handleMultiplePowerupsSelect(type, color);
+            default:
+                return;
         }
         this.secondaryButtons = new ArrayList<>();
         resetSelections();
@@ -913,7 +921,7 @@ public class GUIView extends View {
     void handlePowerupPaymentSelect(PowerupType type, AmmoType color) {
         addPaidPowerup(new Powerup(type, color));
         if(getRequiredPayment().isEmpty()) {
-            Map<AmmoType, Integer> ammo = new HashMap<>();
+            Map<AmmoType, Integer> ammo = new EnumMap<>(AmmoType.class);
             ammo.put(AmmoType.BLUE, 0);
             ammo.put(AmmoType.YELLOW, 0);
             ammo.put(AmmoType.RED, 0);
@@ -996,6 +1004,7 @@ public class GUIView extends View {
                 break;
             case RECHARGE_WEAPON:
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.RELOAD, getCharacter(), null));
+                break;
             default:
                 break;
 
@@ -1085,7 +1094,7 @@ public class GUIView extends View {
         setBanner();
         setTargets();
         if (this.targetSelected.size() >= this.minSelectable) {
-            this.secondaryButtons.add("continue");
+            this.secondaryButtons.add(CONTINUE_BUTTON);
         } else {
             this.secondaryButtons = new ArrayList<>();
         }
@@ -1140,20 +1149,20 @@ public class GUIView extends View {
             int amount = Integer.parseInt(targetsAmount.get(0));
             this.minSelectable = amount;
             this.maxSelectable = amount;
-            toAppend = "Choose " + amount + " players each in different squares\n";
+            toAppend = "Choose " + amount + " players each in different squares";
             text.append(toAppend);
         } else if (targetsAmount.get(1).equals("MAX")) {
             int min = Integer.parseInt(targetsAmount.get(0));
             this.minSelectable = min;
             this.maxSelectable = getEffectPossibility().getMultipleSquares().size();
-            toAppend = "Choose at least " + min + " players each in different squares\n";
+            toAppend = "Choose at least " + min + " players each in different squares";
             text.append(toAppend);
         } else {
             int min = Integer.parseInt(targetsAmount.get(0));
             int max = Integer.parseInt(targetsAmount.get(1));
             this.minSelectable = min;
             this.maxSelectable = max;
-            toAppend = "Choose from " + min + " to " + max + " players each in different squares\n";
+            toAppend = "Choose from " + min + " to " + max + " players each in different squares";
             text.append(toAppend);
         }
         this.currentStatus = text.toString();
@@ -1336,10 +1345,44 @@ public class GUIView extends View {
         this.currentStatus = "Do you want to reload?";
         this.currentAction = "Select a weapon or continue";
         this.secondaryButtons = new ArrayList<>();
-        this.secondaryButtons.add("continue");
+        this.secondaryButtons.add(CONTINUE_BUTTON);
         setBanner();
         setSecondaryButtons();
         setWeapons();
+    }
+
+    /**
+     * Show weapon effect used
+     * @param character that used the effect
+     * @param effect used
+     */
+    void handleEffectSelected(GameCharacter character, WeaponEffectOrderType effect) {
+        if (character == getCharacter()) {
+            return;
+        }
+        StringBuilder text = new StringBuilder();
+        if (character == getCharacter()) {
+            text.append("You");
+        } else {
+            text.append(character);
+        }
+        text.append(" used ");
+        switch (effect) {
+            case PRIMARY:
+                text.append("primary effect");
+                break;
+            case ALTERNATIVE:
+                text.append("alternative mode");
+                break;
+            case SECONDARYONE:
+                text.append("first secondary effect");
+                break;
+            case SECONDARYTWO:
+                text.append("alternative secondary effect");
+                break;
+        }
+        addMessage(text.toString());
+        showMessage();
     }
 
     /**
@@ -1411,12 +1454,10 @@ public class GUIView extends View {
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.EFFECT_COMBO, getCharacter(), input));
                 break;
             case EFFECT_REQUIRE_SELECTION:
-                if (input.equals("Y")) {
-                    super.setPossibilityRequire(true);
-                } else {
-                    super.setPossibilityRequire(false);
-                }
+                super.setPossibilityRequire(input.equals("Y"));
                 break;
+            default:
+                return;
         }
         this.secondaryButtons = new ArrayList<>();
         setSecondaryButtons();
@@ -1465,7 +1506,7 @@ public class GUIView extends View {
         setBanner();
         setEffects();
         if (isWeaponActivated()) {
-            this.secondaryButtons.add("continue");
+            this.secondaryButtons.add(CONTINUE_BUTTON);
         } else {
             addActionsSelection(ActionType.CANCEL);
         }
@@ -1526,7 +1567,7 @@ public class GUIView extends View {
             this.currentAction = "You must pay with powerups, select desired ones";
         } else {
             this.currentAction = "Select powerups if you want, then confirm";
-            this.secondaryButtons.add("continue");
+            this.secondaryButtons.add(CONTINUE_BUTTON);
         }
         setBanner();
         setPowerups();

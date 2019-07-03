@@ -155,10 +155,10 @@ public class Board extends Observable {
         List<PlayerBoard> playerBoards = new ArrayList<>();
         List<Weapon> playerWeapons = new ArrayList<>();
         Map<GameCharacter, String> otherPlayers = new EnumMap<>(GameCharacter.class);
-        List<GameCharacter> deadPlayers = new ArrayList<>();
+        List<GameCharacter> dead = new ArrayList<>();
         for(Player character : this.players) {
             if (character.isDead()) {
-                deadPlayers.add(character.getCharacter());
+                dead.add(character.getCharacter());
             }
             List<Weapon> weapons = new ArrayList<>();
             for(WeaponCard weaponCard : player.getWeapons()) {
@@ -185,7 +185,7 @@ public class Board extends Observable {
         return new LoadViewMessage(player.getCharacter(), player.getNickname(), this.skulls, squareViews,
                 track, playerBoards, playerWeapons, player.getPowerups(), player.getScore(), otherPlayers,
                 !this.finalFrenzyOrder.isEmpty(), isPlayerBeforeFirst(player), Integer.parseInt(this.arena.toJson()),
-                deadPlayers);
+                dead);
 
     }
 
@@ -977,7 +977,7 @@ public class Board extends Observable {
     public void endGame() {
         this.gameState = ENDED;
         for (Player player : this.players) {
-            if(player.getDamages().size() > 0) {
+            if(!player.getDamages().isEmpty()) {
                 calculateBoardScore(player);
             }
         }

@@ -332,6 +332,7 @@ public class GameController implements Observer {
                 handleWeaponUseSelection((Weapon) message.getSelection());
                 break;
             case EFFECT:
+                this.sendAll(message);
                 handleEffectSelection((WeaponEffectOrderType) message.getSelection());
                 break;
             case EFFECT_COMBO:
@@ -560,7 +561,7 @@ public class GameController implements Observer {
 
     void payBack() {
         this.turnController.getActivePlayer().addAmmos(this.ammoUsed);
-        this.ammoUsed = new HashMap<>();
+        this.ammoUsed = new EnumMap<>(AmmoType.class);
         for(Powerup p : this.powerupsUsed) {
             this.turnController.getActivePlayer().addPowerup(p);
         }

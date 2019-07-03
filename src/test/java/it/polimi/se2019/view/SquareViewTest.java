@@ -154,5 +154,64 @@ public class SquareViewTest {
                 "│         RED          \n" +
                 "│       YELLOW         \n" +
                 "│______________________\n", this.squareNotSpawn.toString(false));
+        ammos.put(AmmoType.YELLOW, 1);
+        ammos.put(AmmoType.RED, 1);
+        ammos.put(AmmoType.BLUE, 0);
+        tile = new AmmoTile(true, ammos);
+        this.squareNotSpawn.setAvailableAmmoTile(tile);
+        assertEquals("│‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n" +
+                "│          β           \n" +
+                "│                      \n" +
+                "│                      \n" +
+                "│       YELLOW         \n" +
+                "│                      \n" +
+                "│       POWERUP        \n" +
+                "│         RED          \n" +
+                "│       YELLOW         \n" +
+                "│______________________\n", this.squareNotSpawn.toString(false));
+        this.squareNotSpawn.setAvailableAmmoTile(null);
+        assertEquals("│‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n" +
+                "│          β           \n" +
+                "│                      \n" +
+                "│                      \n" +
+                "│       YELLOW         \n" +
+                "│                      \n" +
+                "│                      \n" +
+                "│                      \n" +
+                "│                      \n" +
+                "│______________________\n", this.squareNotSpawn.toString(false));
+        Map<CardinalPoint, Boolean> visibility = new EnumMap<>(CardinalPoint.class);
+        visibility.put(CardinalPoint.WEST, true);
+        visibility.put(CardinalPoint.NORTH, true);
+        visibility.put(CardinalPoint.EAST, true);
+        visibility.put(CardinalPoint.SOUTH, true);
+        SquareView square = new SquareView(1, 1, RoomColor.YELLOW, false, visibility);
+        SquareView squareE = new SquareView(2, 1, RoomColor.YELLOW, false, visibility);
+        SquareView squareW = new SquareView(0, 1, RoomColor.YELLOW, false, visibility);
+        SquareView squareS = new SquareView(1, 2, RoomColor.YELLOW, false, visibility);
+        SquareView squareN = new SquareView(1, 0, RoomColor.YELLOW, false, visibility);
+        new BoardView(3, Arrays.asList(square, squareE, squareN, squareS, squareW), 1);
+        assertEquals("‾ ·  ·  ·  ·  ·  ·  ·  \n" +
+                "·                      \n" +
+                "·                      \n" +
+                "·                      \n" +
+                "·       YELLOW         \n" +
+                "·                      \n" +
+                "·                      \n" +
+                "·                      \n" +
+                "·                      \n" +
+                "                       \n", square.toString(false));
+        squareW = new SquareView(0, 1, RoomColor.RED, false, visibility);
+        new BoardView(3, Arrays.asList(square, squareE, squareN, squareS, squareW), 1);
+        assertEquals("│ ·  ·  ·  ·  ·  ·  ·  \n" +
+                "│                      \n" +
+                "│                      \n" +
+                "                       \n" +
+                "        YELLOW         \n" +
+                "                       \n" +
+                "                       \n" +
+                "│                      \n" +
+                "│                      \n" +
+                "│                      \n", square.toString(false));
     }
 }

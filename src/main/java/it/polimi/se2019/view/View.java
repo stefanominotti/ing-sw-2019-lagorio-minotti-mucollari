@@ -655,14 +655,14 @@ public abstract class View {
      * @param player of which the kill shot points has changed
      */
     void handleKillshotPointsChange(GameCharacter player) {
-        PlayerBoard board;
+        PlayerBoard playerBoard;
         if (player == this.character) {
-            board = this.selfPlayerBoard;
+            playerBoard = this.selfPlayerBoard;
         } else {
-            board = getBoardByCharacter(player);
+            playerBoard = getBoardByCharacter(player);
         }
-        if (board != null) {
-            board.reduceKillshotPoints();
+        if (playerBoard != null) {
+            playerBoard.reduceKillshotPoints();
         }
     }
 
@@ -1218,6 +1218,7 @@ public abstract class View {
                 break;
             case PERSISTENCE:
                 handlePersistenceFinish();
+                break;
             default:
                 break;
         }
@@ -1484,10 +1485,21 @@ public abstract class View {
             case PERSISTENCE:
                 handlePersistenceRequest(message.getCharacter());
                 break;
+            case EFFECT:
+                handleEffectSelected(message.getCharacter(), (WeaponEffectOrderType) message.getSelection());
+                break;
             default:
                 break;
         }
     }
+
+
+    /**
+     * Show weapon effect used message
+     * @param character that used the effect
+     * @param effect used
+     */
+    abstract void handleEffectSelected(GameCharacter character, WeaponEffectOrderType effect);
 
     /**
      * Sets game state on persitence selection
