@@ -61,7 +61,7 @@ public class Client {
             }, 2*1000L);
         }
         try {
-            connection = gson.fromJson(jsonElement.get("port"), Integer.class);
+            connection = gson.fromJson(jsonElement.get("connection"), Integer.class);
         } catch (Exception e) {
             connection = DEFAULT_CONNECTION;
             System.out.println("Invalid connection type, connection set to default " + DEFAULT_CONNECTION +
