@@ -1387,8 +1387,8 @@ public class CLIView extends View {
      */
     @Override
     void handleTurnContinuation(GameCharacter player) {
-        super.handleTurnContinuation(player);
         showMessage(player + " is playing...");
+        super.handleTurnContinuation(player);
     }
 
     /**

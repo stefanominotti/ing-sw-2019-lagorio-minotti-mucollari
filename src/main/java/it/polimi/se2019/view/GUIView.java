@@ -731,7 +731,6 @@ public class GUIView extends View {
      */
     @Override
     void handleTurnContinuation(GameCharacter player) {
-        super.handleTurnContinuation(player);
         resetSelections();
         this.secondaryButtons = new ArrayList<>();
         setSecondaryButtons();
@@ -741,6 +740,7 @@ public class GUIView extends View {
             this.currentAction = getBoardByCharacter(player).getNickname() + " (" + player + ") is playing";
         }
         setBanner();
+        super.handleTurnContinuation(player);
     }
 
     /**
