@@ -717,6 +717,7 @@ public class CLIView extends View {
     @Override
     public void handleConnectionError() {
         showMessage("Connection error, server unreachable or network unavailable\nTry to restart");
+        this.inputEnabled = false;
         super.handleConnectionError();
     }
 
@@ -1440,6 +1441,7 @@ public class CLIView extends View {
             index++;
         }
         showMessage(text.toString());
+        this.inputEnabled = false;
         super.handleGameFinished(ranking);
     }
 
@@ -1449,6 +1451,7 @@ public class CLIView extends View {
     @Override
     void handlePersistenceFinish() {
         showMessage("Saved completed!");
+        this.inputEnabled = false;
         super.handlePersistenceFinish();
     }
 

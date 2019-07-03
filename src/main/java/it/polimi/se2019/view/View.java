@@ -473,7 +473,12 @@ public abstract class View {
      * Handles connection error. Ends the app
      */
     public void handleConnectionError() {
-        System.exit(0);
+        (new Timer()).schedule(new TimerTask() {
+            @Override
+            public void run() {
+                System.exit(0);
+            }
+        }, 7*1000L);
     }
 
     /**
@@ -1242,7 +1247,12 @@ public abstract class View {
      * Closes the app after persistence choice
      */
     void handlePersistenceFinish(){
-        System.exit(0);
+        (new Timer()).schedule(new TimerTask() {
+            @Override
+            public void run() {
+                System.exit(0);
+            }
+        }, 7*1000L);
     }
 
     /**
@@ -1254,7 +1264,12 @@ public abstract class View {
         } catch (IOException e) {
             // Ignore
         }
-        System.exit(0);
+        (new Timer()).schedule(new TimerTask() {
+            @Override
+            public void run() {
+                System.exit(0);
+            }
+        }, 10*1000L);
     }
 
     /**

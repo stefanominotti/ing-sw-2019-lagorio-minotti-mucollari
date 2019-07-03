@@ -207,12 +207,7 @@ public class GUIView extends View {
     @Override
     public void handleConnectionError() {
         this.guiApp.setScene(SceneType.CONNECTION_ERROR);
-        (new Timer()).schedule(new TimerTask() {
-            @Override
-            public void run() {
-               GUIView.super.handleConnectionError();
-            }
-        }, 7*1000L);
+        super.handleConnectionError();
     }
 
     /**
@@ -1446,12 +1441,7 @@ public class GUIView extends View {
         this.currentStatus = "Game saved";
         this.currentAction = "This window will close";
         setBanner();
-        (new Timer()).schedule(new TimerTask() {
-            @Override
-            public void run() {
-                GUIView.super.handlePersistenceFinish();
-            }
-        }, 7*1000L);
+        super.handlePersistenceFinish();
     }
 
     /**
@@ -1670,12 +1660,7 @@ public class GUIView extends View {
     void handleGameFinished(Map<GameCharacter, Integer> ranking) {
         setScene(SceneType.RANKING);
         ((RankingController) this.controller).showMessage(ranking);
-        (new Timer()).schedule(new TimerTask() {
-            @Override
-            public void run() {
-                GUIView.super.handleGameFinished(ranking);
-            }
-        }, 10*1000L);
+        super.handleGameFinished(ranking);
     }
 
     /**+
