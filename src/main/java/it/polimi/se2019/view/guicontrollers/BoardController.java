@@ -146,6 +146,9 @@ public class BoardController extends AbstractSceneController {
     private EventHandler<MouseEvent> decisionSelectionHandler;
     private EventHandler<MouseEvent> ammosSelectionHandler;
 
+    /**
+     * Class constructor, it builds a board controller and its event handlers
+     */
     public BoardController() {
         this.players = new ArrayList<>();
         this.storeWeapons = new EnumMap<>(Weapon.class);
@@ -265,15 +268,26 @@ public class BoardController extends AbstractSceneController {
         };
     }
 
+    /**
+     * Sets the player borad
+     */
     @FXML
     void setPlayerBoard() {
         new Thread(() -> getView().setPlayerBoard(getView().getCharacter())).start();
     }
 
+    /**
+     * Gets the active character board
+     * @return the active game character
+     */
     public GameCharacter getActiveBoard() {
         return this.activeBoard;
     }
 
+    /**
+     * Open a new stage with the weapon details info
+     * @param weapon you want to show info
+     */
     void showWeaponInfo(Weapon weapon) {
 
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(FXML_PATH + "CardDetail.fxml"));
@@ -292,6 +306,9 @@ public class BoardController extends AbstractSceneController {
         controller.setWeapon(weapon);
     }
 
+    /**
+     * Sets the arena and the corresponding grid for handling objects above it
+     */
     public void setArena() {
         Platform.runLater(() ->
                 this.arenaImage.setImage(new Image(ARENAS_PATH + "arena_" + getView().getBoard().getArena() +
@@ -336,6 +353,9 @@ public class BoardController extends AbstractSceneController {
         updateKillshotTrack();
     }
 
+    /**
+     * Updates the killshot track, replacing skulls with the killers drops
+     */
     public void updateKillshotTrack() {
         Map<Integer, List<GameCharacter>> killshotTrack = getView().getBoard().getKillshotTrack();
         Platform.runLater(() -> {
@@ -367,6 +387,10 @@ public class BoardController extends AbstractSceneController {
         });
     }
 
+    /**
+     * Sets the player board that has to be shown
+     * @param player of which you to show the player board
+     */
     public void setPlayerBoard(GameCharacter player) {
         this.activeBoard = player;
         PlayerBoard board;
@@ -412,6 +436,9 @@ public class BoardController extends AbstractSceneController {
         updatePowerups();
     }
 
+    /**
+     * Updates marks on a player board
+     */
     public void updateBoardMarks() {
         PlayerBoard board;
         if (this.activeBoard == getView().getCharacter()) {
@@ -433,6 +460,9 @@ public class BoardController extends AbstractSceneController {
         });
     }
 
+    /**
+     * Updates damages on a player board
+     */
     public void updateBoardDamages() {
         PlayerBoard board;
         if (this.activeBoard == getView().getCharacter()) {
@@ -454,6 +484,9 @@ public class BoardController extends AbstractSceneController {
         });
     }
 
+    /**
+     * Updates killshot points on the player board
+     */
     public void updateKillshotPoints() {
         PlayerBoard board;
         if (this.activeBoard == getView().getCharacter()) {
@@ -473,6 +506,9 @@ public class BoardController extends AbstractSceneController {
         });
     }
 
+    /**
+     * Updates the available ammo
+     */
     public void updateAmmo() {
         PlayerBoard board;
         String labelText;
@@ -505,6 +541,9 @@ public class BoardController extends AbstractSceneController {
         this.ammoLabel.getStyleClass().remove("font-ammo-small");
     }
 
+    /**
+     * Updates player score raised
+     */
     public void updatePoints() {
         SelfPlayerBoard board = getView().getSelfPlayerBoard();
         int score = board.getScore();
@@ -521,6 +560,9 @@ public class BoardController extends AbstractSceneController {
         });
     }
 
+    /**
+     * Updates weapon stores with weapons of their matching colors
+     */
     public void updateStores() {
         Platform.runLater(() -> {
             this.storeWeapons = new EnumMap<>(Weapon.class);
@@ -566,6 +608,9 @@ public class BoardController extends AbstractSceneController {
         });
     }
 
+    /**
+     * Updates player weapons and their status
+     */
     public void updateWeapons() {
         Platform.runLater(() -> {
             int i = 3;
@@ -617,6 +662,9 @@ public class BoardController extends AbstractSceneController {
         });
     }
 
+    /**
+     * Updates player powerups
+     */
     public void updatePowerups() {
         Platform.runLater(() -> {
             int i = 6;
@@ -648,6 +696,12 @@ public class BoardController extends AbstractSceneController {
         });
     }
 
+    /**
+     * Gets the squares grid of the arena matching to the x, y coordinates
+     * @param x coordinate of the square of which you want the pane
+     * @param y coordinate of the square of which you want the pane
+     * @return the matching grid pane
+     */
     GridPane getSquarePaneByCoordinates(int x, int y) {
         int arena = getView().getBoard().getArena();
         for (Node n : this.arenaPane.getChildren()) {
@@ -658,6 +712,9 @@ public class BoardController extends AbstractSceneController {
         return null;
     }
 
+    /**
+     * Refills the ammo tiles on the arena
+     */
     public void updateTiles() {
         Platform.runLater(() -> {
             for (SquareView s : getView().getBoard().getSquares()) {
@@ -676,6 +733,9 @@ public class BoardController extends AbstractSceneController {
         });
     }
 
+    /**
+     * Updates a player position on the arena
+     */
     public void updatePlayersPositions() {
         Platform.runLater(() -> {
             this.players = new ArrayList<>();
@@ -711,6 +771,10 @@ public class BoardController extends AbstractSceneController {
         });
     }
 
+    /**
+     * Shows messages into the console box
+     * @param messages List of the messages that have to be shown
+     */
     public void showMessage(List<String> messages) {
         String message = messages.stream().collect(Collectors.joining("\n"));
         Platform.runLater(() ->
@@ -718,13 +782,26 @@ public class BoardController extends AbstractSceneController {
         );
     }
 
+    /**
+     * Sets the banner of actions and status
+     * @param status of the game
+     * @param action that player has to do
+     */
     public void setBanner(String status, String action) {
         Platform.runLater(() -> {
+            if (status.length() > 37){
+                this.currentStatusLabel.getStyleClass().add("font-status-small");
+            }
             this.currentStatusLabel.setText(status);
             this.currentActionLabel.setText(action);
         });
+        this.currentStatusLabel.getStyleClass().remove("font-status-small");
     }
 
+    /**
+     * Sets the available actions for the player, enabling the matching action buttons
+     * @param actions List of the type of the actions that can be done
+     */
     public void setActions(List<ActionType> actions) {
         Platform.runLater(() -> {
             Button b = (Button) this.actionsPane.getChildren().get(0);
@@ -751,6 +828,11 @@ public class BoardController extends AbstractSceneController {
         });
     }
 
+    /**
+     * Sets the powerups that can be used and the selected ones
+     * @param powerups List of the powerups that can be used
+     * @param selected List of the selected ones
+     */
     public void setPowerups(List<Powerup> powerups, List<Powerup> selected) {
         Platform.runLater(() -> {
             for (int i = 6; i < 9; i++) {
@@ -793,6 +875,10 @@ public class BoardController extends AbstractSceneController {
         });
     }
 
+    /**
+     * Shows the available squares, which ones you can click on
+     * @param coordinates of the squares you want to make clickable
+     */
     public void setSquares(List<Coordinates> coordinates) {
         Platform.runLater(() -> {
             if (!coordinates.isEmpty()) {
@@ -819,6 +905,10 @@ public class BoardController extends AbstractSceneController {
         });
     }
 
+    /**
+     * Sets the weapons clickable for use
+     * @param weapons list of the weapons that can be used
+     */
     public void setWeapons(List<Weapon> weapons) {
         if (!weapons.isEmpty()) {
             Platform.runLater(() -> {
@@ -877,6 +967,10 @@ public class BoardController extends AbstractSceneController {
         }
     }
 
+    /**
+     * Matches the secondary buttons to a function and enables them
+     * @param buttons List of the messages that the buttons have to contain
+     */
     public void setSecondaryButtons(List<String> buttons) {
         Platform.runLater(() -> {
             int i = 0;
@@ -910,6 +1004,7 @@ public class BoardController extends AbstractSceneController {
                 b.setId(id);
                 if (id.equals("y")) {
                     b.setText("Yes");
+                    b.getStyleClass().add(BUTTON_CONFIRM_CLASS);
                 } else if (id.equals("n")) {
                     b.setText("No");
                     b.getStyleClass().add(BUTTON_DANGER_CLASS);
@@ -941,6 +1036,11 @@ public class BoardController extends AbstractSceneController {
         });
     }
 
+    /**
+     * Sets the available targets that can be chosen by player
+     * @param targets List of the available characters that can be chosen
+     * @param selected List of the selected ones
+     */
     public void setTargets(List<GameCharacter> targets, List<GameCharacter> selected) {
         Platform.runLater(() -> {
             if (!targets.isEmpty()) {

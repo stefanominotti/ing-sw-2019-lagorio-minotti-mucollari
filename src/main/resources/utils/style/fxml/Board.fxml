@@ -431,15 +431,15 @@
                               </GridPane>
                               <GridPane fx:id="arena211" layoutX="150.0" layoutY="160.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="157.0">
                                  <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="113.0" minWidth="10.0" prefWidth="16.0" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="65.0" minWidth="-Infinity" prefWidth="54.08573913574219" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="113.0" minWidth="10.0" prefWidth="19.0" />
+                                    <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="65.0" minWidth="-Infinity" prefWidth="51.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="121.0" minWidth="10.0" prefWidth="47.91426086425781" />
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="121.0" minWidth="10.0" prefWidth="40.0" />
                                  </columnConstraints>
                                  <rowConstraints>
                                     <RowConstraints maxHeight="72.0" minHeight="10.0" prefHeight="48.311676025390625" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="92.0" minHeight="10.0" prefHeight="45.688323974609375" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="38.2259521484375" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="92.0" minHeight="10.0" prefHeight="45.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="26.61297607421875" valignment="TOP" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
@@ -563,8 +563,8 @@
                                  </columnConstraints>
                                  <rowConstraints>
                                     <RowConstraints maxHeight="92.0" minHeight="10.0" prefHeight="36.333343505859375" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="37.666656494140625" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="65.66665649414062" valignment="TOP" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="64.0" valignment="TOP" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
                                     <ImageView fitHeight="38.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true" styleClass="img-characters" GridPane.columnIndex="2" />
@@ -588,8 +588,8 @@
                                  <rowConstraints>
                                     <RowConstraints maxHeight="72.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="92.0" minHeight="10.0" prefHeight="44.66667175292969" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="40.33332824707031" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="56.66667175292969" valignment="TOP" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="43.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="54.0" valignment="TOP" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
                                     <ImageView fitHeight="38.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true" styleClass="img-characters" GridPane.columnIndex="2" GridPane.rowIndex="1" />
@@ -666,14 +666,14 @@
                               </GridPane>
                               <GridPane fx:id="arena311" layoutX="150.0" layoutY="160.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="157.0">
                                  <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="113.0" minWidth="10.0" prefWidth="16.0" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="65.0" minWidth="-Infinity" prefWidth="54.08573913574219" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="113.0" minWidth="10.0" prefWidth="20.0" />
+                                    <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="65.0" minWidth="-Infinity" prefWidth="50.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="121.0" minWidth="10.0" prefWidth="47.91426086425781" />
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="121.0" minWidth="10.0" prefWidth="40.0" />
                                  </columnConstraints>
                                  <rowConstraints>
                                     <RowConstraints maxHeight="72.0" minHeight="10.0" prefHeight="48.311676025390625" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="92.0" minHeight="10.0" prefHeight="50.666656494140625" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="92.0" minHeight="10.0" prefHeight="50.666656494140625" valignment="BOTTOM" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="34.333343505859375" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="26.61297607421875" valignment="TOP" vgrow="SOMETIMES" />
                                  </rowConstraints>
@@ -798,8 +798,8 @@
                                  </columnConstraints>
                                  <rowConstraints>
                                     <RowConstraints maxHeight="92.0" minHeight="10.0" prefHeight="36.333343505859375" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="46.0" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="66.0" valignment="TOP" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="52.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="63.0" valignment="TOP" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
                                     <ImageView fitHeight="38.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true" styleClass="img-characters" GridPane.columnIndex="2" />
@@ -1144,10 +1144,7 @@
                            <children>
                               <Pane prefHeight="123.0" prefWidth="517.0">
                                  <children>
-                                    <ImageView fx:id="playerBoardImage" fitHeight="122.0" fitWidth="590.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../../../player_boards/player_board_banshee.png" />
-                                       </image></ImageView>
+                                    <ImageView fx:id="playerBoardImage" fitHeight="122.0" fitWidth="590.0" pickOnBounds="true" preserveRatio="true" />
                                     <GridPane fx:id="damagesGrid" layoutX="43.0" layoutY="40.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="338.0">
                                        <columnConstraints>
                                           <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
