@@ -363,13 +363,13 @@ public class BoardController extends AbstractSceneController {
         }
         Platform.runLater(() -> {
             if (!board.isFrenzyBoard()) {
-                this.damagesGrid.setTranslateX(50);
-                this.deathsGrid.setTranslateX(110);
+                this.damagesGrid.setTranslateX(105);
+                this.deathsGrid.setTranslateX(43);
                 this.playerBoardImage.setImage(new Image(PLAYER_BOARDS_PATH + "player_board_" +
                         player.toString().toLowerCase() + ".png"));
             } else {
-                this.damagesGrid.setTranslateX(105);
-                this.deathsGrid.setTranslateX(43);
+                this.damagesGrid.setTranslateX(50);
+                this.deathsGrid.setTranslateX(110);
                 this.playerBoardImage.setImage(new Image(PLAYER_BOARDS_PATH + "player_board_ff_" +
                         player.toString().toLowerCase() + ".png"));
             }
@@ -492,9 +492,9 @@ public class BoardController extends AbstractSceneController {
         SelfPlayerBoard board = getView().getSelfPlayerBoard();
         int score = board.getScore();
         int fourPoints = score/4;
-        score = score - fourPoints;
+        score = score - fourPoints*4;
         int twoPoints = score/2;
-        score = score - twoPoints;
+        score = score - twoPoints*2;
         int onePoints = score;
         Platform.runLater(() -> {
             this.scoreLabel.setText("Your Points" + " (" + board.getScore() + ")");
@@ -896,8 +896,6 @@ public class BoardController extends AbstractSceneController {
                 } else if (id.equals("n")) {
                     b.setText("No");
                     b.getStyleClass().add(BUTTON_DANGER_CLASS);
-                } else if (id.equals("red") || id.equals("blue") || id.equals("yellow")) {
-                    b.setText(null);
                 } else {
                     b.setText(Character.toUpperCase(id.charAt(0)) + id.substring(1));
                 }

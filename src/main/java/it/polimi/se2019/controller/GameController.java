@@ -338,7 +338,6 @@ public class GameController implements Observer {
                 handleWeaponUseSelection((Weapon) message.getSelection());
                 break;
             case EFFECT:
-                this.sendAll(message);
                 handleEffectSelection((WeaponEffectOrderType) message.getSelection());
                 break;
             case EFFECT_COMBO:

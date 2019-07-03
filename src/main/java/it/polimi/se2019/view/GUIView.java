@@ -146,6 +146,7 @@ public class GUIView extends View {
             return;
         }
         getClient().send(new NicknameMessage(NicknameMessageType.CONNECTED, input));
+        setWaitStatus();
     }
 
     /**
@@ -174,6 +175,7 @@ public class GUIView extends View {
         resetSelections();
         setTargets();
         setActions();
+        setWaitStatus();
     }
 
     /**
@@ -835,7 +837,7 @@ public class GUIView extends View {
         setPowerups();
     }
 
-    void setActions() {
+    private void setActions() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setActions(getActionsSelection());
         }
@@ -845,6 +847,7 @@ public class GUIView extends View {
         getClient().send(new SingleSelectionMessage(SelectionMessageType.ACTION, getCharacter(), action));
         resetSelections();
         setActions();
+        setWaitStatus();
     }
 
     /**
@@ -920,6 +923,7 @@ public class GUIView extends View {
         setSecondaryButtons();
         setActions();
         setPowerups();
+        setWaitStatus();
     }
 
     private void handleMultiplePowerupsSelect(PowerupType type, AmmoType color) {
@@ -936,6 +940,7 @@ public class GUIView extends View {
         }
         getClient().send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP, getCharacter(), getPaidPowerups()));
         this.secondaryButtons = new ArrayList<>();
+        setWaitStatus();
         resetSelections();
         setSecondaryButtons();
         setActions();
@@ -951,6 +956,7 @@ public class GUIView extends View {
             ammo.put(AmmoType.RED, 0);
             getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
                     getPaidPowerups()));
+            setWaitStatus();
             resetSelections();
             setSecondaryButtons();
             setActions();
@@ -976,6 +982,7 @@ public class GUIView extends View {
         if (getPowerupsSelection().isEmpty()) {
             getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
                     getPaidPowerups()));
+            setWaitStatus();
             this.secondaryButtons = new ArrayList<>();
             resetSelections();
             setSecondaryButtons();
@@ -1000,10 +1007,12 @@ public class GUIView extends View {
                 if(!getRequiredPayment().isEmpty()) {
                     getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
                             getPaidPowerups()));
+                    setWaitStatus();
+                } else {
+                    resetSelections();
+                    setPowerups();
+                    ammoRequest();
                 }
-                ammoRequest();
-                resetSelections();
-                setPowerups();
                 break;
             case EFFECT_SELECT_SQUARE:
                 super.selectionEffectFinish();
@@ -1018,9 +1027,11 @@ public class GUIView extends View {
                 break;
             case USE_EFFECT:
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.EFFECT, getCharacter(), null));
+                setWaitStatus();
                 break;
             case USE_POWERUP:
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.USE_POWERUP, getCharacter(), null));
+                setWaitStatus();
                 break;
             case MULTIPLE_POWERUPS_SELECTION:
                 if(getPowerupsSelection().isEmpty()) {
@@ -1028,14 +1039,20 @@ public class GUIView extends View {
                 } else {
                     getClient().send(new SingleSelectionMessage(SelectionMessageType.USE_POWERUP, getCharacter(), getPaidPowerups()));
                 }
+                setWaitStatus();
                 break;
             case RECHARGE_WEAPON:
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.RELOAD, getCharacter(), null));
+                setWaitStatus();
                 break;
             default:
                 break;
-
         }
+        resetSelections();
+        setPowerups();
+        setSquares();
+        setWeapons();
+        setTargets();
         this.secondaryButtons = new ArrayList<>();
         setSecondaryButtons();
     }
@@ -1044,6 +1061,7 @@ public class GUIView extends View {
         if (getState() == USE_EFFECT) {
             getClient().send(new SingleSelectionMessage(SelectionMessageType.EFFECT, getCharacter(), effect));
             setWeaponActivated(true);
+            setWaitStatus();
         }
         resetSelections();
         setEffects();
@@ -1261,6 +1279,7 @@ public class GUIView extends View {
             default:
                 break;
         }
+        setWaitStatus();
         resetSelections();
         setSquares();
         setActions();
@@ -1270,7 +1289,7 @@ public class GUIView extends View {
      * Handles clien effect target choice
      * @param character target chosen
      */
-    void handleEffectTargetSelect(GameCharacter character) {
+    private void handleEffectTargetSelect(GameCharacter character) {
         this.targetSelected.add(character);
         removeCharacterSelection(character);
         if(this.targetSelected.size() < this.maxSelectable) {
@@ -1511,9 +1530,11 @@ public class GUIView extends View {
         switch (getState()) {
             case PERSISTENCE_SELECTION:
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.PERSISTENCE, getCharacter(), input));
+                setWaitStatus();
                 break;
             case EFFECT_COMBO_SELECTION:
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.EFFECT_COMBO, getCharacter(), input));
+                setWaitStatus();
                 break;
             case EFFECT_REQUIRE_SELECTION:
                 super.setPossibilityRequire(input.equals("Y"));
@@ -1550,6 +1571,7 @@ public class GUIView extends View {
             default:
                 break;
         }
+        setWaitStatus();
         resetSelections();
         setWeapons();
         setActions();
@@ -1610,6 +1632,7 @@ public class GUIView extends View {
         if (getPowerupsSelection().isEmpty() && !getRequiredPayment().isEmpty()) {
             getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
                     getPaidPowerups()));
+            setWaitStatus();
             this.secondaryButtons = new ArrayList<>();
             setSecondaryButtons();
             resetSelections();
@@ -1662,6 +1685,7 @@ public class GUIView extends View {
             }
         }
         getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), ammos, new ArrayList<>()));
+        setWaitStatus();
         this.secondaryButtons = new ArrayList<>();
         setSecondaryButtons();
     }
@@ -1891,5 +1915,11 @@ public class GUIView extends View {
     void resetSelections() {
         super.resetSelections();
         this.targetSelected = new ArrayList<>();
+    }
+
+    private void setWaitStatus() {
+        this.currentStatus = "Wait...";
+        this.currentAction = "";
+        setBanner();
     }
 }

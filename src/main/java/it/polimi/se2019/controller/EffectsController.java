@@ -167,7 +167,7 @@ class EffectsController {
         return availableWeapons;
     }
 
-    boolean canApply(List<WeaponEffect> effect) {
+    private boolean canApply(List<WeaponEffect> effect) {
         int index = 0;
         while (true) {
             try {
@@ -236,6 +236,8 @@ class EffectsController {
         if (this.activePlayer.getWeaponCardByWeapon(this.weapon).isReady()) {
             this.board.unloadWeapon(this.activePlayer, this.activePlayer.getWeaponCardByWeapon(this.weapon));
         }
+        this.controller.sendAll(new SingleSelectionMessage(SelectionMessageType.EFFECT,
+                this.activePlayer.getCharacter(), effectType));
         switch (effectType) {
             case PRIMARY:
                 this.effectsQueue.addAll(0, this.weapon.getPrimaryEffect());
