@@ -20,7 +20,6 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
 
     private RMIServerInterface server;
     private final LinkedList<Message> queue;
-    private long pingTime;
 
     /**
      * Class constructor, it builds an RMI protocol client
@@ -61,6 +60,7 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
 
         new Thread(() -> {
             while(true) {
+<<<<<<< HEAD
                 if (System.currentTimeMillis() - this.pingTime > 5000) {
                     getView().handleConnectionError();
                 }
@@ -71,6 +71,14 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
                     getView().handleConnectionError();
                 }
 
+=======
+                try {
+                    this.server.ping();
+                } catch (RemoteException e) {
+                    getView().handleConnectionError();
+                }
+
+>>>>>>> parent of 3f48bfc... Update ping system
                 try {
                     sleep(3000);
                 } catch (InterruptedException e) {
@@ -98,7 +106,6 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
      */
     @Override
     public void ping() {
-        this.pingTime = System.currentTimeMillis();
         // Used to check if client is still connected
     }
 
