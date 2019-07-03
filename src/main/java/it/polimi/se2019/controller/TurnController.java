@@ -112,6 +112,7 @@ class TurnController {
      */
     void startTurn(TurnType type, GameCharacter player) {
         setActivePlayer(this.board.getPlayerByCharacter(player));
+        this.board.startTurnTimer(this.activePlayer.getCharacter());
         switch (type) {
             case FIRST_TURN:
                 this.movesLeft = 2;
@@ -149,7 +150,6 @@ class TurnController {
                 sendActions();
                 break;
         }
-        this.board.startTurnTimer(this.activePlayer.getCharacter());
     }
 
     /**
@@ -377,7 +377,7 @@ class TurnController {
     }
 
     /**
-     *
+     * Calculates and send available shoot actions
      */
     private void calculateShootAction() {
         if (!this.finalFrenzy && this.activePlayer.getDamages().size() < 6) {
@@ -495,8 +495,16 @@ class TurnController {
         handleMovementAction(coordinates);
         if (!this.moveShoot) {
             handleEndAction();
-        } else {
+        } else if (this.finalFrenzy) {
             handleReload();
+        } else {
+            this.effectsController.setActivePlayer(this.activePlayer);
+            if (this.effectsController.getAvailableWeapons().isEmpty()) {
+                handleEndAction();
+                return;
+            }
+            this.controller.send(new SelectionListMessage<>(SelectionMessageType.USE_WEAPON,
+                    this.activePlayer.getCharacter(), this.effectsController.getAvailableWeapons()));
         }
     }
 

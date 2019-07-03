@@ -171,8 +171,10 @@ public class BoardController extends AbstractSceneController {
         this.actionSelectionHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                ActionType action = ActionType.valueOf(((Button) event.getSource()).getId().toUpperCase());
-                getView().handleActionInput(action);
+                if (event.getSource() != null && ((Node) event.getSource()).getId() != null) {
+                    ActionType action = ActionType.valueOf(((Button) event.getSource()).getId().toUpperCase());
+                    getView().handleActionInput(action);
+                }
             }
         };
         this.powerupSelectionHandler = new EventHandler<MouseEvent>() {
@@ -191,10 +193,12 @@ public class BoardController extends AbstractSceneController {
         this.squareSelectionHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                Button s = (Button) event.getSource();
-                int x = Integer.parseInt(String.valueOf(s.getId().charAt(s.getId().length()-2)));
-                int y = Integer.parseInt(String.valueOf(s.getId().charAt(s.getId().length()-1)));
-                getView().handleSquareInput(x, y);
+                if (event.getSource() != null && ((Node) event.getSource()).getId() != null) {
+                    Button s = (Button) event.getSource();
+                    int x = Integer.parseInt(String.valueOf(s.getId().charAt(s.getId().length() - 2)));
+                    int y = Integer.parseInt(String.valueOf(s.getId().charAt(s.getId().length() - 1)));
+                    getView().handleSquareInput(x, y);
+                }
             }
         };
         this.weaponSelectionHandler = new EventHandler<MouseEvent>() {
@@ -209,42 +213,54 @@ public class BoardController extends AbstractSceneController {
         this.confirmHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                getView().handleContinue();
+                if (event.getSource() != null && ((Node) event.getSource()).getId() != null) {
+                    getView().handleContinue();
+                }
             }
         };
         this.characterSelectionHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                ImageView s = (ImageView) event.getSource();
-                getView().handleCharacterInput(GameCharacter.valueOf(s.getId().toUpperCase()));
+                if (event.getSource() != null && ((Node) event.getSource()).getId() != null) {
+                    ImageView s = (ImageView) event.getSource();
+                    getView().handleCharacterInput(GameCharacter.valueOf(s.getId().toUpperCase()));
+                }
             }
         };
         this.cardinalPointSelectionHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                Button s = (Button) event.getSource();
-                getView().handleCardinalPointInput(CardinalPoint.valueOf(s.getId().toUpperCase()));
+                if (event.getSource() != null && ((Node) event.getSource()).getId() != null) {
+                    Button s = (Button) event.getSource();
+                    getView().handleCardinalPointInput(CardinalPoint.valueOf(s.getId().toUpperCase()));
+                }
             }
         };
         this.effectSelectionHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                Button s = (Button) event.getSource();
-                getView().handleEffectInput(WeaponEffectOrderType.getFromIdentifier(s.getId().toUpperCase()));
+                if (event.getSource() != null && ((Node) event.getSource()).getId() != null) {
+                    Button s = (Button) event.getSource();
+                    getView().handleEffectInput(WeaponEffectOrderType.getFromIdentifier(s.getId().toUpperCase()));
+                }
             }
         };
         this.decisionSelectionHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                Button s = (Button) event.getSource();
-                getView().handleDecisionInput(s.getId());
+                if (event.getSource() != null && ((Node) event.getSource()).getId() != null) {
+                    Button s = (Button) event.getSource();
+                    getView().handleDecisionInput(s.getId());
+                }
             }
         };
         this.ammosSelectionHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                AmmoType ammo =  AmmoType.valueOf(((Button) event.getSource()).getId());
-                getView().handleAmmoInput(ammo);
+                if (event.getSource() != null && ((Node) event.getSource()).getId() != null) {
+                    AmmoType ammo = AmmoType.valueOf(((Button) event.getSource()).getId());
+                    getView().handleAmmoInput(ammo);
+                }
             }
         };
     }
@@ -329,6 +345,7 @@ public class BoardController extends AbstractSceneController {
                 img.setImage(null);
                 i++;
             }
+            i = 7;
             for (Map.Entry<Integer, List<GameCharacter>> skull : killshotTrack.entrySet()) {
                 ImageView img = (ImageView) this.skullsGrid.getChildren().get(i);
                 if (skull.getValue().isEmpty()) {
@@ -345,7 +362,7 @@ public class BoardController extends AbstractSceneController {
                         extraImg.setImage(new Image(DROPS_PATH + "drop_" + skull.getValue().get(j).getColor() + ".png"));
                     }
                 }
-                i++;
+                i--;
             }
         });
     }
