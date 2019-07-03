@@ -13,6 +13,7 @@ public class RMIVirtualClient extends Thread implements VirtualClientInterface {
     private final RMIClientInterface client;
     private RMIProtocolServer server;
     private boolean active;
+    private long pingTime;
 
     /**
      * Class constructor, it builds a RMI virtual client
@@ -43,6 +44,8 @@ public class RMIVirtualClient extends Thread implements VirtualClientInterface {
      */
     @Override
     public void run() {
+        this.pingTime = System.currentTimeMillis();
+
         while(this.active) {
 
             if (System.currentTimeMillis() - this.pingTime > 5000) {
@@ -61,6 +64,10 @@ public class RMIVirtualClient extends Thread implements VirtualClientInterface {
                 Thread.currentThread().interrupt();
             }
         }
+    }
+
+    void ping() {
+        this.pingTime = System.currentTimeMillis();
     }
 
     /**
