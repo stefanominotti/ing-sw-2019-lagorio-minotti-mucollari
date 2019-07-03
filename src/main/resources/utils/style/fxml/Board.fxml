@@ -1144,8 +1144,11 @@
                            <children>
                               <Pane prefHeight="123.0" prefWidth="517.0">
                                  <children>
-                                    <ImageView fx:id="playerBoardImage" fitHeight="122.0" fitWidth="590.0" pickOnBounds="true" preserveRatio="true" />
-                                    <GridPane fx:id="damagesGrid" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="338.0" translateX="43.0" translateY="40.0">
+                                    <ImageView fx:id="playerBoardImage" fitHeight="122.0" fitWidth="590.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../../player_boards/player_board_banshee.png" />
+                                       </image></ImageView>
+                                    <GridPane fx:id="damagesGrid" layoutX="43.0" layoutY="40.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="338.0">
                                        <columnConstraints>
                                           <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
                                           <ColumnConstraints hgrow="SOMETIMES" maxWidth="27.67" minWidth="27.67" prefWidth="17.67" />
@@ -1178,7 +1181,7 @@
                                           <ImageView fitHeight="35.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="11" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
                                        </children>
                                     </GridPane>
-                                    <GridPane fx:id="deathsGrid" maxHeight="30.0" maxWidth="158.0" minHeight="30.0" minWidth="157.0" prefHeight="30.0" prefWidth="157.0" translateX="105.0" translateY="88.0">
+                                    <GridPane fx:id="deathsGrid" layoutX="105.0" layoutY="88.0" maxHeight="30.0" maxWidth="158.0" minHeight="30.0" minWidth="157.0" prefHeight="30.0" prefWidth="157.0">
                                        <columnConstraints>
                                           <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="26.0" minWidth="26.0" prefWidth="26.0" />
                                           <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="26.0" minWidth="26.0" prefWidth="26.0" />
@@ -1199,7 +1202,7 @@
                                           <ImageView fitHeight="26.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5" />
                                        </children>
                                     </GridPane>
-                                    <GridPane fx:id="marksGrid" layoutX="234.0" prefHeight="19.0" prefWidth="147.0">
+                                    <GridPane fx:id="marksGrid" layoutX="236.0" layoutY="2.0" prefHeight="19.0" prefWidth="147.0">
                                       <columnConstraints>
                                           <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="274.0" />
                                           <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="274.0" />
@@ -1439,20 +1442,20 @@
                                     <Text fx:id="messagesText" fill="WHITE" layoutX="14.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" />
                                  </children>
                               </Pane>
-                              <HBox fx:id="secondaryButtonsBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="47.0" prefWidth="376.0">
+                              <HBox fx:id="secondaryButtonsBox" alignment="CENTER" maxHeight="-Infinity" prefHeight="47.0" prefWidth="376.0">
                                  <children>
-                                    <Button fx:id="actionButton1" alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="35.0" prefWidth="80.0" textFill="WHITE" visible="false" wrapText="true" />
-                                    <Button fx:id="actionButton2" alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="35.0" prefWidth="80.0" textFill="WHITE" visible="false" wrapText="true">
+                                    <Button fx:id="actionButton1" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="35.0" prefWidth="85.0" textFill="WHITE" visible="false" wrapText="true" />
+                                    <Button fx:id="actionButton2" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="35.0" prefWidth="85.0" textFill="WHITE" visible="false" wrapText="true">
                                        <HBox.margin>
                                           <Insets left="5.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button fx:id="actionButton3" alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="35.0" prefWidth="80.0" textFill="WHITE" visible="false" wrapText="true" HBox.hgrow="SOMETIMES">
+                                    <Button fx:id="actionButton3" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="35.0" prefWidth="85.0" textFill="WHITE" visible="false" wrapText="true" HBox.hgrow="SOMETIMES">
                                        <HBox.margin>
                                           <Insets left="5.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button fx:id="actionButton4" alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="35.0" prefWidth="80.0" textFill="WHITE" visible="false" wrapText="true">
+                                    <Button fx:id="actionButton4" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="35.0" prefWidth="85.0" textFill="WHITE" visible="false" wrapText="true">
                                        <HBox.margin>
                                           <Insets left="5.0" />
                                        </HBox.margin>

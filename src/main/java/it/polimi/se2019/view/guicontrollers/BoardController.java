@@ -380,13 +380,13 @@ public class BoardController extends AbstractSceneController {
         }
         Platform.runLater(() -> {
             if (!board.isFrenzyBoard()) {
-                this.damagesGrid.setTranslateX(105);
-                this.deathsGrid.setTranslateX(43);
+                this.damagesGrid.setTranslateX(0);
+                this.deathsGrid.setTranslateX(0);
                 this.playerBoardImage.setImage(new Image(PLAYER_BOARDS_PATH + "player_board_" +
                         player.toString().toLowerCase() + ".png"));
             } else {
-                this.damagesGrid.setTranslateX(50);
-                this.deathsGrid.setTranslateX(110);
+                this.damagesGrid.setTranslateX(10);
+                this.deathsGrid.setTranslateX(32);
                 this.playerBoardImage.setImage(new Image(PLAYER_BOARDS_PATH + "player_board_ff_" +
                         player.toString().toLowerCase() + ".png"));
             }
