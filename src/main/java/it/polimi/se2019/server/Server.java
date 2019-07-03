@@ -287,7 +287,12 @@ public class Server {
             this.rmiProtocolServer = new RMIProtocolServer(this, this.portRMI);
         } catch (RemoteException e) {
             LOGGER.log(Level.SEVERE, "Unable to start RMI server");
-            System.exit(0);
+            (new Timer()).schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    System.exit(0);
+                }
+            }, 2*1000L);
         }
         LOGGER.log(Level.INFO, "Waiting for clients");
     }

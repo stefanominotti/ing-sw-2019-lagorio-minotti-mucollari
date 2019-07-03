@@ -1048,6 +1048,7 @@ public class CLIView extends View {
      */
     @Override
     void handleInvalidToken() {
+        this.inputEnabled = false;
         showMessage("Invalid token");
         super.handleInvalidToken();
     }
@@ -1057,6 +1058,7 @@ public class CLIView extends View {
      */
     @Override
     void handleFullLobby() {
+        this.inputEnabled = false;
         showMessage("Lobby is full");
         super.handleFullLobby();
     }
@@ -1127,6 +1129,7 @@ public class CLIView extends View {
      */
     @Override
     void handleGameAlreadyStarted() {
+        this.inputEnabled = false;
         showMessage("Game already started, sorry");
         super.handleGameAlreadyStarted();
     }

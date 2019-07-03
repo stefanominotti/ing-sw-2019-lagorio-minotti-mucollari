@@ -875,14 +875,24 @@ public abstract class View {
      * Handles invalid token, after the app is closed
      */
     void handleInvalidToken() {
-        System.exit(0);
+        (new Timer()).schedule(new TimerTask() {
+            @Override
+            public void run() {
+                System.exit(0);
+            }
+        }, 3*1000L);
     }
 
     /**
      * Handles full lobby, after the app is closed
      */
     void handleFullLobby() {
-        System.exit(0);
+        (new Timer()).schedule(new TimerTask() {
+            @Override
+            public void run() {
+                System.exit(0);
+            }
+        }, 2*1000L);
     }
 
     /**
@@ -922,7 +932,12 @@ public abstract class View {
      * after the app is closed
      */
     void handleGameAlreadyStarted() {
-        System.exit(0);
+        (new Timer()).schedule(new TimerTask() {
+            @Override
+            public void run() {
+                System.exit(0);
+            }
+        }, 2*1000L);
     }
 
     /**

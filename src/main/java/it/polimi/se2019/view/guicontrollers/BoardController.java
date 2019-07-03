@@ -130,6 +130,8 @@ public class BoardController extends AbstractSceneController {
     private GridPane arenaButtonsContainer;
     @FXML
     private HBox secondaryButtonsBox;
+    @FXML
+    private GridPane extraMarks;
 
     private EventHandler<MouseEvent> setPlayerBoardHandler;
     private EventHandler<MouseEvent> weaponInfoHandler;
@@ -318,7 +320,7 @@ public class BoardController extends AbstractSceneController {
         updateKillshotTrack();
     }
 
-    void updateKillshotTrack() {
+    public void updateKillshotTrack() {
         Map<Integer, List<GameCharacter>> killshotTrack = getView().getBoard().getKillshotTrack();
         Platform.runLater(() -> {
             int i = 0;
@@ -336,6 +338,12 @@ public class BoardController extends AbstractSceneController {
                 } else if (skull.getValue().size() == 2) {
                     img.setImage(new Image(DROPS_PATH + "drop_" + skull.getValue().get(0).getColor() + "_" +
                             skull.getValue().get(1).getColor() + ".png"));
+                }
+                if (skull.getValue().size() > 2) {
+                    for (int j = 2; j < skull.getValue().size(); j++) {
+                        ImageView extraImg = (ImageView) this.extraMarks.getChildren().get(j - 2);
+                        extraImg.setImage(new Image(DROPS_PATH + "drop_" + skull.getValue().get(j).getColor() + ".png"));
+                    }
                 }
                 i++;
             }
@@ -355,9 +363,13 @@ public class BoardController extends AbstractSceneController {
         }
         Platform.runLater(() -> {
             if (!board.isFrenzyBoard()) {
+                this.damagesGrid.setTranslateX(50);
+                this.deathsGrid.setTranslateX(110);
                 this.playerBoardImage.setImage(new Image(PLAYER_BOARDS_PATH + "player_board_" +
                         player.toString().toLowerCase() + ".png"));
             } else {
+                this.damagesGrid.setTranslateX(105);
+                this.deathsGrid.setTranslateX(43);
                 this.playerBoardImage.setImage(new Image(PLAYER_BOARDS_PATH + "player_board_ff_" +
                         player.toString().toLowerCase() + ".png"));
             }
@@ -425,7 +437,7 @@ public class BoardController extends AbstractSceneController {
         });
     }
 
-    void updateKillshotPoints() {
+    public void updateKillshotPoints() {
         PlayerBoard board;
         if (this.activeBoard == getView().getCharacter()) {
             board = getView().getSelfPlayerBoard();
@@ -473,18 +485,17 @@ public class BoardController extends AbstractSceneController {
                 }
             }
         });
-        if(this.ammoLabel.getStyleClass().contains("font-ammo-small")) {
-            this.ammoLabel.getStyleClass().remove("font-ammo-small");
-        }
+        this.ammoLabel.getStyleClass().remove("font-ammo-small");
     }
 
     public void updatePoints() {
         SelfPlayerBoard board = getView().getSelfPlayerBoard();
         int score = board.getScore();
         int fourPoints = score/4;
-        score = fourPoints%4;
+        score = score - fourPoints;
         int twoPoints = score/2;
-        int onePoints = twoPoints%2;
+        score = score - twoPoints;
+        int onePoints = score;
         Platform.runLater(() -> {
             this.scoreLabel.setText("Your Points" + " (" + board.getScore() + ")");
             this.fourPointQty.setText("x" + fourPoints);

@@ -272,7 +272,7 @@ public class GUIView extends View {
 
     /**
      * Handles a player disconnection fromt the lobby when a game is not yet started
-     * @param character
+     * @param character disconnected
      */
     @Override
     void handleClientDisconnected(GameCharacter character) {
@@ -863,7 +863,7 @@ public class GUIView extends View {
 
     /**
      * Shows powerups choice
-     * @param powerups
+     * @param powerups List of powerups to be chosen
      */
     @Override
     void handleUsePowerupRequest(List<Powerup> powerups) {
@@ -911,6 +911,7 @@ public class GUIView extends View {
                 break;
             case MULTIPLE_POWERUPS_SELECTION:
                 handleMultiplePowerupsSelect(type, color);
+                return;
             default:
                 return;
         }
@@ -921,8 +922,8 @@ public class GUIView extends View {
         setPowerups();
     }
 
-    void handleMultiplePowerupsSelect(PowerupType type, AmmoType color) {
-        for(Powerup powerup: getPowerupsSelection()){
+    private void handleMultiplePowerupsSelect(PowerupType type, AmmoType color) {
+        for(Powerup powerup: getPowerupsSelection()) {
             if(powerup.getColor() == color && powerup.getType() == type) {
                 addPaidPowerup(powerup);
                 removePowerupSelection(powerup);
@@ -934,9 +935,14 @@ public class GUIView extends View {
             return;
         }
         getClient().send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP, getCharacter(), getPaidPowerups()));
+        this.secondaryButtons = new ArrayList<>();
+        resetSelections();
+        setSecondaryButtons();
+        setActions();
+        setPowerups();
     }
 
-    void handlePowerupPaymentSelect(PowerupType type, AmmoType color) {
+    private void handlePowerupPaymentSelect(PowerupType type, AmmoType color) {
         addPaidPowerup(new Powerup(type, color));
         if(getRequiredPayment().isEmpty()) {
             Map<AmmoType, Integer> ammo = new EnumMap<>(AmmoType.class);
@@ -1061,7 +1067,7 @@ public class GUIView extends View {
         setSquares();
     }
 
-    void setSquares() {
+    private void setSquares() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setSquares(getCoordinatesSelection());
         }
@@ -1289,7 +1295,7 @@ public class GUIView extends View {
      * Handles client multiple squares target input
      * @param character multiple squares chosen and target chosen
      */
-    void handleEffectMultipleSquareSelect(GameCharacter character) {
+    private void handleEffectMultipleSquareSelect(GameCharacter character) {
         this.targetSelected.add(character);
         Coordinates toRemove = null;
         List<GameCharacter> removeCharacter = new ArrayList<>();
@@ -1460,6 +1466,46 @@ public class GUIView extends View {
         setTargets();
     }
 
+    /**
+     * Shows kill shot track change
+     * @param skulls number
+     * @param players of which the kill shot track has changed
+     */
+    @Override
+    void handleKillshotTrackChange(int skulls, List<GameCharacter> players) {
+        super.handleKillshotTrackChange(skulls, players);
+        String player1;
+        if (players.contains(getCharacter())) {
+            player1 = "You";
+        } else {
+            player1 = players.get(0).toString();
+        }
+        if (players.size() == 1) {
+            addMessage(player1 + " got 1 mark on killshot track");
+        } else if (players.size() == 2 && players.get(0) == players.get(1)) {
+            addMessage(player1 + " got 2 marks on killshot track");
+        } else {
+            addMessage(player1 + " and " + players.get(1) + " got 1 mark on killshot track");
+        }
+        showMessage();
+        updateKillshotTrack();
+    }
+
+    /**
+     * Shows kill shot points change
+     * @param player of which the kill shot points changed
+     */
+    @Override
+    void handleKillshotPointsChange(GameCharacter player) {
+        super.handleKillshotPointsChange(player);
+        if (getCharacter() == player) {
+            addMessage("Your killshot points have been reduced");
+        } else {
+            addMessage(player + "'s killshot points have been reduced");
+        }
+        updateKillshotPoints(player);
+    }
+
     public void handleDecisionInput(String input) {
         input = input.toUpperCase();
         switch (getState()) {
@@ -1479,7 +1525,7 @@ public class GUIView extends View {
         setSecondaryButtons();
     }
 
-    void setWeapons() {
+    private void setWeapons() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setWeapons(getWeaponsSelection());
         }
@@ -1593,7 +1639,7 @@ public class GUIView extends View {
         setSecondaryButtons();
     }
 
-    void ammoRequest() {
+    private void ammoRequest() {
         this.currentStatus = "You must pay one ammo of any color";
         this.currentAction = "Select ammo color from buttons below";
         this.secondaryButtons = new ArrayList<>();
@@ -1607,7 +1653,7 @@ public class GUIView extends View {
     }
 
     public void handleAmmoInput(AmmoType ammo) {
-        Map<AmmoType, Integer> ammos = new HashMap<>();
+        Map<AmmoType, Integer> ammos = new EnumMap<>(AmmoType.class);
         for(AmmoType ammoType : AmmoType.values()) {
             if(ammoType == ammo) {
                 ammos.put(ammo, 1);
@@ -1615,6 +1661,9 @@ public class GUIView extends View {
                 ammos.put(ammo, 0);
             }
         }
+        getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), ammos, new ArrayList<>()));
+        this.secondaryButtons = new ArrayList<>();
+        setSecondaryButtons();
     }
 
     /**
@@ -1819,10 +1868,22 @@ public class GUIView extends View {
         }
     }
 
+    private void updateKillshotPoints(GameCharacter character) {
+        if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {
+            ((BoardController) this.controller).updateKillshotPoints();
+        }
+    }
+
     private void updatePoints() {
         if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() ==
                 getCharacter()) {
             ((BoardController) this.controller).updatePoints();
+        }
+    }
+
+    private void updateKillshotTrack() {
+        if (this.currentScene == SceneType.BOARD) {
+            ((BoardController) this.controller).updateKillshotTrack();
         }
     }
 

@@ -7,6 +7,8 @@ import it.polimi.se2019.view.CLIView;
 import it.polimi.se2019.view.GUIApp;
 import javafx.application.Application;
 import java.io.FileReader;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Class for handling clients
@@ -38,7 +40,12 @@ public class Client {
             jsonElement = (JsonObject) parser.parse(configReader);
         } catch (Exception e) {
             System.out.println("Invalid settings file");
-            System.exit(0);
+            (new Timer()).schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    System.exit(0);
+                }
+            }, 2*1000L);
         }
 
         try {
@@ -46,7 +53,12 @@ public class Client {
             port = gson.fromJson(jsonElement.get("port"), Integer.class);
         } catch (Exception e) {
             System.out.println("Can't read IP or Port");
-            System.exit(0);
+            (new Timer()).schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    System.exit(0);
+                }
+            }, 2*1000L);
         }
         try {
             connection = gson.fromJson(jsonElement.get("port"), Integer.class);

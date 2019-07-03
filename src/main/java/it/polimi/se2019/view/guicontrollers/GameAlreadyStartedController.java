@@ -5,7 +5,7 @@ package it.polimi.se2019.view.guicontrollers;
  */
 public class GameAlreadyStartedController extends AbstractSceneController {
 
-    public void quitApp(){
+    public void quitApp() {
         System.exit(0);
     }
 }
