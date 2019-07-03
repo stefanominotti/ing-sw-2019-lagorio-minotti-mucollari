@@ -47,6 +47,10 @@
 	-fx-background-color: #dc3545;
 }
 
+.button-danger:hover {
+	-fx-background-color: #bd3545;
+}
+
 .button-confirm {
 	-fx-background-color: #28a745;
 }

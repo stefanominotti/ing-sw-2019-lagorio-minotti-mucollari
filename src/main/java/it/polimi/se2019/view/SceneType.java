@@ -15,5 +15,6 @@ public enum SceneType {
     WEAPON_INFO,
     CARD_CHOICE,
     INVALID_TOKEN,
+    GAME_ALREADY_STARTED,
     RANKING
 }
