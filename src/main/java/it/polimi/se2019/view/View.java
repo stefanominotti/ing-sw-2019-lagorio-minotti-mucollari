@@ -59,7 +59,7 @@ public abstract class View {
     private static final Logger LOGGER = Logger.getLogger(View.class.getName());
 
     private static final String PATH = System.getProperty("user.home");
-    private static final String FILE_NAME = "/AdrenalinaClient.token";
+    private static final String FILE_NAME = "/AdrenalineClient.token";
 
     private GameCharacter character;
     private AbstractClient client;

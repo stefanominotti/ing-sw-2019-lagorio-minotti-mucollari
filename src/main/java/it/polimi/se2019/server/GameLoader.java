@@ -21,9 +21,9 @@ import java.util.logging.Logger;
 public class GameLoader {
 
     private static final Logger LOGGER = Logger.getLogger(GameLoader.class.getName());
-    private static final String SERVER_SETTINGS = "/server_settings.json";
+    private static final String SERVER_SETTINGS = "/AdrenalineServerSettings.json";
     private static final String CONFIG_PATH = System.getProperty("user.home");
-    private static final String DEFAULT_SAVE_FILE = "/game_data.json";
+    private static final String DEFAULT_SAVE_FILE = "/AdrenalineGame.save";
 
     private Board board;
     private String filePath;
@@ -40,7 +40,7 @@ public class GameLoader {
             this.filePath = CONFIG_PATH + '/' +
                     ((JsonObject)this.parser.parse(configReader)).get("savePath").getAsString();
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Invalid settings file, save file set to default game_data.json");
+            LOGGER.log(Level.SEVERE, "Invalid settings file, save file will be written by default on AdrenalineGame.save");
             this.filePath = CONFIG_PATH + DEFAULT_SAVE_FILE;
         }
         this.board = new Board();

@@ -56,7 +56,7 @@ public class Board extends Observable {
     private static final long DEFAULT_POWERUPS_TIMER = 10L*1000L;
     private static final int MIN_PLAYERS = 3;
     private static final String PATH = System.getProperty("user.home");
-    private static final String SERVER_SETTINGS = "/server_settings.json";
+    private static final String SERVER_SETTINGS = "/AdrenalineServerSettings.json";
 
     private long startTimer;
     private long turnTimer;

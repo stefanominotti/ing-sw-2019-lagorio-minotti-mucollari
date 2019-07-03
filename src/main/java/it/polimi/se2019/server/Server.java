@@ -26,7 +26,7 @@ public class Server {
 
     private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
     private static final String PATH = System.getProperty("user.home");
-    private static final String SERVER_SETTINGS = "/server_settings.json";
+    private static final String SERVER_SETTINGS = "/AdrenalineServerSettings.json";
     private static final int DEFAULT_SOCKET_PORT = 12345;
     private static final int DEFAULT_RMI_PORT = 1099;
     private static final int MAX_CLIENT = 5;
@@ -68,7 +68,7 @@ public class Server {
 
     /**
      * Main class
-     * @param args for options, not usable. Edit "server_settings.json" to set options
+     * @param args for options, not usable. Edit the json "AdrenalineServerSettings.json" to set options
      */
     public static void main(String[] args) {
         new Server();

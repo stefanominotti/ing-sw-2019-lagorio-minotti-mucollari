@@ -14,13 +14,13 @@ import java.io.FileReader;
 public class Client {
 
     private static final String CONFIG_PATH = System.getProperty("user.home");
-    private static final String CLIENT_SETTINGS = "/client_settings.json";
+    private static final String CLIENT_SETTINGS = "/AdrenalineClientSettings.json";
     private static final int DEFAULT_UI = 0;
     private static final int DEFAULT_CONNECTION = 0;
 
     /**
      * Main class
-     * @param args for options, not usable. Edit "client_settings.json" to set options
+     * @param args for options, not usable. Edit the json "AdrenalineClientSettings.json" to set options
      */
     public static void main(String[] args) {
 
