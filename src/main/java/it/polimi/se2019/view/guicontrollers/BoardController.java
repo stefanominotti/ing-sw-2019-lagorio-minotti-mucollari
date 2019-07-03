@@ -55,6 +55,8 @@ public class BoardController extends AbstractSceneController {
     private static final String CARD_SELECTABLE_CLASS = "card-selectable";
     private static final String CARD_SELECTED_CLASS = "card-selected";
     private static final String BUTTON_STD_CLASS = "button-std";
+    private static final String BUTTON_DANGER_CLASS = "button-danger";
+    private static final String BUTTON_CONFIRM_CLASS = "button-confirm";
     private static final String CHARACTER_CLASS = "img-characters";
     private static final String CHARACTER_SELECTABLE_CLASS = "img-characters-selectable";
     private static final String CHARACTER_SELECTED_CLASS = "img-characters-selected";
@@ -848,7 +850,7 @@ public class BoardController extends AbstractSceneController {
                 String classString;
                 if (buttons.get(0).equals("continue")) {
                     handler = this.confirmHandler;
-                    classString = "button-confirm";
+                    classString = BUTTON_CONFIRM_CLASS;
                 } else if (WeaponEffectOrderType.getFromIdentifier(buttons.get(0).toUpperCase()) != null) {
                     handler = this.effectSelectionHandler;
                     classString = BUTTON_STD_CLASS;
@@ -864,6 +866,7 @@ public class BoardController extends AbstractSceneController {
                     b.setText("Yes");
                 } else if (id.equals("n")) {
                     b.setText("No");
+                    b.getStyleClass().add(BUTTON_DANGER_CLASS);
                 } else {
                     b.setText(Character.toUpperCase(id.charAt(0)) + id.substring(1));
                 }
@@ -880,7 +883,8 @@ public class BoardController extends AbstractSceneController {
                     b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.cardinalPointSelectionHandler);
                     b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.effectSelectionHandler);
                     b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.decisionSelectionHandler);
-                    b.getStyleClass().remove("button-confirm");
+                    b.getStyleClass().remove(BUTTON_CONFIRM_CLASS);
+                    b.getStyleClass().remove(BUTTON_STD_CLASS);
                     b.getStyleClass().remove(BUTTON_STD_CLASS);
                 i++;
             }

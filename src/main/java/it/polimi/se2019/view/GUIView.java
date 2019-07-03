@@ -224,6 +224,20 @@ public class GUIView extends View {
     }
 
     /**
+     * Sets the scene for game already started
+     */
+    @Override
+    void handleGameAlreadyStarted() {
+        this.guiApp.setScene(SceneType.GAME_ALREADY_STARTED);
+        (new Timer()).schedule(new TimerTask() {
+            @Override
+            public void run() {
+                GUIView.super.handleGameAlreadyStarted();
+            }
+        }, 7*1000L);
+    }
+
+    /**
      * Sets the scene for nickname request
      */
     @Override
