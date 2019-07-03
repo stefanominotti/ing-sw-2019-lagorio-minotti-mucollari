@@ -1,7 +1,7 @@
 package it.polimi.se2019.model.messages.weapon;
 
 import it.polimi.se2019.model.GameCharacter;
-import it.polimi.se2019.model.Weapon;
+import it.polimi.se2019.model.playerassets.weapon.Weapon;
 
 public class WeaponSwitchMessage extends WeaponMessage {
 

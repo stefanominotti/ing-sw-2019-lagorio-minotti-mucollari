@@ -1,6 +1,11 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.arena.CardinalPoint;
+import it.polimi.se2019.model.arena.RoomColor;
+import it.polimi.se2019.model.playerassets.AmmoTile;
+import it.polimi.se2019.model.playerassets.AmmoType;
+import it.polimi.se2019.model.playerassets.weapon.Weapon;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

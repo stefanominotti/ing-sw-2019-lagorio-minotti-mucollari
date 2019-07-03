@@ -1,6 +1,6 @@
 package it.polimi.se2019.model.messages.player;
 
-import it.polimi.se2019.model.EffectType;
+import it.polimi.se2019.model.playerassets.weapon.EffectType;
 import it.polimi.se2019.model.GameCharacter;
 
 /**

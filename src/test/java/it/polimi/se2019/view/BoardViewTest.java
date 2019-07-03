@@ -1,8 +1,8 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.model.CardinalPoint;
+import it.polimi.se2019.model.arena.CardinalPoint;
 import it.polimi.se2019.model.GameCharacter;
-import it.polimi.se2019.model.RoomColor;
+import it.polimi.se2019.model.arena.RoomColor;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,6 +1,10 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.arena.CardinalPoint;
+import it.polimi.se2019.model.arena.Coordinates;
+import it.polimi.se2019.model.arena.RoomColor;
+import it.polimi.se2019.model.playerassets.weapon.EffectType;
 
 import java.io.Serializable;
 import java.util.*;

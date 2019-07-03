@@ -1,6 +1,6 @@
 package it.polimi.se2019.model.messages.player;
 
-import it.polimi.se2019.model.Coordinates;
+import it.polimi.se2019.model.arena.Coordinates;
 import it.polimi.se2019.model.GameCharacter;
 
 /**

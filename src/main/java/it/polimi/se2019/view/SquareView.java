@@ -1,13 +1,18 @@
 package it.polimi.se2019.view;
 
 import it.polimi.se2019.model.*;
+import it.polimi.se2019.model.arena.CardinalPoint;
+import it.polimi.se2019.model.arena.RoomColor;
+import it.polimi.se2019.model.playerassets.AmmoTile;
+import it.polimi.se2019.model.playerassets.AmmoType;
+import it.polimi.se2019.model.playerassets.weapon.Weapon;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static it.polimi.se2019.model.CardinalPoint.*;
+import static it.polimi.se2019.model.arena.CardinalPoint.*;
 import static it.polimi.se2019.view.SquareStringUtils.center;
 
 /**
