@@ -1,7 +1,6 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.model.arena.Coordinates;
 import it.polimi.se2019.model.messages.*;
 import it.polimi.se2019.model.messages.board.ArenaMessage;
 import it.polimi.se2019.model.messages.board.BoardMessage;
@@ -22,11 +21,6 @@ import it.polimi.se2019.model.messages.timer.TimerMessageType;
 import it.polimi.se2019.model.messages.timer.TimerType;
 import it.polimi.se2019.model.messages.turn.TurnContinuationMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
-import it.polimi.se2019.model.playerassets.AmmoType;
-import it.polimi.se2019.model.playerassets.Powerup;
-import it.polimi.se2019.model.playerassets.PowerupType;
-import it.polimi.se2019.model.playerassets.weapon.Weapon;
-import it.polimi.se2019.model.playerassets.weapon.WeaponEffectOrderType;
 import it.polimi.se2019.view.VirtualView;
 
 import java.util.*;

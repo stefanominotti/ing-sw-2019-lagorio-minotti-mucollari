@@ -1,7 +1,7 @@
 package it.polimi.se2019.model.messages.powerups;
 
 import it.polimi.se2019.model.GameCharacter;
-import it.polimi.se2019.model.playerassets.Powerup;
+import it.polimi.se2019.model.Powerup;
 import it.polimi.se2019.model.messages.Message;
 import it.polimi.se2019.model.messages.MessageType;
 import it.polimi.se2019.model.messages.SingleReceiverMessage;

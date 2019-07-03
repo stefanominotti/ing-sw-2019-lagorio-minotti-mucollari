@@ -1,17 +1,11 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.model.arena.*;
 import it.polimi.se2019.model.messages.payment.PaymentMessage;
 import it.polimi.se2019.model.messages.payment.PaymentMessageType;
 import it.polimi.se2019.model.messages.payment.PaymentType;
 import it.polimi.se2019.model.messages.selections.SelectionMessageType;
 import it.polimi.se2019.model.messages.selections.SelectionListMessage;
-import it.polimi.se2019.model.playerassets.AmmoType;
-import it.polimi.se2019.model.playerassets.Powerup;
-import it.polimi.se2019.model.playerassets.PowerupType;
-import it.polimi.se2019.model.playerassets.weapon.Weapon;
-import it.polimi.se2019.model.playerassets.weapon.WeaponCard;
 
 import java.util.*;
 import java.util.List;

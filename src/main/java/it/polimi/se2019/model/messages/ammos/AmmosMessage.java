@@ -1,6 +1,6 @@
 package it.polimi.se2019.model.messages.ammos;
 
-import it.polimi.se2019.model.playerassets.AmmoType;
+import it.polimi.se2019.model.AmmoType;
 import it.polimi.se2019.model.GameCharacter;
 import it.polimi.se2019.model.messages.Message;
 import it.polimi.se2019.model.messages.MessageType;

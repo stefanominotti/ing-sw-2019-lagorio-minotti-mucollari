@@ -1,11 +1,5 @@
 package it.polimi.se2019.model;
 
-import it.polimi.se2019.model.arena.Square;
-import it.polimi.se2019.model.playerassets.AmmoType;
-import it.polimi.se2019.model.playerassets.Powerup;
-import it.polimi.se2019.model.playerassets.PowerupType;
-import it.polimi.se2019.model.playerassets.weapon.Weapon;
-import it.polimi.se2019.model.playerassets.weapon.WeaponCard;
 import org.junit.Before;
 import org.junit.Test;
 

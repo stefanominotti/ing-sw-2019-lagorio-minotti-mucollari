@@ -1,15 +1,8 @@
 package it.polimi.se2019.model;
 
-import it.polimi.se2019.model.arena.CardinalPoint;
-import it.polimi.se2019.model.arena.Square;
 import it.polimi.se2019.model.messages.board.GameSetMessage;
 import it.polimi.se2019.model.messages.client.LoadViewMessage;
 import it.polimi.se2019.model.messages.player.ScoreMotivation;
-import it.polimi.se2019.model.playerassets.AmmoTile;
-import it.polimi.se2019.model.playerassets.AmmoType;
-import it.polimi.se2019.model.playerassets.weapon.EffectType;
-import it.polimi.se2019.model.playerassets.weapon.Weapon;
-import it.polimi.se2019.model.playerassets.weapon.WeaponCard;
 import org.junit.Before;
 import org.junit.Test;
 

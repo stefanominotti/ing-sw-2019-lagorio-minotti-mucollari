@@ -2,10 +2,6 @@ package it.polimi.se2019.server;
 
 import com.google.gson.*;
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.model.arena.Room;
-import it.polimi.se2019.model.arena.Square;
-import it.polimi.se2019.model.playerassets.AmmoTile;
-import it.polimi.se2019.model.playerassets.weapon.WeaponCard;
 
 import java.io.*;
 import java.nio.file.Files;

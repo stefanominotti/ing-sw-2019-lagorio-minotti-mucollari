@@ -1,7 +1,6 @@
 package it.polimi.se2019.controller;
 
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.model.arena.Coordinates;
 import it.polimi.se2019.model.messages.board.ArenaMessage;
 import it.polimi.se2019.model.messages.board.SkullsMessage;
 import it.polimi.se2019.model.messages.client.*;
@@ -12,12 +11,6 @@ import it.polimi.se2019.model.messages.selections.SelectionMessageType;
 import it.polimi.se2019.model.messages.selections.SingleSelectionMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessage;
 import it.polimi.se2019.model.messages.turn.TurnMessageType;
-import it.polimi.se2019.model.playerassets.AmmoTile;
-import it.polimi.se2019.model.playerassets.AmmoType;
-import it.polimi.se2019.model.playerassets.Powerup;
-import it.polimi.se2019.model.playerassets.PowerupType;
-import it.polimi.se2019.model.playerassets.weapon.Weapon;
-import it.polimi.se2019.model.playerassets.weapon.WeaponCard;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,12 +1,6 @@
 package it.polimi.se2019.model;
 
 import com.google.gson.Gson;
-import it.polimi.se2019.model.arena.Square;
-import it.polimi.se2019.model.playerassets.AmmoType;
-import it.polimi.se2019.model.playerassets.Powerup;
-import it.polimi.se2019.model.playerassets.PowerupType;
-import it.polimi.se2019.model.playerassets.weapon.Weapon;
-import it.polimi.se2019.model.playerassets.weapon.WeaponCard;
 
 import java.util.*;
 

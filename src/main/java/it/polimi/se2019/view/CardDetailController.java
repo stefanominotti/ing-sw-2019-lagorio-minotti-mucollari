@@ -1,7 +1,7 @@
 package it.polimi.se2019.view;
 
-import it.polimi.se2019.model.playerassets.AmmoType;
-import it.polimi.se2019.model.playerassets.weapon.Weapon;
+import it.polimi.se2019.model.AmmoType;
+import it.polimi.se2019.model.Weapon;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

@@ -2,13 +2,6 @@ package it.polimi.se2019.view;
 
 import it.polimi.se2019.controller.ActionType;
 import it.polimi.se2019.model.*;
-import it.polimi.se2019.model.arena.CardinalPoint;
-import it.polimi.se2019.model.arena.Coordinates;
-import it.polimi.se2019.model.playerassets.AmmoType;
-import it.polimi.se2019.model.playerassets.Powerup;
-import it.polimi.se2019.model.playerassets.PowerupType;
-import it.polimi.se2019.model.playerassets.weapon.Weapon;
-import it.polimi.se2019.model.playerassets.weapon.WeaponEffectOrderType;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;

@@ -1,8 +1,8 @@
 package it.polimi.se2019.model.messages.client;
 
 import it.polimi.se2019.model.GameCharacter;
-import it.polimi.se2019.model.playerassets.Powerup;
-import it.polimi.se2019.model.playerassets.weapon.Weapon;
+import it.polimi.se2019.model.Powerup;
+import it.polimi.se2019.model.Weapon;
 import it.polimi.se2019.view.PlayerBoard;
 import it.polimi.se2019.view.SquareView;
 
