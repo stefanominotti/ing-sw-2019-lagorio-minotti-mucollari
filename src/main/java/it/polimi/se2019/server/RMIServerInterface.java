@@ -1,7 +1,6 @@
 package it.polimi.se2019.server;
 
 import it.polimi.se2019.client.RMIClientInterface;
-import it.polimi.se2019.client.RMIProtocolClient;
 import it.polimi.se2019.model.messages.Message;
 
 import java.rmi.Remote;
@@ -31,5 +30,5 @@ public interface RMIServerInterface extends Remote {
      * Pings the client
      * @throws RemoteException if the client is not reachable
      */
-    void ping(RMIClientInterface client) throws RemoteException;
+    void ping() throws RemoteException;
 }
