@@ -924,10 +924,6 @@ public class CLIView extends View {
         }
 
         showMessage(text.toString());
-
-        if (getState() == MULTIPLE_POWERUPS_SELECTION && attacker != getCharacter()) {
-            handleUsePowerupRequest(getPowerupsSelection());
-        }
     }
 
     /**

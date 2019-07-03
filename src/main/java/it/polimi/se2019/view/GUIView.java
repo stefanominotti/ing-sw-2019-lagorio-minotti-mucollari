@@ -506,10 +506,6 @@ public class GUIView extends View {
         } else if (attackType == EffectType.MARK) {
             updateBoardMarks(character);
         }
-
-        if (getState() == MULTIPLE_POWERUPS_SELECTION && attacker != getCharacter()) {
-            handleUsePowerupRequest(getPowerupsSelection());
-        }
     }
 
     /**
@@ -992,11 +988,14 @@ public class GUIView extends View {
         }
     }
 
-    public void handleConfirmation() {
+    public void handleContinue() {
         switch (getState()) {
             case PAYMENT:
-                getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
-                        getPaidPowerups()));
+                if(!getRequiredPayment().isEmpty()) {
+                    getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
+                            getPaidPowerups()));
+                }
+                ammoRequest();
                 resetSelections();
                 setPowerups();
                 break;
@@ -1562,13 +1561,16 @@ public class GUIView extends View {
         for (Powerup p : toRemove) {
             removePowerupSelection(p);
         }
-        if (getPowerupsSelection().isEmpty()) {
+        if (getPowerupsSelection().isEmpty() && !getRequiredPayment().isEmpty()) {
             getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), getRequiredPayment(),
                     getPaidPowerups()));
             this.secondaryButtons = new ArrayList<>();
             setSecondaryButtons();
             resetSelections();
             setPowerups();
+            return;
+        } else if (getPowerupsSelection().isEmpty() && getRequiredPayment().isEmpty()) {
+            ammoRequest();
             return;
         }
         this.currentStatus = text.toString();
@@ -1589,6 +1591,30 @@ public class GUIView extends View {
         setBanner();
         setPowerups();
         setSecondaryButtons();
+    }
+
+    void ammoRequest() {
+        this.currentStatus = "You must pay one ammo of any color";
+        this.currentAction = "Select ammo color from buttons below";
+        this.secondaryButtons = new ArrayList<>();
+        for(AmmoType ammo : getSelfPlayerBoard().getAvailableAmmos().keySet()) {
+            if(getSelfPlayerBoard().getAvailableAmmos().get(ammo) > 0) {
+                this.secondaryButtons.add(ammo.toString().toLowerCase());
+            }
+        }
+        setBanner();
+        setSecondaryButtons();
+    }
+
+    void handleAmmoInput(AmmoType ammo) {
+        Map<AmmoType, Integer> ammos = new HashMap<>();
+        for(AmmoType ammoType : AmmoType.values()) {
+            if(ammoType == ammo) {
+                ammos.put(ammo, 1);
+            } else {
+                ammos.put(ammo, 0);
+            }
+        }
     }
 
     /**
