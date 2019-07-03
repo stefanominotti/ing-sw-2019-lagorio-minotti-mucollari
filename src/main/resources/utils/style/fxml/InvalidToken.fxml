@@ -11,7 +11,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="700.0" styleClass="background-pane" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.se2019.view.guicontrollers.InvalidTokenController">
    <top>
-      <VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="89.0" prefWidth="600.0" styleClass="topPane" stylesheets="@../css/style.css" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="89.0" prefWidth="600.0" styleClass="backgroud-dark-tiny" stylesheets="@../css/style.css" BorderPane.alignment="CENTER">
          <children>
             <ImageView fitHeight="41.0" fitWidth="303.0" pickOnBounds="true" preserveRatio="true" translateX="3.0" translateY="-10.0">
                <image>
@@ -49,7 +49,7 @@
                   <Label fx:id="removeSuccessLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="11.0" prefWidth="290.0" textFill="#28a745" />
                </children>
             </VBox>
-            <Button fx:id="removeButton" layoutX="78.0" layoutY="237.0" mnemonicParsing="false" onAction="#removeToken" prefHeight="30.0" prefWidth="149.0" styleClass="button-std" stylesheets="@../css/style.css" text="Remove invalid token" textFill="WHITE" />
+            <Button fx:id="removeButton" layoutX="73.0" layoutY="234.0" mnemonicParsing="false" onAction="#removeToken" prefHeight="36.0" prefWidth="161.0" styleClass="button-std" stylesheets="@../css/style.css" text="Remove invalid token" textFill="WHITE" />
          </children>
       </AnchorPane>
    </center>

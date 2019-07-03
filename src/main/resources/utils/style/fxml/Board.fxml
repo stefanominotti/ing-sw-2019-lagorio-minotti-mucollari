@@ -1418,28 +1418,28 @@
                               <Pane prefHeight="95.0" prefWidth="376.0">
                                  <children>
                                     <Text fx:id="messagesText" fill="WHITE" layoutX="14.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" />
-                                    <HBox fx:id="secondaryButtonsBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="47.0" prefWidth="376.0">
-                                       <children>
-                                          <Button fx:id="actionButton1" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0" textFill="WHITE" visible="false" />
-                                          <Button fx:id="actionButton2" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0" textFill="WHITE" visible="false">
-                                             <HBox.margin>
-                                                <Insets left="5.0" />
-                                             </HBox.margin>
-                                          </Button>
-                                          <Button fx:id="actionButton3" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0" textFill="WHITE" visible="false">
-                                             <HBox.margin>
-                                                <Insets left="5.0" />
-                                             </HBox.margin>
-                                          </Button>
-                                          <Button fx:id="actionButton4" mnemonicParsing="false" prefHeight="32.0" prefWidth="85.0" textFill="WHITE" visible="false">
-                                             <HBox.margin>
-                                                <Insets left="5.0" />
-                                             </HBox.margin>
-                                          </Button>
-                                       </children>
-                                    </HBox>
                                  </children>
                               </Pane>
+                              <HBox fx:id="secondaryButtonsBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="47.0" prefWidth="376.0">
+                                 <children>
+                                    <Button fx:id="actionButton1" alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="35.0" prefWidth="80.0" textFill="WHITE" visible="false" wrapText="true" />
+                                    <Button fx:id="actionButton2" alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="35.0" prefWidth="80.0" textFill="WHITE" visible="false" wrapText="true">
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="actionButton3" alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="35.0" prefWidth="80.0" textFill="WHITE" visible="false" wrapText="true" HBox.hgrow="SOMETIMES">
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="actionButton4" alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="35.0" prefWidth="80.0" textFill="WHITE" visible="false" wrapText="true">
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                              </HBox>
                            </children>
                         </VBox>
                      </children></StackPane>
