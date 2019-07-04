@@ -830,6 +830,8 @@ public class GUIView extends View {
         super.handleActionSelectionRequest(actions);
         this.currentStatus = "What do you want to do?";
         this.currentAction = "Select an action from the list above";
+        this.secondaryButtons = new ArrayList<>();
+        setSecondaryButtons();
         setBanner();
         setActions();
         setSquares();
@@ -878,6 +880,7 @@ public class GUIView extends View {
             this.secondaryButtons = new ArrayList<>();
             this.secondaryButtons.add(CONTINUE_BUTTON);
         } else {
+            this.secondaryButtons = new ArrayList<>();
             if (powerups.get(0).getType() == PowerupType.TARGETING_SCOPE) {
                 this.secondaryButtons.add(CONTINUE_BUTTON);
             } else {
@@ -1138,10 +1141,9 @@ public class GUIView extends View {
         this.currentAction = "Select one of the available targets";
         setBanner();
         setTargets();
+        this.secondaryButtons = new ArrayList<>();
         if (this.targetsSelected.size() >= this.minSelectable) {
             this.secondaryButtons.add(CONTINUE_BUTTON);
-        } else {
-            this.secondaryButtons = new ArrayList<>();
         }
         setSecondaryButtons();
     }
@@ -1212,10 +1214,9 @@ public class GUIView extends View {
         }
         this.currentStatus = text.toString();
         this.currentAction = "Select from the available players";
+        this.secondaryButtons = new ArrayList<>();
         if (this.targetsSelected.size() >= this.minSelectable) {
             this.secondaryButtons.add(CONTINUE_BUTTON);
-        } else {
-            this.secondaryButtons = new ArrayList<>();
         }
         setSecondaryButtons();
         setBanner();
@@ -1299,6 +1300,8 @@ public class GUIView extends View {
         this.targetsSelected.add(character);
         removeCharacterSelection(character);
         if(this.targetsSelected.size() < this.maxSelectable && !getCharactersSelection().isEmpty()) {
+            setTargets();
+            setActions();
             handleEffectTargetRequest();
             return;
         }
@@ -1595,6 +1598,7 @@ public class GUIView extends View {
         this.currentAction = "Select one from the buttons below";
         setBanner();
         setEffects();
+        this.secondaryButtons = new ArrayList<>();
         if (isWeaponActivated()) {
             this.secondaryButtons.add(CONTINUE_BUTTON);
         } else {
@@ -1763,9 +1767,16 @@ public class GUIView extends View {
      */
     @Override
     void handleGameFinished(Map<GameCharacter, Integer> ranking) {
-        setScene(SceneType.RANKING);
-        ((RankingController) this.controller).showMessage(ranking);
-        super.handleGameFinished(ranking);
+        this.currentStatus = "Game finished";
+        this.currentAction = "Ranking will be shown soon";
+        (new Timer()).schedule(new TimerTask() {
+            @Override
+            public void run() {
+                setScene(SceneType.RANKING);
+                ((RankingController) GUIView.this.controller).showMessage(ranking);
+                GUIView.super.handleGameFinished(ranking);
+            }
+        }, 5*1000L);
     }
 
     /**+

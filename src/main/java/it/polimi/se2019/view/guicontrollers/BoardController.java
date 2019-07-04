@@ -218,6 +218,7 @@ public class BoardController extends AbstractSceneController {
             public void handle(MouseEvent event) {
                 if (event.getSource() != null && ((Node) event.getSource()).getId() != null) {
                     getView().handleContinue();
+                    ((Button) event.getSource()).setVisible(false);
                 }
             }
         };
@@ -236,6 +237,7 @@ public class BoardController extends AbstractSceneController {
                 if (event.getSource() != null && ((Node) event.getSource()).getId() != null) {
                     Button s = (Button) event.getSource();
                     getView().handleCardinalPointInput(CardinalPoint.valueOf(s.getId().toUpperCase()));
+                    ((Button) event.getSource()).setVisible(false);
                 }
             }
         };
@@ -245,6 +247,7 @@ public class BoardController extends AbstractSceneController {
                 if (event.getSource() != null && ((Node) event.getSource()).getId() != null) {
                     Button s = (Button) event.getSource();
                     getView().handleEffectInput(WeaponEffectOrderType.getFromIdentifier(s.getId().toUpperCase()));
+                    ((Button) event.getSource()).setVisible(false);
                 }
             }
         };
@@ -254,6 +257,7 @@ public class BoardController extends AbstractSceneController {
                 if (event.getSource() != null && ((Node) event.getSource()).getId() != null) {
                     Button s = (Button) event.getSource();
                     getView().handleDecisionInput(s.getId());
+                    ((Button) event.getSource()).setVisible(false);
                 }
             }
         };
@@ -261,8 +265,9 @@ public class BoardController extends AbstractSceneController {
             @Override
             public void handle(MouseEvent event) {
                 if (event.getSource() != null && ((Node) event.getSource()).getId() != null) {
-                    AmmoType ammo = AmmoType.valueOf(((Button) event.getSource()).getId());
+                    AmmoType ammo = AmmoType.valueOf(((Button) event.getSource()).getId().toUpperCase());
                     getView().handleAmmoInput(ammo);
+                    ((Button) event.getSource()).setVisible(false);
                 }
             }
         };
