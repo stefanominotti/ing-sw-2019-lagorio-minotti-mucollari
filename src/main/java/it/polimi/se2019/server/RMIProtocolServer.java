@@ -2,7 +2,6 @@ package it.polimi.se2019.server;
 
 import it.polimi.se2019.client.RMIClientInterface;
 import it.polimi.se2019.model.messages.Message;
-import it.polimi.se2019.model.messages.MessageType;
 import it.polimi.se2019.model.messages.client.ClientMessage;
 import it.polimi.se2019.model.messages.client.ClientMessageType;
 import java.net.MalformedURLException;
@@ -118,11 +117,6 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
      */
     @Override
     public void notify(Message message, RMIClientInterface client) {
-        this.clientCorrespondency.get(client).updateLastMessageTime();
-        if (message.getMessageType() == MessageType.CLIENT_MESSAGE && ((ClientMessage) message).getType()
-                == ClientMessageType.PING) {
-            return;
-        }
         synchronized(this.queue) {
             this.queue.add(new ClientMessagePair(this.clientCorrespondency.get(client), message));
             this.queue.notifyAll();

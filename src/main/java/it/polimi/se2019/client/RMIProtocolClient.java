@@ -1,9 +1,6 @@
 package it.polimi.se2019.client;
 
 import it.polimi.se2019.model.messages.Message;
-import it.polimi.se2019.model.messages.MessageType;
-import it.polimi.se2019.model.messages.client.ClientMessage;
-import it.polimi.se2019.model.messages.client.ClientMessageType;
 import it.polimi.se2019.server.RMIServerInterface;
 import it.polimi.se2019.view.View;
 
@@ -23,7 +20,6 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
 
     private RMIServerInterface server;
     private final LinkedList<Message> queue;
-    private long lastMessageTime;
 
     /**
      * Class constructor, it builds an RMI protocol client
@@ -70,12 +66,8 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
                     getView().handleConnectionError();
                 }
 
-                if (System.currentTimeMillis() - this.lastMessageTime > 20000) {
-                    getView().handleConnectionError();
-                }
-
                 try {
-                    sleep(10000);
+                    sleep(3000);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
@@ -110,12 +102,6 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
      */
     @Override
     public void notify(Message message) {
-        this.lastMessageTime = System.currentTimeMillis();
-        if (message.getMessageType() == MessageType.CLIENT_MESSAGE && ((ClientMessage) message).getType()
-                == ClientMessageType.PING) {
-            send(message);
-            return;
-        }
         synchronized (this.queue) {
             this.queue.add(message);
             this.queue.notifyAll();

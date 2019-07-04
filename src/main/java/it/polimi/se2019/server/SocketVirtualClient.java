@@ -43,8 +43,8 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
     @Override
     public void send(Message message) {
         ObjectOutputStream writer;
-        if (message.getMessageType() != MessageType.CLIENT_MESSAGE || ((ClientMessage) message).getType()
-                != null) {
+        if (message.getMessageType() == MessageType.CLIENT_MESSAGE && ((ClientMessage) message).getType()
+                == null) {
             this.pingActive = false;
         }
         try {
