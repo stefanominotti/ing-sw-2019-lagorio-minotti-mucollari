@@ -49,20 +49,10 @@ public class RMIVirtualClient extends Thread implements VirtualClientInterface {
     }
 
     /**
-     * Runs the RMI virtual client and thread that handles network issues
+     * Runs the RMI virtual client
      */
     @Override
     public void run() {
-        this.pingActive = true;
-        this.lastMessageTime = System.currentTimeMillis();
-        new Thread(() -> {
-            while(this.active) {
-                if(System.currentTimeMillis() - this.lastMessageTime > 20000) {
-                    this.server.notifyDisconnection(this);
-                    this.pingActive = false;
-                }
-            }
-        }).start();
         while(this.active) {
             try {
                 this.client.ping();
@@ -72,6 +62,10 @@ public class RMIVirtualClient extends Thread implements VirtualClientInterface {
 
             if (this.pingActive) {
                 send(new ClientMessage(ClientMessageType.PING));
+            }
+            if (System.currentTimeMillis() - this.lastMessageTime > 20000) {
+                this.server.notifyDisconnection(this);
+                this.pingActive = false;
             }
 
             try {
