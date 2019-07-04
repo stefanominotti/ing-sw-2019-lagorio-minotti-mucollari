@@ -66,7 +66,7 @@
   "secondaryEffectTwo": [
     {
       "effectName": "tripode di supporto",
-      "description": "Dai 1 danno aggiuntivo all'altro dei due bersagli e/o dai 1 danno aggiuntivo a un bersaglio differente che puoi vedere",
+      "description": "Dai 1 danno aggiuntivo all'altro dei due bersagli",
       "cost": {
         "BLUE": 1,
         "RED": 0,
