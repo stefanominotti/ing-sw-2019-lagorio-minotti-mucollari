@@ -1053,6 +1053,7 @@ public class BoardController extends AbstractSceneController {
                 this.arenaPane.toFront();
                 for (ImageView player : this.players) {
                     player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.setPlayerBoardHandler);
+                    player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.characterSelectionHandler);
                     player.getStyleClass().remove(CHARACTER_SELECTABLE_CLASS);
                     player.getStyleClass().remove(CHARACTER_SELECTED_CLASS);
                     player.getStyleClass().add(CHARACTER_CLASS);

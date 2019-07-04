@@ -1100,7 +1100,7 @@ public class GUIView extends View {
     void handleEffectTargetRequest() {
         super.handleEffectTargetRequest();
         if (getEffectPossibility().getCharacters().size() == 1 &&
-                getEffectPossibility().getCharacters().get(0) == super.getCharacter()) {
+                getEffectPossibility().getCharacters().get(0) == getCharacter()) {
             handleEffectMoveRequest();
             return;
         }
