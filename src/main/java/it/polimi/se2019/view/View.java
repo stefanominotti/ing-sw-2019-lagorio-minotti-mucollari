@@ -1218,7 +1218,6 @@ public abstract class View {
             this.state = OTHER_PLAYER_TURN;
         } else {
             this.state = YOUR_TURN;
-            this.client.send(message);
         }
     }
 
