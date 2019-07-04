@@ -52,7 +52,7 @@ public class GUIView extends View {
     private SceneType currentScene;
 
     private GameCharacter activePlayer;
-    private List<GameCharacter> targetSelected;
+    private List<GameCharacter> targetsSelected;
     private int minSelectable;
     private int maxSelectable;
 
@@ -1018,7 +1018,7 @@ public class GUIView extends View {
                 super.selectionEffectFinish();
                 break;
             case EFFECT_TARGET_SELECTION:
-                super.setPossibilityCharacters(this.targetSelected);
+                super.setPossibilityCharacters(this.targetsSelected);
                 if (!getEffectPossibility().getSquares().isEmpty()) {
                     handleEffectMoveRequest();
                 } else {
@@ -1138,7 +1138,7 @@ public class GUIView extends View {
         this.currentAction = "Select one of the available targets";
         setBanner();
         setTargets();
-        if (this.targetSelected.size() >= this.minSelectable) {
+        if (this.targetsSelected.size() >= this.minSelectable) {
             this.secondaryButtons.add(CONTINUE_BUTTON);
         } else {
             this.secondaryButtons = new ArrayList<>();
@@ -1290,13 +1290,13 @@ public class GUIView extends View {
      * @param character target chosen
      */
     private void handleEffectTargetSelect(GameCharacter character) {
-        this.targetSelected.add(character);
+        this.targetsSelected.add(character);
         removeCharacterSelection(character);
-        if(this.targetSelected.size() < this.maxSelectable) {
+        if(this.targetsSelected.size() < this.maxSelectable && !getCharactersSelection().isEmpty()) {
             handleEffectTargetRequest();
             return;
         }
-        super.setPossibilityCharacters(this.targetSelected);
+        super.setPossibilityCharacters(this.targetsSelected);
         if (!getEffectPossibility().getSquares().isEmpty()) {
             setCharactersSelection(new ArrayList<>());
             setTargets();
@@ -1315,7 +1315,7 @@ public class GUIView extends View {
      * @param character multiple squares chosen and target chosen
      */
     private void handleEffectMultipleSquareSelect(GameCharacter character) {
-        this.targetSelected.add(character);
+        this.targetsSelected.add(character);
         Coordinates toRemove = null;
         List<GameCharacter> removeCharacter = new ArrayList<>();
         for(Coordinates coordinates : getMultipleSquareSelection().keySet()) {
@@ -1328,11 +1328,11 @@ public class GUIView extends View {
             removeCharacterSelection(c);
         }
         removeMultipleSquareSelection(toRemove);
-        if(this.targetSelected.size() < this.minSelectable) {
+        if(this.targetsSelected.size() < this.minSelectable) {
             handleMultipleSquareRequest();
             return;
         }
-        super.setPossibilityCharacters(this.targetSelected);
+        super.setPossibilityCharacters(this.targetsSelected);
         super.selectionEffectFinish();
         resetSelections();
         setTargets();
@@ -1584,7 +1584,7 @@ public class GUIView extends View {
     @Override
     void handleEffectRequest(List<WeaponEffectOrderType> effects) {
         super.handleEffectRequest(effects);
-        this.targetSelected = new ArrayList<>();
+        this.targetsSelected = new ArrayList<>();
         this.currentStatus = "Which effect do you want to use?";
         this.currentAction = "Select one from the buttons below";
         setBanner();
@@ -1798,7 +1798,7 @@ public class GUIView extends View {
 
     private void setTargets() {
         if (this.currentScene == SceneType.BOARD) {
-            ((BoardController) this.controller).setTargets(getCharactersSelection(), this.targetSelected);
+            ((BoardController) this.controller).setTargets(getCharactersSelection(), this.targetsSelected);
         }
     }
 
@@ -1914,7 +1914,7 @@ public class GUIView extends View {
     @Override
     void resetSelections() {
         super.resetSelections();
-        this.targetSelected = new ArrayList<>();
+        this.targetsSelected = new ArrayList<>();
     }
 
     private void setWaitStatus() {

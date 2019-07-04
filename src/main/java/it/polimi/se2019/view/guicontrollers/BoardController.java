@@ -144,7 +144,7 @@ public class BoardController extends AbstractSceneController {
     private EventHandler<MouseEvent> cardinalPointSelectionHandler;
     private EventHandler<MouseEvent> effectSelectionHandler;
     private EventHandler<MouseEvent> decisionSelectionHandler;
-    private EventHandler<MouseEvent> ammosSelectionHandler;
+    private EventHandler<MouseEvent> ammoSelectionHandler;
 
     /**
      * Class constructor, it builds a board controller and its event handlers
@@ -257,7 +257,7 @@ public class BoardController extends AbstractSceneController {
                 }
             }
         };
-        this.ammosSelectionHandler = new EventHandler<MouseEvent>() {
+        this.ammoSelectionHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 if (event.getSource() != null && ((Node) event.getSource()).getId() != null) {
@@ -989,7 +989,7 @@ public class BoardController extends AbstractSceneController {
                     classString = BUTTON_STD_CLASS;
                 } else if (buttons.get(0).equals("red") || buttons.get(0).equals("yellow") ||
                         buttons.get(0).equals("blue")) {
-                    handler = this.ammosSelectionHandler;
+                    handler = this.ammoSelectionHandler;
                     if (id.equals("red")) {
                         classString = "ammo-red";
                     } else if (id.equals("blue")) {
