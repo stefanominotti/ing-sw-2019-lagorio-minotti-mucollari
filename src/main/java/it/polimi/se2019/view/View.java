@@ -104,6 +104,7 @@ public abstract class View {
         }
         this.paidPowerups = new ArrayList<>();
         this.charactersSelection = new ArrayList<>();
+        this.connectionError = false;
         resetSelections();
     }
 
@@ -474,16 +475,15 @@ public abstract class View {
      * Handles connection error. Ends the app
      */
     public void handleConnectionError() {
-        if (this.connectionError) {
-            return;
+        if (!this.connectionError) {
+            this.connectionError = true;
+            (new Timer()).schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    System.exit(0);
+                }
+            }, 2*1000L);
         }
-        this.connectionError = true;
-        (new Timer()).schedule(new TimerTask() {
-            @Override
-            public void run() {
-                System.exit(0);
-            }
-        }, 2*1000L);
     }
 
     /**

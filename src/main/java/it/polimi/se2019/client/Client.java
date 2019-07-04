@@ -31,7 +31,6 @@ public class Client {
         String ip = null;
         int port = 0;
         FileReader configReader;
-        boolean connectionError = false;
 
         Gson gson = new Gson();
         JsonParser parser = new JsonParser();
@@ -40,10 +39,6 @@ public class Client {
             configReader = new FileReader(CONFIG_PATH + CLIENT_SETTINGS);
             jsonElement = (JsonObject) parser.parse(configReader);
         } catch (Exception e) {
-            if (connectionError) {
-                return;
-            }
-            connectionError = true;
             System.out.println("Invalid settings file");
             (new Timer()).schedule(new TimerTask() {
                 @Override
@@ -58,10 +53,6 @@ public class Client {
             port = gson.fromJson(jsonElement.get("port"), Integer.class);
         } catch (Exception e) {
             System.out.println("Can't read IP or Port");
-            if (connectionError) {
-                return;
-            }
-            connectionError = true;
             (new Timer()).schedule(new TimerTask() {
                 @Override
                 public void run() {
