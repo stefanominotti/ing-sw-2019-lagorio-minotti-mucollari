@@ -1251,7 +1251,7 @@ public class GUIView extends View {
     @Override
     void handleEffectRequireRequest() {
         super.handleEffectRequireRequest();
-        this.currentStatus = "Do you want to perform not mandatory effect?";
+        this.currentStatus = "Do you want to perform an optional effect?";
         this.currentAction = getEffectPossibility().getDescription();
         setBanner();
         this.secondaryButtons = Arrays.asList("y", "n");
