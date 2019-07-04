@@ -1212,6 +1212,12 @@ public class GUIView extends View {
         }
         this.currentStatus = text.toString();
         this.currentAction = "Select from the available players";
+        if (this.targetsSelected.size() >= this.minSelectable) {
+            this.secondaryButtons.add(CONTINUE_BUTTON);
+        } else {
+            this.secondaryButtons = new ArrayList<>();
+        }
+        setSecondaryButtons();
         setBanner();
         setTargets();
     }
