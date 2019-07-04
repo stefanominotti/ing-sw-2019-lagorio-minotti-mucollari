@@ -13,6 +13,8 @@ import it.polimi.se2019.model.playerassets.Powerup;
 import it.polimi.se2019.model.playerassets.weapons.*;
 
 import java.util.*;
+
+import static it.polimi.se2019.model.playerassets.weapons.WeaponEffectOrderType.PRIMARY;
 import static it.polimi.se2019.model.playerassets.weapons.WeaponEffectOrderType.SECONDARYONE;
 import static it.polimi.se2019.model.playerassets.weapons.WeaponEffectOrderType.SECONDARYTWO;
 
@@ -555,7 +557,7 @@ class EffectsController {
                     Square originalPosition = this.activePlayer.getPosition();
                     originalPosition.removePlayer(this.activePlayer);
                     List<Square> toRemove = new ArrayList<>();
-
+                    this.effectOrder = PRIMARY;
                     for (Square square : availableSquares) {
                         this.activePlayer.setPosition(square);
                         square.addPlayer(this.activePlayer);
