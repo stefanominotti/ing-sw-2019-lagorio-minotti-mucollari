@@ -997,6 +997,7 @@ public class GUIView extends View {
         if (!getRequiredPayment().isEmpty()) {
             for (Map.Entry<AmmoType, Integer> ammo : getRequiredPayment().entrySet()) {
                 if (ammo.getValue() != 0) {
+                    setPowerups();
                     requirePayment();
                     return;
                 }
