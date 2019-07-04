@@ -1062,6 +1062,7 @@ public class BoardController extends AbstractSceneController {
                         player.getStyleClass().add(CHARACTER_SELECTABLE_CLASS);
                         player.getStyleClass().remove(CHARACTER_CLASS);
                     } else if (selected.contains(GameCharacter.valueOf(player.getId().toUpperCase()))) {
+                        player.setOnMousePressed(this.setPlayerBoardHandler);
                         player.getStyleClass().add(CHARACTER_SELECTED_CLASS);
                         player.getStyleClass().remove(CHARACTER_CLASS);
                     }
