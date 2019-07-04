@@ -1328,7 +1328,7 @@ public class GUIView extends View {
             removeCharacterSelection(c);
         }
         removeMultipleSquareSelection(toRemove);
-        if(this.targetsSelected.size() < this.minSelectable) {
+        if(this.targetsSelected.size() < this.minSelectable && !getCharactersSelection().isEmpty()) {
             handleMultipleSquareRequest();
             return;
         }
