@@ -360,11 +360,15 @@ class TurnController {
         }
         Square originalPosition = this.activePlayer.getPosition();
         this.effectsController.setActivePlayer(this.activePlayer);
-        for (Square s : this.board.getSquaresByDistance(this.activePlayer, distance)) {
+        List<Square> squareByDistance = this.board.getSquaresByDistance(this.activePlayer, distance);
+        originalPosition.removePlayer(this.activePlayer);
+        for (Square s : squareByDistance) {
             this.activePlayer.setPosition(s);
+            s.addPlayer(this.activePlayer);
             if (!this.effectsController.getAvailableWeapons().isEmpty()) {
                 movements.add(new Coordinates(s.getX(), s.getY()));
             }
+            s.removePlayer(this.activePlayer);
         }
         if (reload) {
             for (Map.Entry<Weapon, Boolean> w : originalLoadedWeapons.entrySet()) {
@@ -372,6 +376,7 @@ class TurnController {
             }
         }
         this.activePlayer.setPosition(originalPosition);
+        originalPosition.addPlayer(this.activePlayer);
         this.board.resumeTurnTimer();
         return movements;
     }

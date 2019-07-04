@@ -552,17 +552,21 @@ class EffectsController {
                 if (this.effectOrder == SECONDARYONE && !this.mainEffectApplied) {
                     this.board.pauseTurnTimer();
                     Square originalPosition = this.activePlayer.getPosition();
+                    originalPosition.removePlayer(this.activePlayer);
                     List<Square> toRemove = new ArrayList<>();
 
                     for (Square square : availableSquares) {
                         this.activePlayer.setPosition(square);
+                        square.addPlayer(this.activePlayer);
                         try {
                             seeEffectPossibility(this.weapon.getPrimaryEffect().get(0));
                         } catch (UnsupportedOperationException e) {
                             toRemove.add(square);
                         }
+                        square.removePlayer(this.activePlayer);
                     }
                     this.activePlayer.setPosition(originalPosition);
+                    originalPosition.addPlayer(this.activePlayer);
                     this.board.resumeTurnTimer();
                     availableSquares.removeAll(toRemove);
                 }
