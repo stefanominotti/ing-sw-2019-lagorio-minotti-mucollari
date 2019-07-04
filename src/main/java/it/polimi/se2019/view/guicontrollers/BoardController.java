@@ -983,17 +983,17 @@ public class BoardController extends AbstractSceneController {
                 Button b = (Button) this.secondaryButtonsBox.getChildren().get(i);
                 EventHandler<MouseEvent> handler;
                 String classString;
-                if (buttons.get(0).equals("continue")) {
+                String identifier = buttons.get(0);
+                if (identifier.equals("continue")) {
                     handler = this.confirmHandler;
                     classString = BUTTON_CONFIRM_CLASS;
-                } else if (WeaponEffectOrderType.getFromIdentifier(buttons.get(0).toUpperCase()) != null) {
+                } else if (WeaponEffectOrderType.getFromIdentifier(identifier.toUpperCase()) != null) {
                     handler = this.effectSelectionHandler;
                     classString = BUTTON_STD_CLASS;
-                } else if (buttons.get(0).equals("y")) {
+                } else if (identifier.equals("y")) {
                     handler = this.decisionSelectionHandler;
                     classString = BUTTON_STD_CLASS;
-                } else if (buttons.get(0).equals("red") || buttons.get(0).equals("yellow") ||
-                        buttons.get(0).equals("blue")) {
+                } else if (identifier.equals("red") || identifier.equals("yellow") || identifier.equals("blue")) {
                     handler = this.ammoSelectionHandler;
                     if (id.equals("red")) {
                         classString = "ammo-red";
@@ -1025,11 +1025,7 @@ public class BoardController extends AbstractSceneController {
                 Button b = (Button) this.secondaryButtonsBox.getChildren().get(i);
                 b.setId(null);
                 b.setVisible(false);
-                b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.confirmHandler);
-                b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.cardinalPointSelectionHandler);
-                b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.effectSelectionHandler);
-                b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.decisionSelectionHandler);
-                b.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.ammoSelectionHandler);
+                b.setOnMousePressed(null);
                 b.getStyleClass().remove(BUTTON_CONFIRM_CLASS);
                 b.getStyleClass().remove(BUTTON_STD_CLASS);
                 b.getStyleClass().remove(BUTTON_STD_CLASS);
@@ -1052,23 +1048,25 @@ public class BoardController extends AbstractSceneController {
             if (!targets.isEmpty()) {
                 this.arenaPane.toFront();
                 for (ImageView player : this.players) {
-                    player.setOnMousePressed(this.setPlayerBoardHandler);
-                    player.getStyleClass().remove(CHARACTER_SELECTABLE_CLASS);
-                    player.getStyleClass().remove(CHARACTER_SELECTED_CLASS);
-                    player.getStyleClass().add(CHARACTER_CLASS);
                     if (targets.contains(GameCharacter.valueOf(player.getId().toUpperCase()))) {
                         player.setOnMousePressed(this.characterSelectionHandler);
+                        player.getStyleClass().remove(CHARACTER_SELECTED_CLASS);
                         player.getStyleClass().add(CHARACTER_SELECTABLE_CLASS);
                         player.getStyleClass().remove(CHARACTER_CLASS);
                     } else if (selected.contains(GameCharacter.valueOf(player.getId().toUpperCase()))) {
                         player.setOnMousePressed(null);
+                        player.getStyleClass().remove(CHARACTER_SELECTABLE_CLASS);
                         player.getStyleClass().add(CHARACTER_SELECTED_CLASS);
                         player.getStyleClass().remove(CHARACTER_CLASS);
+                    } else {
+                        player.setOnMousePressed(this.setPlayerBoardHandler);
+                        player.getStyleClass().remove(CHARACTER_SELECTABLE_CLASS);
+                        player.getStyleClass().remove(CHARACTER_SELECTED_CLASS);
+                        player.getStyleClass().add(CHARACTER_CLASS);
                     }
                 }
             } else {
                 for (ImageView player : this.players) {
-                    player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.characterSelectionHandler);
                     player.setOnMousePressed(this.setPlayerBoardHandler);
                     player.getStyleClass().remove(CHARACTER_SELECTABLE_CLASS);
                     player.getStyleClass().remove(CHARACTER_SELECTED_CLASS);

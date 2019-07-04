@@ -1689,9 +1689,9 @@ public class GUIView extends View {
         Map<AmmoType, Integer> ammos = new EnumMap<>(AmmoType.class);
         for(AmmoType ammoType : AmmoType.values()) {
             if(ammoType == ammo) {
-                ammos.put(ammo, 1);
+                ammos.put(ammoType, 1);
             } else {
-                ammos.put(ammo, 0);
+                ammos.put(ammoType, 0);
             }
         }
         getClient().send(new PaymentSentMessage(getCurrentPayment(), getCharacter(), ammos, new ArrayList<>()));
