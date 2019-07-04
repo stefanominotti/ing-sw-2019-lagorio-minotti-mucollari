@@ -99,7 +99,7 @@ public class SquareView implements Serializable {
         this.spawn = spawn;
         this.color = color;
         this.activePlayers = activePlayers;
-        this.availableAmmoTile= availableAmmoTile;
+        this.availableAmmoTile = availableAmmoTile;
         this.store = store;
         this.nearbyAccessibility = map;
     }

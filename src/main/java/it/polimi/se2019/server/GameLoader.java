@@ -83,7 +83,8 @@ public class GameLoader {
                 int posY = this.gson.fromJson(
                         jsonPlayer.getAsJsonObject().get("player_position").getAsJsonObject().get("y"), int.class);
                 Square square = this.board.getArena().getSquareByCoordinate(posX, posY);
-                this.board.movePlayer(player, square);
+                square.addPlayer(player);
+                player.setPosition(square);
             } catch (NullPointerException e) {
                 // Ignore
             }
