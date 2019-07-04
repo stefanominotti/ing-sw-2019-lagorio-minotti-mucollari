@@ -19,6 +19,7 @@ public class GameTimer {
     private Future<?> future = null;
     private Board board;
     private GameCharacter character;
+    private int pauseCounter;
 
 
     /**
@@ -57,7 +58,10 @@ public class GameTimer {
      * Pause the timer
      */
     void pause() {
-        if(!this.isRunning) return;
+        this.pauseCounter++;
+        if(!this.isRunning) {
+            return;
+        }
         this.future.cancel(false);
         this.isRunning = false;
     }
@@ -66,7 +70,10 @@ public class GameTimer {
      * Resumes the timer
      */
     void resume() {
-        this.start();
+        this.pauseCounter--;
+        if (this.pauseCounter == 0) {
+            this.start();
+        }
     }
 
     /**

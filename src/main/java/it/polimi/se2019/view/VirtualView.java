@@ -191,10 +191,12 @@ public class VirtualView extends Observable implements Observer {
     private void update(TurnMessage message) {
         if (message.getType() == TurnMessageType.START) {
             this.server.saveGame();
+            sendAll(message);
         } else if (message.getType() == TurnMessageType.CONTINUATION) {
             send((SingleReceiverMessage) message);
+        } else {
+            sendAll(message);
         }
-        sendAll(message);
     }
 
     /**

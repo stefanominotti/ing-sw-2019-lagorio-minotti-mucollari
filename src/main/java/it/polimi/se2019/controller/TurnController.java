@@ -358,10 +358,10 @@ class TurnController {
                 }
             }
         }
-        Square originalPosition = this.activePlayer.getPosition();
+        Square originalPos = this.activePlayer.getPosition();
         this.effectsController.setActivePlayer(this.activePlayer);
         List<Square> squareByDistance = this.board.getSquaresByDistance(this.activePlayer, distance);
-        originalPosition.removePlayer(this.activePlayer);
+        originalPos.removePlayer(this.activePlayer);
         for (Square s : squareByDistance) {
             this.activePlayer.setPosition(s);
             s.addPlayer(this.activePlayer);
@@ -375,8 +375,8 @@ class TurnController {
                 this.activePlayer.getWeaponCardByWeapon(w.getKey()).setReady(w.getValue());
             }
         }
-        this.activePlayer.setPosition(originalPosition);
-        originalPosition.addPlayer(this.activePlayer);
+        this.activePlayer.setPosition(originalPos);
+        originalPos.addPlayer(this.activePlayer);
         this.board.resumeTurnTimer();
         return movements;
     }

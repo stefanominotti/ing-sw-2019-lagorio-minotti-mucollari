@@ -735,10 +735,8 @@ public class GUIView extends View {
         this.secondaryButtons = new ArrayList<>();
         setSecondaryButtons();
         setPowerups();
-        if (player != getCharacter()) {
-            this.currentStatus = WAITING_FOR_PLAYER_TURN_MESSAGE;
-            this.currentAction = getBoardByCharacter(player).getNickname() + " (" + player + ") is playing";
-        }
+        this.currentStatus = WAITING_FOR_PLAYER_TURN_MESSAGE;
+        this.currentAction = getBoardByCharacter(player).getNickname() + " (" + player + ") is playing";
         setBanner();
         super.handleTurnContinuation(player);
     }
