@@ -12,5 +12,6 @@ public enum ClientMessageType {
     CLIENT_RECONNECTION,
     LOBBY_FULL,
     INVALID_TOKEN,
-    CHARACTER_SELECTION
+    CHARACTER_SELECTION,
+    PING
 }

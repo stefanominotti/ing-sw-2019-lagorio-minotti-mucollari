@@ -228,7 +228,7 @@ public class Server {
                             new ClientReadyMessage(((CharacterMessage) message).getCharacter(),
                                     this.clientNicknames.get(client), ((CharacterMessage) message).getToken()));
                     this.clientNicknames.remove(client);
-                } else {
+                } else if (((ClientMessage) message).getType() == ClientMessageType.CLIENT_RECONNECTION) {
                     for (Player player : this.model.getPlayers()) {
                         GameCharacter character = player.verifyPlayer(((ReconnectionMessage) message).getToken());
                         if (character != null && !this.clients.containsKey(character)) {

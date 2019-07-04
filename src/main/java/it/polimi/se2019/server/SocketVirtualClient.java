@@ -1,6 +1,9 @@
 package it.polimi.se2019.server;
 
 import it.polimi.se2019.model.messages.Message;
+import it.polimi.se2019.model.messages.MessageType;
+import it.polimi.se2019.model.messages.client.ClientMessage;
+import it.polimi.se2019.model.messages.client.ClientMessageType;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,6 +22,8 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
     private Socket socket;
     private SocketServer server;
     private boolean active;
+    private boolean pingActive;
+    private long lastMessageTime;
 
     /**
      * Class constructor, it builds a socket virtual client
@@ -38,7 +43,10 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
     @Override
     public void send(Message message) {
         ObjectOutputStream writer;
-
+        if (message.getMessageType() == MessageType.CLIENT_MESSAGE && ((ClientMessage) message).getType()
+                == null) {
+            this.pingActive = false;
+        }
         try {
             writer = new ObjectOutputStream(this.socket.getOutputStream());
             writer.writeObject(message);
@@ -46,6 +54,7 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Error on sending Message");
         }
+        this.pingActive = true;
     }
 
 
@@ -54,21 +63,50 @@ public class SocketVirtualClient extends Thread implements VirtualClientInterfac
      */
     @Override
     public void run() {
+        this.pingActive = true;
+        this.lastMessageTime = System.currentTimeMillis();
+        new Thread(() -> {
+            while(this.active) {
+                if (this.pingActive) {
+                    send(new ClientMessage(ClientMessageType.PING));
+                }
+                if (System.currentTimeMillis() - this.lastMessageTime > 20000) {
+                    this.server.notifyDisconnection(this);
+                    this.pingActive = false;
+                }
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }).start();
+
         try {
             while (this.active && !this.socket.isClosed()) {
                 ObjectInputStream inputStream = new ObjectInputStream((this.socket.getInputStream()));
                 Message message = (Message) inputStream.readObject();
                 if (message != null) {
-                    this.server.notify(message, this);
+                    this.lastMessageTime = System.currentTimeMillis();
+                    if (message.getMessageType() != MessageType.CLIENT_MESSAGE || ((ClientMessage) message).getType()
+                            != ClientMessageType.PING) {
+                        this.server.notify(message, this);
+                    }
                 }
             }
         } catch (IOException e) {
             this.server.notifyDisconnection(this);
+            this.pingActive = false;
         } catch (ClassNotFoundException e) {
             LOGGER.log(Level.SEVERE, "Error on managing Stream");
         }
+
         if(!this.socket.isClosed()) {
-            this.socket.isClosed();
+            try {
+                this.socket.close();
+            } catch (IOException e) {
+                // Ignore
+            }
         }
     }
 

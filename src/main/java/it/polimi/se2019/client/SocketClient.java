@@ -1,6 +1,9 @@
 package it.polimi.se2019.client;
 
 import it.polimi.se2019.model.messages.Message;
+import it.polimi.se2019.model.messages.MessageType;
+import it.polimi.se2019.model.messages.client.ClientMessage;
+import it.polimi.se2019.model.messages.client.ClientMessageType;
 import it.polimi.se2019.view.View;
 
 import java.io.*;
@@ -12,6 +15,7 @@ import java.net.Socket;
 public class SocketClient extends AbstractClient implements Runnable {
 
     private Socket socket;
+    private long lastMessageTime;
 
     /**
      * Class constructor, it builds a socket client
@@ -48,6 +52,20 @@ public class SocketClient extends AbstractClient implements Runnable {
      */
     @Override
     public void run() {
+        this.lastMessageTime = System.currentTimeMillis();
+        new Thread(() -> {
+            while(!this.socket.isClosed()) {
+                if (System.currentTimeMillis() - this.lastMessageTime > 20000) {
+                    getView().handleConnectionError();
+                }
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }).start();
+
         try {
             while (!this.socket.isClosed()) {
                 ObjectInputStream inputStream = null;
@@ -63,7 +81,13 @@ public class SocketClient extends AbstractClient implements Runnable {
                 try {
                     Message message = (Message) inputStream.readObject();
                     if (message != null) {
-                        notify(message);
+                        this.lastMessageTime = System.currentTimeMillis();
+                        if (message.getMessageType() == MessageType.CLIENT_MESSAGE && ((ClientMessage) message).getType()
+                                == ClientMessageType.PING) {
+                            send(message);
+                        } else {
+                            notify(message);
+                        }
                     } else {
                         getView().handleConnectionError();
                     }
@@ -82,6 +106,6 @@ public class SocketClient extends AbstractClient implements Runnable {
      */
     @Override
     public void notify(Message message) {
-       getView().manageUpdate(message);
+        getView().manageUpdate(message);
     }
 }
