@@ -231,7 +231,7 @@ public class GUIView extends View {
             public void run() {
                 GUIView.super.handleGameAlreadyStarted();
             }
-        }, 7*1000L);
+        }, 2*1000L);
     }
 
     /**

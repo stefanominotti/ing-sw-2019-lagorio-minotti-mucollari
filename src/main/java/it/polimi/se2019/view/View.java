@@ -91,6 +91,7 @@ public abstract class View {
     private EffectPossibilityPack possibilitySelections;
 
     private PowerupType activePowerup;
+    private boolean connectionError;
 
     /**
      * Class constructor, it builds a view
@@ -473,12 +474,16 @@ public abstract class View {
      * Handles connection error. Ends the app
      */
     public void handleConnectionError() {
+        if (this.connectionError) {
+            return;
+        }
+        this.connectionError = true;
         (new Timer()).schedule(new TimerTask() {
             @Override
             public void run() {
                 System.exit(0);
             }
-        }, 7*1000L);
+        }, 2*1000L);
     }
 
     /**
@@ -880,7 +885,7 @@ public abstract class View {
             public void run() {
                 System.exit(0);
             }
-        }, 3*1000L);
+        }, 2*1000L);
     }
 
     /**
@@ -1267,7 +1272,7 @@ public abstract class View {
             public void run() {
                 System.exit(0);
             }
-        }, 7*1000L);
+        }, 4*1000L);
     }
 
     /**
