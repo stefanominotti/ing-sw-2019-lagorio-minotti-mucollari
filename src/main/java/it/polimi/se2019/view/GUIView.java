@@ -1597,8 +1597,8 @@ public class GUIView extends View {
         this.currentStatus = "Which effect do you want to use?";
         this.currentAction = "Select one from the buttons below";
         setBanner();
-        setEffects();
         this.secondaryButtons = new ArrayList<>();
+        setEffects();
         if (isWeaponActivated()) {
             this.secondaryButtons.add(CONTINUE_BUTTON);
         } else {
