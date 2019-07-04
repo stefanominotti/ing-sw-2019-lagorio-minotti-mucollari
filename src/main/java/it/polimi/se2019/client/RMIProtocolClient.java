@@ -34,7 +34,6 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
         super(view);
 
         this.queue = new LinkedList<>();
-
         new Thread(() -> {
             synchronized (RMIProtocolClient.this.queue) {
                 while (true) {
@@ -63,14 +62,20 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
         }
 
         new Thread(() -> {
+            boolean active = true;
+            while(active){
+                if (System.currentTimeMillis() - this.lastMessageTime > 20000) {
+                    active = false;
+                    getView().handleConnectionError();
+                }
+            }
+        }).start();
+
+        new Thread(() -> {
             while(true) {
                 try {
                     this.server.ping();
-                } catch (RemoteException e) {
-                    getView().handleConnectionError();
-                }
-
-                if (System.currentTimeMillis() - this.lastMessageTime > 20000) {
+                } catch (RemoteException | NullPointerException e) {
                     getView().handleConnectionError();
                 }
 
