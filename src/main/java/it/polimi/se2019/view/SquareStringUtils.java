@@ -5,7 +5,7 @@ import it.polimi.se2019.model.GameCharacter;
 import java.util.List;
 
 /**
- * Class for handling square string utils
+ * Class for handling square string utils, it is used to transform squares into string for print them into CLI
  */
 public class SquareStringUtils {
 
@@ -29,9 +29,9 @@ public class SquareStringUtils {
     }
 
     /**
-     * Draws the legend of the game characters playing the game
-     * @param characters playing
-     * @return legend drawn
+     * Draws the legend that contains the game characters are playing the game
+     * @param characters are playing
+     * @return String with the legend
      */
     public static String legendSquare(List<GameCharacter> characters, List<GameCharacter> deadPlayers) {
         StringBuilder builder = new StringBuilder();
@@ -58,7 +58,7 @@ public class SquareStringUtils {
     }
 
     /**
-     * Centers a text on a line
+     * Centers text on a line
      * @param text to be centered
      * @param len of the line
      * @return test centered
