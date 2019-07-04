@@ -1052,8 +1052,7 @@ public class BoardController extends AbstractSceneController {
             if (!targets.isEmpty()) {
                 this.arenaPane.toFront();
                 for (ImageView player : this.players) {
-                    player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.setPlayerBoardHandler);
-                    player.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.characterSelectionHandler);
+                    player.setOnMousePressed(this.setPlayerBoardHandler);
                     player.getStyleClass().remove(CHARACTER_SELECTABLE_CLASS);
                     player.getStyleClass().remove(CHARACTER_SELECTED_CLASS);
                     player.getStyleClass().add(CHARACTER_CLASS);
@@ -1062,7 +1061,7 @@ public class BoardController extends AbstractSceneController {
                         player.getStyleClass().add(CHARACTER_SELECTABLE_CLASS);
                         player.getStyleClass().remove(CHARACTER_CLASS);
                     } else if (selected.contains(GameCharacter.valueOf(player.getId().toUpperCase()))) {
-                        player.setOnMousePressed(this.setPlayerBoardHandler);
+                        player.setOnMousePressed(null);
                         player.getStyleClass().add(CHARACTER_SELECTED_CLASS);
                         player.getStyleClass().remove(CHARACTER_CLASS);
                     }

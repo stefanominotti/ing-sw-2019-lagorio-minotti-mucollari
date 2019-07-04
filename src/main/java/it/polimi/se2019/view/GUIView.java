@@ -1046,6 +1046,9 @@ public class GUIView extends View {
             case RECHARGE_WEAPON:
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.RELOAD, getCharacter(), null));
                 setWaitStatus();
+            case MULTIPLE_SQUARES_SELECTION:
+                super.setPossibilityCharacters(this.targetsSelected);
+                super.selectionEffectFinish();
                 break;
             default:
                 break;
@@ -1299,8 +1302,6 @@ public class GUIView extends View {
         this.targetsSelected.add(character);
         removeCharacterSelection(character);
         if(this.targetsSelected.size() < this.maxSelectable && !getCharactersSelection().isEmpty()) {
-            setTargets();
-            setActions();
             handleEffectTargetRequest();
             return;
         }

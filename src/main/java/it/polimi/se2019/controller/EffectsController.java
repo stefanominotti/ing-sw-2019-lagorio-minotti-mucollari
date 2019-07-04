@@ -116,13 +116,14 @@ class EffectsController {
      * @return true if it is, else false
      */
     private boolean checkSecondaryFirst() {
+        WeaponEffectOrderType originalOrder = this.effectOrder;
         try {
-            WeaponEffectOrderType originalOrder = this.effectOrder;
             this.effectOrder = SECONDARYONE;
             seeEffectPossibility(this.weapon.getSecondaryEffectOne().get(0));
             this.effectOrder = originalOrder;
             return true;
         } catch (UnsupportedOperationException e) {
+            this.effectOrder = originalOrder;
             return false;
         }
     }
