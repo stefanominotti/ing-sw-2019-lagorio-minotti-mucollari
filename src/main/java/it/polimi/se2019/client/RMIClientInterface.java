@@ -22,5 +22,4 @@ public interface RMIClientInterface extends Remote {
      * @throws RemoteException if the client is not reachable
      */
     void ping() throws RemoteException;
-
 }

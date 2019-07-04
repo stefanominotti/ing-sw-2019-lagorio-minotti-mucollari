@@ -19,14 +19,14 @@ public abstract class AbstractClient {
     }
 
     /**
-     * Sends a message to the abstract client
+     * Sends a message to the server
      * @param message you want to send
      */
     public abstract void send(Message message);
 
     /**
-     * Notifies a message to the client
-     * @param message you want to notify
+     * Receives a message
+     * @param message you want to be notified
      */
     public abstract void notify(Message message);
 
@@ -37,5 +37,4 @@ public abstract class AbstractClient {
     View getView() {
         return this.view;
     }
-
 }

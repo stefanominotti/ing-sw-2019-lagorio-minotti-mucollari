@@ -21,7 +21,7 @@ public class Coordinates implements Serializable {
     }
 
     /**
-     * Gets x coordinate
+     * Gets x of the coordinate
      * @return x coordinate
      */
     public int getX() {
@@ -29,7 +29,7 @@ public class Coordinates implements Serializable {
     }
 
     /**
-     * Gets y coordinate
+     * Gets y of the coordinate
      * @return y coordinate
      */
     public int getY() {

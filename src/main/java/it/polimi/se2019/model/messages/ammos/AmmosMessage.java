@@ -19,7 +19,7 @@ public class AmmosMessage extends Message {
     /**
      * Class constructor, it builds an ammo message
      * @param type of the ammo message
-     * @param character addressee of the message
+     * @param character of which the message is referred to
      * @param ammos map with ammo and its quantity to be sent
      */
     public AmmosMessage(AmmosMessageType type, GameCharacter character, Map<AmmoType, Integer> ammos) {

@@ -76,7 +76,7 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
     }
 
     /**
-     * Sends a message to the client
+     * Sends a message to server
      * @param message you want to send
      */
     @Override

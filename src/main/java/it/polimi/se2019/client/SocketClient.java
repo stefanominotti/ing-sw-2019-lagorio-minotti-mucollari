@@ -29,7 +29,7 @@ public class SocketClient extends AbstractClient implements Runnable {
     }
 
     /**
-     * Send a message to the client
+     * Send a message to server
      * @param message you want to send
      */
     @Override
