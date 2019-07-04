@@ -80,6 +80,7 @@ public class Board extends Observable {
     private List<GameCharacter> deadPlayers;
     private Map<GameCharacter, Integer> pointsFromKillshotTrack;
     private boolean reconnection;
+    private boolean turnAfterDeath;
 
     /**
      * Class constructor, it builds a board
@@ -459,7 +460,7 @@ public class Board extends Observable {
      * @param skulls number to set
      */
     public void setSkulls(int skulls){
-        this.skulls = skulls;
+        this.skulls = 1;
         for (int i=0; i<this.skulls; i++) {
             this.killshotTrack.put(i + 1, new ArrayList<>());
         }
@@ -615,7 +616,9 @@ public class Board extends Observable {
         fillWeaponStores();
         notifyChanges(new TurnMessage(TurnMessageType.END, player.getCharacter()));
         if (nextPlayer == null) {
-            if (!this.finalFrenzyOrder.isEmpty() && player.getCharacter() == this.finalFrenzyOrder.get(this.finalFrenzyOrder.size() - 1)) {
+            if (!this.finalFrenzyOrder.isEmpty() &&
+                    player.getCharacter() == this.finalFrenzyOrder.get(this.finalFrenzyOrder.size() - 1) &&
+                    !this.turnAfterDeath) {
                 endGame();
                 return;
             }
@@ -636,8 +639,10 @@ public class Board extends Observable {
         TurnType type;
         if(player.isDead()) {
             type = TurnType.AFTER_DEATH;
+            this.turnAfterDeath = true;
         } else if(this.gameState == FIRST_TURN || player.getPosition() == null) {
             type = TurnType.FIRST_TURN;
+            this.turnAfterDeath = false;
         } else if(!this.finalFrenzyOrder.isEmpty()) {
             this.skulls = -1;
             if(isPlayerBeforeFirst(player)) {
@@ -645,8 +650,10 @@ public class Board extends Observable {
             } else {
                 type = TurnType.FINAL_FRENZY_AFTER;
             }
+            this.turnAfterDeath = false;
         } else {
             type = TurnType.NORMAL;
+            this.turnAfterDeath = false;
         }
         notifyChanges(new TurnMessage(TurnMessageType.START, type, player.getCharacter()));
     }
