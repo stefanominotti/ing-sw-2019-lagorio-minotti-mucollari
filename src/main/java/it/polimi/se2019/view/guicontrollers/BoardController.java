@@ -504,9 +504,11 @@ public class BoardController extends AbstractSceneController {
                 ImageView img = (ImageView) this.deathsGrid.getChildren().get(i);
                 img.setImage(null);
             }
-            for (int i = 0; i < KILLSHOT_POINTS_SIZE - board.getKillshotPoints().size(); i++) {
-                ImageView img = (ImageView) this.deathsGrid.getChildren().get(i);
-                img.setImage(new Image(UTILS_PATH + "skull.png"));
+            if (!board.isFrenzyBoard()) {
+                for (int i = 0; i < KILLSHOT_POINTS_SIZE - board.getKillshotPoints().size(); i++) {
+                    ImageView img = (ImageView) this.deathsGrid.getChildren().get(i);
+                    img.setImage(new Image(UTILS_PATH + "skull.png"));
+                }
             }
         });
     }

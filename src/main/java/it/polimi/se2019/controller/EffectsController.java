@@ -110,6 +110,7 @@ class EffectsController {
             }
         }
         this.weapon = null;
+        resetController();
         return availableWeapons;
     }
 
