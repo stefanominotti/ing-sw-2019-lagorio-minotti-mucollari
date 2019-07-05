@@ -460,7 +460,7 @@ public class Board extends Observable {
      * @param skulls number to set
      */
     public void setSkulls(int skulls){
-        this.skulls = 1;
+        this.skulls = skulls;
         for (int i=0; i<this.skulls; i++) {
             this.killshotTrack.put(i + 1, new ArrayList<>());
         }

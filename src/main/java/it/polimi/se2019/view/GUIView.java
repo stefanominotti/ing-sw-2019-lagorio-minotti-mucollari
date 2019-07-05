@@ -1769,6 +1769,7 @@ public class GUIView extends View {
     void handleGameFinished(Map<GameCharacter, Integer> ranking) {
         this.currentStatus = "Game finished";
         this.currentAction = "Ranking will be shown soon";
+        setBanner();
         (new Timer()).schedule(new TimerTask() {
             @Override
             public void run() {
@@ -1776,7 +1777,7 @@ public class GUIView extends View {
                 ((RankingController) GUIView.this.controller).showMessage(ranking);
                 GUIView.super.handleGameFinished(ranking);
             }
-        }, 5*1000L);
+        }, 10*1000L);
     }
 
     /**+

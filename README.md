@@ -48,7 +48,9 @@ Nella path che contiene il jar, utilizzare il comando:
 
     $ java -jar adrenalina-client.jar
 
-Oppure utilizzare gli script `adrenalina-client.sh` o `adrenalina-client.bat`<br/>Su alcuni terminali Windows, per una corretta visualizzazione dei caratteri in modalità CLI, potrebbe essere necessario eseguire il jar con il seguente comando:
+Oppure utilizzare gli script `adrenalina-client.sh` o `adrenalina-client.bat`
+
+Su alcuni terminali Windows, per una corretta visualizzazione dei caratteri in modalità CLI, potrebbe essere necessario eseguire il jar con il seguente comando:
 
     $ chcp 65001 &&  java -jar -Dfile.encoding=UTF8 adrenalina-client.jar
 

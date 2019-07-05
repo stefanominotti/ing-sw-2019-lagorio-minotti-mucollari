@@ -202,13 +202,13 @@ public class EffectControllerTest {
     public void moveSelfCaseTest() {
         this.weapon = Weapon.CYBERBLADE;
         this.controller.setWeapon(weapon);
-        this.controller.selectEffect(SECONDARYONE);
+        this.controller.effectSelected(SECONDARYONE);
         this.characters.add(this.player.getCharacter());
         this.squares.add(new Coordinates(2,0));
         this.squares.add(new Coordinates(1,1));
-        assertEquals(this.characters, this.controller.seeEffectPossibility(weapon.getSecondaryEffectOne().get(0)).getCharacters());
-        assertTrue(assertCoordinates(this.squares,
-                this.controller.seeEffectPossibility(weapon.getSecondaryEffectOne().get(0)).getSquares()));
+        EffectPossibilityPack pack = this.controller.seeEffectPossibility(weapon.getSecondaryEffectOne().get(0));
+        assertEquals(this.characters, pack.getCharacters());
+        assertTrue(assertCoordinates(this.squares, pack.getSquares()));
         this.weapon = Weapon.POWER_GLOVE;
         this.controller.setWeapon(weapon);
         this.controller.selectEffect(PRIMARY);
