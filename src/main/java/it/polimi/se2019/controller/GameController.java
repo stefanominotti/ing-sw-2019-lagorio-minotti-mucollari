@@ -192,6 +192,7 @@ public class GameController implements Observer {
                 count++;
             }
         }
+        count--;
         if (this.gameSaved && count == 0) {
             this.view.resetServer();
             return;
