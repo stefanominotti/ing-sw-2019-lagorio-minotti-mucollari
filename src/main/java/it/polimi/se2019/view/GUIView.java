@@ -1777,7 +1777,7 @@ public class GUIView extends View {
                 ((RankingController) GUIView.this.controller).showMessage(ranking);
                 GUIView.super.handleGameFinished(ranking);
             }
-        }, 10*1000L);
+        }, 5*1000L);
     }
 
     /**+

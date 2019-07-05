@@ -676,7 +676,7 @@ public class CLIView extends View {
         List<Coordinates> availableSquares = new ArrayList<>(getEffectPossibility().getMultipleSquares().keySet());
         try {
             for (String i : inputList) {
-                String[] strings = i.split(".");
+                String[] strings = i.split("\\.");
                 int squareIndex = Integer.parseInt(strings[0]) - 1;
                 int characterIndex = Integer.parseInt(strings[1]) - 1;
                 if (squareIndex < 0 || characterIndex < 0 || squareIndex >= availableCharacters.size()) {
@@ -1955,8 +1955,7 @@ public class CLIView extends View {
             }
             squareIndex++;
         }
-        text.setLength(text.length() - 1);
-        text.append("Type [square.character,...]:\n");
+        text.append("Type [square.character,...]:");
         showMessage(text.toString());
         this.inputEnabled = true;
     }
