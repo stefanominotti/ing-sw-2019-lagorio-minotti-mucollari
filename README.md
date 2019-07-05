@@ -26,7 +26,7 @@ Il file contiene le seguenti impostazioni
 - Timer di gioco
 - Porta Socket
 - Porta RMI
-- Nome del salvataggio
+- Nome del file di salvataggio
 
 Nella path che contiene il jar, utilizzare il comando:
 
@@ -48,7 +48,12 @@ Nella path che contiene il jar, utilizzare il comando:
 
     $ java -jar adrenalina-client.jar
 
-Oppure utilizzare gli script `adrenalina-client.sh` o `adrenalina-client.bat`
+Oppure utilizzare gli script `adrenalina-client.sh` o `adrenalina-client.bat`<br/>Su alcuni terminali Windows, per una corretta visualizzazione dei caratteri in modalità CLI, potrebbe essere necessario eseguire il jar con il seguente comando:
+
+    $ chcp 65001 &&  java -jar -Dfile.encoding=UTF8 adrenalina-client.jar
+
+# Risoluzione dello schermo
+Per un corretto e ottimale funzionamento della GUI, la minima risoluzione dello schermo richiesta è 1280x800
 
 ## UML
 
