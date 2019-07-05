@@ -1,5 +1,4 @@
-# Prova Finale (Ingegneria del Software)
-085923 - [San Pietro]
+# Prova Finale (Ingegneria del Software) - [San Pietro]
 
 ## Gruppo: 46
 Antonio Lagorio - antonio.lagorio@mail.polimi.it
@@ -53,4 +52,4 @@ Oppure utilizzare gli script `adrenalina-client.sh` o `adrenalina-client.bat`
 
 ## UML
 
-UML disponibile nella cartella `deliveries/final/UML` di questo repository
+UML disponibili nella cartella `deliveries/final/UML` di questo repository
