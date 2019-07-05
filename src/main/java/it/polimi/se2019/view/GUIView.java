@@ -895,12 +895,20 @@ public class GUIView extends View {
         setSecondaryButtons();
     }
 
+    /**
+     * Sets powerups for the board
+     */
     void setPowerups() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setPowerups(getPowerupsSelection(), getPaidPowerups());
         }
     }
 
+    /**
+     * Handles operations on powerups player choice depending on game state
+     * @param type of the powerup chosen
+     * @param color of the powerup choseen
+     */
     public void handlePowerupInput(PowerupType type, AmmoType color) {
         switch (getState()) {
             case DISCARD_SPAWN:
@@ -929,8 +937,13 @@ public class GUIView extends View {
         setWaitStatus();
     }
 
+    /**
+     * Handles multiples powerups selection
+     * @param type of the powerup chosen
+     * @param color of the powerup chosen
+     */
     private void handleMultiplePowerupsSelect(PowerupType type, AmmoType color) {
-        for(Powerup powerup: getPowerupsSelection()) {
+        for(Powerup powerup : getPowerupsSelection()) {
             if(powerup.getColor() == color && powerup.getType() == type) {
                 addPaidPowerup(powerup);
                 removePowerupSelection(powerup);
@@ -950,6 +963,11 @@ public class GUIView extends View {
         setPowerups();
     }
 
+    /**
+     * Handles payment by powerup selection
+     * @param type of the powerup chosen
+     * @param color of the powerup chosen
+     */
     private void handlePowerupPaymentSelect(PowerupType type, AmmoType color) {
         addPaidPowerup(new Powerup(type, color));
         if(getRequiredPayment().isEmpty()) {
@@ -1065,6 +1083,10 @@ public class GUIView extends View {
         setSecondaryButtons();
     }
 
+    /**
+     * Handles effect macro choice by player
+     * @param effect chosen by player
+     */
     public void handleEffectInput(WeaponEffectOrderType effect) {
         if (getState() == USE_EFFECT) {
             getClient().send(new SingleSelectionMessage(SelectionMessageType.EFFECT, getCharacter(), effect));
@@ -1539,6 +1561,10 @@ public class GUIView extends View {
         updateKillshotPoints(player);
     }
 
+    /**
+     * Handles Yes/No player decision input, sending message based on type of selection done
+     * @param input
+     */
     public void handleDecisionInput(String input) {
         input = input.toUpperCase();
         switch (getState()) {
@@ -1552,7 +1578,7 @@ public class GUIView extends View {
                 break;
             case EFFECT_REQUIRE_SELECTION:
                 super.setPossibilityRequire(input.equals("Y"));
-                break;
+                return;
             default:
                 return;
         }
@@ -1560,12 +1586,19 @@ public class GUIView extends View {
         setSecondaryButtons();
     }
 
+    /**
+     * Sets weapons on the board
+     */
     private void setWeapons() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setWeapons(getWeaponsSelection());
         }
     }
 
+    /**
+     * Handles click on a weapon, sending message based on type of selection done
+     * @param weapon which is clicked on
+     */
     public void handleWeaponInput(Weapon weapon) {
         switch (getState()) {
             case SELECT_WEAPON:
@@ -1743,6 +1776,10 @@ public class GUIView extends View {
         setTargets();
     }
 
+    /**
+     * Handles cardinal point choice, resetting secondary buttons after choice
+     * @param point cardinal point chosen by the player
+     */
     public void handleCardinalPointInput(CardinalPoint point) {
         if (getState() == EFFECT_SELECT_CARDINAL) {
             super.setPossibilityCardinal(new ArrayList<>(Arrays.asList(point)));
@@ -1796,12 +1833,19 @@ public class GUIView extends View {
         }
     }
 
+    /**
+     * Sets banner of action and game status
+     */
     private void setBanner() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setBanner(this.currentStatus, this.currentAction);
         }
     }
 
+    /**
+     * Adds a message into console messages box, removing the oldest message
+     * @param message to be add
+     */
     private void addMessage(String message) {
         if (this.messages.size() == 5) {
             this.messages.removeFirst();
@@ -1809,24 +1853,37 @@ public class GUIView extends View {
         this.messages.addLast(message);
     }
 
+    /**
+     * Calls method on Board Controller to set secondary buttons
+     */
     private void setSecondaryButtons() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setSecondaryButtons(new ArrayList<>(this.secondaryButtons));
         }
     }
 
+    /**
+     * Calls method on Board Controller to set the arena
+     */
     private void setArena() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setArena();
         }
     }
 
+    /**
+     * Calls method on Board Controller to set targets
+     */
     private void setTargets() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setTargets(getCharactersSelection(), this.targetsSelected);
         }
     }
 
+    /**
+     * Calls method on Board Controller to show the active player board
+     * @param character of which the player board has to be shown
+     */
     public void setPlayerBoard(GameCharacter character) {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setPlayerBoard(character);
@@ -1893,36 +1950,59 @@ public class GUIView extends View {
         }
     }
 
+    /**
+     * @param character
+     */
     private void updateBoardMarks(GameCharacter character) {
         if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {
             ((BoardController) this.controller).updateBoardMarks();
         }
     }
 
+    /**
+     * Calls method on Board Controller to update ammo shown
+     * @param character of which the ammo have to be updated
+     */
     private void updateAmmo(GameCharacter character) {
         if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {
             ((BoardController) this.controller).updateAmmo();
         }
     }
 
+    /**
+     * Calls method on Board Controller to update powerups
+     * @param character of which the powerups have to be updated
+     */
     private void updatePowerups(GameCharacter character) {
         if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {
             ((BoardController) this.controller).updatePowerups();
         }
     }
 
+    /**
+     * Calls method on Board Controller to update character weapons
+     * @param character of which the weapons have to be updated
+     */
     private void updateWeapons(GameCharacter character) {
         if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {
             ((BoardController) this.controller).updateWeapons();
         }
     }
 
+
+    /**
+     * Calls method on Board Controller to update points shown
+     * @param character of which the points have to be updated
+     */
     private void updateKillshotPoints(GameCharacter character) {
         if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {
             ((BoardController) this.controller).updateKillshotPoints();
         }
     }
 
+    /**
+     * Calls method on Board Controller to update points shown
+     */
     private void updatePoints() {
         if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() ==
                 getCharacter()) {
@@ -1930,18 +2010,27 @@ public class GUIView extends View {
         }
     }
 
+    /**
+     * Calls method on Board Controller to update killshot track shown
+     */
     private void updateKillshotTrack() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).updateKillshotTrack();
         }
     }
 
+    /**
+     * Resets all selections, including targets selected
+     */
     @Override
     void resetSelections() {
         super.resetSelections();
         this.targetsSelected = new ArrayList<>();
     }
 
+    /**
+     * Sets wait status
+     */
     private void setWaitStatus() {
         this.currentStatus = "Wait...";
         this.currentAction = "";
