@@ -865,7 +865,7 @@ public class BoardController extends AbstractSceneController {
                         break;
                     }
                 }
-                if (!set) {
+                if (set) {
                     for (Powerup p : selected) {
                         if (p.getType() == type && p.getColor() == color) {
                             img.setOnMousePressed(null);

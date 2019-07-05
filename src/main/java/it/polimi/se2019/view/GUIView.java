@@ -1043,7 +1043,13 @@ public class GUIView extends View {
             case EFFECT_TARGET_SELECTION:
                 super.setPossibilityCharacters(this.targetsSelected);
                 if (!getEffectPossibility().getSquares().isEmpty()) {
+                    setCharactersSelection(new ArrayList<>());
+                    this.secondaryButtons = new ArrayList<>();
+                    setSecondaryButtons();
+                    setTargets();
+                    setActions();
                     handleEffectMoveRequest();
+                    return;
                 } else {
                     super.selectionEffectFinish();
                 }
