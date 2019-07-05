@@ -52,7 +52,7 @@ Oppure utilizzare gli script `adrenalina-client.sh` o `adrenalina-client.bat`<br
 
     $ chcp 65001 &&  java -jar -Dfile.encoding=UTF8 adrenalina-client.jar
 
-# Risoluzione dello schermo
+## Risoluzione dello schermo
 Per un corretto e ottimale funzionamento della GUI, la minima risoluzione dello schermo richiesta è 1280x800
 
 ## UML
