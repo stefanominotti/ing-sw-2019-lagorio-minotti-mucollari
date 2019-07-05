@@ -978,6 +978,7 @@ public class BoardController extends AbstractSceneController {
             int i = 0;
             for (String id : buttons) {
                 Button b = (Button) this.secondaryButtonsBox.getChildren().get(i);
+                b.setVisible(true);
                 EventHandler<MouseEvent> handler;
                 String classString;
                 String identifier = buttons.get(0);
@@ -1013,7 +1014,6 @@ public class BoardController extends AbstractSceneController {
                 } else {
                     b.setText(Character.toUpperCase(id.charAt(0)) + id.substring(1));
                 }
-                b.setVisible(true);
                 b.setOnMousePressed(handler);
                 b.getStyleClass().add(classString);
                 i++;
