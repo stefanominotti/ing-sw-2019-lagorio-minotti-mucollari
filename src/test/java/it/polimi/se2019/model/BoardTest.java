@@ -13,6 +13,7 @@ import it.polimi.se2019.model.playerassets.weapons.WeaponCard;
 import org.junit.Before;
 import org.junit.Test;
 
+import static it.polimi.se2019.model.GameState.SETTING_UP_GAME;
 import static org.junit.Assert.*;
 
 import java.util.*;
@@ -42,14 +43,18 @@ public class BoardTest {
     public void createModelViewTest() {
         this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
         this.board.loadArena("1");
+        this.board.getPlayers().get(0).addWeapon(new WeaponCard(Weapon.SHOCKWAVE));
+        this.board.getPlayers().get(0).setDead(true);
         LoadViewMessage message = this.board.createModelView(this.board.getPlayers().get(0));
         assertEquals("playerTest1", message.getNickname());
         assertEquals(0, message.getSkulls());
         assertEquals(10, message.getSquares().size());
         assertEquals(0, message.getScore());
+        assertEquals(Weapon.SHOCKWAVE, message.getReadyWeapons().get(0));
         assertFalse(message.isBeforeFirstPlayer());
         assertFalse(message.isFrenzy());
         assertEquals(GameCharacter.BANSHEE, message.getCharacter());
+        assertTrue(message.getPlayerBoards().get(0).isDead());
     }
 
     @Test
@@ -57,6 +62,8 @@ public class BoardTest {
         this.board.addPlayer(GameCharacter.BANSHEE, "playerTest1", "token");
         this.board.addPlayer(GameCharacter.DOZER, "playerTest2", "token");
         this.board.addPlayer(GameCharacter.D_STRUCT_OR, "playerTest3", "token");
+        this.board.finalizePlayersCreation();
+        assertEquals(SETTING_UP_GAME, this.board.getGameState());
         this.board.loadArena("1");
         this.board.finalizeGameSetup();
         assertNotNull(this.board.getPlayers());

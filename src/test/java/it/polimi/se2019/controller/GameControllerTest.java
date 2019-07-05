@@ -246,42 +246,7 @@ public class GameControllerTest {
         assertTrue(this.player.getPowerups().isEmpty());
     }
 
-
-
-    /*@Test
-    public void actionsTest() {
-        this.controller.update(null, new SingleSelectionMessage(SelectionMessageType.ACTION, this.player.getCharacter(),
-                ActionType.ENDTURN));
-    }
-
     @Test
-    public void weaponTest() {
-        Weapon weapon = Weapon.TRACTOR_BEAM;
-        this.player.addWeapon(new WeaponCard(weapon));
-        this.controller.update(null,
-                new SingleSelectionMessage(SelectionMessageType.USE_WEAPON, this.player.getCharacter(), weapon));
-        this.controller.update(null,
-                new SingleSelectionMessage(SelectionMessageType.EFFECT, this.player.getCharacter(), PRIMARY));
-        this.controller.update(null,
-                new SingleSelectionMessage(SelectionMessageType.EFFECT, this.player.getCharacter(), ALTERNATIVE));
-        this.controller.update(null,
-                new SingleSelectionMessage(SelectionMessageType.EFFECT, this.player.getCharacter(), null));
-    }
-
-    @Test
-    public void askPowerupTest() {
-        this.controller.update(null,
-                new SingleSelectionMessage(SelectionMessageType.USE_WEAPON, this.player.getCharacter(), Weapon.MACHINE_GUN));
-        List<GameCharacter> characters = new ArrayList<>(Arrays.asList(this.p1.getCharacter(), this.p2.getCharacter()));
-        this.controller.askPowerup(characters);
-        this.player.addPowerup(new Powerup(PowerupType.TARGETING_SCOPE, AmmoType.BLUE));
-        this.controller.askPowerup(characters);
-        this.p1.addPowerup(new Powerup(PowerupType.TAGBACK_GRENADE, AmmoType.RED));
-        this.controller.askPowerup(characters);
-
-    }*/
-
-   @Test
     public void canPayPowerupTest() {
         this.player.addPowerup(new Powerup(PowerupType.TARGETING_SCOPE, AmmoType.BLUE));
         assertTrue(this.controller.canPayPowerup());

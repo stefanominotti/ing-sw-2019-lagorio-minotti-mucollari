@@ -26,7 +26,7 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
      * @param view which you want to pass
      * @param ip of the server
      */
-    public RMIProtocolClient(View view, String ip) {
+    public RMIProtocolClient(View view, String ip, int port) {
         super(view);
 
         this.queue = new LinkedList<>();
@@ -51,7 +51,7 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
         }).start();
 
         try {
-            this.server = (RMIServerInterface) Naming.lookup("//" + ip + "/MyServer");
+            this.server = (RMIServerInterface) Naming.lookup("//" + ip + ":" + port + "/MyServer");
             RMIClientInterface remoteRef = (RMIClientInterface) UnicastRemoteObject.exportObject(this, 0);
             this.server.addClient(remoteRef);
         } catch (MalformedURLException | RemoteException | NotBoundException e) {
@@ -62,7 +62,7 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
             while(true) {
                 try {
                     this.server.ping();
-                } catch (RemoteException e) {
+                } catch (RemoteException | NullPointerException e) {
                     getView().handleConnectionError();
                 }
 

@@ -58,10 +58,15 @@ public class Server {
             if(this.portRMI == this.portSocket) {
                 LOGGER.log(Level.SEVERE, "Invalid port, port set to default (RMI: " + DEFAULT_RMI_PORT +
                         ", Socket: " + DEFAULT_SOCKET_PORT + ")");
+                this.portSocket = DEFAULT_SOCKET_PORT;
+                this.portRMI = DEFAULT_RMI_PORT;
+
             }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Invalid settings file, port set to default (RMI: " + DEFAULT_RMI_PORT +
                     ", Socket: " + DEFAULT_SOCKET_PORT + ")");
+            this.portSocket = DEFAULT_SOCKET_PORT;
+            this.portRMI = DEFAULT_RMI_PORT;
         }
         resetServer();
     }
@@ -76,7 +81,7 @@ public class Server {
 
     /**
      * Starts MVC pattern
-     * @param board whit
+     * @param board to use as model for the MVC pattern
      */
     private void startMVC(Board board) {
         this.model = board;
@@ -95,7 +100,7 @@ public class Server {
     }
 
     /**
-     * Sets tje connection open or closed for accepting clients
+     * Sets the connection open or closed for accepting clients
      * @param allowed true for open, false for close
      */
     public void setConnectionAllowed(boolean allowed) {

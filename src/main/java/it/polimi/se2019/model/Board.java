@@ -336,15 +336,6 @@ public class Board extends Observable {
      */
     void finalizePlayersCreation() {
         this.gameState = SETTING_UP_GAME;
-        List<Player> toRemove = new ArrayList<>();
-        for (Player p : this.players) {
-            if (p.getNickname() == null) {
-                toRemove.add(p);
-            }
-        }
-        for (Player p : toRemove) {
-            this.players.remove(p);
-        }
         notifyChanges(new ClientMessage(ClientMessageType.GAME_ALREADY_STARTED, null));
         notifyChanges(new PlayerMessage(PlayerMessageType.START_SETUP, this.players.get(0).getCharacter()));
     }

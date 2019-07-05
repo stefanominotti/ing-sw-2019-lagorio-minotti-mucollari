@@ -63,7 +63,7 @@ public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerI
         }
 
         try {
-            Naming.rebind("//localhost/MyServer", this);
+            Naming.rebind("//localhost:" + port + "/MyServer", this);
         } catch (MalformedURLException e) {
             LOGGER.log(Level.SEVERE, "Can't register given object");
         } catch (RemoteException e) {
