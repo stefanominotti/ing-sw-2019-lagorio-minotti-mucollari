@@ -20,7 +20,7 @@ Eknid Mucollari - eknid.mucollari@mail.polimi.it
 
 ## Istruzioni per avviare il server 
 
-Copiare il file `AdrenalineServerSettings.json` nella path user home:<br/>(es. `C:\Users\pippo` per Windows - `/Users/pippo` per Mac)
+Copiare il file di configurazione `AdrenalineServerSettings.json` nella path user home:<br/>(es. `C:\Users\pippo` per Windows - `/Users/pippo` per Mac)
 
 Il file contiene le seguenti impostazioni 
 - Timer di gioco
@@ -37,7 +37,7 @@ Oppure utilizzare gli script `adrenalina-server.sh` o `adrenalina-server.bat`
 
 ## Istruzioni per avviare il client 
 
-Copiare il file `AdrenalineClientSettings.json` nella path user home:<br/>(es. `C:\Users\pippo` per Windows - `/Users/pippo` per Mac)
+Copiare il file di configurazione `AdrenalineClientSettings.json` nella path user home:<br/>(es. `C:\Users\pippo` per Windows - `/Users/pippo` per Mac)
 
 Il file contiene le seguenti impostazioni:
 - Indirizzo e porta del server
