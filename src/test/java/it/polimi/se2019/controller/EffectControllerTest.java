@@ -208,14 +208,14 @@ public class EffectControllerTest {
         this.squares.add(new Coordinates(1,1));
         EffectPossibilityPack pack = this.controller.seeEffectPossibility(weapon.getSecondaryEffectOne().get(0));
         assertEquals(this.characters, pack.getCharacters());
-        assertTrue(assertCoordinates(this.squares, pack.getSquares()));
+        assertTrue(checkCoordinatesTest(this.squares, pack.getSquares()));
         this.weapon = Weapon.POWER_GLOVE;
         this.controller.setWeapon(weapon);
         this.controller.selectEffect(PRIMARY);
         this.controller.setEnvironment(this.player.getPosition(), this.board.getArena().getSquareByCoordinate(1,1));
         this.squares = new ArrayList<>(Arrays.asList(new Coordinates(1,1)));
         assertEquals(this.characters, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(1)).getCharacters());
-        assertTrue(assertCoordinates(this.squares,
+        assertTrue(checkCoordinatesTest(this.squares,
                 this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(1)).getSquares()));
         this.controller.setCurrentEffect(this.weapon.getPrimaryEffect().get(1));
         this.controller.application(this.controller.seeEffectPossibility(this.weapon.getPrimaryEffect().get(1)));
@@ -235,13 +235,13 @@ public class EffectControllerTest {
         this.squares.add(new Coordinates(1,0));
         this.squares.add(new Coordinates(2,1));
         assertEquals(this.characters, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(1)).getCharacters());
-        assertTrue(assertCoordinates(this.squares, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(1)).getSquares()));
+        assertTrue(checkCoordinatesTest(this.squares, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(1)).getSquares()));
 
 
     }
 
     @Test
-    public void mooveOtherCaseTest() {
+    public void moveOthersCaseTest() {
         this.weapon = Weapon.TRACTOR_BEAM;
         this.controller.setWeapon(weapon);
         this.controller.selectEffect(ALTERNATIVE);
@@ -249,7 +249,7 @@ public class EffectControllerTest {
         this.characters.add(this.p2.getCharacter());
         this.squares.add(new Coordinates(1,0));
         assertEquals(this.characters, this.controller.seeEffectPossibility(this.weapon.getAlternativeMode().get(0)).getCharacters());
-        assertTrue(assertCoordinates(this.squares,
+        assertTrue(checkCoordinatesTest(this.squares,
                 this.controller.seeEffectPossibility(weapon.getAlternativeMode().get(0)).getSquares()));
         this.player.setPosition(this.board.getArena().getSquareByCoordinate(1,1));
         this.weapon = Weapon.SLEDGEHAMMER;
@@ -264,7 +264,7 @@ public class EffectControllerTest {
         this.controller.application(pack);
         this.squares.remove(0);
         this.squares.add(new Coordinates(1,0));
-        assertTrue(assertCoordinates(this.squares,
+        assertTrue(checkCoordinatesTest(this.squares,
                 this.controller.seeEffectPossibility(weapon.getAlternativeMode().get(2)).getSquares()));
         this.controller.setCurrentEffect(this.weapon.getAlternativeMode().get(2));
         this.controller.application(this.controller.seeEffectPossibility(this.weapon.getAlternativeMode().get(2)));
@@ -280,7 +280,7 @@ public class EffectControllerTest {
         this.squares.add(new Coordinates(2,0));
         this.squares.add(new Coordinates(2,1));
         this.squares.add(new Coordinates(1,1));
-        assertTrue(assertCoordinates(this.squares,
+        assertTrue(checkCoordinatesTest(this.squares,
                 this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(0)).getSquares()));
         this.controller.setEnvironment(this.player.getPosition(), this.board.getArena().getSquareByCoordinate(1,1));
         this.characters.add(p2.getCharacter());
@@ -310,7 +310,7 @@ public class EffectControllerTest {
     }
 
     @Test
-    public void selectMultipleSquareCaseTest() {
+    public void selectMultipleSquaresCaseTest() {
         this.weapon = Weapon.SHOCKWAVE;
         this.controller.setWeapon(weapon);
         this.controller.selectEffect(PRIMARY);
@@ -321,7 +321,7 @@ public class EffectControllerTest {
         characters = new ArrayList<>();
         characters.add(p2.getCharacter());
         this.multipleSquares.put(new Coordinates(1,1), characters);
-        assertTrue(assertMultipleSquare(this.multipleSquares, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(0)).getMultipleSquares()));
+        assertTrue(checkMultipleSquaresTest(this.multipleSquares, this.controller.seeEffectPossibility(weapon.getPrimaryEffect().get(0)).getMultipleSquares()));
     }
 
     @Test
@@ -330,7 +330,7 @@ public class EffectControllerTest {
     }
 
 
-    private boolean assertCoordinates(List<Coordinates> coordinates1, List<Coordinates> coordinates2) {
+    private boolean checkCoordinatesTest(List<Coordinates> coordinates1, List<Coordinates> coordinates2) {
         if(coordinates1.size() != coordinates2.size()) {
             return false;
         }
@@ -349,7 +349,7 @@ public class EffectControllerTest {
         return true;
     }
 
-    private boolean assertMultipleSquare(Map<Coordinates, List<GameCharacter>> multi1, Map<Coordinates, List<GameCharacter>> multi2) {
+    private boolean checkMultipleSquaresTest(Map<Coordinates, List<GameCharacter>> multi1, Map<Coordinates, List<GameCharacter>> multi2) {
         if(multi1.size() != multi2.size()) {
             return false;
         }

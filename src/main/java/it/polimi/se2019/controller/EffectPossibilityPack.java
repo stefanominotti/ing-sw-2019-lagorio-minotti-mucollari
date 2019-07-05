@@ -51,6 +51,7 @@ public class EffectPossibilityPack implements Serializable {
     }
 
     /**
+     * //TODO check it
      * Class constructor, it is used by clients to fill the possibility pack with their choices
      * @param require true if the effect is mandatory to use, else false
      * @param type of the effect
@@ -169,6 +170,10 @@ public class EffectPossibilityPack implements Serializable {
         this.require = require;
     }
 
+    /**
+     * Gets the effect macro description
+     * @return String with the effect macro description
+     */
     public String getDescription() { return this.description; }
 }
 

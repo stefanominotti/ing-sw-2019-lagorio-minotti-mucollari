@@ -4,6 +4,7 @@ import java.util.*;
 
 /**
  * Class for handling the effect target
+ * @author stefanominotti
  */
 public class EffectTarget {
 

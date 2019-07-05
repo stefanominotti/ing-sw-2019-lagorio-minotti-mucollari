@@ -45,6 +45,12 @@ import java.util.logging.Logger;
 import static it.polimi.se2019.model.GameState.*;
 import static java.util.stream.Collectors.toMap;
 
+/**
+ * Class for handling board
+ * @author stefanominotti
+ * @author antoniolagorio
+ * @author eknidmucollari
+ */
 public class Board extends Observable {
 
     private static final Logger LOGGER = Logger.getLogger(SocketVirtualClient.class.getName());
@@ -169,7 +175,7 @@ public class Board extends Observable {
                 dead.add(character.getCharacter());
             }
             List<Weapon> weapons = new ArrayList<>();
-            for(WeaponCard weaponCard : player.getWeapons()) {
+            for(WeaponCard weaponCard : character.getWeapons()) {
                 if(!weaponCard.isReady()) {
                     weapons.add(weaponCard.getWeaponType());
                 }

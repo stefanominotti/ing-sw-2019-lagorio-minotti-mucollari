@@ -35,6 +35,8 @@ import static it.polimi.se2019.view.ClientState.*;
 
 /**
  * Class for handling GUI view
+ * @author stefanominotti
+ * @author antoniolagorio
  */
 public class GUIView extends View {
     

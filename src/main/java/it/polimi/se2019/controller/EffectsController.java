@@ -28,16 +28,16 @@ class EffectsController {
     private WeaponEffect currentEffect;
     private WeaponEffectOrderType effectOrder;
 
-    //da impostare ogni volta che viene scelto un'arma
+    //To set every time a weapon is chosen
     private Weapon weapon;
 
-    //da impostare ogni volta che viene eseguito un effetto
+    //To set every time an effect is performed
     private boolean mainEffectApplied;
     private boolean secondaryEffectOneApplied;
     private boolean secondaryEffectTwoApplied;
     private List<WeaponEffect> effectsQueue;
 
-    //da impostare ogni volta che viene eseguito parte di un effetto
+    //To set every time part of an effect is performed
     private List<Player> hitByMain;
     private List<Player> hitBySecondary;
     private Room chosenRoom;
@@ -48,8 +48,8 @@ class EffectsController {
 
     /**
      * Class constructor, it builds an effect controller
-     * @param board in which the effect controller has to be built
-     * @param controller of the game in which the effect controller has to be built
+     * @param board where the effect controller has to be built
+     * @param controller of the game
      */
     EffectsController(Board board, GameController controller) {
         this.board = board;
@@ -94,6 +94,10 @@ class EffectsController {
         this.weapon = weapon;
     }
 
+    /**
+     * Sets the current effect
+     * @param effect you want to make as the current one
+     */
     void setCurrentEffect(WeaponEffect effect) {
         this.currentEffect = effect;
     }
@@ -134,7 +138,7 @@ class EffectsController {
 
     /**
      * Gets the available effects
-     * @return map with the effect macro and its list
+     * @return Map with the effect macro and List of the effects that compose that macro
      */
     Map<WeaponEffectOrderType, List<WeaponEffect>> getAvailableEffects() {
         Map<WeaponEffectOrderType, List<WeaponEffect>> availableWeapons = new LinkedHashMap<>();
@@ -172,6 +176,11 @@ class EffectsController {
         return availableWeapons;
     }
 
+    /**
+     * Knows if an effect can be applied
+     * @param effect you want to know if it as applicable
+     * @return true if it is, else false
+     */
     private boolean canApply(List<WeaponEffect> effect) {
         int index = 0;
         while (true) {
@@ -189,7 +198,7 @@ class EffectsController {
     }
 
     /**
-     * Checks if a player has enough ammo to apply an effect macro
+     * Checks if a player has enough ammo to apply a List of effects
      * @param effects list you want to be check
      * @return true if he can, else false
      */
@@ -237,6 +246,10 @@ class EffectsController {
         handleEffectsQueue();
     }
 
+    /**
+     * Handles effect macro selection by a player build
+     * @param effectType type of the effect macro selected
+     */
     void effectSelected(WeaponEffectOrderType effectType) {
         if (this.activePlayer.getWeaponCardByWeapon(this.weapon).isReady()) {
             this.board.unloadWeapon(this.activePlayer, this.activePlayer.getWeaponCardByWeapon(this.weapon));
@@ -269,7 +282,7 @@ class EffectsController {
     /**
      * Handles the position constraint case distance from a player, getting players that satisfy that constraint
      * @param constraint to be satisfied
-     * @return List of the player that satisies the constraint
+     * @return List of the player that satisfies the constraint
      */
     private List<Player> distanceByPlayerCase(PositionConstraint constraint) {
         List<Player> players = new ArrayList<>();

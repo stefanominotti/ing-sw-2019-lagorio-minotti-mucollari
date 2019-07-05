@@ -5,6 +5,8 @@ import java.util.List;
 
 /**
  * Class for handling position constraints of targets
+ * @author stefanominotti
+ * @author antoniolagorio
  */
 public class PositionConstraint {
 

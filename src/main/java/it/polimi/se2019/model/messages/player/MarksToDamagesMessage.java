@@ -2,8 +2,10 @@ package it.polimi.se2019.model.messages.player;
 
 import it.polimi.se2019.model.GameCharacter;
 
+
 /**
- *
+ * Class for handling marks to damage messages
+ * @author stefanominotti
  */
 public class MarksToDamagesMessage extends PlayerMessage {
 

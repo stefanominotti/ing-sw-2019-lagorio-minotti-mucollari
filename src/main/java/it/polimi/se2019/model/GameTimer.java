@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Game timer class that supports pause and resume
+ * @author stefanominotti
  */
 public class GameTimer {
 

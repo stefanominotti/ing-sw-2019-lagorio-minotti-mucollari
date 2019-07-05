@@ -2,6 +2,7 @@ package it.polimi.se2019.model.playerassets;
 
 /**
  * Enumeration Class for handling ammo tiles
+ * @author stefanominotti
  */
 public enum AmmoType {
 
@@ -12,7 +13,7 @@ public enum AmmoType {
     private char identifier;
 
     /**
-     * Class constructor
+     * Class constructor, it builds an ammo tile
      * @param identifier of the ammo type
      */
     AmmoType(char identifier) {

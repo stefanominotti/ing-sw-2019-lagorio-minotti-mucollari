@@ -2,6 +2,8 @@ package it.polimi.se2019.model;
 
 /**
  * Enumeration Class for handling game characters
+ * @author stefanominotti
+ * @author antoniolagorio
  */
 public enum GameCharacter {
 
@@ -31,6 +33,11 @@ public enum GameCharacter {
         return this.identifier;
     }
 
+
+    /**
+     * Gets the character color
+     * @return color of the character as string
+     */
     public String getColor() {
         return this.color;
     }

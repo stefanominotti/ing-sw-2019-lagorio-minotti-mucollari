@@ -11,6 +11,8 @@ import java.util.*;
 
 /**
  * Enumeration Class for handling weapons
+ * @author stefanominotti
+ * @author antoniolagorio
  */
 public enum Weapon {
     LOCK_RIFLE("lock_rifle.json"),

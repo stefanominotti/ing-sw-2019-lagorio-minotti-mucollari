@@ -6,6 +6,8 @@ import java.util.*;
 
 /**
  * Class for handling weapon effects
+ * @author stefanominotti
+ * @author antoniolagorio
  */
 public class WeaponEffect {
 

@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * Class for handling powerups
+ * @author antoniolagorio
  */
 public class Powerup implements Serializable {
 

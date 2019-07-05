@@ -1,7 +1,8 @@
 package it.polimi.se2019.model.playerassets.weapons;
 
 /**
- * Class for handling weapon cards
+ * Class for handling weapon card
+ * @author stefanominotti
  */
 public class WeaponCard {
 

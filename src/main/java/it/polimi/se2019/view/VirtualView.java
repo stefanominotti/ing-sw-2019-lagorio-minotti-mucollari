@@ -224,6 +224,9 @@ public class VirtualView extends Observable implements Observer {
         this.server.sendOthers(character, message);
     }
 
+    /**
+     * Resets the server after a save, ready to accept connections
+     */
     public void resetServer() {
         this.server.resetServer();
     }

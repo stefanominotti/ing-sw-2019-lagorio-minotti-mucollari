@@ -2,6 +2,7 @@ package it.polimi.se2019.model;
 
 /**
  * Enumeration Class for handling game state
+ * @author stefanominotti
  */
 public enum GameState {
 

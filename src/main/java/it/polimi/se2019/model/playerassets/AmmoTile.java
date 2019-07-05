@@ -6,6 +6,7 @@ import java.util.Map;
 
 /**
  * Class for handling ammo tiles
+ * @author stefanominotti
  */
 public class AmmoTile implements Serializable {
 

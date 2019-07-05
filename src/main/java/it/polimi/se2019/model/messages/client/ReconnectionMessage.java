@@ -23,6 +23,10 @@ public class ReconnectionMessage extends ClientMessage {
         this.token = token;
     }
 
+    /**
+     * Gets the token of the client is trying to reconnect
+     * @return String with the token digest for matching it with the one that is saved on the server
+     */
     public String getToken() {
         return this.token;
     }

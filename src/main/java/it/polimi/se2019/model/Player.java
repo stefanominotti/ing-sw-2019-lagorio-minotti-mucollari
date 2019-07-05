@@ -12,6 +12,8 @@ import java.util.*;
 
 /**
  * Class for handling players
+ * @author stefanominotti
+ * @author eknid mucollari
  */
 public class Player {
 

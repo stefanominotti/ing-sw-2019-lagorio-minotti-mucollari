@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * Class for handling rooms
+ * @author stefanominotti
  */
 public class Room {
 
@@ -31,10 +32,18 @@ public class Room {
         return color;
     }
 
+    /**
+     * Gets the squares of the room
+     * @return List of the square of the room
+     */
     public List<Square> getSquares() {
         return new ArrayList<>(this.squares);
     }
 
+    /**
+     * Knows if the room has any spawn point
+     * @return true if it has, else false
+     */
     public boolean hasSpawn() {
         for(Square square : this.squares) {
             if (square.isSpawn()) {
@@ -46,8 +55,7 @@ public class Room {
 
     /**
      * Gets the spawn square of the room
-     * @return the spawn square of the room
-     * @throws IllegalStateException if
+     * @return the spawn square of the room, null if it doesn't have it
      */
     public Square getSpawn() {
         for(Square square : this.squares) {
