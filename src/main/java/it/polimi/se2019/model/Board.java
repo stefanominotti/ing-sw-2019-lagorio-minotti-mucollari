@@ -587,20 +587,25 @@ public class Board extends Observable {
         }
 
         Player nextPlayer = null;
+        List<Player> toAutomaticRespawn = new ArrayList<>();
         for (GameCharacter c : this.deadPlayers) {
             Player p = getPlayerByCharacter(c);
-            if (!player.isConnected()) {
-                drawPowerup(p);
-
-                Room room =
-                        this.arena.getRoomByColor(RoomColor.valueOf(p.getPowerups().get(0).getColor().toString()));
-
-                removePowerup(p, p.getPowerups().get(0));
-                respawnPlayer(p, room);
+            if (!p.isConnected()) {
+                toAutomaticRespawn.add(p);
             } else {
                 nextPlayer = p;
                 break;
             }
+        }
+
+        for (Player p : toAutomaticRespawn) {
+            drawPowerup(p);
+
+            Room room =
+                    this.arena.getRoomByColor(RoomColor.valueOf(p.getPowerups().get(0).getColor().toString()));
+
+            removePowerup(p, p.getPowerups().get(0));
+            respawnPlayer(p, room);
         }
 
         fillAmmoTiles();

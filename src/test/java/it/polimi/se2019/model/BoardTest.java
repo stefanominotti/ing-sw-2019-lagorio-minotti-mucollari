@@ -1,12 +1,15 @@
 package it.polimi.se2019.model;
 
 import it.polimi.se2019.model.arena.CardinalPoint;
+import it.polimi.se2019.model.arena.RoomColor;
 import it.polimi.se2019.model.arena.Square;
 import it.polimi.se2019.model.messages.board.GameSetMessage;
 import it.polimi.se2019.model.messages.client.LoadViewMessage;
 import it.polimi.se2019.model.messages.player.ScoreMotivation;
 import it.polimi.se2019.model.playerassets.AmmoTile;
 import it.polimi.se2019.model.playerassets.AmmoType;
+import it.polimi.se2019.model.playerassets.Powerup;
+import it.polimi.se2019.model.playerassets.PowerupType;
 import it.polimi.se2019.model.playerassets.weapons.EffectType;
 import it.polimi.se2019.model.playerassets.weapons.Weapon;
 import it.polimi.se2019.model.playerassets.weapons.WeaponCard;
@@ -68,6 +71,10 @@ public class BoardTest {
         this.board.finalizeGameSetup();
         assertNotNull(this.board.getPlayers());
         assertEquals(3, this.board.getPlayers().size());
+        List<Player> players = this.board.getPlayers();
+        this.board = new Board();
+        this.board.setPlayers(players);
+        assertEquals(players, this.board.getPlayers());
     }
 
     @Test
@@ -564,5 +571,28 @@ public class BoardTest {
         this.board.setGameState(GameState.IN_GAME);
         this.board.handleDisconnection(GameCharacter.BANSHEE);
         assertEquals(3, this.board.getPlayers().size());
+    }
+
+    @Test
+    public void endTurnWithDeadPlayerTest() {
+        this.board.loadArena("3");
+        this.board.addPlayer(GameCharacter.BANSHEE, "1", "token");
+        this.board.addPlayer(GameCharacter.DOZER, "1", "token");
+        this.board.startTurn(this.board.getPlayers().get(0));
+        this.board.startTurnTimer(this.board.getPlayers().get(0).getCharacter());
+        this.board.getPlayers().get(0).setDead(true);
+        this.board.getPlayers().get(1).setDead(true);
+        this.board.addDeadPlayer(this.board.getPlayers().get(0));
+        this.board.addDeadPlayer(this.board.getPlayers().get(1));
+        this.board.getPlayers().get(1).disconnect();
+        this.board.getPlayers().get(0).addPowerup(new Powerup(PowerupType.TELEPORTER, AmmoType.RED));
+        this.board.getPlayers().get(1).addPowerup(new Powerup(PowerupType.TELEPORTER, AmmoType.YELLOW));
+        this.board.endTurn(this.board.getPlayers().get(0).getCharacter());
+        assertEquals(RoomColor.RED, this.board.getPlayers().get(0).getPosition().getRoom().getColor());
+        assertEquals(this.board.getArena().getRoomByColor(RoomColor.RED).getSpawn(),
+                this.board.getPlayers().get(0).getPosition());
+        assertEquals(RoomColor.YELLOW, this.board.getPlayers().get(1).getPosition().getRoom().getColor());
+        assertEquals(this.board.getArena().getRoomByColor(RoomColor.YELLOW).getSpawn(),
+                this.board.getPlayers().get(1).getPosition());
     }
 }
