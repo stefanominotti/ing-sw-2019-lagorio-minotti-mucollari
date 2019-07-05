@@ -216,12 +216,26 @@ public class TurnControllerTest {
         this.controller.setWeaponToGet(new WeaponCard(Weapon.LOCK_RIFLE));
         assertFalse(this.controller.handleSwitchWeapon(Weapon.MACHINE_GUN));
     }
+
     @Test
     public void cancelTest() {
         this.controller.setMovesLeft(1);
         this.controller.setMoveShoot(true);
         this.controller.cancelAction();
         assertEquals(2, this.controller.getMovesLeft());
+    }
+
+    @Test
+    public void endTurn() {
+        this.controller.handleAction(ActionType.ENDTURN);
+        assertEquals(1, this.board.getCurrentPlayer());
+        this.controller.handleAction(ActionType.RELOAD);
+        assertEquals(2, this.board.getCurrentPlayer());
+        this.controller.setMoveShoot(true);
+        this.controller.handleAction(ActionType.RELOAD);
+        assertEquals(2, this.board.getCurrentPlayer());
+        assertEquals(TurnState.SELECTACTION, this.controller.getState());
+
     }
 
     private boolean assertCoordinates(List<Coordinates> coordinates1, List<Coordinates> coordinates2) {
