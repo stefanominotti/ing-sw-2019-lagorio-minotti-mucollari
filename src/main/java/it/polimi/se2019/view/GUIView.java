@@ -985,6 +985,13 @@ public class GUIView extends View {
             return;
         }
 
+        for (Powerup p : getPowerupsSelection()) {
+            if (p.getType() == type && p.getColor() == color) {
+                removePowerupSelection(p);
+                break;
+            }
+        }
+
         int newValue = getRequiredPayment().get(color) - 1;
         putRequiredPayment(color, newValue);
 
@@ -1073,6 +1080,7 @@ public class GUIView extends View {
             case RECHARGE_WEAPON:
                 getClient().send(new SingleSelectionMessage(SelectionMessageType.RELOAD, getCharacter(), null));
                 setWaitStatus();
+                break;
             case MULTIPLE_SQUARES_SELECTION:
                 super.setPossibilityCharacters(this.targetsSelected);
                 super.selectionEffectFinish();
