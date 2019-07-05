@@ -137,6 +137,8 @@ public class Board extends Observable {
         jObject.append(toAppend);
         toAppend = "\"finalFrenzyOrder\":" + gson.toJson(this.finalFrenzyOrder) + ',';
         jObject.append(toAppend);
+        toAppend = "\"turnAfterDeath\":" + gson.toJson(this.turnAfterDeath) + ',';
+        jObject.append(toAppend);
         toAppend = "\"deadPlayers\":" + gson.toJson(this.deadPlayers);
         jObject.append(toAppend);
         jObject.append("}");
