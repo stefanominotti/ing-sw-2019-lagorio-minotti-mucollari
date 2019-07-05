@@ -92,12 +92,7 @@ public class VirtualView extends Observable implements Observer {
      * @param message to be forwarded
      */
     private void update(SingleSelectionMessage message) {
-        if (message.getType() == SelectionMessageType.PERSISTENCE) {
-            this.server.setConnectionAllowed(false);
-            sendAll(message);
-        } else {
-            send(message);
-        }
+        send(message);
     }
 
     /**
@@ -213,6 +208,10 @@ public class VirtualView extends Observable implements Observer {
      * @param message to be sent
      */
     public void sendAll(Message message) {
+        if (message.getMessageType() == MessageType.SINGLE_SELECTION_MESSAGE &&
+                ((SingleSelectionMessage) message).getType() == SelectionMessageType.PERSISTENCE) {
+            this.server.setConnectionAllowed(false);
+        }
         this.server.sendAll(message);
     }
 

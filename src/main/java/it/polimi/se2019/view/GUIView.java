@@ -1014,6 +1014,7 @@ public class GUIView extends View {
                     resetSelections();
                     setPowerups();
                     ammoRequest();
+                    return;
                 }
                 break;
             case EFFECT_SELECT_SQUARE:
@@ -1651,6 +1652,8 @@ public class GUIView extends View {
             setPowerups();
             return;
         } else if (getPowerupsSelection().isEmpty() && getRequiredPayment().isEmpty()) {
+            resetSelections();
+            setPowerups();
             ammoRequest();
             return;
         }
@@ -1683,8 +1686,8 @@ public class GUIView extends View {
                 this.secondaryButtons.add(ammo.toString().toLowerCase());
             }
         }
-        setBanner();
         setSecondaryButtons();
+        setBanner();
     }
 
     public void handleAmmoInput(AmmoType ammo) {
@@ -1806,7 +1809,7 @@ public class GUIView extends View {
 
     private void setSecondaryButtons() {
         if (this.currentScene == SceneType.BOARD) {
-            ((BoardController) this.controller).setSecondaryButtons(this.secondaryButtons);
+            ((BoardController) this.controller).setSecondaryButtons(new ArrayList<>(this.secondaryButtons));
         }
     }
 
