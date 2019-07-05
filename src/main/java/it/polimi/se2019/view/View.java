@@ -908,7 +908,11 @@ public abstract class View {
      */
     void handleReconnectionRequest() {
         this.state = RECONNECTING;
-        this.client.send(new ReconnectionMessage(getToken()));
+        try {
+            this.client.send(new ReconnectionMessage(getToken()));
+        } catch (NullPointerException e) {
+            handleConnectionError();
+        }
     }
 
     /**
