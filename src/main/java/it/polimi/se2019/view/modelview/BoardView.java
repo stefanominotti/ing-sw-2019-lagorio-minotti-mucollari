@@ -27,6 +27,7 @@ public class BoardView {
      * Class constructor, it builds a board view
      * @param skulls number set for the board
      * @param squares square view which compose the arena
+     * @param arena arena number
      */
     public BoardView(int skulls, List<SquareView> squares, int arena) {
         this.arena = arena;
@@ -52,6 +53,7 @@ public class BoardView {
      * @param killshotTrack killshot tracks of the game characters
      * @param frenzy true if Final Frenzy is active, else false
      * @param beforeFirstPlayer true if the current player is playing before the first player, else false
+     * @param arena arena number
      * @param deadPlayers List of dead players
      */
     public BoardView(int skulls, List<SquareView> squares, Map<Integer, List<GameCharacter>> killshotTrack, boolean frenzy,

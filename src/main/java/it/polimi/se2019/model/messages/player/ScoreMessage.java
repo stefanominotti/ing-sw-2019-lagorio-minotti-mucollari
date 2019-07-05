@@ -16,6 +16,8 @@ public class ScoreMessage extends PlayerMessage {
      * Class constructor, it builds a score message
      * @param character who is raising score
      * @param score amount to be raised
+     * @param motivation that has caused the score message
+     * @param killedCharacter the character killed
      */
     public ScoreMessage(GameCharacter character, int score, ScoreMotivation motivation, GameCharacter killedCharacter) {
         super(PlayerMessageType.SCORE, character);

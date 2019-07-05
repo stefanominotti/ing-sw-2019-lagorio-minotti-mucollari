@@ -20,7 +20,7 @@ public class TurnMessage extends Message {
      * Class constructor, it build a turn message
      * @param type of the turn message
      * @param turnType type of the turn
-     * @param character
+     * @param character active character
      */
     public TurnMessage(TurnMessageType type, TurnType turnType, GameCharacter character) {
         setMessageType(MessageType.TURN_MESSAGE);

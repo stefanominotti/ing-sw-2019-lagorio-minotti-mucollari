@@ -17,6 +17,7 @@ public class ReconnectionMessage extends ClientMessage {
     /**
      * Class constructor, it builds a reconnection message for handling the token sent by a client which is trying
      * to reconnect
+     * @param token token of the client is trying to reconnect
      */
     public ReconnectionMessage(String token) {
         super(ClientMessageType.CLIENT_RECONNECTION);

@@ -32,6 +32,7 @@ public class SquareStringUtils {
     /**
      * Draws the legend that contains the game characters are playing the game
      * @param characters are playing
+     * @param deadPlayers List of the dead characters
      * @return String with the legend
      */
     public static String legendSquare(List<GameCharacter> characters, List<GameCharacter> deadPlayers) {
