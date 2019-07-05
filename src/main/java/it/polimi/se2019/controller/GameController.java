@@ -215,8 +215,15 @@ public class GameController implements Observer {
                 counter++;
             }
         }
-        if (counter < 3) {
+        if (counter < 3 && this.gameStarted) {
             this.gameStarted = false;
+            for (Player p : this.model.getPlayers()) {
+                if (p.isConnected() && !this.gameSaved) {
+                    sendAll(new SingleSelectionMessage(SelectionMessageType.PERSISTENCE, p.getCharacter(),
+                            null));
+                    break;
+                }
+            }
         }
     }
 

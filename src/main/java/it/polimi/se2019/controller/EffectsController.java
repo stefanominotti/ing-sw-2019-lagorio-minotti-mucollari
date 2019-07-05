@@ -569,6 +569,7 @@ class EffectsController {
                         }
                         square.removePlayer(this.activePlayer);
                     }
+                    this.effectOrder = SECONDARYONE;
                     this.activePlayer.setPosition(originalPosition);
                     originalPosition.addPlayer(this.activePlayer);
                     this.board.resumeTurnTimer();
@@ -849,6 +850,7 @@ class EffectsController {
         this.secondaryEffectTwoApplied = false;
         this.effectsQueue = new ArrayList<>();
         this.activeCombo = null;
+        this.effectOrder = null;
     }
 
     /**

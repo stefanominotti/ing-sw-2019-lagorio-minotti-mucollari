@@ -428,13 +428,6 @@ public class Board extends Observable {
             if (this.gameTimer != null) {
                 this.gameTimer.cancel();
             }
-            for (Player p : this.players) {
-                if (p.isConnected()) {
-                    notifyChanges(new SingleSelectionMessage(SelectionMessageType.PERSISTENCE, p.getCharacter(),
-                            null));
-                    break;
-                }
-            }
         }
     }
 
