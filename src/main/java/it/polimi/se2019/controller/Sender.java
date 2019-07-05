@@ -12,6 +12,10 @@ public class Sender {
     private VirtualView view;
     private boolean active;
 
+    /**
+     * Sender of messages
+     * @param view where the messages are directed to
+     */
     public Sender(VirtualView view) {
         this.view = view;
         if (view != null) {
@@ -19,6 +23,11 @@ public class Sender {
         }
     }
 
+    /**
+     * Sends a message
+     * @param message which has to be sent
+     * @param toAll true if has to be sent on broadcast, else false
+     */
     public void send(Object message, boolean toAll) {
         if (!this.active) {
             return;

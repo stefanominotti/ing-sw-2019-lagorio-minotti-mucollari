@@ -77,7 +77,7 @@ class EffectsController {
     }
 
     /**
-     * Sets the environment choices when is asked to a player to choose a direction or room
+     * Every time an effect is applied it sets rooms, squares, directions of the targets
      * @param initialSquare starting square
      * @param finalSquare arrival square
      */
@@ -89,6 +89,10 @@ class EffectsController {
         this.chosenSquare = finalSquare;
     }
 
+    /**
+     * Sets the weapon you want to use
+     * @param weapon you want to use
+     */
     void setWeapon(Weapon weapon) {
         resetController();
         this.weapon = weapon;
@@ -96,7 +100,7 @@ class EffectsController {
 
     /**
      * Sets the current effect
-     * @param effect you want to make as the current one
+     * @param effect that is applying
      */
     void setCurrentEffect(WeaponEffect effect) {
         this.currentEffect = effect;
@@ -198,8 +202,8 @@ class EffectsController {
     }
 
     /**
-     * Checks if a player has enough ammo to apply a List of effects
-     * @param effects list you want to be check
+     * Checks if a player has enough ammo to apply the effect macro
+     * @param effects list of the effect that compose the macro you want to check
      * @return true if he can, else false
      */
     boolean checkCost(List<WeaponEffect> effects) {
@@ -671,7 +675,7 @@ class EffectsController {
     }
 
     /**
-     * Handles effect pack application
+     * Handles effect pack application, and checks conditions after it is applied
      * @param pack which you want to apply
      */
     void handleApplication(EffectPossibilityPack pack) {
@@ -691,6 +695,10 @@ class EffectsController {
         handleEffectsQueue();
     }
 
+    /**
+     * Permorms an effect possibility pack
+     * @param pack of the effects that you want to perform
+     */
     void application(EffectPossibilityPack pack) {
         Square square = this.activePlayer.getPosition();
         try {

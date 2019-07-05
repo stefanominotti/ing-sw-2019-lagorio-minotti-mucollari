@@ -159,7 +159,7 @@ class PowerupsController {
     }
 
     /**
-     * Handles the position chosen
+     * Receives the position chosen by the holder
      * @param position coordinates chosen by the powerup holder
      */
     void receivePosition(Coordinates position) {

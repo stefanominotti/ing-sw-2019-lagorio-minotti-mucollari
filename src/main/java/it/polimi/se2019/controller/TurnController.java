@@ -55,38 +55,74 @@ class TurnController {
         this.moveReloadedWeapons = new ArrayList<>();
     }
 
+    /**
+     * Sets turn state
+     * @param state you want to set to the turn
+     */
     void setState(TurnState state) {
         this.state = state;
     }
 
+    /**
+     * Gets the weapons you want to take when you are switching weapons
+     * @param weapon you want to take
+     */
     void setWeaponToGet(WeaponCard weapon) {
         this.weaponToGet = weapon;
     }
 
+    /**
+     * Gets the weapons that you want to take when you are switching weapons
+     * @return the weapon you want
+     */
     WeaponCard getWeaponToGet() {
         return this.weaponToGet;
     }
 
+    /**
+     * Knows if move and shoot is activated
+     * @return true if it is, else false
+     */
     boolean getMoveShoot() {
         return this.moveShoot;
     }
 
+    /**
+     * Gets the turn state
+     * @return the Turn State
+     */
     TurnState getState() {
         return this.state;
     }
 
+    /**
+     * Sets the Final Frenzy
+     * @param finalFrenzy true to active, else false
+     */
     void setFinalFrenzy(boolean finalFrenzy) {
         this.finalFrenzy = finalFrenzy;
     }
 
+    /**
+     * Sets the available moves left
+     * @param moves amount of moves left
+     */
     void setMovesLeft(int moves) {
         this.movesLeft = moves;
     }
 
+    /**
+     * Sets if possible move and shoot
+     * @param moveShoot true if it is, else false
+     */
     void setMoveShoot(boolean moveShoot) {
         this.moveShoot = moveShoot;
     }
 
+    /**
+     * Gets the moves left
+     * @return amount of moves left
+     */
     int getMovesLeft() {
         return this.movesLeft;
     }
@@ -99,10 +135,17 @@ class TurnController {
         return this.activePlayer;
     }
 
+    /**
+     * Sets the player as active
+     * @param player you want to set active
+     */
     void setActivePlayer(Player player) {
         this.activePlayer = player;
     }
 
+    /**
+     * Activates final frenzy
+     */
     void activeFinalFrenzy() {
         this.finalFrenzy = true;
     }
@@ -207,6 +250,9 @@ class TurnController {
         return movements;
     }
 
+    /**
+     *
+     */
     private void sendMovementAction() {
         this.controller.send(new SelectionListMessage<>(SelectionMessageType.MOVE, this.activePlayer.getCharacter(),
                 calculateMovementAction()));
@@ -535,6 +581,11 @@ class TurnController {
         handleEndAction();
     }
 
+    /**
+     * Handles a pickup action returning weapons available for that coordinates
+     * @param coordinates where you want to pick
+     * @return List of the weapons available for that coordinates
+     */
     List<Weapon> handlePickupAction(Coordinates coordinates) {
         int x = coordinates.getX();
         int y = coordinates.getY();
