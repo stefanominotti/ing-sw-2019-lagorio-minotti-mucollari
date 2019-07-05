@@ -1115,6 +1115,9 @@ public class GUIView extends View {
         setSquares();
     }
 
+    /**
+     * Calls method on Board Controller to set squares selectable
+     */
     private void setSquares() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).setSquares(getCoordinatesSelection());
@@ -1712,6 +1715,9 @@ public class GUIView extends View {
         setSecondaryButtons();
     }
 
+    /**
+     * Handles ammo pay request, calling method on board controller to show buttons for paying
+     */
     private void ammoRequest() {
         this.currentStatus = "You must pay one ammo of any color";
         this.currentAction = "Select ammo color from buttons below";
@@ -1725,6 +1731,10 @@ public class GUIView extends View {
         setBanner();
     }
 
+    /**
+     * Handles ammo payment
+     * @param ammo paid
+     */
     public void handleAmmoInput(AmmoType ammo) {
         Map<AmmoType, Integer> ammos = new EnumMap<>(AmmoType.class);
         for(AmmoType ammoType : AmmoType.values()) {
@@ -1894,6 +1904,9 @@ public class GUIView extends View {
         }
     }
 
+    /**
+     * Calls method on Board Controller to show set rooms
+     */
     private void setRooms() {
         if (this.currentScene == SceneType.BOARD) {
             List<Coordinates> squares = new ArrayList<>();
@@ -1906,6 +1919,9 @@ public class GUIView extends View {
         }
     }
 
+    /**
+     * Calls method on Board Controller to show cardinal points choice request when a weapon ask for it
+     */
     private void setCardinalPoints() {
         if (this.currentScene == SceneType.BOARD) {
             this.secondaryButtons = new ArrayList<>();
@@ -1916,6 +1932,9 @@ public class GUIView extends View {
         }
     }
 
+    /**
+     * Calls method on Board Controller to show effect macro choice request when a weapon ask for it
+     */
     private void setEffects() {
         if (this.currentScene == SceneType.BOARD) {
             this.secondaryButtons = new ArrayList<>();
@@ -1926,24 +1945,37 @@ public class GUIView extends View {
         }
     }
 
+    /**
+     * Calls method on Board Controller to update weapons turn
+     */
     private void updateStores() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).updateStores();
         }
     }
 
+    /**
+     * Calls method on Board Controller to update ammo tiles remove
+     */
     private void updateTiles() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).updateTiles();
         }
     }
 
+    /**
+     * Calls method on Board Controller to update players position
+     */
     private void updatePlayersPositions() {
         if (this.currentScene == SceneType.BOARD) {
             ((BoardController) this.controller).updatePlayersPositions();
         }
     }
 
+    /**
+     * Calls method on Board Controller to update player damages on his board
+     * @param character
+     */
     private void updateBoardDamages(GameCharacter character) {
         if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {
             ((BoardController) this.controller).updateBoardDamages();
@@ -1951,7 +1983,8 @@ public class GUIView extends View {
     }
 
     /**
-     * @param character
+     * Calls method on Board Controller to update marks
+     * @param character of which the marks have to be updated
      */
     private void updateBoardMarks(GameCharacter character) {
         if (this.currentScene == SceneType.BOARD && ((BoardController) this.controller).getActiveBoard() == character) {

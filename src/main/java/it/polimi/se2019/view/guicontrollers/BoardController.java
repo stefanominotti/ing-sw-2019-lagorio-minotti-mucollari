@@ -1059,8 +1059,8 @@ public class BoardController extends AbstractSceneController {
                         player.getStyleClass().add(CHARACTER_SELECTED_CLASS);
                     } else {
                         player.setOnMousePressed(this.setPlayerBoardHandler);
-                        player.getStyleClass().remove(CHARACTER_SELECTABLE_CLASS);
                         player.getStyleClass().remove(CHARACTER_SELECTED_CLASS);
+                        player.getStyleClass().remove(CHARACTER_SELECTABLE_CLASS);
                         player.getStyleClass().add(CHARACTER_CLASS);
                     }
                 }
