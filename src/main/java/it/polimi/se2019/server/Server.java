@@ -81,7 +81,7 @@ public class Server {
 
     /**
      * Starts MVC pattern
-     * @param board whit
+     * @param board to use as model for the MVC pattern
      */
     private void startMVC(Board board) {
         this.model = board;
@@ -100,7 +100,7 @@ public class Server {
     }
 
     /**
-     * Sets tje connection open or closed for accepting clients
+     * Sets the connection open or closed for accepting clients
      * @param allowed true for open, false for close
      */
     public void setConnectionAllowed(boolean allowed) {
