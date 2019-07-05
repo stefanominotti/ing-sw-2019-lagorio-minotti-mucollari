@@ -1238,7 +1238,7 @@ public class GUIView extends View {
         } else {
             description = getCurrentWeapon().getSecondaryEffectTwo().get(0).getDescription();
         }
-        this.currentStatus = "Do you want to combo?";
+        this.currentStatus = "Do you want to use the combo?";
         this.currentAction = description;
         setBanner();
         this.secondaryButtons = Arrays.asList("y", "n");
@@ -1295,7 +1295,7 @@ public class GUIView extends View {
     }
 
     /**
-     * Handles clien effect target choice
+     * Handles client effect target choice
      * @param character target chosen
      */
     private void handleEffectTargetSelect(GameCharacter character) {
@@ -1397,6 +1397,7 @@ public class GUIView extends View {
     @Override
     void handleReloadRequest(List<Weapon> weapons) {
         super.handleReloadRequest(weapons);
+        setPlayerBoard(getCharacter());
         this.currentStatus = "Do you want to reload?";
         this.currentAction = "Select a weapon or continue";
         this.secondaryButtons = new ArrayList<>();
@@ -1526,6 +1527,7 @@ public class GUIView extends View {
     @Override
     void handleKillshotPointsChange(GameCharacter player) {
         super.handleKillshotPointsChange(player);
+        setPlayerBoard(getCharacter());
         if (getCharacter() == player) {
             addMessage("Your killshot points have been reduced");
         } else {
