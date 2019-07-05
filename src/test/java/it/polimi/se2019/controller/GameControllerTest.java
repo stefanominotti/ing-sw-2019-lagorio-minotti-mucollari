@@ -76,6 +76,15 @@ public class GameControllerTest {
         this.controller.update(null, new ClientMessage(ClientMessageType.RECONNECTED,
                 this.player.getCharacter()));
         assertTrue(this.player.isConnected());
+        this.controller.update(null, new ClientDisconnectedMessage(this.p1.getCharacter()));
+        this.controller.update(null, new ClientDisconnectedMessage(this.p2.getCharacter()));
+        assertFalse(this.p1.isConnected());
+        assertFalse(this.p2.isConnected());
+        this.controller.update(null, new ClientMessage(ClientMessageType.RECONNECTED, this.p1.getCharacter()));
+        this.controller.update(null, new ClientMessage(ClientMessageType.RECONNECTED, this.p2.getCharacter()));
+        assertTrue(this.p1.isConnected());
+        assertTrue(this.p2.isConnected());
+
     }
 
     @Test
