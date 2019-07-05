@@ -142,6 +142,9 @@ class EffectsController {
      */
     Map<WeaponEffectOrderType, List<WeaponEffect>> getAvailableEffects() {
         Map<WeaponEffectOrderType, List<WeaponEffect>> availableWeapons = new LinkedHashMap<>();
+        if (this.weapon == null) {
+            return availableWeapons;
+        }
         if (!this.mainEffectApplied) {
             availableWeapons.put(WeaponEffectOrderType.PRIMARY, weapon.getPrimaryEffect());
             if (!this.weapon.getAlternativeMode().isEmpty() && checkCost(weapon.getAlternativeMode())) {

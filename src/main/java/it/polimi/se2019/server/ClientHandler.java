@@ -68,6 +68,9 @@ public class ClientHandler extends Thread {
             } catch (IOException e) {
                 active = false;
                 LOGGER.log(Level.SEVERE, "Error on adding new SocketVirtualClient to Server");
+            } catch (NullPointerException e) {
+                active = false;
+                LOGGER.log(Level.SEVERE, "Socket error");
             }
         }
     }
