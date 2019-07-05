@@ -1,4 +1,5 @@
-# Prova Finale (Ingegneria del Software) - 085923 - [San Pietro]
+# Prova Finale (Ingegneria del Software)
+085923 - [San Pietro]
 
 ## Gruppo: 46
 Antonio Lagorio - antonio.lagorio@mail.polimi.it
@@ -20,9 +21,7 @@ Eknid Mucollari - eknid.mucollari@mail.polimi.it
 
 ## Istruzioni per avviare il server 
 
-Copiare il file `AdrenalineServerSettings.json` nella path user home:
-(es. `C:\Users\pippo` per Windows)
-(es. `/Users/pippo` per Mac)
+Copiare il file `AdrenalineServerSettings.json` nella path user home:<br/>(es. `C:\Users\pippo` per Windows - `/Users/pippo` per Mac)
 
 Il file contiene le seguenti impostazioni 
 - Timer di gioco
@@ -34,14 +33,12 @@ Nella path che contiene il jar, utilizzare il comando:
 
     $ java -jar adrenalina-server.jar
 
-Oppure utilizzare gli script `adrenalina-server.sh` oppure `adrenalina-server.bat`
+Oppure utilizzare gli script `adrenalina-server.sh` o `adrenalina-server.bat`
 
 
 ## Istruzioni per avviare il client 
 
-Copiare il file `AdrenalineClientSettings.json` nella path user home:
-(es. `C:\Users\pippo` per Windows)
-(es. `/Users/pippo` per Mac)
+Copiare il file `AdrenalineClientSettings.json` nella path user home:<br/>(es. `C:\Users\pippo` per Windows - `/Users/pippo` per Mac)
 
 Il file contiene le seguenti impostazioni:
 - Indirizzo e porta del server
@@ -52,8 +49,8 @@ Nella path che contiene il jar, utilizzare il comando:
 
     $ java -jar adrenalina-client.jar
 
-Oppure utilizzare gli script `adrenalina-client.sh` oppure `adrenalina-client.bat`
+Oppure utilizzare gli script `adrenalina-client.sh` o `adrenalina-client.bat`
 
 ## UML
 
-UML disponibile nella cartella 'deliveries/final/UML' di questa repo
+UML disponibile nella cartella `deliveries/final/UML` di questo repository
