@@ -121,7 +121,7 @@ public abstract class View {
             this.client = s;
         } else {
             try {
-                this.client = new RMIProtocolClient(this, ip);
+                this.client = new RMIProtocolClient(this, ip, port);
             } catch (IllegalStateException e) {
                 handleConnectionError();
             }

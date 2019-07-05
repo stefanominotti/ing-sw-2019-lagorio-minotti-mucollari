@@ -58,10 +58,15 @@ public class Server {
             if(this.portRMI == this.portSocket) {
                 LOGGER.log(Level.SEVERE, "Invalid port, port set to default (RMI: " + DEFAULT_RMI_PORT +
                         ", Socket: " + DEFAULT_SOCKET_PORT + ")");
+                this.portSocket = DEFAULT_SOCKET_PORT;
+                this.portRMI = DEFAULT_RMI_PORT;
+
             }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Invalid settings file, port set to default (RMI: " + DEFAULT_RMI_PORT +
                     ", Socket: " + DEFAULT_SOCKET_PORT + ")");
+            this.portSocket = DEFAULT_SOCKET_PORT;
+            this.portRMI = DEFAULT_RMI_PORT;
         }
         resetServer();
     }
