@@ -1,4 +1,5 @@
-# Prova Finale (Ingegneria del Software) - 085923 - [San Pietro]
+# Prova Finale (Ingegneria del Software)
+# 085923 - [San Pietro]
 
 ## Gruppo: 46
 Antonio Lagorio - antonio.lagorio@mail.polimi.it
@@ -20,8 +21,7 @@ Eknid Mucollari - eknid.mucollari@mail.polimi.it
 
 ## Istruzioni per avviare il server 
 
-Copiare il file `AdrenalineServerSettings.json` nella path user home:<br/>
-(es. `C:\Users\pippo` per Windows - `/Users/pippo` per Mac)
+Copiare il file `AdrenalineServerSettings.json` nella path user home:<br/>(es. `C:\Users\pippo` per Windows - `/Users/pippo` per Mac)
 
 Il file contiene le seguenti impostazioni 
 - Timer di gioco
@@ -38,8 +38,7 @@ Oppure utilizzare gli script `adrenalina-server.sh` o `adrenalina-server.bat`
 
 ## Istruzioni per avviare il client 
 
-Copiare il file `AdrenalineClientSettings.json` nella path user home:<br/>
-(es. `C:\Users\pippo` per Windows - `/Users/pippo` per Mac)
+Copiare il file `AdrenalineClientSettings.json` nella path user home:<br/>(es. `C:\Users\pippo` per Windows - `/Users/pippo` per Mac)
 
 Il file contiene le seguenti impostazioni:
 - Indirizzo e porta del server
