@@ -7,6 +7,7 @@ import java.util.Map;
 
 /**
  * Class for handling weapon store refilled message
+ * @author stefanominotti
  */
 public class WeaponStoresRefilledMessage extends BoardMessage {
 

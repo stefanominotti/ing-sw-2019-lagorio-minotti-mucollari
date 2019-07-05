@@ -4,13 +4,14 @@ import it.polimi.se2019.model.GameCharacter;
 
 /**
  * Class for handling player ready message
+ * @author stefanominotti
  */
 public class PlayerReadyMessage extends PlayerMessage {
 
     private String nickname;
 
     /**
-     * Class constructor, it builds a player ready message
+     * Class constructor, it builds a player ready message when a player chose a nickname
      * @param character of the ready player
      * @param nickname of the ready player
      */

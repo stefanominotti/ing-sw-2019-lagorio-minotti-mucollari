@@ -53,6 +53,9 @@ import static it.polimi.se2019.view.ClientState.*;
 
 /**
  * Abstract class for handling view
+ * @author stefanominotti
+ * @author antoniolagorio
+ * @author eknidmucollari
  */
 public abstract class View {
 

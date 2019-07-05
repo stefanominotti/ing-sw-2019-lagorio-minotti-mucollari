@@ -4,6 +4,7 @@ import it.polimi.se2019.model.GameCharacter;
 
 /**
  * Class for handling score message
+ * @author stefanominotti
  */
 public class ScoreMessage extends PlayerMessage {
 

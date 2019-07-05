@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 
 /**
  * Class for handling RMI virtual client
+ * @author stefanominotti
  */
 public class RMIVirtualClient extends Thread implements VirtualClientInterface {
 

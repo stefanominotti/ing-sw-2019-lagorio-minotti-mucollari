@@ -17,6 +17,8 @@ import java.util.Map;
 
 /**
  * Class for handling card detail controller
+ *  @author stefanominotti
+ *  @author antoniolagorio
  */
 public class CardDetailController extends AbstractSceneController {
 

@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * Class for handling square string utils, it is used to transform squares into string for print them into CLI
+ *  @author stefanominotti
  */
 public class SquareStringUtils {
 

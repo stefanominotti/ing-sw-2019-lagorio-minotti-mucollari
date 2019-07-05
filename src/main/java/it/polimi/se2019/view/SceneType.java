@@ -2,6 +2,8 @@ package it.polimi.se2019.view;
 
 /**
  * Enumeration class for handling scene type
+ *  @author stefanominotti
+ *  @author antoniolagorio
  */
 public enum SceneType {
     SELECT_NICKNAME,

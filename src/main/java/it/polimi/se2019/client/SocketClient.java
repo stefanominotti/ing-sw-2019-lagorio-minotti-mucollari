@@ -8,6 +8,7 @@ import java.net.Socket;
 
 /**
  * Class for handling socket client, it handles thread to send message (Socket)
+ * @author stefanominotti
  */
 public class SocketClient extends AbstractClient implements Runnable {
 

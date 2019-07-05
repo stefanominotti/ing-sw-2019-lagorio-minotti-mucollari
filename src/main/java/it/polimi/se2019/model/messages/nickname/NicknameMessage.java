@@ -5,6 +5,7 @@ import it.polimi.se2019.model.messages.MessageType;
 
 /**
  * Class for handling nickname message
+ * @author stefanominotti
  */
 public class NicknameMessage extends Message {
 

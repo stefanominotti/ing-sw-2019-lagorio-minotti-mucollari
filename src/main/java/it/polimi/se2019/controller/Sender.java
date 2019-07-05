@@ -4,6 +4,9 @@ import it.polimi.se2019.model.messages.Message;
 import it.polimi.se2019.model.messages.SingleReceiverMessage;
 import it.polimi.se2019.view.VirtualView;
 
+/**
+ * Class for handling Sender, it is used to send messages from controller to view
+ */
 public class Sender {
 
     private VirtualView view;

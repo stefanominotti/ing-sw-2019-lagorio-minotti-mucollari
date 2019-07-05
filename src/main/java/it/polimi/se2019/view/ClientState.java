@@ -2,6 +2,8 @@ package it.polimi.se2019.view;
 
 /**
  * Enumeration class for handling client state
+ *  @author stefanominotti
+ *  @author eknidmucollari
  */
 public enum ClientState {
     TYPING_NICKNAME,

@@ -11,6 +11,7 @@ import java.util.*;
 
 /**
  * Class for handling effect possibility pack, with all effect data
+ * @author eknidmucollari
  */
 public class EffectPossibilityPack implements Serializable {
     private List<String> targetsAmount;

@@ -5,6 +5,7 @@ import it.polimi.se2019.model.GameCharacter;
 
 /**
  * Class for handling player spawn message
+ * @author stefanominotti
  */
 public class SpawnMessage extends PlayerMessage {
 

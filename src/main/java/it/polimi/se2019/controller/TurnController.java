@@ -21,6 +21,8 @@ import static java.util.stream.Collectors.toMap;
 
 /**
  * Class for handling turn controller
+ * @author stefanominotti
+ * @author eknidmucollari
  */
 class TurnController {
 

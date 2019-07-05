@@ -9,6 +9,8 @@ import static it.polimi.se2019.view.SquareStringUtils.*;
 
 /**
  * Class for handling board view
+ * @author stefanominotti
+ * @author eknidmucollari
  */
 public class BoardView {
 

@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 /**
  * Class for handling socket virtual client
+ * @author stefanominotti
  */
 public class SocketVirtualClient extends Thread implements VirtualClientInterface {
 

@@ -4,9 +4,9 @@ import it.polimi.se2019.model.messages.Message;
 import it.polimi.se2019.model.messages.client.ClientMessage;
 import it.polimi.se2019.model.messages.client.ClientMessageType;
 
-
 /**
  * Class for handling socket server
+ * @author stefanominotti
  */
 class SocketServer {
 

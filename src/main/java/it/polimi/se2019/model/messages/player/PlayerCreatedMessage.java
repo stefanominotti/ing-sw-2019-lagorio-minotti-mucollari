@@ -5,6 +5,7 @@ import java.util.Map;
 
 /**
  * Class for handling player created message
+ * @author stefanominotti
  */
 public class PlayerCreatedMessage extends PlayerMessage {
 

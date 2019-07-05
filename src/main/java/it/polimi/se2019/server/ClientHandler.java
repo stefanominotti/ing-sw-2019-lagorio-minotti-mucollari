@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 /**
  * Class for handling client handler
+ * @author stefanominotti
  */
 public class ClientHandler extends Thread {
 

@@ -33,6 +33,7 @@ import java.util.*;
 
 /**
  * Class for handling game controller
+ * @author stefanominotti
  */
 public class GameController implements Observer {
 

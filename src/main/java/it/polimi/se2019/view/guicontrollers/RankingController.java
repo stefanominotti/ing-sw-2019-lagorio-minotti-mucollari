@@ -12,6 +12,7 @@ import java.util.Map;
 
 /**
  * Class for handling ranking controller
+ * @author antoniolagorio
  */
 public class RankingController extends AbstractSceneController {
 

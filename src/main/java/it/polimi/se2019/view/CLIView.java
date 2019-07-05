@@ -32,6 +32,8 @@ import static it.polimi.se2019.view.ClientState.*;
 
 /**
  * Class for handling CLI view
+ *  @author stefanominotti
+ *  @author eknidmucollari
  */
 public class CLIView extends View {
 

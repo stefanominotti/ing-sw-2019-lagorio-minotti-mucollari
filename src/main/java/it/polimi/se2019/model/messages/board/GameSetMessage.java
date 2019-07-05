@@ -8,6 +8,7 @@ import java.util.Map;
 
 /**
  * Class for handling game setup message
+ * @author stefanominotti
  */
 public class GameSetMessage extends BoardMessage {
 

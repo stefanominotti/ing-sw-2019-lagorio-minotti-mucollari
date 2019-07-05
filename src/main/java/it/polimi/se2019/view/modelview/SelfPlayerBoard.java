@@ -13,6 +13,7 @@ import java.util.Map;
 
 /**
  * Class for handling self player board
+ *  * @author stefanominotti
  */
 public class SelfPlayerBoard extends PlayerBoard {
 

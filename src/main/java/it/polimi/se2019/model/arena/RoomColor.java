@@ -2,6 +2,7 @@ package it.polimi.se2019.model.arena;
 
 /**
  * Enumeration Class for handling room colors
+ * @author antoniolagorio
  */
 public enum RoomColor {
 

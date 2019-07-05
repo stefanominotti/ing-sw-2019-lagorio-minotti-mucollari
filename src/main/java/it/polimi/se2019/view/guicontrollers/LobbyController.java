@@ -14,6 +14,8 @@ import java.util.Map;
 
 /**
  * Class for handling lobby cotroller
+ * @author antoniolagorio
+ * @author stefanominotti
  */
 public class LobbyController extends AbstractSceneController {
 

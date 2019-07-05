@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * Class for handling coordinates
+ * @author antoniolagorio
  */
 public class Coordinates implements Serializable {
 

@@ -15,6 +15,7 @@ import static java.lang.Thread.sleep;
 
 /**
  * Class for handling RMI protocol client, it handles thread to empty RMI messages queue and send message (RMI)
+ * @author stefanominotti
  */
 public class RMIProtocolClient extends AbstractClient implements RMIClientInterface {
 

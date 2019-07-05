@@ -11,6 +11,7 @@ import java.util.Map;
 
 /**
  * Class for handling load view message
+ * @author eknidmucollari
  */
 public class LoadViewMessage extends ClientMessage {
 

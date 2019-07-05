@@ -1,5 +1,9 @@
 package it.polimi.se2019.model.messages.selections;
 
+/**
+ * Class for handling selection message type
+ * @author stefanominotti
+ */
 public enum SelectionMessageType {
     PICKUP,
     MOVE,

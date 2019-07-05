@@ -7,6 +7,7 @@ import it.polimi.se2019.model.messages.SingleReceiverMessage;
 
 /**
  * Class for handling player message
+ * @author antoniolagorio
  */
 public class PlayerMessage extends Message implements SingleReceiverMessage {
 

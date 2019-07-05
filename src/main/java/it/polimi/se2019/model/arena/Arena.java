@@ -13,6 +13,7 @@ import java.util.Scanner;
 
 /**
  * Class for handling the Arenas
+ * @author eknidmucollari
  */
 public class Arena {
 

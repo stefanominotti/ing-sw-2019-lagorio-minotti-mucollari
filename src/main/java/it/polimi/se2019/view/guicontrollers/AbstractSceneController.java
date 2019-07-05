@@ -4,6 +4,7 @@ import it.polimi.se2019.view.GUIView;
 
 /**
  * Abstract class for handling abstract scene controller
+ *  @author antoniolagorio
  */
 public abstract class AbstractSceneController {
 

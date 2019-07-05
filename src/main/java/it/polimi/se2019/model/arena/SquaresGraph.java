@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * Class for handling squares graph
+ * @author stefanominotti
  */
 public class SquaresGraph {
 

@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 
 /**
  * Class for handling game loader
+ * @author eknidmucollari
  */
 public class GameLoader {
 

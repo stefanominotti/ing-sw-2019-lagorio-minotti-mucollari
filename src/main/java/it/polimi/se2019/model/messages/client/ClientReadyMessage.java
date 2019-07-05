@@ -4,6 +4,7 @@ import it.polimi.se2019.model.GameCharacter;
 
 /**
  * Class for handling client ready message
+ * @author eknidmucollari
  */
 public class ClientReadyMessage extends ClientMessage {
 

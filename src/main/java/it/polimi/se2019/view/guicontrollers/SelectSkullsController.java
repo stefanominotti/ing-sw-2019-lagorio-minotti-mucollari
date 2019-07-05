@@ -5,6 +5,7 @@ import javafx.scene.control.ComboBox;
 
 /**
  * Class for handling select skulls controller
+ * @author antoniolagorio
  */
 public class SelectSkullsController extends AbstractSceneController {
 

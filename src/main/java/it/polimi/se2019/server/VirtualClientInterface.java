@@ -4,6 +4,7 @@ import it.polimi.se2019.model.messages.Message;
 
 /**
  * Class for handling virtual client interface
+ * @author stefanominotti
  */
 public interface VirtualClientInterface {
 

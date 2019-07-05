@@ -25,6 +25,7 @@ import java.util.Observer;
 
 /**
  * Class for handling virtual view
+ * @author stefanominotti
  */
 public class VirtualView extends Observable implements Observer {
 

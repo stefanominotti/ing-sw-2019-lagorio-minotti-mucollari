@@ -5,6 +5,7 @@ import javafx.scene.control.TextField;
 
 /**
  * Class for handling select nickname controller
+ * @author antoniolagorio
  */
 public class SelectNicknameController extends AbstractSceneController {
 

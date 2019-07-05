@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 
 /**
  * Class for handling RMI server interface
+ * @author stefanominotti
  */
 public interface RMIServerInterface extends Remote {
 

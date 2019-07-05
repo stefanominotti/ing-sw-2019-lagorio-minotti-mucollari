@@ -12,6 +12,8 @@ import java.io.IOException;
 
 /**
  * Class for handling GUI application
+ *  @author stefanominotti
+ *  @author antoniolagorio
  */
 public class GUIApp extends Application {
 

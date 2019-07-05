@@ -8,7 +8,8 @@ import javafx.scene.control.ToggleGroup;
 import java.util.List;
 
 /**
- * Class for handling select arena controller
+ * Class for handling select arena controller+
+ * @author antoniolagorio
  */
 public class SelectCharacterController extends AbstractSceneController {
 

@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 
 /**
  * Class for handling RMI Client Interface
+ * @author stefanominotti
  */
 public interface RMIClientInterface extends Remote {
 

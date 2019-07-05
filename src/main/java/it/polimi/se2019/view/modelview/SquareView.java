@@ -17,6 +17,7 @@ import static it.polimi.se2019.view.SquareStringUtils.center;
 
 /**
  * Class for handling square view
+ *  @author stefanominotti
  */
 public class SquareView implements Serializable {
 

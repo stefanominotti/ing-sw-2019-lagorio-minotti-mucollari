@@ -2,6 +2,7 @@ package it.polimi.se2019.model.messages.player;
 
 /**
  * Enumeration Class for handling player message type
+ * @author stefanominotti
  */
 public enum PlayerMessageType {
     READY,

@@ -17,6 +17,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Class for handling RMI Protocol Server
+ * @author stefanominotti
+ */
 public class RMIProtocolServer extends UnicastRemoteObject implements RMIServerInterface {
 
     private static final Logger LOGGER = Logger.getLogger(RMIProtocolServer.class.getName());

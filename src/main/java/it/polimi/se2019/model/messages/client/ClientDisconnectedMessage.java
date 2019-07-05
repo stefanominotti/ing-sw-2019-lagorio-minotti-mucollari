@@ -4,6 +4,7 @@ import it.polimi.se2019.model.GameCharacter;
 
 /**
  * Class for handling client disconnected message
+ * @author stefanominotti
  */
 public class ClientDisconnectedMessage extends ClientMessage {
 

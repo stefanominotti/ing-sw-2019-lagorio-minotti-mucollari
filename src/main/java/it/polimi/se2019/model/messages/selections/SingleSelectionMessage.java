@@ -5,6 +5,9 @@ import it.polimi.se2019.model.messages.Message;
 import it.polimi.se2019.model.messages.MessageType;
 import it.polimi.se2019.model.messages.SingleReceiverMessage;
 
+/**
+ * Class for
+ */
 public class SingleSelectionMessage extends Message implements SingleReceiverMessage {
 
     private SelectionMessageType type;

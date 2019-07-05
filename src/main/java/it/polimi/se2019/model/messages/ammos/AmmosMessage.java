@@ -9,6 +9,7 @@ import java.util.Map;
 
 /**
  * Class for handling ammo message
+ * @author stefanominotti
  */
 public class AmmosMessage extends Message {
 

@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * Class for handling character message
+ * @author stefanominotti
  */
 public class CharacterMessage extends ClientMessage {
 

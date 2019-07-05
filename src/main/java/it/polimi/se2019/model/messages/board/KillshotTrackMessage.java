@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * Class for handling killshot track message
+ * @author stefanominotti
  */
 public class KillshotTrackMessage extends BoardMessage {
 

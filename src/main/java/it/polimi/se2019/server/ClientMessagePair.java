@@ -4,6 +4,7 @@ import it.polimi.se2019.model.messages.Message;
 
 /**
  * Class for handling client message pair, used to pair client-message
+ * @author stefanominotti
  */
 public class ClientMessagePair {
 

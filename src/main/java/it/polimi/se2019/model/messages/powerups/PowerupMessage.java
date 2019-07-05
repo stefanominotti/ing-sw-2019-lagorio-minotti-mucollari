@@ -8,6 +8,7 @@ import it.polimi.se2019.model.messages.SingleReceiverMessage;
 
 /**
  * Class for handling power up message
+ * @author stefanominotti
  */
 public class PowerupMessage extends Message implements SingleReceiverMessage {
 

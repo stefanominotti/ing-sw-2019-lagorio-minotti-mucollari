@@ -6,6 +6,7 @@ import javafx.scene.control.ToggleGroup;
 
 /**
  * Class for handling select arena controller
+ * @author antoniolagorio
  */
 public class SelectArenaController extends AbstractSceneController {
 

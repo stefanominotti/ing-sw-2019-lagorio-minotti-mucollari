@@ -3,7 +3,8 @@ package it.polimi.se2019.model.messages.player;
 import it.polimi.se2019.model.GameCharacter;
 
 /**
- *  Class for handling Final Frenzy message
+ * Class for handling Final Frenzy message
+ * @author stefanominotti
  */
 public class FinalFrenzyMessage extends PlayerMessage {
 

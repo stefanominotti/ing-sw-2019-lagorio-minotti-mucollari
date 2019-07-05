@@ -9,7 +9,8 @@ import it.polimi.se2019.model.messages.SingleReceiverMessage;
 import java.util.Map;
 
 /**
- *  Class for handling payment message
+ * Class for handling payment message
+ * @author stefanominotti
  */
 public class PaymentMessage extends Message implements SingleReceiverMessage {
 

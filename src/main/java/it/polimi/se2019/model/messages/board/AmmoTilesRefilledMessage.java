@@ -7,6 +7,7 @@ import java.util.Map;
 
 /**
  * Class for handling ammo tiles refill message
+ * @author stefanominotti
  */
 public class AmmoTilesRefilledMessage extends BoardMessage {
 

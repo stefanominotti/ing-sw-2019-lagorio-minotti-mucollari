@@ -5,6 +5,7 @@ import it.polimi.se2019.model.messages.MessageType;
 
 /**
  * Class for handling board message
+ * @author stefanominotti
  */
 public class BoardMessage extends Message {
 

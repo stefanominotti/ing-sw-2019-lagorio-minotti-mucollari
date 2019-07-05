@@ -9,6 +9,7 @@ import java.util.Map;
 
 /**
  * Class for handling payment sent message
+ * @author stefanominotti
  */
 public class PaymentSentMessage extends PaymentMessage {
 

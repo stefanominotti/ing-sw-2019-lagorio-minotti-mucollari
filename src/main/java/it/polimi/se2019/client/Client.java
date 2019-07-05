@@ -12,6 +12,7 @@ import java.util.TimerTask;
 
 /**
  * Class for handling clients
+ * @author stefanominotti
  */
 public class Client {
 

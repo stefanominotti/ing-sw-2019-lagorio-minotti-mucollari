@@ -10,6 +10,7 @@ import java.util.TimerTask;
 
 /**
  * Class for handling invalid token controller
+ * @author antoniolagorio
  */
 public class InvalidTokenController extends AbstractSceneController {
 

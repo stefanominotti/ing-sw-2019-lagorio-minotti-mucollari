@@ -2,6 +2,7 @@ package it.polimi.se2019.model.messages.board;
 
 /**
  * Class for handling skulls message
+ * @author stefanominotti
  */
 public class SkullsMessage extends BoardMessage {
 

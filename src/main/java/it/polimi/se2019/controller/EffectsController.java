@@ -20,6 +20,7 @@ import static it.polimi.se2019.model.playerassets.weapons.WeaponEffectOrderType.
 
 /**
  * Class for handling weapon effects controller
+ * @author eknidmucollari
  */
 class EffectsController {
     private Board board;

@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 
 /**
  * Class for handling server
+ * @author stefanominotti
  */
 public class Server {
 

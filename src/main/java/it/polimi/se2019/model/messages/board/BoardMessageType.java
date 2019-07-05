@@ -2,6 +2,7 @@ package it.polimi.se2019.model.messages.board;
 
 /**
  * Enumeration Class for the board message type
+ * @author stefanominotti
  */
 public enum BoardMessageType {
     AMMO_TILES_REFILLED,

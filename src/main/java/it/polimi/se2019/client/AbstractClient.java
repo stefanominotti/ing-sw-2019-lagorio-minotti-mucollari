@@ -5,6 +5,7 @@ import it.polimi.se2019.view.View;
 
 /**
  * Abstract class for handling abstract client
+ * @author stefanominotti
  */
 public abstract class AbstractClient {
 

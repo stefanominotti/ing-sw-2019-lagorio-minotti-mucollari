@@ -4,7 +4,8 @@ import it.polimi.se2019.model.playerassets.weapons.EffectType;
 import it.polimi.se2019.model.GameCharacter;
 
 /**
- *  Class for handling attack message
+ * Class for handling attack message
+ * @author stefanominotti
  */
 public class AttackMessage extends PlayerMessage {
 

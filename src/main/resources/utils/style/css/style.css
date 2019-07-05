@@ -44,11 +44,11 @@
 }
 
 .button-danger {
-	-fx-background-color: #d61124;
+	-fx-background-color: #dc3545;
 }
 
 .button-danger:hover {
-	-fx-background-color: #ab0c1b;
+	-fx-background-color: #bd2130;
 }
 
 .button-confirm {

@@ -2,6 +2,7 @@ package it.polimi.se2019.view.guicontrollers;
 
 /**
  * Class for game already started controller
+ * @author antoniolagorio
  */
 public class GameAlreadyStartedController extends AbstractSceneController {
 

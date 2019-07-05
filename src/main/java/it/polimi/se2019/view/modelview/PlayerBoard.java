@@ -9,6 +9,8 @@ import java.util.*;
 
 /**
  * Class for handling player board
+ * @author stefanominotti
+ * @author eknidmucollari
  */
 public class PlayerBoard implements Serializable {
 

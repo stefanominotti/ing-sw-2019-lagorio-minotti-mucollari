@@ -10,6 +10,7 @@ import static java.lang.Math.abs;
 
 /**
  * Class for handling squares
+ * @author stefanominotti
  */
 public class Square {
 
