@@ -23,7 +23,7 @@ public enum WeaponEffectOrderType {
 
     /**
      * Gets the identifier of the effect macro
-     * @return
+     * @return the identifier of the effect macro
      */
     public String getIdentifier() {
         return this.identifier;

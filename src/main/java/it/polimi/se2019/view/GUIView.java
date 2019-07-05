@@ -1566,7 +1566,7 @@ public class GUIView extends View {
 
     /**
      * Handles Yes/No player decision input, sending message based on type of selection done
-     * @param input
+     * @param input y if yes, n if no
      */
     public void handleDecisionInput(String input) {
         input = input.toUpperCase();

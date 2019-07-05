@@ -112,6 +112,7 @@ public class Board extends Observable {
 
     /**
      * Writes board data to JSON
+     * @return string contains the board as json
      */
     public String toJson() {
         Gson gson = new Gson();

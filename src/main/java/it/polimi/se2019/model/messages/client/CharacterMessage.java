@@ -36,7 +36,7 @@ public class CharacterMessage extends ClientMessage {
 
     /**
      * Gets the available characters for choice
-     * @return
+     * @return List of the available characters
      */
     public List<GameCharacter> getAvailables() {
         return this.availables;

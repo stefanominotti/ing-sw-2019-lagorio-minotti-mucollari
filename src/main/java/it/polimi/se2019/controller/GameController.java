@@ -34,6 +34,7 @@ import java.util.*;
 /**
  * Class for handling game controller
  * @author stefanominotti
+ * @author eknidmucollari
  */
 public class GameController implements Observer {
 
@@ -73,21 +74,32 @@ public class GameController implements Observer {
         this.sender = new Sender(this.view);
     }
 
+    /**
+     * Gets the turn controller
+     * @return the turn controller
+     */
     TurnController getTurnController() {
         return this.turnController;
     }
 
+    /**
+     * Sets a powerup as used
+     * @param powerups List of the powerups to set as used
+     */
     void setPowerupsUsed(List<Powerup> powerups) {
         this.powerupsUsed = powerups;
     }
 
+    /**
+     * Sets ammo as used
+     * @param ammo Map with ammo type and its quantity to set as used
+     */
     void setAmmoUsed(Map<AmmoType, Integer> ammo) {
         this.ammoUsed = ammo;
     }
 
     /**
      * Updates the view with a message
-     *
      * @param view the view to notify
      * @param message to be notified
      */
@@ -116,6 +128,7 @@ public class GameController implements Observer {
                 break;
         }
     }
+
 
     private void update(ClientMessage message) {
         switch (message.getType()) {
@@ -148,7 +161,6 @@ public class GameController implements Observer {
 
     /**
      * Handles a reconnected client, sending him his view
-     *
      * @param character who is reconnected
      */
     private void handleClientReconnected(GameCharacter character) {
@@ -183,7 +195,6 @@ public class GameController implements Observer {
 
     /**
      * Handles a disconnected client, notify other clients
-     *
      * @param character who is disconnected
      */
     private void handleClientDisconnected(GameCharacter character) {
@@ -230,7 +241,6 @@ public class GameController implements Observer {
 
     /**
      * Updates board with a message
-     *
      * @param message to be updated
      */
     private void update(BoardMessage message) {
@@ -248,7 +258,6 @@ public class GameController implements Observer {
 
     /**
      * Handles chosen arena creating it and finalizing game setup
-     *
      * @param arena ID chosen by the master player
      */
     private void handleArenaReceived(String arena) {
@@ -258,7 +267,6 @@ public class GameController implements Observer {
 
     /**
      * Handles chosen skulls number setting it in the model and finalizing game setup
-     *
      * @param skulls number chosen by the master player
      */
     private void handleSkullsReceived(int skulls) {
@@ -267,7 +275,6 @@ public class GameController implements Observer {
 
     /**
      * Handles a turn message receiving
-     *
      * @param message received
      */
     private void update(TurnMessage message) {
@@ -277,7 +284,6 @@ public class GameController implements Observer {
 
     /**
      * Handles a selection list message receiving
-     *
      * @param message received
      */
     private void update(SelectionListMessage message) {
@@ -303,7 +309,6 @@ public class GameController implements Observer {
 
     /**
      * Handles a single selection message receiving
-     *
      * @param message received
      */
     private void update(SingleSelectionMessage message) {
@@ -363,7 +368,6 @@ public class GameController implements Observer {
 
     /**
      * Handles persistence selection
-     *
      * @param selection chosen by the player
      */
     private void handlePersistenceSelection(String selection) {
@@ -377,7 +381,6 @@ public class GameController implements Observer {
 
     /**
      * Handles powerup discard selection
-     *
      * @param powerup chosen to discard
      */
     private void handlePowerupDiscardSelection(Powerup powerup) {
@@ -386,7 +389,6 @@ public class GameController implements Observer {
 
     /**
      * Handles action selection
-     *
      * @param action chosen
      */
     private void handleActionSelection(ActionType action) {
@@ -395,7 +397,6 @@ public class GameController implements Observer {
 
     /**
      * Handles movement selection
-     *
      * @param coordinates chosen where the player wants to move
      */
     private void handleMovementSelection(Coordinates coordinates) {
@@ -404,7 +405,6 @@ public class GameController implements Observer {
 
     /**
      * Handle pickup selection
-     *
      * @param coordinates chosen where the player wants to move and pickup
      */
     private void handlePickupSelection(Coordinates coordinates) {
@@ -413,7 +413,6 @@ public class GameController implements Observer {
 
     /**
      * Handles weapon pickup selection
-     *
      * @param weapon chosen to pickup
      */
     private void handleWeaponPickupSelection(Weapon weapon) {
@@ -422,7 +421,6 @@ public class GameController implements Observer {
 
     /**
      * Handles weapon switch selection
-     *
      * @param weapon the player wants to switch
      */
     private void handleWeaponSwitchSelection(Weapon weapon) {
@@ -431,7 +429,6 @@ public class GameController implements Observer {
 
     /**
      * Handled weapon reload selection
-     *
      * @param weapon chosen to be reloaded
      */
     private void handleReloadSelection(Weapon weapon) {
@@ -440,7 +437,6 @@ public class GameController implements Observer {
 
     /**
      * Handles powerup use selection
-     *
      * @param player  who chose to use the powerup
      * @param powerup chosen to use
      */
@@ -459,7 +455,6 @@ public class GameController implements Observer {
 
     /**
      * Handles powerup position selection
-     *
      * @param player      who chose to use the powerup
      * @param coordinates chosen by the powerup holder
      */
@@ -469,7 +464,6 @@ public class GameController implements Observer {
 
     /**
      * Handles powerup position selection
-     *
      * @param player    who chose to use the powerup
      * @param character target chosen by the powerup holder
      */
@@ -479,7 +473,6 @@ public class GameController implements Observer {
 
     /**
      * Handles weapon use selection
-     *
      * @param weapon chosen to use
      */
     private void handleWeaponUseSelection(Weapon weapon) {
@@ -488,7 +481,6 @@ public class GameController implements Observer {
 
     /**
      * Handles effect selection
-     *
      * @param effectSelection effect chosen to be apply
      */
     private void handleEffectSelection(WeaponEffectOrderType effectSelection) {
@@ -510,7 +502,6 @@ public class GameController implements Observer {
 
     /**
      * Handles effect combo selection
-     *
      * @param selection "y" if the player choose to use a combo, else "n"
      */
     private void handleEffectComboSelection(String selection) {
@@ -524,7 +515,6 @@ public class GameController implements Observer {
 
     /**
      * Handles effect possibility pack selection
-     *
      * @param selection effect possibility pack chosen by the player
      */
     private void handleEffectPossibilitySelection(EffectPossibilityPack selection) {
@@ -541,7 +531,6 @@ public class GameController implements Observer {
 
     /**
      * Handles the player payment
-     *
      * @param ammos    paid
      * @param powerups paid
      * @param type     of payment done
@@ -639,10 +628,13 @@ public class GameController implements Observer {
             checkTargetingScope();
             return;
         }
-        checkTagbackGrande();
+        checkTagbackGrenade();
     }
 
-    void checkTagbackGrande() {
+    /**
+     * Send a message to the client asking it, if the player wants to use a "targeting scope"
+     */
+    void checkTagbackGrenade() {
         this.powerupRequests = checkTagbackGrenadeCharacters().size();
         for (GameCharacter player : checkTagbackGrenadeCharacters()) {
             send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP, player,
@@ -661,6 +653,9 @@ public class GameController implements Observer {
         }, this.model.getPowerupsTimerDuration());
     }
 
+    /**
+     * Send a message to the client asking it, if the player wants to use a "targeting scope"
+     */
     void checkTargetingScope() {
         this.powerupRequests = 1;
         send(new SelectionListMessage<>(SelectionMessageType.USE_POWERUP, this.turnController.getActivePlayer().getCharacter(),

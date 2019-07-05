@@ -60,6 +60,7 @@ public class Player {
 
     /**
      * Writes player data to JSON
+     * @return string contains player data as json
      */
     public String toJson(){
         Gson gson = new Gson();

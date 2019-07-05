@@ -9,7 +9,7 @@ public interface SingleReceiverMessage {
 
     /**
      * Gets the addressee of the message
-     * @return the addresse of the message
+     * @return the addressee of the message
      */
     GameCharacter getCharacter();
 }

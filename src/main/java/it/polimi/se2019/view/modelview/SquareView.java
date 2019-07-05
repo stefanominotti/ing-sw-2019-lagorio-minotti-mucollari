@@ -91,6 +91,7 @@ public class SquareView implements Serializable {
      * @param spawn true if the square is a spawn point, else false
      * @param activePlayers List of the active game characters on the square
      * @param availableAmmoTile Ammo tile on the square
+     * @param store List of the weapon on the store
      * @param map with cardinal points and true if the direction is accessible from the square, else false
      */
     public SquareView(int x, int y, RoomColor color, boolean spawn, List<GameCharacter> activePlayers,
@@ -177,30 +178,51 @@ public class SquareView implements Serializable {
         return new ArrayList<>(this.store);
     }
 
+
     /**
-     *
-     * @return
+     * Gets the room color of the square
+     * @return the room color
      */
     public RoomColor getColor() {
         return this.color;
     }
 
+    /**
+     * Adds active player to the square
+     * @param player character you want to add
+     */
     public void addActivePlayer(GameCharacter player) {
         this.activePlayers.add(player);
     }
 
+    /**
+     * Remove an active player
+     * @param player character of the player you want to remove
+     */
     public void removeActivePlayer(GameCharacter player) {
         this.activePlayers.remove(player);
     }
 
+    /**
+     * Sets ammo tile on the square
+     * @param tile you want to set on the square
+     */
     public void setAvailableAmmoTile(AmmoTile tile) {
         this.availableAmmoTile = tile;
     }
 
+    /**
+     * Removes the ammo tile from the square
+     */
     public void removeAmmoTile() {
         this.availableAmmoTile = null;
     }
 
+    /**
+     * Gets the square view of another square passing the direction from the square
+     * @param direction where you want to get the square
+     * @return the square view of the matching square
+     */
     public SquareView getSquareAtDirection(CardinalPoint direction) {
         switch(direction) {
             case NORTH:
@@ -215,6 +237,11 @@ public class SquareView implements Serializable {
         return null;
     }
 
+    /**
+     * Writes the square view as a string
+     * @param marked true if a square is available for movement, else false
+     * @return square as string
+     */
     public String toString(boolean marked) {
 
         StringBuilder builder = new StringBuilder();
