@@ -14,7 +14,7 @@ public class KillshotTrackMessage extends BoardMessage {
     private List<GameCharacter> players;
 
     /**
-     * Class constructor, it builds a killshot track message
+     * Class constructor, it builds a killshot track message to signal a variation of killshot track
      * @param skulls number of the skull of the killshot track
      * @param players addressee of the message
      */
@@ -25,7 +25,7 @@ public class KillshotTrackMessage extends BoardMessage {
     }
 
     /**
-     * Gets the skull number of the message
+     * Gets the skull number of the skull removed
      * @return the number of the skull of the message
      */
     public int getSkulls() {
@@ -33,8 +33,8 @@ public class KillshotTrackMessage extends BoardMessage {
     }
 
     /**
-     * Gets the addressee characters of the message
-     * @return List of the Game Character addressee of the message
+     * Gets the list of characters which of marks was placed on the track
+     * @return List of the Game Character which of marks was placed on the track
      */
     public List<GameCharacter> getPlayers() {
         return this.players;

@@ -19,7 +19,7 @@ public class GameSetMessage extends BoardMessage {
     private final Map<Coordinates, Map<CardinalPoint, Boolean>> nearbyAccessibility;
 
     /**
-     * Class constructor, it builds a board message
+     * Class constructor, it builds a board message after game setup finished
      * @param skulls number of skull set for the game
      * @param arenaNumber ID of the arena set for the game
      * @param squareColors colors and positions of the squares of the arena

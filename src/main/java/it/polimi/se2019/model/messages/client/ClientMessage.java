@@ -36,8 +36,8 @@ public class ClientMessage extends Message implements SingleReceiverMessage {
     }
 
     /**
-     * Gets the addressee character of the message
-     * @return the addressee of the message
+     * Gets the addressee/sender character of the message
+     * @return the addressee/sender of the message
      */
     public GameCharacter getCharacter() {
         return this.character;

@@ -18,8 +18,8 @@ public class SkullsMessage extends BoardMessage {
     }
 
     /**
-     * Gets the skulls number of the message
-     * @return the number of the skulls of the message
+     * Gets the current skulls number
+     * @return the number of the skulls
      */
     public int getSkulls() {
         return skulls;

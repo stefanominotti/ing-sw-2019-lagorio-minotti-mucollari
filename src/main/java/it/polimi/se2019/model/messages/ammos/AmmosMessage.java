@@ -39,8 +39,8 @@ public class AmmosMessage extends Message {
     }
 
     /**
-     * Gets the addressee of the message
-     * @return the Game Character of the addressee
+     * Gets the sender of the message
+     * @return the Game Character of the sender
      */
     public GameCharacter getCharacter() {
         return this.character;

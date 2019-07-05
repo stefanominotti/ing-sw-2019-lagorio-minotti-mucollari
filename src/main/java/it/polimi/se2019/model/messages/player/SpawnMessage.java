@@ -13,8 +13,8 @@ public class SpawnMessage extends PlayerMessage {
 
     /**
      * Class constructor, it builds a spawn message
-     * @param character who has spawn
-     * @param coordinates where the characters has spawn
+     * @param character who has spawned
+     * @param coordinates where the characters has spawned
      */
     public SpawnMessage(GameCharacter character, Coordinates coordinates) {
         super(PlayerMessageType.SPAWNED, character);
@@ -22,8 +22,8 @@ public class SpawnMessage extends PlayerMessage {
     }
 
     /**
-     * Gets the coordinates where the characters has spawn
-     * @return the coordinates where the characters has spawn
+     * Gets the coordinates where the characters has spawned
+     * @return the coordinates where the characters has spawned
      */
     public Coordinates getCoordinates() {
         return this.coordinates;

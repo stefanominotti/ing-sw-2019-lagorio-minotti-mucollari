@@ -78,8 +78,8 @@ public class LoadViewMessage extends ClientMessage {
     }
 
     /**
-     * Gets the kill shot track for the addressee
-     * @return Map with game characters and the corresponding dealt damages to the addressee
+     * Gets the kill shot track
+     * @return Map with game characters and the corresponding marks on the track
      */
     public Map<Integer, List<GameCharacter>> getKillshotTrack() {
         return this.killshotTrack;
@@ -151,7 +151,7 @@ public class LoadViewMessage extends ClientMessage {
 
 
     /**
-     * Knows if the addressee plays before the first player in the current turn
+     * Knows if the addressee plays before the first player in final frenzy
      * @return true if it is, else false
      */
     public boolean isBeforeFirstPlayer() {

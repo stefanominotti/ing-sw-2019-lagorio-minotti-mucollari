@@ -10,7 +10,7 @@ public class ArenaMessage extends BoardMessage {
 
     /**
      * Class constructor, it builds an arena message
-     * @param arena name of the arena
+     * @param arena index of the arena
      */
     public ArenaMessage(String arena) {
         super(BoardMessageType.ARENA);
@@ -19,7 +19,7 @@ public class ArenaMessage extends BoardMessage {
 
     /**
      * Gets the arena of the message
-     * @return the name of the arena
+     * @return the index of the arena
      */
     public String getArena() {
         return arena;

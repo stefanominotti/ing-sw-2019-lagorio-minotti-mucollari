@@ -12,7 +12,7 @@ public class FinalFrenzyMessage extends PlayerMessage {
 
     /**
      * Class constructor, it builds a Final Frenzy message
-     * @param character who has activated the Final Frenzy
+     * @param character which the message has to be sent
      * @param beforeFirstPlayer true if the character plays before the first player in the current turn, else false
      */
     public FinalFrenzyMessage(GameCharacter character, boolean beforeFirstPlayer) {

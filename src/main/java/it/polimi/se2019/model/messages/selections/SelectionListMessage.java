@@ -18,7 +18,8 @@ public class SelectionListMessage<T> extends Message implements SingleReceiverMe
     private List<T> list;
 
     /**
-     * Class constructor, it builds a selection list message which contains the choices of a player
+     * Class constructor, it builds a selection list message which contains the choices of a player or the possible
+     * choices to be sent
      * @param type of the selection message
      * @param character which has done the choices
      * @param list of the choices
@@ -39,7 +40,7 @@ public class SelectionListMessage<T> extends Message implements SingleReceiverMe
     }
 
     /**
-     * Gets the character, who made the choices
+     * Gets the character, who made the choices or the addressee of the message
      * @return character who made the choices
      */
     public GameCharacter getCharacter() {
