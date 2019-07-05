@@ -521,6 +521,9 @@ public class GameController implements Observer {
         this.effectsController.handleApplication(selection);
     }
 
+    /**
+     * Ends an effect
+     */
     void endEffects() {
         this.turnController.handleEndAction();
     }
@@ -553,6 +556,11 @@ public class GameController implements Observer {
         }
     }
 
+    /**
+     * Payment
+     * @param ammos paid
+     * @param powerups paid
+     */
     void payment(Map<AmmoType, Integer> ammos, List<Powerup> powerups) {
         this.model.useAmmos(this.turnController.getActivePlayer(), ammos);
         this.ammoUsed = ammos;
@@ -562,6 +570,9 @@ public class GameController implements Observer {
         }
     }
 
+    /**
+     * Uses to rollback on move-shot-reload, it gives back ammo paid
+     */
     void payBack() {
         this.turnController.getActivePlayer().addAmmos(this.ammoUsed);
         this.ammoUsed = new EnumMap<>(AmmoType.class);
@@ -571,6 +582,9 @@ public class GameController implements Observer {
         this.powerupsUsed = new ArrayList<>();
     }
 
+    /**
+     * Resets powerups and ammo paid
+     */
     void resetPayment() {
         this.powerupsUsed = new ArrayList<>();
         this.ammoUsed = null;
