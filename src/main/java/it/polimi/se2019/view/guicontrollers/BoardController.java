@@ -797,10 +797,10 @@ public class BoardController extends AbstractSceneController {
      * @param action that player has to do
      */
     public void setBanner(String status, String action) {
+        if (status.length() > 37){
+            this.currentStatusLabel.getStyleClass().add("font-status-small");
+        }
         Platform.runLater(() -> {
-            if (status.length() > 37){
-                this.currentStatusLabel.getStyleClass().add("font-status-small");
-            }
             this.currentStatusLabel.setText(status);
             this.currentActionLabel.setText(action);
         });

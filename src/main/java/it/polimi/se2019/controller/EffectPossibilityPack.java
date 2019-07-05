@@ -51,8 +51,7 @@ public class EffectPossibilityPack implements Serializable {
     }
 
     /**
-     * //TODO check it
-     * Class constructor, it is used by clients to fill the possibility pack with their choices
+     * Class constructor, it is used to build an empty possibility pack and is fill by client, time by time
      * @param require true if the effect is mandatory to use, else false
      * @param type of the effect
      */
