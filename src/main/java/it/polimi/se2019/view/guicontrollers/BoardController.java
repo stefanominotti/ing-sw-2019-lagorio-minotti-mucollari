@@ -859,18 +859,18 @@ public class BoardController extends AbstractSceneController {
                 for (Powerup p : powerups) {
                     if (p.getType() == type && p.getColor() == color) {
                         img.setOnMousePressed(this.powerupSelectionHandler);
-                        img.getStyleClass().add(CARD_SELECTABLE_CLASS);
                         img.getStyleClass().remove(CARD_SELECTED_CLASS);
+                        img.getStyleClass().add(CARD_SELECTABLE_CLASS);
                         set = true;
                         break;
                     }
                 }
-                if (set) {
+                if (!set) {
                     for (Powerup p : selected) {
                         if (p.getType() == type && p.getColor() == color) {
                             img.setOnMousePressed(null);
-                            img.getStyleClass().add(CARD_SELECTED_CLASS);
                             img.getStyleClass().remove(CARD_SELECTABLE_CLASS);
+                            img.getStyleClass().add(CARD_SELECTED_CLASS);
                             set = true;
                             break;
                         }

@@ -678,7 +678,15 @@ public class GameController implements Observer {
 
     void checkEnemyTurnPowerup() {
         if (this.powerupRequests == 0) {
-            if (!this.turnController.getActivePlayer().getPowerupsByType(PowerupType.TARGETING_SCOPE).isEmpty() && canPayPowerup()) {
+            List<GameCharacter> toRemove = new ArrayList<>();
+            for (GameCharacter player : this.effectTargets) {
+                if(!this.model.getPlayerByCharacter(player).isDead()) {
+                    toRemove.add(player);
+                }
+            }
+            this.effectTargets.removeAll(toRemove);
+            if (!this.turnController.getActivePlayer().getPowerupsByType(PowerupType.TARGETING_SCOPE).isEmpty() &&
+                    canPayPowerup() && !this.effectTargets.isEmpty()) {
                 checkTargetingScope();
                 return;
             }
