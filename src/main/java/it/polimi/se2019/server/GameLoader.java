@@ -74,9 +74,6 @@ public class GameLoader {
         this.board.loadArena(this.gson.fromJson(jsonElement.get("arena"), String.class));
         for (JsonElement jsonPlayer : jsonPlayers) {
             Player player = this.gson.fromJson(jsonPlayer.getAsJsonObject().get("player"), Player.class);
-            if (player.isDead()) {
-                this.board.addDeadPlayer(player);
-            }
             player.disconnect();
             try {
                 int posX = this.gson.fromJson(

@@ -745,7 +745,11 @@ class EffectsController {
             this.secondaryEffectOneApplied = true;
             this.effectOrder = WeaponEffectOrderType.PRIMARY;
         }
-        this.effectsQueue.remove(0);
+        try {
+            this.effectsQueue.remove(0);
+        } catch (IndexOutOfBoundsException e) {
+            // Ignore
+        }
     }
 
     /**

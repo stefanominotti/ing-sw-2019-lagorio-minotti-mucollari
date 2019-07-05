@@ -52,7 +52,7 @@ public class ClientHandler extends Thread {
     }
 
     /**
-     * Runs the client handler, opening the connection
+     * Runs the client handler, listening for connections
      */
     @Override
     public void run() {

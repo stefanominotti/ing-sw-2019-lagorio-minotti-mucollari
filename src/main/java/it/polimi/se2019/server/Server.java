@@ -116,6 +116,10 @@ public class Server {
         return this.connectionAllowed;
     }
 
+    /**
+     * Adds a client to temporary clients
+     * @param client to be added
+     */
     void addClient(VirtualClientInterface client) {
         ((Thread) client).start();
         this.temporaryClients.add(client);

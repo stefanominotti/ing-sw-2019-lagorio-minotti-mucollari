@@ -170,9 +170,6 @@ public class GameController implements Observer {
         }
         if (counter == this.model.getPlayers().size() ) {
             this.model.setReconnection(false);
-            for (Player p : this.model.getPlayers()) {
-                this.model.sendModelView(p);
-            }
             if (this.model.getDeadPlayers().isEmpty()) {
                 this.model.startTurn(this.model.getPlayers().get(this.model.getCurrentPlayer()));
             } else {
@@ -216,7 +213,7 @@ public class GameController implements Observer {
                 counter++;
             }
         }
-        if (counter < 3 && this.gameStarted) {
+        if (counter < 3) {
             this.gameStarted = false;
             for (Player p : this.model.getPlayers()) {
                 if (p.isConnected() && !this.gameSaved) {

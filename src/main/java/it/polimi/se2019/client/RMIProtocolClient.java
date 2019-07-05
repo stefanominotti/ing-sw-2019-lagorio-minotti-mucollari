@@ -26,6 +26,7 @@ public class RMIProtocolClient extends AbstractClient implements RMIClientInterf
      * Class constructor, it builds an RMI protocol client
      * @param view which you want to pass
      * @param ip of the server
+     * @param port used by the server
      */
     public RMIProtocolClient(View view, String ip, int port) {
         super(view);

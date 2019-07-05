@@ -45,7 +45,7 @@ public class SocketClient extends AbstractClient implements Runnable {
     }
 
     /**
-     * Run the thread to handle client input
+     * Run the thread for messages receiving
      */
     @Override
     public void run() {
