@@ -10,7 +10,7 @@ Eknid Mucollari - eknid.mucollari@mail.polimi.it
 ## Requisiti sviluppati
 
 - Regole semplificate
-- Recole complete
+- Regole complete
 - Socket
 - RMI
 - CLI
