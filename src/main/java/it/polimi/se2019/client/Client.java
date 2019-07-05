@@ -40,12 +40,7 @@ public class Client {
             jsonElement = (JsonObject) parser.parse(configReader);
         } catch (Exception e) {
             System.out.println("Invalid settings file");
-            (new Timer()).schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    System.exit(0);
-                }
-            }, 2*1000L);
+            System.exit(0);
         }
 
         try {
